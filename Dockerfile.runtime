@@ -1,0 +1,1 @@
+FROM hub.furycloud.io/mercadolibre/tomcat:8.5-jdk8
