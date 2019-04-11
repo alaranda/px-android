@@ -18,6 +18,8 @@ coverage:
         target: auto
         threshold: 0.5%
         if_not_found: success
+  ignore:
+    - "src/main/java/com/mercadolibre/Main.java"
 comment: # configuration of the details the bot will comment on the PR
   layout: "header, diff, tree, changes"
   behavior: default
