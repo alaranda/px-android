@@ -19,7 +19,10 @@ coverage:
         threshold: 0.5%
         if_not_found: success
   ignore:
+    - "src/test"
+    - "src/main/java/com/mercadolibre/constants"
     - "src/main/java/com/mercadolibre/Main.java"
+    - "src/main/java/com/mercadolibre/dto"
 comment: # configuration of the details the bot will comment on the PR
   layout: "header, diff, tree, changes"
   behavior: default

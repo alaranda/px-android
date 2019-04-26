@@ -1,0 +1,6 @@
+{
+  "cause": [],
+  "error": "invalid_id",
+  "message": "preference_id not found",
+  "status": 404
+}

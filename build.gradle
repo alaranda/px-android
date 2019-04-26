@@ -50,10 +50,6 @@ repositories {
 	maven { url "http://git.ml.com/nexus/content/groups/Arquitectura" }
 }
 
-configurations {
-	providedRuntime
-}
-
 dependencies {
 	compile('com.mercadolibre.restclient:restclient-default:0.3.19') {
 		exclude module:'guava'
