@@ -35,7 +35,7 @@ public class PaymentRouterTest {
 
     @Test
     public void doPayment_withoutBody_400() throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder("/px_checkout_mobile/payments");
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments");
 
         final Response response = post(uriBuilder.build());
 
@@ -44,7 +44,7 @@ public class PaymentRouterTest {
 
     @Test
     public void doPayment_invalidPK_404() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder("/px_checkout_mobile/payments");
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments");
         final String responseBody = IOUtils.toString(getClass().getResourceAsStream("/publicKey/invalidPK.json"));
         MockPublicKeyAPI.getPublicKey("1", HttpStatus.SC_NOT_FOUND,
                 responseBody);
@@ -59,7 +59,7 @@ public class PaymentRouterTest {
 
     @Test
     public void doPayment_validPayment_200() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder("/px_checkout_mobile/payments");
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments");
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
