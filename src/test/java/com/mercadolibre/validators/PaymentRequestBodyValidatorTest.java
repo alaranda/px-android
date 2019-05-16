@@ -101,4 +101,12 @@ public class PaymentRequestBodyValidatorTest {
             assertThat(e.getDescription(), is(String.format("%s must be positive.", PaymentsRequestBodyParams.INSTALLMENTS)));
         }
     }
+
+    @Test
+    public void paymentRequestBodyValidator_withOutInstallmetns_validationSucceed() throws IOException, ValidationException  {
+        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+                IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyRapipago.json")),
+                PaymentRequestBody.class);
+        validator.validate(paymentRequestBody);
+    }
 }

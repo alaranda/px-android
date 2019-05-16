@@ -30,7 +30,7 @@ public class PaymentRequestBodyValidator {
                 .validate(paymentRequestBody.getPrefId())
                 .throwIfInvalid();
         validateEmail(paymentRequestBody);
-        validateOptionalPositiveParam(paymentRequestBody.getInstallments());
+        validateOptionalPositiveParam(paymentRequestBody.getInstallments(), validateExistToken(paymentRequestBody.getToken()));
         validateOptionalPositiveParam(paymentRequestBody.getIssuerId());
     }
 
@@ -40,8 +40,8 @@ public class PaymentRequestBodyValidator {
         }
     }
 
-    private void validateOptionalPositiveParam(final Integer installments) throws ValidationException {
-        if (installments != null) {
+    private void validateOptionalPositiveParam(final Integer installments, final boolean require) throws ValidationException {
+        if (require && installments != null) {
             SimpleValidatorHelper.isIntPositive(PaymentsRequestBodyParams.INSTALLMENTS).validate(installments).throwIfInvalid();
         }
     }
@@ -53,6 +53,10 @@ public class PaymentRequestBodyValidator {
         SimpleValidatorHelper.notNullString(PaymentsRequestBodyParams.EMAIL)
                 .validate(paymentRequestBody.getPayer().getEmail())
                 .throwIfInvalid();
+    }
+
+    private boolean validateExistToken(String token) {
+        return token != null ? true : false;
     }
 
 }

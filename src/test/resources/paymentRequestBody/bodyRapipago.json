@@ -1,0 +1,9 @@
+{
+  "payer": {
+    "email": "user_regre_px@gmail.com"
+  },
+  "public_key": "APP_USR-0d933ff3-b803-4999-a211-8b3c7d5c7c03",
+  "payment_method_id": "rapipago",
+  "pref_id": "243966003-faedce8f-ee83-40a7-b8e6-bba34928383d",
+  "binary_mode": false
+}
