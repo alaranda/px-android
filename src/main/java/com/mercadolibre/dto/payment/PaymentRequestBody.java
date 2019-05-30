@@ -10,9 +10,7 @@ import java.math.BigDecimal;
  */
 public class PaymentRequestBody {
 
-    //Viene en el body del request
     private String prefId;
-    private String publicKey;
 
     private Payer payer;
     private String email;
@@ -23,7 +21,7 @@ public class PaymentRequestBody {
     private String issuerId;
     private String token;
 
-    private int installments;
+    private Integer installments;
 
     // coupon fields
     private BigDecimal couponAmount;
@@ -33,11 +31,13 @@ public class PaymentRequestBody {
     private boolean binaryMode;
 
 
+    PaymentRequestBody(){}
+
     public String getPrefId() {
         return prefId;
     }
 
-    public int getInstallments() {
+    public Integer getInstallments() {
         return installments;
     }
 
@@ -51,10 +51,6 @@ public class PaymentRequestBody {
 
     public String getPaymentMethodId() {
         return paymentMethodId;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
     }
 
     public String getIssuerId() {

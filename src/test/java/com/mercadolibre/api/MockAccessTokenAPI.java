@@ -1,15 +1,15 @@
-package com.mercadolibre.mocks;
+package com.mercadolibre.api;
 
-import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;
 
-public class MockPreferenceAPI {
 
-    public static void getById(final String id, final int statusCode, final String body) {
+public class MockAccessTokenAPI {
+
+    public static void getAccessToken(String accessTokenID, int statusCode, String body) {
         MockResponse.builder()
-                .withURL(PreferenceAPI.buildUrl(id))
+                .withURL(AccessTokenAPI.buildUrl(accessTokenID).toString())
                 .withMethod(HttpMethod.GET)
                 .withStatusCode(statusCode)
                 .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())

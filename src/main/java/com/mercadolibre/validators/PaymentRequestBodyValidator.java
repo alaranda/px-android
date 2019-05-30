@@ -1,11 +1,14 @@
 package com.mercadolibre.validators;
 
+import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.exceptions.ValidationException;
+import spark.utils.StringUtils;
+
+import java.util.OptionalInt;
 
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_METHOD_ID;
-import static com.mercadolibre.constants.QueryParamsConstants.PUBLIC_KEY;
 import static java.lang.String.format;
 
 public class PaymentRequestBodyValidator {
@@ -20,9 +23,6 @@ public class PaymentRequestBodyValidator {
         SimpleValidator.from((body) -> body != null, format("%s is required.", "body"))
                 .validate(paymentRequestBody)
                 .throwIfInvalid();
-        SimpleValidatorHelper.notNullString(PUBLIC_KEY)
-                .validate(paymentRequestBody.getPublicKey())
-                .throwIfInvalid();
         SimpleValidatorHelper.notNullString(PAYMENT_METHOD_ID)
                 .validate(paymentRequestBody.getPaymentMethodId())
                 .throwIfInvalid();
@@ -30,19 +30,19 @@ public class PaymentRequestBodyValidator {
                 .validate(paymentRequestBody.getPrefId())
                 .throwIfInvalid();
         validateEmail(paymentRequestBody);
-        validateOptionalPositiveParam(paymentRequestBody.getInstallments(), validateExistToken(paymentRequestBody.getToken()));
+        validateOptionalPositiveParam(paymentRequestBody.getInstallments());
         validateOptionalPositiveParam(paymentRequestBody.getIssuerId());
     }
 
     private void validateOptionalPositiveParam(final String issuerId) throws ValidationException {
-        if (issuerId != null) {
+        if (!StringUtils.isBlank(issuerId)) {
             SimpleValidatorHelper.isNumber(PaymentsRequestBodyParams.ISSUER_ID).validate(issuerId).throwIfInvalid();
         }
     }
 
-    private void validateOptionalPositiveParam(final Integer installments, final boolean require) throws ValidationException {
-        if (require && installments != null) {
-            SimpleValidatorHelper.isIntPositive(PaymentsRequestBodyParams.INSTALLMENTS).validate(installments).throwIfInvalid();
+    private void validateOptionalPositiveParam(final Integer installments) throws ValidationException {
+        if (installments != null) {
+            SimpleValidatorHelper.isIntPositive(Constants.INSTALLMENTS).validate(installments).throwIfInvalid();
         }
     }
 
@@ -54,9 +54,4 @@ public class PaymentRequestBodyValidator {
                 .validate(paymentRequestBody.getPayer().getEmail())
                 .throwIfInvalid();
     }
-
-    private boolean validateExistToken(String token) {
-        return token != null ? true : false;
-    }
-
 }

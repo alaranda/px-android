@@ -38,21 +38,6 @@ public enum PublicKeyAPI {
         );
     }
 
-    public Either<PublicKeyInfo, ApiError> getById(final String requestId, final String publicKey)
-            throws ApiException {
-
-        final Headers headers = getHeaders(requestId);
-        final URIBuilder url = getPath(publicKey);
-
-        try {
-            final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL).get(url.toString());
-            return buildResponse(headers, url, serviceResponse);
-        } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
-            throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
     /**
      * Makes an async API call to Public Key API using a public key and gets all the data associated to the key.
      * The model PublicKey will be returned.

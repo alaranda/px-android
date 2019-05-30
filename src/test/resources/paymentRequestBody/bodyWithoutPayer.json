@@ -4,6 +4,5 @@
   "issuer_id": 1,
   "token": "3f9a210eef126cad82e25c9cff09e307",
   "payment_method_id": "visa",
-  "pref_id": "204318018-8c37198f-3212-4814-980f-4baf8904e968",
-  "public_key": "TEST-c8473389-df81-468c-96a8-71e2c7cd1f89"
+  "pref_id": "204318018-8c37198f-3212-4814-980f-4baf8904e968"
 }

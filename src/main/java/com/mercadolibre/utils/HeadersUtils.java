@@ -62,21 +62,20 @@ public enum HeadersUtils {
     /**
      * Get the test token header
      *
-     * @param value of the header
+     * @param publicKey id
      * @return Header with the testToken
      */
-    public static Header getTestToken(boolean value) {
-        return new Header(TEST_TOKEN, String.valueOf(value));
+    public static Header getTestToken(final String publicKey) {
+        return new Header(TEST_TOKEN, String.valueOf(isTestToken(publicKey)));
     }
 
     public static Headers completePaymentHeaders(final Headers headers, final String token,
-                                                 final String requestId, final boolean isTestToken) {
+                                                 final String requestId) {
         //TODO TrackingProductId tiene que venir desde las apps (?)
         Headers filteredHeaders = HeadersUtils.filter(headers, PAYMENT_HEADERS);
         if (!filteredHeaders.contains("x-idempotency-key")) {
             filteredHeaders.add("x-idempotency-key", generateKey(token, requestId));
         }
-        filteredHeaders.add(getTestToken(isTestToken));
         filteredHeaders.add(X_REQUEST_ID, requestId);
         filteredHeaders.add(getPaymentsCallerScopes());
         return filteredHeaders;
@@ -105,7 +104,7 @@ public enum HeadersUtils {
         return userAgent;
     }
 
-    public static boolean isTestToken(final String publicKey) {
+    private static boolean isTestToken(final String publicKey) {
         return publicKey.startsWith("TEST");
     }
 }

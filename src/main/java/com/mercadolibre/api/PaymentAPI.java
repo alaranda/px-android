@@ -61,7 +61,7 @@ public enum PaymentAPI {
     }
 
     private Either<Payment, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_WRITE_NAME, url.getPath(), url.getQueryParams(), response, headers);
+        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_WRITE_NAME, url.toString(), url.getQueryParams(), response, headers);
         return RESTUtils.responseToEither(response, Payment.class);
     }
 }

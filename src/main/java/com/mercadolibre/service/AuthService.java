@@ -1,13 +1,16 @@
 package com.mercadolibre.service;
 
+import com.mercadolibre.api.AccessTokenAPI;
 import com.mercadolibre.api.PublicKeyAPI;
 import com.mercadolibre.dto.ApiError;
+import com.mercadolibre.dto.access_token.AccessToken;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.utils.Either;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.CompletableFuture;
 
 public enum AuthService {
 
@@ -17,18 +20,30 @@ public enum AuthService {
     private static final String PUBLIC_KEY_TEST_PREFIX = "test";
 
     /**
-     * Hace el API call a la API de Public Key usando el public key id y obtiene la data asociada a ese id.
+     * Devuelve una promesa de publicKey llamando a PublicKeyAPI
      *
-     * @param requestId request id
-     * @param publicKey public key id
-     * @return el objeto public key info
+     * @param publicKeyId publicKey id
+     * @param requestId   request id
+     * @return PublicKey
+     * @throws ApiException si falla PublicKeyAPI
+     */
+    public final CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncPublicKey(final String requestId, final String publicKeyId) throws ApiException {
+        return PublicKeyAPI.INSTANCE.getAsyncById(publicKeyId, requestId);
+    }
+
+    /**
+     * Hace el API call a la API de Access token usando el access token id y obtiene la data asociada a ese id.
+     *
+     * @param requestId     request id
+     * @param accessTokenId access token id
+     * @return el objeto access token
      * @throws ApiException si falla el api call (status code is not 2xx)
      */
-    public PublicKeyInfo getPublicKey(@Nonnull final String requestId, final String publicKey) throws ApiException {
-        final Either<PublicKeyInfo, ApiError> pk = PublicKeyAPI.INSTANCE.getById(requestId, publicKey);
-        if (!pk.isValuePresent()) {
-            throw new ApiException(pk.getAlternative());
+    public AccessToken getAccessToken(@Nonnull final String requestId, @Nonnull final String accessTokenId) throws ApiException {
+        final Either<AccessToken, ApiError> accessToken = AccessTokenAPI.INSTANCE.getById(accessTokenId, requestId);
+        if (!accessToken.isValuePresent()) {
+            throw new ApiException(accessToken.getAlternative());
         }
-        return pk.getValue();
+        return accessToken.getValue();
     }
 }

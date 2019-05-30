@@ -6,7 +6,6 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
@@ -14,11 +13,13 @@ import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
+import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.logs.MonitoringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 
-import java.util.Optional;
+
+import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.HeadersConstants.X_CALLER_SCOPES;
 import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
@@ -48,23 +49,24 @@ public enum PreferenceAPI {
      * @return preference
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */
-    public Optional<Preference> getPreference(final String requestId,
-                                              final String preferenceId) throws ApiException {
+    public CompletableFuture<Either<Preference, ApiError>> geAsynctPreference( final String preferenceId,
+                                                                               final String requestId) throws ApiException {
         final Headers headers = new Headers().add(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .add(X_CALLER_SCOPES, "admin")
                 .add(X_REQUEST_ID, requestId);
-        final String url = buildUrl(preferenceId);
+        final URIBuilder url = buildUrl(preferenceId);
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_READ_NAME).get(url, headers);
-            MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, url, response, headers);
-            if (RESTUtils.isResponseSuccessful(response)) {
-                return Optional.ofNullable(RESTUtils.responseToObject(response, Preference.class));
-            }
-            throw new ApiException(GsonWrapper.fromJson(RESTUtils.getBody(response), ApiError.class));
+            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_READ_NAME).asyncGet(url.toString(), headers);
+            return completableFutureResponse.thenApply(response -> buildResponse(headers, url, response));
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, url, headers, e);
+            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, url.toString(), headers, e);
             throw new ApiException("external_error", "API call to preference failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
+    }
+
+    private Either<Preference, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
+        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, url.getPath(), url.getQueryParams(), response, headers);
+        return RESTUtils.responseToEither(response, Preference.class);
     }
 
     /**
@@ -73,10 +75,10 @@ public enum PreferenceAPI {
      * @param preferenceId preference id
      * @return a string with the url
      */
-    public static String buildUrl(final String preferenceId) {
+    public static URIBuilder buildUrl(final String preferenceId) {
         return new URIBuilder()
                 .setScheme(Config.getString("preference.url.scheme"))
                 .setHost(Config.getString("preference.url.host"))
-                .setPath(String.format("%s/%s", URL, preferenceId)).toString();
+                .setPath(String.format("%s/%s", URL, preferenceId));
     }
 }

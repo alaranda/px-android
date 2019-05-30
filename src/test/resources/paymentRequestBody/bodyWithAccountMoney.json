@@ -1,0 +1,8 @@
+{
+  "payment_method_id": "account_money",
+  "pref_id": "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014",
+  "token":"a735d437b3ab0901b68b71cb49a0d8a0",
+  "payer": {
+    "email":"testuser.mla.20@gmail.com"
+  }
+}

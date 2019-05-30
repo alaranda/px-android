@@ -26,6 +26,7 @@ public class PaymentBody {
     private String couponCode;
     private boolean binaryMode;
     private String externalReference;
+    private BasicUser collector;
 
     public String getToken() {
         return token;
@@ -92,10 +93,11 @@ public class PaymentBody {
         this.campaignId = builder.campaignId;
         this.couponCode = builder.couponCode;
         this.differentialPricingId = builder.differentialPricingId;
+        this.collector = builder.collector;
     }
 
-    public static Builder builder(final PaymentRequestBody paymentRequestBody, final Preference preference) {
-        return new Builder(paymentRequestBody, preference);
+    public static Builder builder(final PaymentRequestBody paymentRequestBody, final Preference preference, final boolean isBLacklabel) {
+        return new Builder(paymentRequestBody, preference, isBLacklabel);
     }
 
     public static final class Builder {
@@ -112,11 +114,14 @@ public class PaymentBody {
         private String couponCode;
         private boolean binaryMode;
         private String externalReference;
+        private BasicUser collector;
 
-        Builder(final PaymentRequestBody paymentRequestBody, final Preference preference) {
+        Builder(final PaymentRequestBody paymentRequestBody, final Preference preference, final boolean isBLacklabel) {
             this.token = paymentRequestBody.getToken();
             this.issuerId = paymentRequestBody.getIssuerId();
-            this.installments = paymentRequestBody.getInstallments();
+            if(paymentRequestBody.getInstallments() != null) {
+                this.installments = paymentRequestBody.getInstallments();
+            }
             this.paymentMethodId = paymentRequestBody.getPaymentMethodId();
             this.binaryMode = paymentRequestBody.isBinaryMode();
             this.couponAmount = paymentRequestBody.getCouponAmount();
@@ -128,15 +133,21 @@ public class PaymentBody {
             if (preference.getDifferentialPricing() != null) {
                 this.differentialPricingId = preference.getDifferentialPricing().getId();
             }
-            final PreferencePayer payer = preference.getPayer();
-            if (payer != null) {
-                this.payer = new PayerBody(payer.getName(), payer.getSurname(), payer.getEmail());
-            } else if (paymentRequestBody.getPayer() != null) {
-                this.payer = new PayerBody(paymentRequestBody.getPayer().getFirstName(),
-                        paymentRequestBody.getPayer().getLastName(),
-                        paymentRequestBody.getPayer().getEmail());
+            if (!isBLacklabel) {
+                final PreferencePayer payer = preference.getPayer();
+                if (payer != null) {
+                    this.payer = new PayerBody(payer.getName(), payer.getSurname(), payer.getEmail());
+                } else if (paymentRequestBody.getPayer() != null) {
+                    this.payer = new PayerBody(paymentRequestBody.getPayer().getFirstName(),
+                            paymentRequestBody.getPayer().getLastName(),
+                            paymentRequestBody.getPayer().getEmail());
+                }
             }
+        }
 
+        public Builder withCollector(long collector) {
+            this.collector = new BasicUser(collector);
+            return this;
         }
 
         public PaymentBody build() {

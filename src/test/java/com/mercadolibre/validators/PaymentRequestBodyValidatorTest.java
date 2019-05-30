@@ -29,20 +29,6 @@ public class PaymentRequestBodyValidatorTest {
     }
 
     @Test
-    public void paymentRequestBodyValidator_withoutPublicKey_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
-                IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutPK.json")),
-                PaymentRequestBody.class);
-        try {
-            validator.validate(paymentRequestBody);
-        } catch (ValidationException e) {
-            assertThat(e.getCode(), is("bad_request"));
-            assertThat(e.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
-            assertThat(e.getDescription(), is(String.format("%s is required.", PUBLIC_KEY)));
-        }
-    }
-
-    @Test
     public void paymentRequestBodyValidator_withoutPaymentMethodId_validationFail() throws IOException {
         final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutPM.json")),
