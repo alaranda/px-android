@@ -1,53 +1,138 @@
 buildscript {
-	ext {
-		springBootVersion = '1.5.8.RELEASE'
-	}
 	repositories {
-		mavenCentral()
+		maven { url "http://maven.melicloud.com/nexus/content/repositories/fury" }
+		maven { url "http://git.ml.com:8081/nexus/content/groups/Arquitectura" }
+		maven { url "http://git.ml.com:8081/nexus/content/repositories/releases" }
+		maven { url "http://central.maven.org/maven2" }
+		maven { url "http://controller.maven.apache.org/maven2" }
 	}
+
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath group: 'com.mercadolibre', name: 'i18n', version: '1.5'
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse-wtp'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'war'
-apply plugin: 'jacoco'
+plugins {
+	id 'application'
+	id 'java'
+	id 'jacoco'
+	id 'idea'
+	id 'distribution'
+	id "us.kirchmeier.capsule" version "1.0.2"
+	id 'com.monits.staticCodeAnalysis' version '2.6.4'
+}
 
+mainClassName = 'com.mercadolibre.Main'
 
 group = 'com.mercadolibre'
 version = '0.0.1-SNAPSHOT'
 
+description = """px-checkout-mobile-payments"""
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+def envType = 'development'
+if (project.hasProperty('production')) {
+	envType = 'production'
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDir "src/main/resources/${envType}"
+		}
+	}
+}
+
 repositories {
-	mavenCentral()
 	jcenter()
-	maven { url "http://git.ml.com:8081/nexus/content/repositories/MLGrailsPlugins" }
-	maven { url "http://git.ml.com:8081/nexus/content/groups/Arquitectura" }
-}
-
-war {
-	archiveName 'ROOT.war'
-}
-
-configurations {
-	providedRuntime
+	maven { url "http://git.ml.com/nexus/content/groups/Arquitectura" }
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
-	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile("junit:junit")
+	compile('com.mercadolibre.restclient:restclient-default:0.3.19') {
+		exclude module:'guava'
+		exclude module:'json-core'
+	}
+	compile('com.sparkjava:spark-core:2.6.0') {
+		exclude(module:'httpclient')
+		exclude(module:'gson')
+	}
+	compile 'com.google.code.findbugs:annotations:3.0.1'
+	compile 'org.apache.httpcomponents:httpcore:4.4.9'
+	compile 'commons-configuration:commons-configuration:1.10'
+	compile 'com.google.code.gson:gson:2.8.2'
+	compile 'log4j:log4j:1.2.17'
+	compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
+	compile 'org.slf4j:slf4j-api:1.7.25'
+	compile 'com.newrelic.agent.java:newrelic-api:4.11.0'
+	compile 'com.google.guava:guava:21.0'
+	compile 'com.mercadolibre.json:json-core:0.0.9'
+	compile 'com.mercadolibre.security:mlauth:0.0.6'
+	compile 'com.mercadolibre:i18n:1.6'
+	compile 'com.google.inject:guice:4.0'
+	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.2'
+
+	testCompile group:'com.mercadolibre', name:'kvsclient', version:'0.0.47', classifier:'tests'
+	testCompile group:'junit', name:'junit', version:'4.12'
+	testCompile group:'com.mercadolibre.restclient', name:'restclient-core', version:'0.2.3', classifier:'tests'
+	testCompile(group:'io.rest-assured', name:'rest-assured', version:'3.0.2') {
+		exclude(module:'httpclient')
+		exclude(module:'httpmime')
+	}
+	testCompile 'org.mockito:mockito-core:2.11.0'
 }
 
+defaultTasks 'run'
+
 jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled false
-    }
+	reports {
+		xml.enabled true
+		html.enabled false
+	}
+}
+
+test {
+	// Endpoint tests run from within the ApiTest Suite, avoid double run
+	exclude 'com/mercadolibre/endpoints/**'
+	jvmArgs = ['-XX:+StartAttachListener']
+	testLogging {
+		exceptionFormat = 'full'
+	}
+}
+
+check.dependsOn jacocoTestReport
+
+task app(type: FatCapsule) {
+	applicationClass 'com.mercadolibre.Main'
+	archiveName 'application.jar'
+
+	capsuleManifest {
+		minJavaVersion = '1.8.0'
+		jvmArgs = ['-Xms2g', '-Xmx2g']
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.7'
+}
+
+staticCodeAnalysis {
+	ignoreErrors = true
+}
+
+plugins.withType(CheckstylePlugin) {
+	checkstyle {
+		maxWarnings = 0 // allow no warnings!
+	}
+}
+
+distributions {
+	main {
+		baseName 'main'
+		contents {
+			from app
+		}
+	}
 }

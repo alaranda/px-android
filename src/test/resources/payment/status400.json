@@ -1,0 +1,10 @@
+{
+  "error": "bad_request",
+  "message": "[...]",
+  "status": 400,
+  "cause": [{
+    "description": "[...]",
+    "code": 2107,
+    "data": null
+  }]
+}

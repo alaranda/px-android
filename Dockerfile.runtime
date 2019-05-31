@@ -1,1 +1,7 @@
-FROM hub.furycloud.io/mercadolibre/tomcat:8.5-jdk8
+FROM hub.furycloud.io/mercadolibre/java8-runtime-webapp:latest
+
+ENV JAVA_OPTS="-server -Dlog4j.configuration=log4j.xml"
+ENV GRADLE_RUN="clean run -Pproduction"
+
+
+ENV NEWRELIC_IGNORE_STATUS_CODES=400,401,403,404,405,409

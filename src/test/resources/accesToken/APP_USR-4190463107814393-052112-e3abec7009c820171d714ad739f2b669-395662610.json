@@ -1,0 +1,19 @@
+{
+  "access_token": "APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610",
+  "user_id": "395662610",
+  "status": "active",
+  "client_id": 4190463107814393,
+  "client_owner_id": 395662610,
+  "operator_id": null,
+  "scopes": [
+    "read",
+    "write",
+    "offline_access"
+  ],
+  "creation_date": "2019-05-21T12:52:54.349-04:00",
+  "expires_in": 21600,
+  "is_test": false,
+  "site_id": "MLA",
+  "user_grant": "auth||395662610##read,write,offline_access##active##MLA##4190463107814393##false####7bd9e6d3-3815-488a-b067-defb0fb0a86b##||1558479174350||rAYWBbvO4FltGVGbnMbk6ADRXA70Fm2Flkc8WZr8doBPX3kAwD3GLa2FuFdWYuKU+AavOTlSncY5QZarCR5pjgABOVdSESpucFVkIQxSkGNSbd1XMEgreaY54nL/yk8ak4gnC5Sdf/YjvAfbppEmFLwRewNDJEXi6gQH4vMO2zA=",
+  "user_session_id": null
+}
