@@ -87,6 +87,11 @@ public class LogBuilder {
         return this;
     }
 
+    public LogBuilder withPref(final String prefId) {
+        logs.append(String.format("[pref_id: %s] ", prefId));
+        return this;
+    }
+
     /**
      * Adds a custom message to the current log
      *

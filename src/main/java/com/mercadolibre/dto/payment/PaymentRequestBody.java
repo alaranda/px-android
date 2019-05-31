@@ -21,6 +21,7 @@ public class PaymentRequestBody {
     private String issuerId;
     private String token;
 
+
     private Integer installments;
 
     // coupon fields

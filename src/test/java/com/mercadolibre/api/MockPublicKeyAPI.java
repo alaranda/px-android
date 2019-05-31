@@ -18,4 +18,15 @@ public class MockPublicKeyAPI {
                 .build();
     }
 
+    public static void getBycallerIdAndClientId(final String callerId, final Long clientId, int statusCode, String body) {
+        MockResponse.builder()
+                .withURL(PublicKeyAPI.getPathWithParams(callerId, clientId).toString())
+                .withMethod(HttpMethod.GET)
+                .withStatusCode(statusCode)
+                .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
+                .withResponseHeader(HeadersConstants.NO_CACHE_PARAMS, "max-age=0")
+                .withResponseBody(body)
+                .build();
+    }
+
 }

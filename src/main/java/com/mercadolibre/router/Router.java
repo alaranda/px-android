@@ -4,6 +4,7 @@ import com.google.common.net.MediaType;
 import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.controllers.PaymentsController;
+import com.mercadolibre.controllers.PreferencesController;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
@@ -68,6 +69,23 @@ public class Router implements SparkApplication {
 
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
+
+            Spark.exception(ApiException.class, (exception, request, response) -> {
+                response.status(exception.getStatusCode());
+                response.type(MediaType.JSON_UTF_8.toString());
+                response.body(GsonWrapper.toJson(exception.toApiError()));
+                if (exception.getStatusCode() < HttpStatus.SC_BAD_REQUEST) {
+                    LOG.info(exception.toLog());
+                } else {
+                    LOG.error(exception.toLog());
+                    if (exception.getStatusCode() >= CLIENT_CLOSE_REQUEST) {
+                        NewRelicUtils.noticeError(exception, request);
+                    }
+                }
+            });
+
+            Spark.get("/init_preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
+                    "/init_preference"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
                 response.status(exception.getStatusCode());

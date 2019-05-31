@@ -1,6 +1,7 @@
 package com.mercadolibre;
 
 import com.mercadolibre.endpoints.PaymentRouterTest;
+import com.mercadolibre.endpoints.PreferenceRouterTest;
 import com.mercadolibre.router.Router;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -11,7 +12,8 @@ import spark.Spark;
 @SuppressWarnings("PMD.UseUtilityClass")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        PaymentRouterTest.class
+        PaymentRouterTest.class,
+        PreferenceRouterTest.class
 })
 public class ApiTest {
 

@@ -1,9 +1,5 @@
 package com.mercadolibre.constants;
 
-
-
-import com.mercadolibre.security.authentication.filters.config.AuthenticationFiltersConfig;
-
 import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTIATE_CONSTANTS_CLASS;
 
 public final class Constants {
@@ -27,6 +23,10 @@ public final class Constants {
     public static final String INSTALLMENTS = "installments";
 
     public static final String ACCESS_TOKEN = "acces_token";
+
+    public static final String PREF_ID = "pref_id";
+    public static final String SHORT_ID = "short_id";
+
     public static final String PUBLIC_KEY = "public_key";
 
     private Constants() {

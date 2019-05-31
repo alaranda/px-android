@@ -1,0 +1,106 @@
+{
+  "additional_info": "",
+  "auto_return": "",
+  "back_urls": {
+    "failure": "",
+    "pending": "",
+    "success": ""
+  },
+  "binary_mode": false,
+  "client_id": "3016981581429034",
+  "collector": {
+    "tags": [
+      "normal",
+      "user_info_verified",
+      "from_facebook",
+      "messages_as_seller",
+      "messages_as_buyer"
+    ],
+    "operator_id": null
+  },
+  "collector_id": 170741455,
+  "coupon_code": null,
+  "date_created": "2019-05-23T14:00:59.272-04:00",
+  "expiration_date_from": null,
+  "expiration_date_to": null,
+  "expires": false,
+  "external_reference": "",
+  "id": "170741455-97bfa15c-27a0-426b-8647-51d745f02622",
+  "init_point": "https://www.mercadopago.com/mla/checkout/pay?pref_id=170741455-97bfa15c-27a0-426b-8647-51d745f02622",
+  "internal_metadata": {},
+  "items": [
+    {
+      "id": "",
+      "currency_id": "ARS",
+      "title": "TEST",
+      "picture_url": "",
+      "description": "",
+      "category_id": "",
+      "quantity": 1,
+      "unit_price": 50
+    }
+  ],
+  "live_mode": true,
+  "marketplace": "NONE",
+  "marketplace_fee": 0,
+  "notification_url": null,
+  "operation_type": "regular_payment",
+  "payer": {
+    "phone": {
+      "area_code": "",
+      "number": ""
+    },
+    "email": "",
+    "address": {
+      "zip_code": "",
+      "street_name": "",
+      "street_number": null
+    },
+    "identification": {
+      "number": "",
+      "type": ""
+    },
+    "name": "",
+    "surname": "",
+    "date_created": ""
+  },
+  "payment_methods": {
+    "default_card_id": null,
+    "excluded_payment_methods": [
+      {
+        "id": ""
+      }
+    ],
+    "default_installments": null,
+    "default_payment_method_id": null,
+    "excluded_payment_types": [
+      {
+        "id": ""
+      }
+    ],
+    "installments": null
+  },
+  "processing_modes": [],
+  "product_id": "BGPQ8BMH3OU001NR2HV0",
+  "redirect_urls": {
+    "failure": "",
+    "pending": "",
+    "success": ""
+  },
+  "sandbox_init_point": "https://sandbox.mercadopago.com/mla/checkout/pay?pref_id=170741455-97bfa15c-27a0-426b-8647-51d745f02622",
+  "shipments": {
+    "local_pickup": false,
+    "default_shipping_method": null,
+    "dimensions": "2x2x2,2000",
+    "receiver_address": {
+      "floor": "",
+      "zip_code": "",
+      "street_name": "",
+      "apartment": "",
+      "street_number": null
+    },
+    "free_methods": [],
+    "mode": "me2"
+  },
+  "total_amount": 50
+}

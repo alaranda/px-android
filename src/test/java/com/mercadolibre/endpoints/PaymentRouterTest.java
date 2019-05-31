@@ -107,4 +107,5 @@ public class PaymentRouterTest {
         assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
         assertThat(response.getBody().print(), is(not(nullValue())));
     }
+
 }
