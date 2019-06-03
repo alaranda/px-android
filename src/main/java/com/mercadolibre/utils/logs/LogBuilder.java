@@ -87,16 +87,6 @@ public class LogBuilder {
         return this;
     }
 
-    public LogBuilder withStatusDetail(final String statusDetail) {
-        logs.append(String.format("[status_detail: %s] ", statusDetail));
-        return this;
-    }
-
-    public LogBuilder withMarketplace(final String marketplace) {
-        logs.append(String.format("[marketplace: %s] ", marketplace));
-        return this;
-    }
-
     public LogBuilder withPref(final String prefId) {
         logs.append(String.format("[pref_id: %s] ", prefId));
         return this;
