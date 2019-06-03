@@ -97,11 +97,6 @@ public class LogBuilder {
         return this;
     }
 
-    public LogBuilder withSite(final String siteId) {
-        logs.append(String.format("[site_id: %s] ", siteId));
-        return this;
-    }
-
     public LogBuilder withPref(final String prefId) {
         logs.append(String.format("[pref_id: %s] ", prefId));
         return this;
