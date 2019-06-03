@@ -21,7 +21,7 @@ public enum PaymentService {
         if (!payment.isValuePresent()) {
             throw new ApiException(payment.getAlternative());
         }
-        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.request", getMetricTagsPayments(payment.getValue()));
+        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.payment", getMetricTagsPayments(payment.getValue()));
         return payment.getValue();
     }
 
