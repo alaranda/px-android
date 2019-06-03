@@ -7,6 +7,7 @@ import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.exceptions.ApiException;
+import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.mercadolibre.utils.logs.LogBuilder;
@@ -113,6 +114,15 @@ public class Router implements SparkApplication {
                 response.type(MediaType.JSON_UTF_8.toString());
                 response.body(apiErrorJson);
 
+            });
+
+            Spark.exception(ValidationException.class, (exception, request, response) -> {
+                response.status(HttpStatus.SC_NOT_FOUND);
+                response.type(MediaType.JSON_UTF_8.toString());
+                ApiError apiError = new ApiError(exception.getMessage(), "bad request", response.status());
+                response.body(GsonWrapper.toJson(apiError));
+                LOG.error(exception.getMessage());
+                NewRelicUtils.noticeError(exception, request);
             });
 
             Spark.after((req, res) -> {

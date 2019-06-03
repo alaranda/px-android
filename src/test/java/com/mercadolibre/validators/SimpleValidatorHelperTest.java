@@ -18,7 +18,7 @@ public class SimpleValidatorHelperTest {
         try {
             SimpleValidatorHelper.isDoublePositive("monto").validate(-2.5).throwIfInvalid();
         } catch (ValidationException e) {
-            assertThat(e.getDescription(), is("monto must be positive."));
+            assertThat(e.getMessage(), is("monto must be positive."));
         }
 
     }

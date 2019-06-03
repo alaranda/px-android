@@ -35,9 +35,8 @@ public class PreferenceValidatorTest {
             validator.validate(preference);
             fail("Expected Validation Exception");
         } catch (ValidationException e) {
-            assertThat(e.getCode(), is("bad_request"));
-            assertThat(e.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
-            assertThat(e.getDescription(), is("invalid pref"));
+            assertThat(e.getMessage(), is("invalid pref"));
+
         }
 
     }

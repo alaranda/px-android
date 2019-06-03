@@ -1,4 +1,4 @@
-{
+[{
   "transaction_amount": 100,
   "installments": 1,
   "issuer_id": 1,
@@ -8,4 +8,4 @@
   },
   "payment_method_id": "visa",
   "pref_id": "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014"
-}
+}]
