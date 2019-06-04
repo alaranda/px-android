@@ -71,8 +71,8 @@ public class Router implements SparkApplication {
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
 
-            Spark.get("/init_preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
-                    "/init_preference"), GsonWrapper::toJson);
+            Spark.get("/init/preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
+                    "/init/preference"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
                 response.status(exception.getStatusCode());
