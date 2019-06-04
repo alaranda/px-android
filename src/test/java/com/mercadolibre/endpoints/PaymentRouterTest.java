@@ -47,11 +47,11 @@ public class PaymentRouterTest {
     }
 
     @Test
-    public void doPayment_invalidPK_404() throws URISyntaxException, IOException {
+    public void doPayment_invalidPK_400() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
                 .addParameter("public_key", "1");;
         final String responseBody = IOUtils.toString(getClass().getResourceAsStream("/publicKey/invalidPK.json"));
-        MockPublicKeyAPI.getPublicKey("1", HttpStatus.SC_NOT_FOUND,
+        MockPublicKeyAPI.getPublicKey("1", HttpStatus.SC_BAD_REQUEST,
                 responseBody);
 
         final Response response = given()
@@ -59,7 +59,7 @@ public class PaymentRouterTest {
                 .with()
                 .contentType("application/json").post(uriBuilder.build());
 
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test

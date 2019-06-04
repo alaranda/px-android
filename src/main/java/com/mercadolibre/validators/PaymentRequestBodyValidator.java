@@ -6,8 +6,6 @@ import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.exceptions.ValidationException;
 import spark.utils.StringUtils;
 
-import java.util.OptionalInt;
-
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_METHOD_ID;
 import static java.lang.String.format;
 

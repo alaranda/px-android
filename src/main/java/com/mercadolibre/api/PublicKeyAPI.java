@@ -25,7 +25,7 @@ public enum PublicKeyAPI {
 
     INSTANCE;
 
-    private static final String PATH = "/v1/public_key/%s";
+    private static final String PATH = "/v1/public_key";
     private static final String POOL = "PUBLIC_KEY_SERVICE_REST_POOL";
 
     static {
@@ -99,7 +99,7 @@ public enum PublicKeyAPI {
         return new URIBuilder()
                 .setScheme(Config.getString(Constants.PUBLIC_KEY_URL_SCHEME))
                 .setHost(Config.getString(Constants.PUBLIC_KEY_URL_HOST))
-                .setPath(String.format(PATH, publicKey));
+                .setPath((PATH + "/" + publicKey));
     }
 
 

@@ -7,6 +7,7 @@ import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.exceptions.ApiException;
+import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.mercadolibre.utils.logs.LogBuilder;
@@ -70,22 +71,8 @@ public class Router implements SparkApplication {
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
 
-            Spark.exception(ApiException.class, (exception, request, response) -> {
-                response.status(exception.getStatusCode());
-                response.type(MediaType.JSON_UTF_8.toString());
-                response.body(GsonWrapper.toJson(exception.toApiError()));
-                if (exception.getStatusCode() < HttpStatus.SC_BAD_REQUEST) {
-                    LOG.info(exception.toLog());
-                } else {
-                    LOG.error(exception.toLog());
-                    if (exception.getStatusCode() >= CLIENT_CLOSE_REQUEST) {
-                        NewRelicUtils.noticeError(exception, request);
-                    }
-                }
-            });
-
-            Spark.get("/init_preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
-                    "/init_preference"), GsonWrapper::toJson);
+            Spark.get("/init/preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
+                    "/init/preference"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
                 response.status(exception.getStatusCode());
@@ -113,6 +100,15 @@ public class Router implements SparkApplication {
                 response.type(MediaType.JSON_UTF_8.toString());
                 response.body(apiErrorJson);
 
+            });
+
+            Spark.exception(ValidationException.class, (exception, request, response) -> {
+                response.status(HttpStatus.SC_NOT_FOUND);
+                response.type(MediaType.JSON_UTF_8.toString());
+                ApiError apiError = new ApiError(exception.getMessage(), "bad request", response.status());
+                response.body(GsonWrapper.toJson(apiError));
+                LOG.error(exception.getMessage());
+                NewRelicUtils.noticeError(exception, request);
             });
 
             Spark.after((req, res) -> {

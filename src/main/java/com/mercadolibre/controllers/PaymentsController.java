@@ -1,5 +1,6 @@
 package com.mercadolibre.controllers;
 
+import com.google.gson.reflect.TypeToken;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
@@ -25,6 +26,9 @@ import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -67,39 +71,45 @@ public enum PaymentsController {
      */
     private PaymentRequest getPaymentRequest(final Request request) throws ApiException, ExecutionException, InterruptedException {
 
-        final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY);
-        final PaymentRequestBody paymentRequestBody = getPaymentRequestBody(request, publicKeyId);
         final String requestId = request.attribute(REQUEST_ID);
+        final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY);
+        final List<PaymentRequestBody> paymentRequestBodyList = getPaymentRequestBody(request, publicKeyId);
+        if (paymentRequestBodyList.size() != 1){
+            //TODO Hacer desarrollo cuando se implemente pago de pref.
+            throw new ApiException("internal_error", "unsupported payment", HttpStatus.SC_BAD_REQUEST);
+        } else {
 
-        final CompletableFuture<Either<PublicKeyInfo, ApiError>> futurePk =
-                AuthService.INSTANCE.getAsyncPublicKey(publicKeyId, requestId);
-        final CompletableFuture<Either<Preference, ApiError>> futurePref =
-                PreferenceAPI.INSTANCE.geAsynctPreference(paymentRequestBody.getPrefId(), requestId);
+            final PaymentRequestBody paymentRequestBody = paymentRequestBodyList.get(0);
+            final CompletableFuture<Either<PublicKeyInfo, ApiError>> futurePk =
+                    AuthService.INSTANCE.getAsyncPublicKey(publicKeyId, requestId);
+            final CompletableFuture<Either<Preference, ApiError>> futurePref =
+                    PreferenceAPI.INSTANCE.geAsynctPreference(paymentRequestBody.getPrefId(), requestId);
 
-        CompletableFuture.allOf(futurePk, futurePref);
+            CompletableFuture.allOf(futurePk, futurePref);
 
-        if (!futurePk.get().isValuePresent()) {
-            final ApiError apiError = futurePk.get().getAlternative();
-            throw new ApiException("external_error", "API call to public key failed", apiError.getStatus());
+            if (!futurePk.get().isValuePresent()) {
+                final ApiError apiError = futurePk.get().getAlternative();
+                throw new ApiException("external_error", "API call to public key failed", apiError.getStatus());
+            }
+            if (!futurePref.get().isValuePresent()) {
+                final ApiError apiError = futurePref.get().getAlternative();
+                throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
+            }
+
+            final PublicKeyInfo publicKey = futurePk.get().getValue();
+            final Preference preference = futurePref.get().getValue();
+
+            if (StringUtils.isNotBlank(request.queryParams(Constants.ACCESS_TOKEN)) || (StringUtils.isNotBlank(request.queryParams(Constants.CLIENT_ID_PARAM))
+                    && StringUtils.isNotBlank(request.queryParams(Constants.CALLER_ID_PARAM)))) {
+                final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, request.queryParams(Constants.ACCESS_TOKEN));
+                return createBlackLabelRequest(request, paymentRequestBody, preference, publicKey, requestId, accessToken);
+            }
+            return PaymentRequest.builder(HeadersUtils.fromSparkHeaders(request), paymentRequestBody, preference, requestId, false)
+                    .withCallerId(publicKey.getOwnerId())
+                    .withClientId(publicKey.getClientId())
+                    .withHeaderTestToken(publicKeyId)
+                    .build();
         }
-        if (!futurePref.get().isValuePresent()) {
-            final ApiError apiError = futurePref.get().getAlternative();
-            throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
-        }
-
-        final PublicKeyInfo publicKey = futurePk.get().getValue();
-        final Preference preference = futurePref.get().getValue();
-
-        if (StringUtils.isNotBlank(request.queryParams(Constants.ACCESS_TOKEN)) || (StringUtils.isNotBlank(request.queryParams(Constants.CLIENT_ID_PARAM))
-                && StringUtils.isNotBlank(request.queryParams(Constants.CALLER_ID_PARAM)))) {
-            final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, request.queryParams(Constants.ACCESS_TOKEN));
-            return createBlackLabelRequest(request, paymentRequestBody, preference, publicKey, requestId, accessToken);
-        }
-        return PaymentRequest.builder(HeadersUtils.fromSparkHeaders(request), paymentRequestBody, preference, requestId, false)
-                .withCallerId(publicKey.getOwnerId())
-                .withClientId(publicKey.getClientId())
-                .withHeaderTestToken(publicKeyId)
-                .build();
     }
 
     private PaymentRequest createBlackLabelRequest(final Request request, final PaymentRequestBody paymentRequestBody,
@@ -113,15 +123,20 @@ public enum PaymentsController {
                 .build();
     }
 
-    private PaymentRequestBody getPaymentRequestBody(final Request request, final String publicKey) throws ApiException {
+    private List<PaymentRequestBody> getPaymentRequestBody(final Request request, final String publicKey) throws ApiException {
         try {
-            final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(request.body(), PaymentRequestBody.class);
+            final Type bodyListType = new TypeToken<ArrayList<PaymentRequestBody>>(){}.getType();
+            final List<PaymentRequestBody> paymentRequestBodyList = GsonWrapper.fromJson(request.body(), bodyListType);
             if (StringUtil.isBlank(publicKey)) {
                 throw new ValidationException("public key required");
             }
             final PaymentRequestBodyValidator validator = new PaymentRequestBodyValidator();
-            validator.validate(paymentRequestBody);
-            return paymentRequestBody;
+
+            paymentRequestBodyList.forEach(paymentRequestBody -> {
+                    validator.validate(paymentRequestBody);
+            });
+
+            return paymentRequestBodyList;
         } catch (Exception e) {
             throw new ApiException("Bad Request", "Error parsing body", HttpStatus.SC_BAD_REQUEST);
         }
