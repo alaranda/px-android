@@ -71,20 +71,6 @@ public class Router implements SparkApplication {
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
 
-            Spark.exception(ApiException.class, (exception, request, response) -> {
-                response.status(exception.getStatusCode());
-                response.type(MediaType.JSON_UTF_8.toString());
-                response.body(GsonWrapper.toJson(exception.toApiError()));
-                if (exception.getStatusCode() < HttpStatus.SC_BAD_REQUEST) {
-                    LOG.info(exception.toLog());
-                } else {
-                    LOG.error(exception.toLog());
-                    if (exception.getStatusCode() >= CLIENT_CLOSE_REQUEST) {
-                        NewRelicUtils.noticeError(exception, request);
-                    }
-                }
-            });
-
             Spark.get("/init_preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
                     "/init_preference"), GsonWrapper::toJson);
 

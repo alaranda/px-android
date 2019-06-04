@@ -76,7 +76,7 @@ public enum PaymentsController {
         final List<PaymentRequestBody> paymentRequestBodyList = getPaymentRequestBody(request, publicKeyId);
         if (paymentRequestBodyList.size() != 1){
             //TODO Hacer desarrollo cuando se implemente pago de pref.
-            throw new ApiException("", "", HttpStatus.SC_BAD_REQUEST);
+            throw new ApiException("internal_error", "unsupported payment", HttpStatus.SC_BAD_REQUEST);
         } else {
 
             final PaymentRequestBody paymentRequestBody = paymentRequestBodyList.get(0);

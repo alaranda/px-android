@@ -20,10 +20,10 @@ import static org.junit.Assert.assertThat;
 public class PaymentRequestBodyValidatorTest {
 
     private PaymentRequestBodyValidator validator = new PaymentRequestBodyValidator();
+    final Type bodyListType = new TypeToken<ArrayList<PaymentRequestBody>>(){}.getType();
 
     @Test
     public void paymentRequestBodyValidator_validationSucceed() throws IOException, ValidationException {
-        final Type bodyListType = new TypeToken<ArrayList<PaymentRequestBody>>(){}.getType();
         final List<PaymentRequestBody> paymentRequestBodyList = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyComplete.json")),
                 bodyListType);
@@ -32,11 +32,11 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withoutPaymentMethodId_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutPM.json")),
-                PaymentRequestBody.class);
+                bodyListType);
         try {
-            validator.validate(paymentRequestBody);
+            validator.validate(paymentRequestBodyList.get(0));
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is(String.format("%s is required.", PAYMENT_METHOD_ID)));
         }
@@ -44,11 +44,11 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withoutPrefId_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutPrefId.json")),
-                PaymentRequestBody.class);
+                bodyListType);
         try {
-            validator.validate(paymentRequestBody);
+            validator.validate(paymentRequestBodyList.get(0));
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is(String.format("%s is required.", PaymentsRequestBodyParams.PREF_ID)));
         }
@@ -56,11 +56,11 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withoutPayer_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutPayer.json")),
-                PaymentRequestBody.class);
+                bodyListType);
         try {
-            validator.validate(paymentRequestBody);
+            validator.validate(paymentRequestBodyList.get(0));
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is(String.format("%s is required.", PaymentsRequestBodyParams.EMAIL)));
         }
@@ -68,11 +68,11 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withNegativeIssuerId_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithoutNumberIssuerId.json")),
-                PaymentRequestBody.class);
+                bodyListType);
         try {
-            validator.validate(paymentRequestBody);
+            validator.validate(paymentRequestBodyList.get(0));
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is(String.format("%s must be number.", PaymentsRequestBodyParams.ISSUER_ID)));
         }
@@ -80,11 +80,11 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withNegativeInstallments_validationFail() throws IOException {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithNegativeInstallments.json")),
-                PaymentRequestBody.class);
+                bodyListType);
         try {
-            validator.validate(paymentRequestBody);
+            validator.validate(paymentRequestBodyList.get(0));
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is(String.format("%s must be positive.", PaymentsRequestBodyParams.INSTALLMENTS)));
         }
@@ -92,9 +92,9 @@ public class PaymentRequestBodyValidatorTest {
 
     @Test
     public void paymentRequestBodyValidator_withOutInstallmetns_validationSucceed() throws IOException, ValidationException  {
-        final PaymentRequestBody paymentRequestBody = GsonWrapper.fromJson(
+        final List<PaymentRequestBody> paymentRequestBodyList  = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyRapipago.json")),
-                PaymentRequestBody.class);
-        validator.validate(paymentRequestBody);
+                bodyListType);
+        validator.validate(paymentRequestBodyList.get(0));
     }
 }

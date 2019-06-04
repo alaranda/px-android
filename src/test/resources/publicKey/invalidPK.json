@@ -1,7 +1,7 @@
 {
   "message": "invalid id",
   "error": "not_found",
-  "status": 404,
+  "status": 400,
   "cause": [
     {
       "code": "1001",
