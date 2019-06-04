@@ -36,7 +36,7 @@ public class PreferenceRouterTest {
 
     @Test
     public void initCheckout_invalidParams_400() throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init_preference");
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference");
 
 
         final Response response = get(uriBuilder.build());
@@ -46,7 +46,7 @@ public class PreferenceRouterTest {
 
     @Test
     public void initCheckout_invalidPref_400() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init_preference")
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
@@ -62,7 +62,7 @@ public class PreferenceRouterTest {
 
     @Test
     public void initCheckout_validPref_200() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init_preference")
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
@@ -83,7 +83,7 @@ public class PreferenceRouterTest {
 
     @Test
     public void initCheckout_invalidPreferenceTidySucces_500() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init_preference")
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
