@@ -22,7 +22,7 @@ public final class Constants {
 
     public static final String INSTALLMENTS = "installments";
 
-    public static final String ACCESS_TOKEN = "acces_token";
+    public static final String ACCESS_TOKEN = "access_token";
 
     public static final String PREF_ID = "pref_id";
     public static final String SHORT_ID = "short_id";

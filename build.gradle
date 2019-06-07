@@ -89,9 +89,19 @@ defaultTasks 'run'
 jacocoTestReport {
 	reports {
 		xml.enabled true
-		html.enabled false
+		html.enabled true
+	}
+	afterEvaluate {
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					'com/mercadolibre/constants',
+					'com/mercadolibre/Main.java',
+					'com/mercadolibre/dto',
+			])
+		})
 	}
 }
+
 
 test {
 	// Endpoint tests run from within the ApiTest Suite, avoid double run
