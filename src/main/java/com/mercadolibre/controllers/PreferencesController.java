@@ -67,8 +67,8 @@ public enum PreferencesController {
         validatePref(preference);
         final AccessToken accessToken = futureAccessToken.get().getValue();
 
-        final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, accessToken.getUserId(),
-                accessToken.getClientId());
+        final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, preference.getCollectorId().toString(),
+                preference.getClientId());
 
 
         final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
@@ -93,7 +93,7 @@ public enum PreferencesController {
     private String isShortKey(final String shortKey, final String requestId) throws ApiException {
 
         try {
-            final PreferenceTidy preferenceTidy = PreferenceTidyApi.INSTANCE.getPreferenceByKey(shortKey, requestId);
+            final PreferenceTidy preferenceTidy = PreferenceTidyApi.INSTANCE.getPreferenceByKey(requestId, shortKey);
             String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
             if (splitLongUrl.length != 2) {
                 throw new ApiException("external_error", "invalid preference", HttpStatus.INTERNAL_SERVER_ERROR_500);
@@ -113,7 +113,7 @@ public enum PreferencesController {
 
     private void logInitPref(final PreferenceResponse preferenceResponse, final String callerId, final long clientId) {
         final LogBuilder logBuilder = new LogBuilder(LogBuilder.LEVEL_INFO, LogBuilder.REQUEST_IN)
-                .withSource(PreferencesController.class.getName())
+                .withSource(CONTROLLER_NAME)
                 .withStatus(org.apache.http.HttpStatus.SC_OK)
                 .withCallerId(callerId)
                 .withClientId(String.valueOf(clientId))
