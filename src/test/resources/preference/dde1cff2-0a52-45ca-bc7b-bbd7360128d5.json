@@ -1,0 +1,44 @@
+{
+  "additional_info": "",
+  "back_urls": {},
+  "binary_mode": false,
+  "client_id": "963",
+  "collector": {
+    "tags": []
+  },
+  "collector_id": 113303981,
+  "date_created": "2012-05-21T23:34:15.146-04:00",
+  "expiration_date_from": null,
+  "expiration_date_to": null,
+  "expires": false,
+  "external_reference": "",
+  "id": "dde1cff2-0a52-45ca-bc7b-bbd7360128d5",
+  "internal_metadata": {},
+  "items": [
+    {
+      "id": "",
+      "picture_url": "",
+      "title": "Aviso de Prueba",
+      "description": "",
+      "category_id": "",
+      "currency_id": "ARS",
+      "quantity": 1,
+      "unit_price": 1
+    }
+  ],
+  "live_mode": true,
+  "marketplace": "NONE",
+  "marketplace_fee": 0,
+  "payer": {
+    "name": "",
+    "surname": ""
+  },
+  "payment_methods": {
+    "default_card_id": null
+  },
+  "processing_modes": [],
+  "purpose": "",
+  "sponsor_id": null,
+  "subscription_plan_id": null,
+  "total_amount": 1
+}

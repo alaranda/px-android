@@ -9,6 +9,8 @@ public class Payer {
     private String email;
     private String firstName;
     private String lastName;
+    private String name;
+    private String surname;
 
 
     public Payer(final String accessToken) {
@@ -43,4 +45,11 @@ public class Payer {
         return lastName;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
 }

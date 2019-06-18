@@ -43,37 +43,41 @@ public enum PreferencesController {
      */
     public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
-        final String requestId = request.attribute(REQUEST_ID);
-        final String accesTokenId = request.queryParams(Constants.ACCESS_TOKEN);
-        final String prefId = extractParamPrefId(request, requestId);
+        try {
+            final String requestId = request.attribute(REQUEST_ID);
+            final String accesTokenId = request.queryParams(Constants.ACCESS_TOKEN);
+            final String prefId = extractParamPrefId(request, requestId);
 
-        final CompletableFuture<Either<AccessToken, ApiError>> futureAccessToken =
-                AuthService.INSTANCE.getAsyncAccessToken(requestId, accesTokenId);
-        final CompletableFuture<Either<Preference, ApiError>> futurePreference =
-                PreferenceAPI.INSTANCE.geAsynctPreference(prefId, requestId);
+            final CompletableFuture<Either<AccessToken, ApiError>> futureAccessToken =
+                    AuthService.INSTANCE.getAsyncAccessToken(requestId, accesTokenId);
+            final CompletableFuture<Either<Preference, ApiError>> futurePreference =
+                    PreferenceAPI.INSTANCE.geAsynctPreference(prefId, requestId);
 
-        CompletableFuture.allOf(futurePreference, futureAccessToken);
+            CompletableFuture.allOf(futurePreference, futureAccessToken);
 
-        if (!futureAccessToken.get().isValuePresent()) {
-            final ApiError apiError = futureAccessToken.get().getAlternative();
-            throw new ApiException("external_error", "API call to access token failed", apiError.getStatus());
+            if (!futureAccessToken.get().isValuePresent()) {
+                final ApiError apiError = futureAccessToken.get().getAlternative();
+                throw new ApiException("external_error", "API call to access token failed", apiError.getStatus());
+            }
+            if (!futurePreference.get().isValuePresent()) {
+                final ApiError apiError = futurePreference.get().getAlternative();
+                throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
+            }
+
+            final Preference preference = futurePreference.get().getValue();
+            validatePref(preference);
+            final AccessToken accessToken = futureAccessToken.get().getValue();
+
+            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, preference.getCollectorId().toString(),
+                    preference.getClientId());
+
+
+            final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
+            logInitPref(preferenceResponse, accessToken.getUserId(), accessToken.getClientId());
+            return preferenceResponse;
+        } catch (ApiException e) {
+            throw new ApiException(e.getCode(), "En este momento no estamos pudiendo procesar pagos", e.getStatusCode());
         }
-        if (!futurePreference.get().isValuePresent()) {
-            final ApiError apiError = futurePreference.get().getAlternative();
-            throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
-        }
-
-        final Preference preference = futurePreference.get().getValue();
-        validatePref(preference);
-        final AccessToken accessToken = futureAccessToken.get().getValue();
-
-        final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, preference.getCollectorId().toString(),
-                preference.getClientId());
-
-
-        final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
-        logInitPref(preferenceResponse, accessToken.getUserId(), accessToken.getClientId());
-        return preferenceResponse;
     }
 
     private String extractParamPrefId(final Request request, final String requestId) throws ApiException {

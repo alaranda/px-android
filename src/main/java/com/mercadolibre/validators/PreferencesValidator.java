@@ -14,8 +14,10 @@ public class PreferencesValidator {
      */
     public void validate(final Preference preference) throws ValidationException {
 
-        validateNullValue(preference.getShipments().getMode());
-        validateNullValue(preference.getShipments().getDimensions());
+        if (preference.getShipments() != null) {
+            validateNullValue(preference.getShipments().getMode());
+            validateNullValue(preference.getShipments().getDimensions());
+        }
     }
 
     private void validateNullValue (String value) throws ValidationException {

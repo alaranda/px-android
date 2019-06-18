@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.payment;
 
+import com.mercadolibre.dto.Payer;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferencePayer;
 
@@ -138,9 +139,10 @@ public class PaymentBody {
                 if (payer != null) {
                     this.payer = new PayerBody(payer.getName(), payer.getSurname(), payer.getEmail());
                 } else if (paymentRequestBody.getPayer() != null) {
-                    this.payer = new PayerBody(paymentRequestBody.getPayer().getFirstName(),
-                            paymentRequestBody.getPayer().getLastName(),
-                            paymentRequestBody.getPayer().getEmail());
+                    Payer requestPayer = paymentRequestBody.getPayer();
+                    String name = (requestPayer.getFirstName() == null) ? requestPayer.getName() : requestPayer.getFirstName();
+                    String lastName = (requestPayer.getLastName() == null) ? requestPayer.getSurname() : requestPayer.getLastName();
+                    this.payer = new PayerBody(name, lastName, paymentRequestBody.getPayer().getEmail());
                 }
             }
         }
