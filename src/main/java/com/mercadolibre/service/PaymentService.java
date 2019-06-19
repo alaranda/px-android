@@ -21,16 +21,25 @@ public enum PaymentService {
         if (!payment.isValuePresent()) {
             throw new ApiException(payment.getAlternative());
         }
-        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.payment", getMetricTagsPayments(payment.getValue()));
-        return payment.getValue();
+        Payment responsePayment = payment.getValue();
+        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.payment", getMetricTagsPayments(responsePayment));
+        DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.transaction_amount", responsePayment.getTransactionAmount().doubleValue());
+
+        if (responsePayment.getCouponId() != null) {
+            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
+            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_amount", responsePayment.getCouponAmount().doubleValue());
+        }
+        return responsePayment;
     }
 
     private String[] getMetricTagsPayments(final Payment payment) {
         final List<String> tags = new LinkedList<>();
         tags.add("site_id:" + payment.getSiteId());
+        tags.add("status:" + payment.getStatus());
         tags.add("status_detail:" + payment.getStatusDetail());
         tags.add("payment_method_id:" + payment.getPaymentMethodId());
         tags.add("marketplace:" + payment.getMarketplace());
+        tags.add("collector_id:" + payment.getCollector().getId());
 
         return tags.toArray(new String[0]);
     }
