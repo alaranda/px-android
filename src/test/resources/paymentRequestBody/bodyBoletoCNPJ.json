@@ -1,0 +1,25 @@
+{
+  "binary_mode":false,
+  "campaign_id":null,
+  "coupon_amount":null,
+  "coupon_code":null,
+  "email":null,
+  "installments":null,
+  "issuer_id":null,
+  "payer":{
+    "email":"unemaildebrasil@gmail.com",
+    "name":"MELI",
+    "id":null,
+    "identification":{
+      "number":"36897693000104",
+      "type":"CNPJ"
+    },
+    "surname":"",
+    "type":null
+  },
+  "payment_method_id":"pec",
+  "pref_id":"245099733-8771f469-d68e-4863-b8cb-9402e22c6bb2",
+  "public_key":"APP_USR-f3f035a2-d343-4a6f-bd3b-fc3c3cb72416",
+  "token":null,
+  "transaction_id":"APP_USR-f3f035a2-d343-4a6f-bd3b-fc3c3cb724161561492347378"
+}

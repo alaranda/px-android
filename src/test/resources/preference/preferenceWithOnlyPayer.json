@@ -1,0 +1,21 @@
+{
+  "payer": {
+    "address": {
+      "street_name": "",
+      "street_number": null,
+      "zip_code": ""
+    },
+    "date_created": "",
+    "email": "",
+    "identification": {
+      "number": "",
+      "type": ""
+    },
+    "name": "name preference",
+    "phone": {
+      "area_code": "",
+      "number": ""
+    },
+    "surname": "surname preference"
+  }
+}

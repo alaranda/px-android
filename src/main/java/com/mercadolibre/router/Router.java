@@ -2,6 +2,7 @@ package com.mercadolibre.router;
 
 import com.google.common.net.MediaType;
 import com.mercadolibre.config.Config;
+import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
@@ -44,17 +45,7 @@ public class Router implements SparkApplication {
     public void init() {
 
         Spark.before("/*", (request, response) -> {
-            final String scope = Config.getSCOPE();
-            request.attribute(API_CONTEXT, ApiContext.getApiContextFromScope(scope));
-
-            String requestId = request.headers(REQUEST_ID);
-            if (StringUtils.isBlank(requestId)) {
-                requestId = UUID.randomUUID().toString();
-                LOG.info("Start new requestId : " + requestId);
-            }
-            request.attribute(REQUEST_ID, requestId);
-            MDC.put(REQUEST_ID, requestId);
-            MonitoringUtils.logRequest(request);
+           setRequestIdAndLogRequest(request);
         });
 
         setupFilters();
@@ -121,6 +112,18 @@ public class Router implements SparkApplication {
         });
 
         afterAfter(DatadogRequestMetric::incrementRequestCounter);
+    }
+
+    private static void setRequestIdAndLogRequest(final Request request) {
+        request.attribute(Constants.API_CONTEXT, ApiContext.getApiContextFromScope(Config.getSCOPE()));
+
+        String requestId = request.headers(REQUEST_ID);
+        if (StringUtils.isBlank(requestId)) {
+            requestId = UUID.randomUUID().toString();
+        }
+        request.attribute(Constants.REQUEST_ID, requestId);
+        MDC.put(Constants.REQUEST_ID, requestId);
+        MonitoringUtils.logRequest(request);
     }
 
     private void setupFilters() {

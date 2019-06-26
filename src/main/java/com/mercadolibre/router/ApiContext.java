@@ -6,16 +6,16 @@ import spark.utils.StringUtils;
 public final class ApiContext {
 
     public static String getApiContextFromScope(final String scope) {
-        if (StringUtils.isNotEmpty(scope)) {
-            switch (scope.toLowerCase()) {
-                case Constants.SCOPE_PROD:
-                    return Constants.API_CONTEXT_V1;
-                case Constants.SCOPE_BETA:
-                    return  Constants.SCOPE_BETA;
-                default:
-                    return Constants.SCOPE_ALPHA;
+        if (isInFuryScope(scope)) {
+            if (Constants.SCOPE_PROD.equals(scope.toLowerCase())) {
+                return Constants.API_CONTEXT_V1;
             }
+            return scope;
         }
-        return Constants.SCOPE_ALPHA;
+        return Constants.API_CONTEXT_LOCALHOST;
+    }
+
+    public static boolean isInFuryScope(final String scope) {
+        return StringUtils.isNotEmpty(scope);
     }
 }
