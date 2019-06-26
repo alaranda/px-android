@@ -21,7 +21,7 @@ public final class HeadersConstants {
     public static final String SESSION_ID = "X-Session-Id";
 
     // Header with the product id.
-    public static final String TRACKING_PRODUCT_ID = "x-product-id";
+    public static final String PRODUCT_ID = "x-product-id";
 
     // Header to indicate an api that it is a test.
     public static final String TEST_TOKEN = "X-Test-Token";
@@ -29,4 +29,10 @@ public final class HeadersConstants {
     public static final String REQUEST_ID = "request_id";
 
     public static final String API_CONTEXT = "api_context";
+
+    public static final String IDEMPOTENCY = "x-idempotency-key";
+
+    public static final String MELI_SESSION = "x-meli-session-id";
+
+    public static final String TRACKING = "x-tracking-id";
 }

@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.payment;
 
+import com.mercadolibre.dto.merchant_orders.MerchantOrder;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
@@ -68,6 +69,11 @@ public class PaymentRequest {
 
         public Builder withCollector(final long collectorId) {
             body.withCollector(collectorId);
+            return this;
+        }
+
+        public Builder withOrder(final long merchantOrderId) {
+            body.withOrder(merchantOrderId);
             return this;
         }
 

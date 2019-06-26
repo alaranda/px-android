@@ -9,7 +9,6 @@ import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import spark.utils.IOUtils;
@@ -53,7 +52,7 @@ public class PreferenceRouterTest {
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
         MockPreferenceAPI.getById(PREF_ID_INVALID, HttpStatus.SC_NOT_FOUND,
-                IOUtils.toString(getClass().getResourceAsStream("/preference/1.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
         MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/accesToken/APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610.json")));
 

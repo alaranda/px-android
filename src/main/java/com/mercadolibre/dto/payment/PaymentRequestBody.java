@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 public class PaymentRequestBody {
 
     private String prefId;
+    private String publicKey;
 
     private Payer payer;
     private String email;
@@ -81,4 +82,7 @@ public class PaymentRequestBody {
     public boolean isBinaryMode() {
         return binaryMode;
     }
+
+    public String getPublicKey() { return publicKey; }
+
 }

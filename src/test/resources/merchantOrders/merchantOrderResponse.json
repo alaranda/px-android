@@ -1,0 +1,42 @@
+{
+  "id": 1116192489,
+  "status": "opened",
+  "external_reference": "",
+  "preference_id": "204318018-4e7deced-257d-4744-b31e-0cb85b153f2c",
+  "payments": [],
+  "shipments": [],
+  "collector": {
+  "id": 204318018,
+  "email": "felipe.leonelli+204318018@mercadolibre.com",
+  "nickname": "TETE2023796"
+  },
+  "marketplace": "NONE",
+  "notification_url": null,
+  "date_created": "2019-06-18T17:35:35.859+00:00",
+  "last_updated": "2019-06-18T17:35:35.859+00:00",
+  "sponsor_id": null,
+  "shipping_cost": 0,
+  "total_amount": 100,
+  "site_id": "MLA",
+  "paid_amount": 0,
+  "refunded_amount": 0,
+  "payer": {
+  "id": 376004968,
+  "email": null
+  },
+  "items": [
+  {
+  "id": "",
+  "category_id": "",
+  "currency_id": "ARS",
+  "description": "",
+  "picture_url": "",
+  "title": "Compra de Nivel 3",
+  "quantity": 1,
+  "unit_price": 100
+  }
+  ],
+  "cancelled": false,
+  "additional_info": null,
+  "application_id": null
+}

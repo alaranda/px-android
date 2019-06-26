@@ -1,8 +1,11 @@
 package com.mercadolibre.dto.payment;
 
+import com.mercadolibre.constants.Constants;
+import com.mercadolibre.dto.Identification;
+import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.Payer;
 import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.dto.preference.PreferencePayer;
+import spark.utils.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -28,6 +31,7 @@ public class PaymentBody {
     private boolean binaryMode;
     private String externalReference;
     private BasicUser collector;
+    private Order order;
 
     public String getToken() {
         return token;
@@ -95,9 +99,11 @@ public class PaymentBody {
         this.couponCode = builder.couponCode;
         this.differentialPricingId = builder.differentialPricingId;
         this.collector = builder.collector;
+        this.order = builder.order;
     }
 
-    public static Builder builder(final PaymentRequestBody paymentRequestBody, final Preference preference, final boolean isBLacklabel) {
+    public static Builder builder(final PaymentRequestBody paymentRequestBody, final Preference preference,
+                                  final boolean isBLacklabel) {
         return new Builder(paymentRequestBody, preference, isBLacklabel);
     }
 
@@ -116,8 +122,9 @@ public class PaymentBody {
         private boolean binaryMode;
         private String externalReference;
         private BasicUser collector;
+        private Order order;
 
-        Builder(final PaymentRequestBody paymentRequestBody, final Preference preference, final boolean isBLacklabel) {
+        Builder(final PaymentRequestBody paymentRequestBody, final Preference preference, final boolean isBLackLabel) {
             this.token = paymentRequestBody.getToken();
             this.issuerId = paymentRequestBody.getIssuerId();
             if(paymentRequestBody.getInstallments() != null) {
@@ -134,21 +141,39 @@ public class PaymentBody {
             if (preference.getDifferentialPricing() != null) {
                 this.differentialPricingId = preference.getDifferentialPricing().getId();
             }
-            if (!isBLacklabel) {
-                final PreferencePayer payer = preference.getPayer();
-                if (payer != null) {
-                    this.payer = new PayerBody(payer.getName(), payer.getSurname(), payer.getEmail());
-                } else if (paymentRequestBody.getPayer() != null) {
-                    Payer requestPayer = paymentRequestBody.getPayer();
-                    String name = (requestPayer.getFirstName() == null) ? requestPayer.getName() : requestPayer.getFirstName();
-                    String lastName = (requestPayer.getLastName() == null) ? requestPayer.getSurname() : requestPayer.getLastName();
-                    this.payer = new PayerBody(name, lastName, paymentRequestBody.getPayer().getEmail());
+
+            if (!isBLackLabel) {
+                buildPayerWhitelabel(paymentRequestBody, preference);
+            }
+        }
+
+        private void buildPayerWhitelabel(final PaymentRequestBody paymentRequestBody, final Preference preference) {
+            Identification identification = null;
+            if (paymentRequestBody.getPayer() != null) {
+                final Payer requestPayer = paymentRequestBody.getPayer();
+                final String name = (requestPayer.getFirstName() == null) ? requestPayer.getName() : requestPayer.getFirstName();
+                final String lastName = (requestPayer.getLastName() == null) ? requestPayer.getSurname() : requestPayer.getLastName();
+                this.payer = new PayerBody(name, lastName, paymentRequestBody.getPayer().getEmail(), paymentRequestBody.getPayer().getIdentification());
+                identification = paymentRequestBody.getPayer().getIdentification();
+
+            }
+            if (identification != null && !identification.getType().equals("CNPJ")){
+                if (StringUtils.isBlank(this.payer.firstName) || StringUtils.isBlank(this.payer.lastName)) {
+                    if (preference.getPayer() != null) {
+                        this.payer = new PayerBody(preference.getPayer().getName(), preference.getPayer().getSurname(),
+                                preference.getPayer().getEmail(), preference.getPayer().getIdentification());
+                    }
                 }
             }
         }
 
         public Builder withCollector(long collector) {
             this.collector = new BasicUser(collector);
+            return this;
+        }
+
+        public Builder withOrder(final long merchantOrderId){
+            this.order = new Order(merchantOrderId, Constants.MERCHANT_ORDER_TYPE);
             return this;
         }
 
@@ -161,15 +186,17 @@ public class PaymentBody {
         private String email;
         private String firstName;
         private String lastName;
+        private Identification identification;
 
         public PayerBody() {
 
         }
 
-        PayerBody(final String firstName, final String lastName, final String email) {
+        PayerBody(final String firstName, final String lastName, final String email, final Identification identification) {
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
+            this.identification = identification;
         }
 
         public String getEmail() {
@@ -184,4 +211,6 @@ public class PaymentBody {
             return lastName;
         }
     }
+
+
 }

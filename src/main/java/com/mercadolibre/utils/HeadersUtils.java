@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import spark.Request;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 import static com.mercadolibre.constants.HeadersConstants.*;
@@ -17,7 +16,7 @@ public enum HeadersUtils {
     ;
 
     private static final Set<String> PAYMENT_HEADERS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "x-meli-session-id", "x-tracking-id", "x-idempotency-key")));
+           MELI_SESSION, TRACKING,IDEMPOTENCY, PRODUCT_ID)));
 
     private static final String X_CALLER_SCOPE_PAYMENTS = "payments";
 

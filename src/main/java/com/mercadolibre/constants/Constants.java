@@ -29,6 +29,11 @@ public final class Constants {
 
     public static final String PUBLIC_KEY = "public_key";
 
+    public static final String MERCHANT_ORDER_TYPE = "mercadopago";
+
+    public static final String FLOW_NAME_LEGACY_PAYMENTS = "legacy";
+    public static final String FLOW_NAME_PAYMENTS = "payments";
+
     private Constants() {
         throw new AssertionError(CAN_NOT_INSTANTIATE_CONSTANTS_CLASS);
     }

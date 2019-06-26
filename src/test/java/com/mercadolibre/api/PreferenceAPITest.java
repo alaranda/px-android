@@ -38,7 +38,7 @@ public class PreferenceAPITest {
     public void getPreference_invalidPreferenceId_notFound() throws IOException {
         try {
             MockPreferenceAPI.getById("1", HttpStatus.SC_NOT_FOUND,
-                    IOUtils.toString(getClass().getResourceAsStream("/preference/1.json")));
+                    IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
             service.geAsynctPreference(UUID.randomUUID().toString(), "1");
         } catch (final ApiException e) {
             assertThat(e.getCode(), is("invalid_id"));

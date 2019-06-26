@@ -1,15 +1,22 @@
 package com.mercadolibre.service;
 
 import com.mercadolibre.api.PaymentAPI;
+import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.ApiError;
+import com.mercadolibre.dto.access_token.AccessToken;
+import com.mercadolibre.dto.merchant_orders.MerchantOrder;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentRequest;
+import com.mercadolibre.dto.payment.PaymentRequestBody;
+import com.mercadolibre.dto.preference.Preference;
+import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.metrics.datadog.DatadogFuryMetricCollector;
+import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.Either;
+import spark.utils.StringUtils;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public enum PaymentService {
 
@@ -21,26 +28,54 @@ public enum PaymentService {
         if (!payment.isValuePresent()) {
             throw new ApiException(payment.getAlternative());
         }
-        Payment responsePayment = payment.getValue();
-        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.payment", getMetricTagsPayments(responsePayment));
-        DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.transaction_amount", responsePayment.getTransactionAmount().doubleValue());
-
-        if (responsePayment.getCouponId() != null) {
-            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
-            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_amount", responsePayment.getCouponAmount().doubleValue());
-        }
-        return responsePayment;
+        return payment.getValue();
     }
 
-    private String[] getMetricTagsPayments(final Payment payment) {
-        final List<String> tags = new LinkedList<>();
-        tags.add("site_id:" + payment.getSiteId());
-        tags.add("status:" + payment.getStatus());
-        tags.add("status_detail:" + payment.getStatusDetail());
-        tags.add("payment_method_id:" + payment.getPaymentMethodId());
-        tags.add("marketplace:" + payment.getMarketplace());
-        tags.add("collector_id:" + payment.getCollector().getId());
+    public PaymentRequest getPaymentRequest(final PaymentRequestBody paymentRequestBody, final String publicKeyId,
+                                            final String accessTokenId, final String requestId, final Headers headers) throws ApiException, ExecutionException, InterruptedException {
 
-        return tags.toArray(new String[0]);
+        final CompletableFuture<Either<PublicKeyInfo, ApiError>> futurePk =
+                AuthService.INSTANCE.getAsyncPublicKey(publicKeyId, requestId);
+        final CompletableFuture<Either<Preference, ApiError>> futurePref =
+                PreferenceAPI.INSTANCE.geAsynctPreference(paymentRequestBody.getPrefId(), requestId);
+
+        CompletableFuture.allOf(futurePk, futurePref);
+
+        if (!futurePk.get().isValuePresent()) {
+            final ApiError apiError = futurePk.get().getAlternative();
+            throw new ApiException("external_error", "API call to public key failed", apiError.getStatus());
+        }
+        if (!futurePref.get().isValuePresent()) {
+            final ApiError apiError = futurePref.get().getAlternative();
+            throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
+        }
+
+        final PublicKeyInfo publicKey = futurePk.get().getValue();
+        final Preference preference = futurePref.get().getValue();
+
+        if (StringUtils.isNotBlank(accessTokenId)) {
+            final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, accessTokenId);
+            final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(requestId, preference, Long.valueOf(accessToken.getUserId()));
+            return createBlackLabelRequest(headers, paymentRequestBody, preference, publicKey, requestId, accessToken, merchantOrder);
+        }
+        return PaymentRequest.builder(headers, paymentRequestBody, preference, requestId, false)
+                .withCallerId(publicKey.getOwnerId())
+                .withClientId(publicKey.getClientId())
+                .withHeaderTestToken(publicKeyId)
+                .build();
+    }
+
+    private PaymentRequest createBlackLabelRequest(final Headers headers, final PaymentRequestBody paymentRequestBody,
+                                                   final Preference preference, final PublicKeyInfo publicKey,
+                                                   final String requestId, final AccessToken accessToken,
+                                                   final MerchantOrder merchantOrder) {
+
+        return PaymentRequest.builder(headers, paymentRequestBody, preference, requestId, true)
+                .withCallerId(Long.valueOf(accessToken.getUserId()))
+                .withClientId(accessToken.getClientId())
+                .withCollector(publicKey.getOwnerId())
+                .withOrder(merchantOrder.getId())
+                .withHeaderTestToken(publicKey.getPublicKey())
+                .build();
     }
 }

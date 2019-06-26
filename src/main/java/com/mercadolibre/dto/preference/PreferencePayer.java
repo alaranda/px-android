@@ -30,4 +30,7 @@ public class PreferencePayer {
         return surname;
     }
 
+    public Identification getIdentification() {
+        return identification;
+    }
 }

@@ -1,5 +1,4 @@
-[
-  {
-    "payment_method_id": "visa"
-  }
-]
+
+{
+  "payment_method_id": "visa"
+}
