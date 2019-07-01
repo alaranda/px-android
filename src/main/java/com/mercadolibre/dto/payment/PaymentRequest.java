@@ -1,6 +1,5 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.dto.merchant_orders.MerchantOrder;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
@@ -38,11 +37,6 @@ public class PaymentRequest {
         return body;
     }
 
-    public static Builder builder(final Headers headers, final PaymentRequestBody paymentRequestBody,
-                                  final Preference preference, final String requestId, final boolean isBLacklabel) {
-        return new Builder(headers, paymentRequestBody, preference, requestId, isBLacklabel);
-    }
-
     public static final class Builder {
 
         private Headers headers;
@@ -50,11 +44,31 @@ public class PaymentRequest {
         private long clientId;
         private PaymentBody.Builder body;
 
-        Builder(final Headers headers, final PaymentRequestBody paymentRequestBody,
-                final Preference preference, final String requestId, final boolean isBLacklabel){
-            this.headers = HeadersUtils.completePaymentHeaders(headers, paymentRequestBody.getToken(),
-                    requestId);
-            this.body = PaymentBody.builder(paymentRequestBody, preference, isBLacklabel);
+        public static Builder createWhiteLabelLegacyPaymentRequest(final Headers headers, final PaymentRequestBody paymentRequestBody,
+                                                                   final Preference preference, final String requestId){
+            final Builder builder = new Builder(headers, paymentRequestBody.getToken(), requestId);
+            builder.body = PaymentBody.Builder.createWhiteLabelLegacyBuilder(paymentRequestBody, preference);
+            return builder;
+        }
+
+        public static Builder createWhiteLabelPaymentRequest(final Headers headers, final PaymentData paymentData,
+                                                                   final Preference preference, final String requestId){
+            final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
+            final Builder builder = new Builder(headers, token, requestId);
+            builder.body = PaymentBody.Builder.createWhiteLabelBuilder(paymentData, preference);
+            return builder;
+        }
+
+        public static Builder createBlackLabelPaymentRequest(final Headers headers, final PaymentData paymentData,
+                                                      final Preference preference, final String requestId){
+            final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
+            final Builder builder = new Builder(headers, token, requestId);
+            builder.body = PaymentBody.Builder.createBlackLabelBuilder(paymentData, preference);
+            return builder;
+        }
+
+        Builder (final Headers headers, final String token, final String requestId) {
+            this.headers = HeadersUtils.completePaymentHeaders(headers, token, requestId);
         }
 
         public Builder withCallerId(final long callerId) {

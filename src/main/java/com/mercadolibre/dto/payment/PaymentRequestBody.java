@@ -6,7 +6,7 @@ import com.mercadolibre.dto.Payer;
 import java.math.BigDecimal;
 
 /**
- * Objeto que mapea el body que recibe el endpoint /px_mobile_api/payments
+ * Objeto que mapea el body que recibe el endpoint /px_mobile_api/legacy_payments
  */
 public class PaymentRequestBody {
 

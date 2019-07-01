@@ -32,6 +32,7 @@ public class Preference {
     private BigDecimal marketplaceFee;
     protected DifferentialPricing differentialPricing;
     protected BigDecimal totalAmount;
+    private boolean binaryMode;
 
     Preference() {
     }
@@ -128,4 +129,7 @@ public class Preference {
         return totalAmount;
     }
 
+    public boolean isBinaryMode() {
+        return binaryMode;
+    }
 }

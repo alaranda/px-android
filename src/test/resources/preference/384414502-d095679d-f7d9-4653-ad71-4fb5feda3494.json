@@ -1,0 +1,92 @@
+{
+  "additional_info": "",
+  "auto_return": "",
+  "back_urls": {
+    "failure": "",
+    "pending": "",
+    "success": ""
+  },
+  "binary_mode": false,
+  "client_id": "963",
+  "collector": {
+    "tags": [
+      "normal",
+      "test_user",
+      "user_info_verified"
+    ]
+  },
+  "collector_id": 384414502,
+  "date_created": "2019-01-14T10:09:25.922-04:00",
+  "expiration_date_from": null,
+  "expiration_date_to": null,
+  "expires": false,
+  "external_reference": "",
+  "id": "384414502-d095679d-f7d9-4653-ad71-4fb5feda3494",
+  "init_point": "https://www.mercadopago.com/mla/checkout/start?pref_id=384414502-d095679d-f7d9-4653-ad71-4fb5feda3494",
+  "internal_metadata": {},
+  "items": [
+    {
+      "id": "",
+      "currency_id": "ARS",
+      "title": "Test Item",
+      "picture_url": "",
+      "description": "",
+      "category_id": "",
+      "quantity": 1,
+      "unit_price": 500
+    }
+  ],
+  "live_mode": true,
+  "marketplace": "NONE",
+  "marketplace_fee": 0,
+  "notification_url": null,
+  "operation_type": "regular_payment",
+  "payer": {
+    "phone": {
+      "area_code": "",
+      "number": ""
+    },
+    "address": {
+      "zip_code": "",
+      "street_name": "",
+      "street_number": null
+    },
+    "email": "test_user_47570744@testuser.com",
+    "identification": {
+      "number": "",
+      "type": ""
+    },
+    "name": "Test",
+    "surname": "User",
+    "date_created": ""
+  },
+  "payment_methods": {
+    "default_card_id": null,
+    "excluded_payment_methods": [
+      {
+        "id": ""
+      }
+    ],
+    "default_installments": null,
+    "default_payment_method_id": null,
+    "excluded_payment_types": [
+      {
+        "id": ""
+      }
+    ],
+    "installments": null
+  },
+  "processing_modes": [],
+  "purpose": "",
+  "sandbox_init_point": "https://sandbox.mercadopago.com/mla/checkout/pay?pref_id=384414502-d095679d-f7d9-4653-ad71-4fb5feda3494",
+  "shipments": {
+    "receiver_address": {
+      "floor": "",
+      "zip_code": "",
+      "street_name": "",
+      "apartment": "",
+      "street_number": null
+    }
+  },
+  "total_amount": 500
+}

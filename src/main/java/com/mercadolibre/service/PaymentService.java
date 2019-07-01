@@ -3,11 +3,10 @@ package com.mercadolibre.service;
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.ApiError;
+import com.mercadolibre.dto.PublicKeyAndPreference;
 import com.mercadolibre.dto.access_token.AccessToken;
 import com.mercadolibre.dto.merchant_orders.MerchantOrder;
-import com.mercadolibre.dto.payment.Payment;
-import com.mercadolibre.dto.payment.PaymentRequest;
-import com.mercadolibre.dto.payment.PaymentRequestBody;
+import com.mercadolibre.dto.payment.*;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
@@ -31,13 +30,45 @@ public enum PaymentService {
         return payment.getValue();
     }
 
-    public PaymentRequest getPaymentRequest(final PaymentRequestBody paymentRequestBody, final String publicKeyId,
-                                            final String accessTokenId, final String requestId, final Headers headers) throws ApiException, ExecutionException, InterruptedException {
+    public PaymentRequest getPaymentRequestLegacy(final PaymentRequestBody paymentRequestBody, final String publicKeyId, final String requestId, final Headers headers) throws ApiException, ExecutionException, InterruptedException {
+
+        final PublicKeyAndPreference publicKeyAndPreference = getPublicKeyAndPreference(publicKeyId, paymentRequestBody.getPrefId(), requestId);
+        final PublicKeyInfo publicKeyInfo = publicKeyAndPreference.getPublicKey();
+        final Preference preference = publicKeyAndPreference.getPreference();
+
+        return PaymentRequest.Builder.createWhiteLabelLegacyPaymentRequest(headers, paymentRequestBody, preference, requestId)
+                .withCallerId(publicKeyInfo.getOwnerId())
+                .withClientId(publicKeyInfo.getClientId())
+                .withHeaderTestToken(publicKeyId)
+                .build();
+    }
+
+    public PaymentRequest getPaymentRequest(final PaymentDataBody paymentDataBody, final String publicKeyId,
+                                            final String accessTokenId, final String requestId, final Headers headers) throws InterruptedException, ApiException, ExecutionException {
+
+        final PublicKeyAndPreference publicKeyAndPreference = getPublicKeyAndPreference(publicKeyId, paymentDataBody.getPrefId(), requestId);
+        final PublicKeyInfo publicKeyInfo = publicKeyAndPreference.getPublicKey();
+        final Preference preference = publicKeyAndPreference.getPreference();
+
+        if (StringUtils.isNotBlank(accessTokenId)) {
+            final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, accessTokenId);
+            final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(requestId, preference, Long.valueOf(accessToken.getUserId()));
+            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, requestId, accessToken ,merchantOrder, publicKeyId);
+        }
+        return PaymentRequest.Builder.createWhiteLabelPaymentRequest(headers, paymentDataBody.getPaymentData().get(0), preference, requestId)
+                .withCallerId(publicKeyInfo.getOwnerId())
+                .withClientId(publicKeyInfo.getClientId())
+                .withHeaderTestToken(publicKeyId)
+                .build();
+    }
+
+    private PublicKeyAndPreference getPublicKeyAndPreference(final String publicKeyId, final String prefId,
+                                                             final String requestId) throws ApiException, ExecutionException, InterruptedException {
 
         final CompletableFuture<Either<PublicKeyInfo, ApiError>> futurePk =
                 AuthService.INSTANCE.getAsyncPublicKey(publicKeyId, requestId);
         final CompletableFuture<Either<Preference, ApiError>> futurePref =
-                PreferenceAPI.INSTANCE.geAsynctPreference(paymentRequestBody.getPrefId(), requestId);
+                PreferenceAPI.INSTANCE.geAsynctPreference(prefId, requestId);
 
         CompletableFuture.allOf(futurePk, futurePref);
 
@@ -53,29 +84,20 @@ public enum PaymentService {
         final PublicKeyInfo publicKey = futurePk.get().getValue();
         final Preference preference = futurePref.get().getValue();
 
-        if (StringUtils.isNotBlank(accessTokenId)) {
-            final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, accessTokenId);
-            final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(requestId, preference, Long.valueOf(accessToken.getUserId()));
-            return createBlackLabelRequest(headers, paymentRequestBody, preference, publicKey, requestId, accessToken, merchantOrder);
-        }
-        return PaymentRequest.builder(headers, paymentRequestBody, preference, requestId, false)
-                .withCallerId(publicKey.getOwnerId())
-                .withClientId(publicKey.getClientId())
-                .withHeaderTestToken(publicKeyId)
-                .build();
+        return new PublicKeyAndPreference(publicKey, preference);
     }
 
-    private PaymentRequest createBlackLabelRequest(final Headers headers, final PaymentRequestBody paymentRequestBody,
+    private PaymentRequest createBlackLabelRequest(final Headers headers, final PaymentData paymentData,
                                                    final Preference preference, final PublicKeyInfo publicKey,
                                                    final String requestId, final AccessToken accessToken,
-                                                   final MerchantOrder merchantOrder) {
+                                                   final MerchantOrder merchantOrder, final String pubicKeyId) {
 
-        return PaymentRequest.builder(headers, paymentRequestBody, preference, requestId, true)
+        return PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
                 .withCallerId(Long.valueOf(accessToken.getUserId()))
                 .withClientId(accessToken.getClientId())
                 .withCollector(publicKey.getOwnerId())
                 .withOrder(merchantOrder.getId())
-                .withHeaderTestToken(publicKey.getPublicKey())
+                .withHeaderTestToken(pubicKeyId)
                 .build();
     }
 }

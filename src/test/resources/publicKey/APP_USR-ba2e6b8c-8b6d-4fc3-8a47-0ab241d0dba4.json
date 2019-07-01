@@ -1,0 +1,17 @@
+{
+  "public_key": "APP_USR-ba2e6b8c-8b6d-4fc3-8a47-0ab241d0dba4",
+  "test_public_key": "TEST-d783da36-74a2-4378-85d1-76f498ca92c4",
+  "client_id": 58975383196875,
+  "owner_id": 384414502,
+  "site_id": "MLA",
+  "scopes": [
+    "reporting_full",
+    "read",
+    "marketplace_off",
+    "offline_access",
+    "wallet-payments",
+    "write"
+  ],
+  "date_created": "2018-12-07T12:15:30.000-04:00",
+  "date_last_updated": "2018-12-07T12:15:30.000-04:00"
+}

@@ -29,6 +29,9 @@ public class PaymentRouterTest {
 
     public static final String PUBLIC_KEY_MLA_1 = "TEST-c8473389-df81-468c-96a8-71e2c7cd1f89";
     public static final String PREFERENCE_ID_1 = "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014";
+    public static final String PUBLIC_KEY_BLACKLABEL_AM = "TEST-d783da36-74a2-4378-85d1-76f498ca92c4";
+    public static final String ACCES_TOKEN_BLACKLABEL_AM = "TEST-6519316523937252-070516-b65bbf874640109e601c32754bacfb6c__LD_LC__-261748045";
+    public static final String PREFERENCE_ID_BLACKLABEL_AM = "384414502-d095679d-f7d9-4653-ad71-4fb5feda3494";
     public static final long CALLER_ID_MLA_1 = 204318018L;
     public static final long CLIENT_ID_MLA_1 = 7977122093299909L;
     public static final long CLIENT_ID_MLA = 889238428771302L;
@@ -36,7 +39,7 @@ public class PaymentRouterTest {
     public static final String ACCES_TOKEN = "APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610";
 
     @Test
-    public void doPayment_whiteLabelWithoutBody_400() throws URISyntaxException {
+    public void legacyPayments_whiteLabelWithoutBody_400() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/legacy_payments");
 
         final Response response = post(uriBuilder.build());
@@ -64,7 +67,7 @@ public class PaymentRouterTest {
     public void legacyPayments_success_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/legacy_payments");
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")));
         MockPaymentAPI.doPayment(CALLER_ID_MLA_1,
@@ -91,16 +94,16 @@ public class PaymentRouterTest {
     }
 
     @Test
-    public void payments_success_200() throws URISyntaxException, IOException {
+    public void payments_blackLabelAccountMoney_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN)
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
-        MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
-        MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/accesToken/APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610.json")));
-        MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")));
+                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN_BLACKLABEL_AM)
+                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
+        MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_BLACKLABEL_AM, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+        MockAccessTokenAPI.getAccessToken(ACCES_TOKEN_BLACKLABEL_AM, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/accesToken/TEST-6519316523937252-070516-b65bbf874640109e601c32754bacfb6c__LD_LC__-261748045.json")));
+        MockPreferenceAPI.getById(PREFERENCE_ID_BLACKLABEL_AM, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/preference/384414502-d095679d-f7d9-4653-ad71-4fb5feda3494.json")));
         MockPaymentAPI.doPayment(CALLER_ID_MLA_1,
                 CLIENT_ID_MLA_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
@@ -108,7 +111,7 @@ public class PaymentRouterTest {
                 IOUtils.toString(getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
 
         final Response response = given()
-                .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyCompleteWithoutPK.json")))
+                .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/blackLabelAccountMoney.json")))
                 .with()
                 .contentType("application/json").post(uriBuilder.build());
 
@@ -123,7 +126,7 @@ public class PaymentRouterTest {
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN)
                 .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")));
         MockPaymentAPI.doPayment(CLIENT_ID_MLA,
@@ -179,7 +182,7 @@ public class PaymentRouterTest {
                 .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
 
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_BAD_REQUEST,
                 IOUtils.toString(getClass().getResourceAsStream("/accesToken/invalidAT.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
@@ -195,18 +198,18 @@ public class PaymentRouterTest {
     }
 
     @Test
-    public void payments_invalidPref_400() throws URISyntaxException, IOException {
+    public void payments_blackLabelInvalidPref_400() throws URISyntaxException, IOException {
         final URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN)
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
+                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN_BLACKLABEL_AM)
+                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
 
-        MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
-        MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_BAD_REQUEST,
+        MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_BLACKLABEL_AM, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+        MockPreferenceAPI.getById(PREFERENCE_ID_BLACKLABEL_AM, HttpStatus.SC_BAD_REQUEST,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
 
         final Response response = given()
-                .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithAccountMoney.json")))
+                .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/blackLabelAccountMoney.json")))
                 .with()
                 .contentType("application/json").post(uriBuilder.build());
 

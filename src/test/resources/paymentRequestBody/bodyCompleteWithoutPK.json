@@ -1,11 +1,117 @@
-[{
-  "transaction_amount": 100,
-  "installments": 1,
-  "issuer_id": 1,
-  "token": "3f9a210eef126cad82e25c9cff09e307",
-  "payer": {
-    "email":"test_user_66162153@testuser.com"
-  },
-  "payment_method_id": "visa",
-  "pref_id": "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014"
-}]
+{
+  "pref_id": "384414502-d095679d-f7d9-4653-ad71-4fb5feda3494",
+  "payment_data": [{
+    "campaign": {
+      "code_type": null,
+      "end_date": "2019-10-12T11:38:14.000-0300",
+      "id": "988686988820403",
+      "legal_terms": "https://api.mercadolibre.com/campaigns/1000952/terms_and_conditions/html",
+      "max_coupon_amount": 10000,
+      "max_redeem_per_user": 1
+    },
+    "coupon_code": null,
+    "discount": {
+      "amount_off": null,
+      "coupon_amount": 100.0,
+      "currency_id": "ARS",
+      "id": "988686988820403",
+      "name": "20% OFF",
+      "percent_off": 20.0
+    },
+    "issuer": {
+      "id": 1078,
+      "labels": null,
+      "name": "Mercado Pago + Banco Patagonia"
+    },
+    "payer": {
+      "email": "test_user_47570744@testuser.com",
+      "name": "Test",
+      "id": null,
+      "identification": {
+        "number": "",
+        "type": ""
+      },
+      "surname": "User",
+      "type": null
+    },
+    "payer_cost": {
+      "agreements": null,
+      "installment_amount": 400,
+      "installment_rate": 0,
+      "installments": 1,
+      "labels": ["CFT_0,00%|TEA_0,00%"],
+      "payment_method_option_id": null,
+      "processing_mode": null,
+      "recommended_message": "1 cuota de $ 400,00 ($ 400,00)",
+      "total_amount": 400
+    },
+    "payment_method": {
+      "accreditation_time": 2880,
+      "additional_info_needed": ["cardholder_identification_number", "cardholder_identification_type", "cardholder_name"],
+      "deferred_capture": "supported",
+      "financial_institutions": [],
+      "id": "mercadopago_cc",
+      "max_allowed_amount": 250000,
+      "merchant_account_id": null,
+      "min_allowed_amount": 1,
+      "name": "Mercado Pago + Banco Patagonia",
+      "payment_type_id": "credit_card",
+      "processing_modes": ["aggregator"],
+      "secure_thumbnail": "https://www.mercadopago.com/org-img/MP3/API/logos/mercadopago_cc.gif",
+      "settings": [{
+        "bin": {
+          "exclusion_pattern": null,
+          "installments_pattern": "^((515073)|(515070)|(532384))",
+          "pattern": "^((515073)|(515070)|(532384))"
+        },
+        "card_number": {
+          "length": 16,
+          "validation": "standard"
+        },
+        "security_code": {
+          "card_location": "back",
+          "length": 3,
+          "mode": null
+        }
+      }, {
+        "bin": {
+          "exclusion_pattern": null,
+          "installments_pattern": "^(532383)",
+          "pattern": "^(532383)"
+        },
+        "card_number": {
+          "length": 16,
+          "validation": "standard"
+        },
+        "security_code": {
+          "card_location": "back",
+          "length": 3,
+          "mode": null
+        }
+      }],
+      "status": "active"
+    },
+    "raw_amount": 500.0,
+    "token": {
+      "card_id": "324132562",
+      "card_number_length": null,
+      "cardholder": null,
+      "creation_date": null,
+      "due_date": null,
+      "esc": null,
+      "expiration_month": null,
+      "expiration_year": null,
+      "first_six_digits": null,
+      "id": "e4b80a49aafe47bc3404b7283cb1eed6",
+      "last_four_digits": "0125",
+      "last_modified_date": null,
+      "luhn_validation": "false",
+      "public_key": "APP_USR-ba2e6b8c-8b6d-4fc3-8a47-0ab241d0dba4",
+      "security_code_length": 3,
+      "status": "active",
+      "trunc_card_number": null,
+      "used_date": null
+    },
+    "transaction_amount": 400
+  }]
+}

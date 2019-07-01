@@ -1,0 +1,20 @@
+{
+  "access_token": "TEST-6519316523937252-070516-b65bbf874640109e601c32754bacfb6c__LD_LC__-261748045",
+  "user_id": "261748045",
+  "status": "active",
+  "client_id": 6519316523937252,
+  "operator_id": null,
+  "scopes": [
+    "read",
+    "offline_access",
+    "write",
+    "payments"
+  ],
+  "creation_date": "2017-07-05T16:11:55.489-04:00",
+  "expires_in": 630720000,
+  "is_test": true,
+  "site_id": "MLA",
+  "user_grant": "auth||261748045##read,offline_access,write,payments##active##MLA##6519316523937252##true####2adbbd3a-8ea9-4a6f-9165-ce543009a6b7||2168256952463||Iqz/VhlLdA5Ve8bBsERs0n0XBDpk9mw1FjWuMXMgfjGIrHRV2cZGRlBnkZI3p9vR1RiUsFZUFxNlHsmlXEZWXuEWBiU+hayPKy3b3u+pzRTU8ZjxzBB6c0UigYStI4kk3rw7GXzqGmC/Pf97nAvZOq88KB4tSLwNkK3i5Brqhmk=",
+  "detached_id": "2adbbd3a-8ea9-4a6f-9165-ce543009a6b7",
+  "user_session_id": null
+}

@@ -68,7 +68,7 @@ public class PreferenceRouterTest {
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREF_VALID, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")));
         MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
@@ -103,7 +103,7 @@ public class PreferenceRouterTest {
                 .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-c8473389-df81-468c-96a8-71e2c7cd1f89.json")));
+                IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREF_ID_WITHOUT_SHIPMENT_NODE, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/dde1cff2-0a52-45ca-bc7b-bbd7360128d5.json")));
         MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,

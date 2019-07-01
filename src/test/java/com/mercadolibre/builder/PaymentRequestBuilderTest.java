@@ -26,7 +26,7 @@ public class PaymentRequestBuilderTest {
                 IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceWithOnlyPayer.json")),
                 Preference.class);
 
-        final PaymentRequest paymentRequest = PaymentRequest.builder(new Headers(), paymentRequestBody, preference, "", false)
+        final PaymentRequest paymentRequest = PaymentRequest.Builder.createWhiteLabelLegacyPaymentRequest(new Headers(), paymentRequestBody, preference, "")
                 .build();
 
         assertEquals(paymentRequest.getBody().getPayer().getFirstName(), "name preference");
@@ -44,7 +44,7 @@ public class PaymentRequestBuilderTest {
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")),
                 Preference.class);
 
-        final PaymentRequest paymentRequest = PaymentRequest.builder(new Headers(), paymentRequestBody, preference, "", false)
+        final PaymentRequest paymentRequest = PaymentRequest.Builder.createWhiteLabelLegacyPaymentRequest(new Headers(), paymentRequestBody, preference, "")
                 .build();
 
         assertEquals(paymentRequest.getBody().getPayer().getFirstName(), "user test");
@@ -62,7 +62,7 @@ public class PaymentRequestBuilderTest {
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")),
                 Preference.class);
 
-        final PaymentRequest paymentRequest = PaymentRequest.builder(new Headers(), paymentRequestBody, preference, "", false)
+        final PaymentRequest paymentRequest = PaymentRequest.Builder.createWhiteLabelLegacyPaymentRequest(new Headers(), paymentRequestBody, preference, "")
                 .build();
 
         assertEquals(paymentRequest.getBody().getPayer().getFirstName(), "MELI");

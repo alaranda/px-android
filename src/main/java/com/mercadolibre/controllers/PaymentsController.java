@@ -1,10 +1,7 @@
 package com.mercadolibre.controllers;
 
-import com.google.gson.reflect.TypeToken;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.payment.Payment;
-import com.mercadolibre.dto.payment.PaymentRequest;
-import com.mercadolibre.dto.payment.PaymentRequestBody;
+import com.mercadolibre.dto.payment.*;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
@@ -13,6 +10,7 @@ import com.mercadolibre.service.PaymentService;
 import com.mercadolibre.utils.HeadersUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import com.mercadolibre.utils.logs.LogBuilder;
+import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
@@ -21,9 +19,6 @@ import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
@@ -74,7 +69,7 @@ public enum PaymentsController {
         if (StringUtils.isBlank(paymentRequestBody.getPublicKey()) && StringUtil.isBlank(request.queryParams(Constants.PUBLIC_KEY))){
             throw new ValidationException("public key required");
         }
-        return PaymentService.INSTANCE.getPaymentRequest(paymentRequestBody, publicKeyId, null, requestId, headers);
+        return PaymentService.INSTANCE.getPaymentRequestLegacy(paymentRequestBody, publicKeyId, requestId, headers);
     }
 
     private PaymentRequestBody getPaymentRequestBody(final Request request) throws ApiException {
@@ -126,34 +121,32 @@ public enum PaymentsController {
         final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY);
         final String accesToken = request.queryParams(Constants.ACCESS_TOKEN);
 
-        final List<PaymentRequestBody> paymentRequestBodyList = getListPaymentRequestBody(request);
-        final PaymentRequestBody paymentRequestBody = paymentRequestBodyList.get(0);
+        final PaymentDataBody paymentDataBody = getListPaymentData(request);
 
         final Headers headers = HeadersUtils.fromSparkHeaders(request);
-        return PaymentService.INSTANCE.getPaymentRequest(paymentRequestBody, publicKeyId, accesToken, requestId, headers);
+        return PaymentService.INSTANCE.getPaymentRequest(paymentDataBody, publicKeyId, accesToken, requestId, headers);
     }
 
-    private List<PaymentRequestBody> getListPaymentRequestBody(final Request request) throws ApiException {
+    private PaymentDataBody getListPaymentData(final Request request) throws ApiException {
 
         try {
-            final Type bodyListType = new TypeToken<ArrayList<PaymentRequestBody>>(){}.getType();
-            final List<PaymentRequestBody> paymentRequestBodyList = GsonWrapper.fromJson(request.body(), bodyListType);
+            final PaymentDataBody paymentDataBody = GsonWrapper.fromJson(request.body(), PaymentDataBody.class);
 
             if (StringUtil.isBlank(request.queryParams(Constants.PUBLIC_KEY))) {
                 throw new ValidationException("public key required");
             }
 
-            if (paymentRequestBodyList.size() != 1){
+            if ((paymentDataBody.getPaymentData().size() != 1) || (StringUtils.isBlank(paymentDataBody.getPrefId())) ) {
                 //TODO Hacer desarrollo cuando se implemente pago de pref.
                 throw new ApiException("internal_error", "unsupported payment", HttpStatus.SC_BAD_REQUEST);
             }
 
-            final PaymentRequestBodyValidator validator = new PaymentRequestBodyValidator();
-            paymentRequestBodyList.forEach(paymentRequestBody -> {
-                validator.validate(paymentRequestBody);
+            final PaymentDataValidator validator = new PaymentDataValidator();
+            paymentDataBody.getPaymentData().forEach(paymentData -> {
+                validator.validate(paymentData);
             });
 
-            return paymentRequestBodyList;
+            return paymentDataBody;
         } catch (Exception e) {
             throw new ApiException("Bad Request", "Error parsing body", HttpStatus.SC_BAD_REQUEST);
         }
