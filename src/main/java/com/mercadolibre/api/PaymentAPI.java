@@ -46,7 +46,7 @@ public enum PaymentAPI {
                     .post(url.toString(), headers, GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8));
             return buildResponse(headers, url, response);
         } catch (RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_WRITE_NAME, url.toString(), headers, e);
+            MonitoringUtils.logException(HttpMethod.POST.name(), POOL_WRITE_NAME, url.toString(), headers, e);
             throw new ApiException("external_error", "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }

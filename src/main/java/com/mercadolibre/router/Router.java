@@ -44,10 +44,6 @@ public class Router implements SparkApplication {
     @Override
     public void init() {
 
-        Spark.before("/*", (request, response) -> {
-           setRequestIdAndLogRequest(request);
-        });
-
         setupFilters();
 
         Spark.get("/ping", (req, res) -> {
@@ -127,11 +123,8 @@ public class Router implements SparkApplication {
     }
 
     private void setupFilters() {
-
-        Spark.before((request, response) -> {
-            request.attribute(REQUEST_START_HEADER, System.currentTimeMillis());
-        });
-
+        Spark.before("/px_mobile/*", (request, response) -> setRequestIdAndLogRequest(request));
+        Spark.before((request, response) ->request.attribute(REQUEST_START_HEADER, System.currentTimeMillis()));
         Spark.after(Router::setHeaders);
 
     }

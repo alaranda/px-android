@@ -30,7 +30,6 @@ public class PaymentDataValidator {
         SimpleValidatorHelper.notNullString(PAYMENT_METHOD_ID)
                 .validate(paymentData.getPaymentMethod().getId())
                 .throwIfInvalid();
-        //validateEmail(paymentData.getPayer());
         validateOptionalPositiveParam(paymentData.getPayerCost());
         validateOptionalCard(paymentData.getIssuer());
     }
@@ -45,14 +44,5 @@ public class PaymentDataValidator {
         if (payerCost != null && payerCost.getInstallments() != null) {
             SimpleValidatorHelper.isIntPositive(Constants.INSTALLMENTS).validate(payerCost.getInstallments()).throwIfInvalid();
         }
-    }
-
-    private void validateEmail(final PaymentData paymentData) throws ValidationException {
-        SimpleValidator.from((payer) -> payer != null, format("%s is required.", PaymentsRequestBodyParams.EMAIL))
-                .validate(paymentData.getPayer())
-                .throwIfInvalid();
-        SimpleValidatorHelper.notNullString(PaymentsRequestBodyParams.EMAIL)
-                .validate(paymentData.getPayer().getEmail())
-                .throwIfInvalid();
     }
 }

@@ -130,6 +130,7 @@ public class PaymentBody {
             builder.paymentMethodId = paymentData.getPaymentMethod().getId();
             builder.couponAmount = paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
             builder.campaignId = paymentData.hasCampaignId() ? Long.valueOf(paymentData.getCampaign().getId()) : null;
+            builder.payer = new PayerBody(paymentData.getPayer().getName(), paymentData.getPayer().getSurname(), null,  paymentData.getPayer().getIdentification());
             return builder;
         }
 

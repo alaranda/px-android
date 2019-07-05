@@ -97,8 +97,8 @@ public enum PaymentsController {
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
         final PaymentRequest paymentRequest = getPaymentRequest(request);
         final Payment payment = PaymentService.INSTANCE.doPayment(paymentRequest);
-
-        DatadogTransactionsMetrics.addTransactionData(payment, Constants.FLOW_NAME_PAYMENTS);
+        final String flow = request.queryParams(Constants.CALLER_ID_PARAM) != null ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
+        DatadogTransactionsMetrics.addTransactionData(payment, flow);
         logPayment(paymentRequest, payment);
 
         return payment;
@@ -119,12 +119,13 @@ public enum PaymentsController {
 
         final String requestId = request.attribute(REQUEST_ID);
         final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY);
-        final String accesToken = request.queryParams(Constants.ACCESS_TOKEN);
+        final String callerId = request.queryParams(Constants.CALLER_ID_PARAM);
+        final String clientId = request.queryParams(Constants.CLIENT_ID_PARAM);
 
         final PaymentDataBody paymentDataBody = getListPaymentData(request);
 
         final Headers headers = HeadersUtils.fromSparkHeaders(request);
-        return PaymentService.INSTANCE.getPaymentRequest(paymentDataBody, publicKeyId, accesToken, requestId, headers);
+        return PaymentService.INSTANCE.getPaymentRequest(paymentDataBody, publicKeyId, callerId, clientId, requestId, headers);
     }
 
     private PaymentDataBody getListPaymentData(final Request request) throws ApiException {

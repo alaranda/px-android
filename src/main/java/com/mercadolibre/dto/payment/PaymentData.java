@@ -60,17 +60,13 @@ public class PaymentData {
         return this.issuer != null ? true : false;
     }
 
-    public boolean hasDiscount(){
-        return this.discount != null ? true : false;
-    }
+    public boolean hasDiscount(){ return this.discount != null ? true : false; }
 
     public boolean hasToken(){
         return this.token != null ? true : false;
     }
 
-    public boolean hasCampaign(){
-        return this.campaign != null ? true : false;
-    }
+    public boolean hasCampaign(){ return this.campaign != null ? true : false; }
 
     public boolean hasCampaignId() {
         if(this.hasCampaign()){
@@ -78,4 +74,6 @@ public class PaymentData {
         }
         return false;
     }
+
+    public boolean hasPayer() { return this.payer != null ? true : false; }
 }

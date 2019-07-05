@@ -48,18 +48,6 @@ public enum AuthService {
     }
 
     /**
-     * Hace el API call a la API de Access token usando el access token id y obtiene la data asociada a ese id.
-     *
-     * @param requestId     request id
-     * @param accessTokenId access token id
-     * @return el objeto access token
-     * @throws ApiException si falla el api call (status code is not 2xx)
-     */
-    public CompletableFuture<Either<AccessToken, ApiError>> getAsyncAccessToken(@Nonnull final String requestId, @Nonnull final String accessTokenId) throws ApiException {
-        return AccessTokenAPI.INSTANCE.getAsyncAccesToken(requestId, accessTokenId);
-    }
-
-    /**
      * Hace el API call a la API de Public Key usando el callerId y el clientId y obtiene la data asociada a ese id.
      *
      * @param requestId request id

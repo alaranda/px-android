@@ -44,16 +44,15 @@ public enum PaymentService {
     }
 
     public PaymentRequest getPaymentRequest(final PaymentDataBody paymentDataBody, final String publicKeyId,
-                                            final String accessTokenId, final String requestId, final Headers headers) throws InterruptedException, ApiException, ExecutionException {
+                                            final String callerId, final String clientId, final String requestId, final Headers headers) throws InterruptedException, ApiException, ExecutionException {
 
         final PublicKeyAndPreference publicKeyAndPreference = getPublicKeyAndPreference(publicKeyId, paymentDataBody.getPrefId(), requestId);
         final PublicKeyInfo publicKeyInfo = publicKeyAndPreference.getPublicKey();
         final Preference preference = publicKeyAndPreference.getPreference();
 
-        if (StringUtils.isNotBlank(accessTokenId)) {
-            final AccessToken accessToken = AuthService.INSTANCE.getAccessToken(requestId, accessTokenId);
-            final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(requestId, preference, Long.valueOf(accessToken.getUserId()));
-            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, requestId, accessToken ,merchantOrder, publicKeyId);
+        if (StringUtils.isNotBlank(callerId)) {
+            final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(requestId, preference, Long.valueOf(callerId));
+            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, requestId, callerId, clientId ,merchantOrder, publicKeyId);
         }
         return PaymentRequest.Builder.createWhiteLabelPaymentRequest(headers, paymentDataBody.getPaymentData().get(0), preference, requestId)
                 .withCallerId(publicKeyInfo.getOwnerId())
@@ -89,12 +88,12 @@ public enum PaymentService {
 
     private PaymentRequest createBlackLabelRequest(final Headers headers, final PaymentData paymentData,
                                                    final Preference preference, final PublicKeyInfo publicKey,
-                                                   final String requestId, final AccessToken accessToken,
+                                                   final String requestId, final String callerId, final String clientId,
                                                    final MerchantOrder merchantOrder, final String pubicKeyId) {
 
         return PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
-                .withCallerId(Long.valueOf(accessToken.getUserId()))
-                .withClientId(accessToken.getClientId())
+                .withCallerId(Long.valueOf(callerId))
+                .withClientId(Long.valueOf(clientId))
                 .withCollector(publicKey.getOwnerId())
                 .withOrder(merchantOrder.getId())
                 .withHeaderTestToken(pubicKeyId)

@@ -4,7 +4,6 @@ import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyApi;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.dto.access_token.AccessToken;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.dto.preference.PreferenceTidy;
@@ -45,20 +44,14 @@ public enum PreferencesController {
 
         try {
             final String requestId = request.attribute(REQUEST_ID);
-            final String accesTokenId = request.queryParams(Constants.ACCESS_TOKEN);
+            final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
             final String prefId = extractParamPrefId(request, requestId);
 
-            final CompletableFuture<Either<AccessToken, ApiError>> futureAccessToken =
-                    AuthService.INSTANCE.getAsyncAccessToken(requestId, accesTokenId);
             final CompletableFuture<Either<Preference, ApiError>> futurePreference =
                     PreferenceAPI.INSTANCE.geAsynctPreference(prefId, requestId);
 
-            CompletableFuture.allOf(futurePreference, futureAccessToken);
+            CompletableFuture.allOf(futurePreference);
 
-            if (!futureAccessToken.get().isValuePresent()) {
-                final ApiError apiError = futureAccessToken.get().getAlternative();
-                throw new ApiException("external_error", "API call to access token failed", apiError.getStatus());
-            }
             if (!futurePreference.get().isValuePresent()) {
                 final ApiError apiError = futurePreference.get().getAlternative();
                 throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
@@ -66,14 +59,12 @@ public enum PreferencesController {
 
             final Preference preference = futurePreference.get().getValue();
             validatePref(preference);
-            final AccessToken accessToken = futureAccessToken.get().getValue();
 
             final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, preference.getCollectorId().toString(),
-                    preference.getClientId());
-
+                   clientId);
 
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
-            logInitPref(preferenceResponse, accessToken.getUserId(), accessToken.getClientId());
+            logInitPref(preferenceResponse, clientId);
             return preferenceResponse;
         } catch (ApiException e) {
             throw new ApiException(e.getCode(), "En este momento no estamos pudiendo procesar pagos", e.getStatusCode());
@@ -115,11 +106,10 @@ public enum PreferencesController {
         validator.validate(preference);
     }
 
-    private void logInitPref(final PreferenceResponse preferenceResponse, final String callerId, final long clientId) {
+    private void logInitPref(final PreferenceResponse preferenceResponse, final long clientId) {
         final LogBuilder logBuilder = new LogBuilder(LogBuilder.LEVEL_INFO, LogBuilder.REQUEST_IN)
                 .withSource(CONTROLLER_NAME)
                 .withStatus(org.apache.http.HttpStatus.SC_OK)
-                .withCallerId(callerId)
                 .withClientId(String.valueOf(clientId))
                 .withPref(preferenceResponse.getPrefId());
 

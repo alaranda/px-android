@@ -62,35 +62,6 @@ public enum AccessTokenAPI {
         }
     }
 
-    /**
-     * Makes an async API call to Acces Token API using a acces token and gets all the data associated to the key.
-     * The model AccesToken will be returned.
-     * If an error occurs while parsing the response then null is returned.
-     *
-     * @param requestId request id
-     * @param accessTokenId acces token id
-     * @return a CompletableFuture<Either<AccessToken, ApiError>>
-     * @throws ApiException (optional) if the api call fail
-     */
-    public CompletableFuture<Either<AccessToken, ApiError>> getAsyncAccesToken(final String requestId,
-                                                                               final String accessTokenId) throws ApiException {
-        final Headers headers = new Headers().add(REQUEST_ID, requestId);
-        final URIBuilder url = buildUrl(accessTokenId);
-
-        try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_READ_NAME).asyncGet(url.toString(), headers);
-            return completableFutureResponse.thenApply(response -> buildResponse(headers, url, response));
-        } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, url.toString(), headers, e);
-            throw new ApiException("external_error", "API call to access token failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private Either<AccessToken, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, url.getPath(), url.getQueryParams(), response, headers);
-        return RESTUtils.responseToEither(response, AccessToken.class);
-    }
-
     public static URIBuilder buildUrl(final String accessTokenId) {
         return new URIBuilder()
                 .setScheme(Config.getString("access_token.url.scheme"))

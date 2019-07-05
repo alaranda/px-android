@@ -1,21 +1,97 @@
-
-[
-  {
-  "payment_method_id": "account_money",
-  "pref_id": "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014",
-  "public_key": "TEST-c8473389-df81-468c-96a8-71e2c7cd1f89",
-  "token":"a735d437b3ab0901b68b71cb49a0d8a0",
-  "payer": {
-    "email":"testuser.mla.20@gmail.com"
+{
+  "pref_id":"384414502-d095679d-f7d9-4653-ad71-4fb5feda3494",
+  "payment_data":[
+    {
+      "campaign":{
+        "code_type":null,
+        "end_date":"2019-10-12T11:38:14.000-0300",
+        "id":null,
+        "legal_terms":"https://api.mercadolibre.com/campaigns/1000952/terms_and_conditions/html",
+        "max_coupon_amount":10000,
+        "max_redeem_per_user":1
+      },
+      "coupon_code":null,
+      "discount":null,
+      "issuer":null,
+      "payer":{
+        "email":"test_user_47570744@testuser.com",
+        "name":"Test",
+        "id":null,
+        "identification":{
+          "number":"",
+          "type":""
+        },
+        "surname":"User",
+        "type":null
+      },
+      "payer_cost":null,
+      "payment_method":{
+        "accreditation_time":null,
+        "additional_info_needed":null,
+        "deferred_capture":null,
+        "financial_institutions":null,
+        "id":"account_money",
+        "max_allowed_amount":null,
+        "merchant_account_id":null,
+        "min_allowed_amount":null,
+        "name":"Account Money of Mercado Pago",
+        "payment_type_id":"account_money",
+        "processing_modes":[
+          "aggregator"
+        ],
+        "secure_thumbnail":null,
+        "settings":null,
+        "status":"active"
+      },
+      "raw_amount":500,
+      "token":null,
+      "transaction_amount":500
+    },
+    {
+      "campaign":{
+        "code_type":null,
+        "end_date":"2019-10-12T11:38:14.000-0300",
+        "id":null,
+        "legal_terms":"https://api.mercadolibre.com/campaigns/1000952/terms_and_conditions/html",
+        "max_coupon_amount":10000,
+        "max_redeem_per_user":1
+      },
+      "coupon_code":null,
+      "discount":null,
+      "issuer":null,
+      "payer":{
+        "email":"test_user_47570744@testuser.com",
+        "name":"Test",
+        "id":null,
+        "identification":{
+          "number":"",
+          "type":""
+        },
+        "surname":"User",
+        "type":null
+      },
+      "payer_cost":null,
+      "payment_method":{
+        "accreditation_time":null,
+        "additional_info_needed":null,
+        "deferred_capture":null,
+        "financial_institutions":null,
+        "id":"account_money",
+        "max_allowed_amount":null,
+        "merchant_account_id":null,
+        "min_allowed_amount":null,
+        "name":"Account Money of Mercado Pago",
+        "payment_type_id":"account_money",
+        "processing_modes":[
+          "aggregator"
+        ],
+        "secure_thumbnail":null,
+        "settings":null,
+        "status":"active"
+      },
+      "raw_amount":500,
+      "token":null,
+      "transaction_amount":500
     }
-  },
-  {
-    "payment_method_id": "account_money",
-    "pref_id": "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014",
-    "public_key": "TEST-c8473389-df81-468c-96a8-71e2c7cd1f89",
-    "token":"a735d437b3ab0901b68b71cb49a0d8a0",
-    "payer": {
-      "email":"testuser.mla.20@gmail.com"
-    }
-  }
-]
+  ]
+}

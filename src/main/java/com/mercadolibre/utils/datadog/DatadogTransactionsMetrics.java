@@ -1,10 +1,8 @@
 package com.mercadolibre.utils.datadog;
 
 import com.mercadolibre.dto.payment.Payment;
-import com.mercadolibre.metrics.datadog.DatadogFuryMetricCollector;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.mercadolibre.metrics.MetricCollector;
+import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public final class DatadogTransactionsMetrics {
 
@@ -17,25 +15,23 @@ public final class DatadogTransactionsMetrics {
      * @param flow flow
      */
     public static void addTransactionData(final Payment payment, final String flow) {
-        DatadogFuryMetricCollector.INSTANCE.incrementCounter("px.checkout_mobile_payments.payment", getMetricTagsPayments(payment, flow));
-        DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.transaction_amount", payment.getTransactionAmount().doubleValue());
+        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", getMetricTags(payment, flow));
+        METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.transaction_amount", payment.getTransactionAmount().doubleValue());
 
         if (payment.getCouponId() != null) {
-            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
-            DatadogFuryMetricCollector.INSTANCE.gauge("px.checkout_mobile_payments.payment.coupon_amount", payment.getCouponAmount().doubleValue());
+            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
+            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_amount", payment.getCouponAmount().doubleValue());
         }
     }
 
-    private static String[] getMetricTagsPayments(final Payment payment, final String flow) {
-        final List<String> tags = new LinkedList<>();
-        tags.add("site_id:" + payment.getSiteId());
-        tags.add("status:" + payment.getStatus());
-        tags.add("status_detail:" + payment.getStatusDetail());
-        tags.add("payment_method_id:" + payment.getPaymentMethodId());
-        tags.add("marketplace:" + payment.getMarketplace());
-        tags.add("collector_id:" + payment.getCollector().getId());
-        tags.add("flow:" + flow);
-
-        return tags.toArray(new String[0]);
+    private static MetricCollector.Tags getMetricTags(final Payment payment, final String flow) {
+        return new MetricCollector.Tags()
+                .add("site_id", payment.getSiteId())
+                .add("status", payment.getStatus())
+                .add("status_detail", payment.getStatusDetail())
+                .add("payment_method_id", payment.getPaymentMethodId())
+                .add("marketplace", payment.getMarketplace())
+                .add("collector_id", payment.getCollector().getId())
+                .add("flow", flow);
     }
 }

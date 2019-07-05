@@ -1,6 +1,5 @@
 package com.mercadolibre.endpoints;
 
-import com.mercadolibre.api.MockAccessTokenAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
 import com.mercadolibre.constants.Constants;
@@ -20,7 +19,6 @@ import static io.restassured.RestAssured.get;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertNotNull;
 
 public class PreferenceRouterTest {
 
@@ -29,16 +27,16 @@ public class PreferenceRouterTest {
         RequestMockHolder.clear();
     }
 
-    public static final String ACCES_TOKEN  = "APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610";
     public static final String PREF_ID_INVALID  = "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014";
     public static final String PREF_VALID = "395662610-297aa2ed-4556-4085-859f-726ab9bab51f";
     public static final String PREF_ID_WITHOUT_SHIPMENT_NODE = "dde1cff2-0a52-45ca-bc7b-bbd7360128d5";
+    public static final String SHORT_ID = "23BYCZ";
 
 
     @Test
     public void initCheckout_invalidParams_400() throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference");
-
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
 
         final Response response = get(uriBuilder.build());
 
@@ -49,12 +47,10 @@ public class PreferenceRouterTest {
     public void initCheckout_invalidPref_400() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
 
         MockPreferenceAPI.getById(PREF_ID_INVALID, HttpStatus.SC_NOT_FOUND,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
-        MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/accesToken/APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610.json")));
 
         final Response response = get(uriBuilder.build());
 
@@ -64,15 +60,13 @@ public class PreferenceRouterTest {
     @Test
     public void initCheckout_validPref_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
-                .addParameter(Constants.PREF_ID, PREF_VALID)
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
+                .addParameter(Constants.SHORT_ID, SHORT_ID)
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREF_VALID, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-21ff9440-f9ab-4467-8ad7-c2847c064014.json")));
-        MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/accesToken/APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610.json")));
         MockPreferenceTidyAPI.getPreferenceByKey("23BYCZ", HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preferenceTidy/23BYCZ.json")));
 
@@ -85,8 +79,7 @@ public class PreferenceRouterTest {
     @Test
     public void initCheckout_invalidPreferenceTidySucces_500() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
-                .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
+                .addParameter(Constants.PREF_ID, PREF_ID_INVALID);
 
         MockPreferenceTidyAPI.getPreferenceByKey("23BYCZ", HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preferenceTidy/200InvalidPreference.json")));
@@ -100,14 +93,12 @@ public class PreferenceRouterTest {
     public void initCheckout_validOldPrefWithoutShipmentsNode_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_WITHOUT_SHIPMENT_NODE)
-                .addParameter(Constants.ACCESS_TOKEN, ACCES_TOKEN);
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREF_ID_WITHOUT_SHIPMENT_NODE, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/dde1cff2-0a52-45ca-bc7b-bbd7360128d5.json")));
-        MockAccessTokenAPI.getAccessToken(ACCES_TOKEN, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/accesToken/APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610.json")));
 
         final Response response = get(uriBuilder.build());
 
