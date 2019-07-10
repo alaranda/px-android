@@ -28,7 +28,6 @@ import spark.servlet.SparkApplication;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
-import static com.mercadolibre.constants.HeadersConstants.API_CONTEXT;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
 import static spark.Spark.afterAfter;
 

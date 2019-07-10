@@ -89,7 +89,7 @@ public enum PublicKeyAPI {
             final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL).get(url.toString());
             return buildResponse(headers, url, serviceResponse);
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
+            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, PATH, headers, e);
             throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }

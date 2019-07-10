@@ -51,37 +51,26 @@ repositories {
 }
 
 dependencies {
-	compile('com.mercadolibre.restclient:restclient-default:0.3.19') {
-		exclude module:'guava'
-		exclude module:'json-core'
-	}
-	compile('com.sparkjava:spark-core:2.6.0') {
-		exclude(module:'httpclient')
-		exclude(module:'gson')
-	}
-	compile 'com.google.code.findbugs:annotations:3.0.1'
-	compile 'org.apache.httpcomponents:httpcore:4.4.9'
+	compile "com.google.guava:guava:$guavaVersion"
+	compile "com.google.code.gson:gson:$gsonVersion"
+	compile "com.sparkjava:spark-core:$sparkVersion"
+	compile "com.mercadolibre.restclient:restclient-default:$restClientVersion"
+	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
 	compile 'commons-configuration:commons-configuration:1.10'
-	compile 'com.google.code.gson:gson:2.8.2'
-	compile 'log4j:log4j:1.2.17'
-	compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
-	compile 'org.slf4j:slf4j-api:1.7.25'
-	compile 'com.newrelic.agent.java:newrelic-api:4.11.0'
-	compile 'com.google.guava:guava:21.0'
 	compile 'com.mercadolibre.json:json-core:0.0.9'
-	compile 'com.mercadolibre.security:mlauth:0.0.6'
-	compile 'com.mercadolibre:i18n:1.6'
-	compile 'com.google.inject:guice:4.0'
-	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.2'
 
-	testCompile group:'com.mercadolibre', name:'kvsclient', version:'0.0.47', classifier:'tests'
-	testCompile group:'junit', name:'junit', version:'4.12'
-	testCompile group:'com.mercadolibre.restclient', name:'restclient-core', version:'0.2.3', classifier:'tests'
-	testCompile(group:'io.rest-assured', name:'rest-assured', version:'3.0.2') {
-		exclude(module:'httpclient')
-		exclude(module:'httpmime')
-	}
-	testCompile 'org.mockito:mockito-core:2.11.0'
+	// MLAuth for access_token filter info
+	compile 'com.mercadolibre.security:mlauth:0.0.8'
+
+	// Metrics and logs
+	compile 'log4j:log4j:1.2.17'
+	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.11'
+
+	// Test tools
+	testCompile 'junit:junit:4.12'
+	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
+	testCompile 'io.rest-assured:rest-assured:3.0.2'
+	testCompile 'org.mockito:mockito-core:2.28.2'
 }
 
 defaultTasks 'run'

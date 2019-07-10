@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.dto.Phone;
+import com.mercadolibre.gson.GsonWrapper;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -203,5 +204,11 @@ public class Payment {
         public Phone getPhone() {
             return phone;
         }
+    }
+
+    public String toLog(final Payment payment){
+        return new StringBuilder()
+                .append(String.format("responseBody: %s -", GsonWrapper.toJson(payment)))
+                .toString();
     }
 }

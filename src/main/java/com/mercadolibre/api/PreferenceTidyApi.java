@@ -58,7 +58,7 @@ public enum PreferenceTidyApi {
             }
             throw new ApiException(GsonWrapper.fromJson(RESTUtils.getBody(response), ApiError.class));
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, url, headers, e);
+            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, URL, headers, e);
             throw new ApiException("external_error", "API call to preferenceTidy failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
     }

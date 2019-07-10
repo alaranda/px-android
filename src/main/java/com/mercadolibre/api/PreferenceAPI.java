@@ -65,7 +65,7 @@ public enum PreferenceAPI {
     }
 
     private Either<Preference, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, url.getPath(), url.getQueryParams(), response, headers);
+        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, URL, url.getQueryParams(), response, headers);
         return RESTUtils.responseToEither(response, Preference.class);
     }
 
