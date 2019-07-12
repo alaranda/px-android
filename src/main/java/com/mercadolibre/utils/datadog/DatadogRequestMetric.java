@@ -28,6 +28,6 @@ public final class DatadogRequestMetric {
                 .add("request_path", request.pathInfo())
                 .add("response_status", response.status())
                 .add("response_status_pattern", getStatusPattern(response.status()))
-                .add("response_content_type", response.type());
+                .add("user_agent", request.userAgent());
     }
 }

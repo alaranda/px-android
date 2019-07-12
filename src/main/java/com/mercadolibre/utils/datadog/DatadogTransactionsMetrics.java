@@ -30,6 +30,7 @@ public final class DatadogTransactionsMetrics {
                 .add("status_detail", payment.getStatusDetail())
                 .add("payment_method_id", payment.getPaymentMethodId())
                 .add("collector_id", payment.getCollector().getId())
+                .add("client_id", payment.getClientId())
                 .add("flow", flow);
     }
 }
