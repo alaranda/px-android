@@ -159,9 +159,7 @@ public enum PaymentsController {
                 .withStatus(HttpStatus.SC_OK)
                 .withCallerId(String.valueOf(paymentRequest.getCallerId()))
                 .withClientId(String.valueOf(paymentRequest.getClientId()))
-                .withPaymentMethodId(paymentRequest.getBody().getPaymentMethodId())
-                .withResponse(payment.toString());
-        logBuilder.withMessage(payment.toLog(payment));
+                .withMessage(payment.toLog(payment));
 
         LOG.info(logBuilder.build());
     }

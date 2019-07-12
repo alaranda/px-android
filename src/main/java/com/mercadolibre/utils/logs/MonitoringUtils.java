@@ -190,7 +190,9 @@ public final class MonitoringUtils {
     }
 
     private static String convertQueryParam(List<NameValuePair> queryParams) {
-        //TODO remove access token
-        return queryParams.toString().replace("[", "{").replace("]", "}");
+        return queryParams.stream()
+                .filter(nvp -> !"access_token".equals(nvp.getName()))
+                .map(nvp -> '[' + nvp.getName() + ':' + nvp.getValue() + ']')
+                .reduce("", String::concat);
     }
 }

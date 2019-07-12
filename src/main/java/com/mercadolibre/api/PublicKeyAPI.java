@@ -62,7 +62,7 @@ public enum PublicKeyAPI {
     }
 
     private Either<PublicKeyInfo, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL, url.getPath(), url.getQueryParams(), response, headers);
+        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL, PATH, url.getQueryParams(), response, headers);
         return RESTUtils.responseToEither(response, PublicKeyInfo.class);
     }
 
@@ -89,7 +89,7 @@ public enum PublicKeyAPI {
             final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL).get(url.toString());
             return buildResponse(headers, url, serviceResponse);
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, PATH, headers, e);
+            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
             throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }

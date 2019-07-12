@@ -111,7 +111,7 @@ public enum PreferencesController {
                 .withSource(CONTROLLER_NAME)
                 .withStatus(org.apache.http.HttpStatus.SC_OK)
                 .withClientId(String.valueOf(clientId))
-                .withPref(preferenceResponse.getPrefId());
+                .withMessage(preferenceResponse.toLog(preferenceResponse));
 
         LOG.info(logBuilder.build());
     }

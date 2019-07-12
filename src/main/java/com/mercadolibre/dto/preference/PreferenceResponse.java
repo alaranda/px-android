@@ -17,4 +17,11 @@ public final class PreferenceResponse {
     public String getPublicKey() {
         return publicKey;
     }
+
+    public String toLog(final PreferenceResponse preferenceResponse){
+        return new StringBuilder()
+                .append(String.format("public_key: %s - ", preferenceResponse.getPublicKey()))
+                .append(String.format("pref_id: %s - ", preferenceResponse.getPrefId()))
+                .toString();
+    }
 }
