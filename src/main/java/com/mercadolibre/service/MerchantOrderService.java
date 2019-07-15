@@ -7,6 +7,7 @@ import com.mercadolibre.dto.payment.BasicUser;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.utils.Either;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ public enum MerchantOrderService {
      * @return el objeto Merchant Order
      * @throws ApiException si falla el api call (status code is not 2xx)
      */
+    @Trace
     public MerchantOrder createMerchantOrder(@Nonnull final String requestId, @Nonnull final Preference preference,
                                              @Nonnull final long payerId) throws ApiException {
 

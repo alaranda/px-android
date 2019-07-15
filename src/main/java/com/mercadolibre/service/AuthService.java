@@ -7,6 +7,7 @@ import com.mercadolibre.dto.access_token.AccessToken;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.utils.Either;
+import com.newrelic.api.agent.Trace;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -27,6 +28,7 @@ public enum AuthService {
      * @return PublicKey
      * @throws ApiException si falla PublicKeyAPI
      */
+    @Trace
     public final CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncPublicKey(final String requestId, final String publicKeyId) throws ApiException {
         return PublicKeyAPI.INSTANCE.getAsyncById(publicKeyId, requestId);
     }
@@ -56,6 +58,7 @@ public enum AuthService {
      * @return el objeto public key info
      * @throws ApiException si falla el api call (status code is not 2xx)
      */
+    @Trace
     public PublicKeyInfo getPublicKey(@Nonnull final String requestId, final String callerId, final Long clientId) throws ApiException {
         final Either<PublicKeyInfo, ApiError> pk = PublicKeyAPI.INSTANCE.getBycallerIdAndClientId(requestId, callerId, clientId);
         if (!pk.isValuePresent()) {

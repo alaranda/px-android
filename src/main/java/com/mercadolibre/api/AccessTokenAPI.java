@@ -13,6 +13,7 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.logs.MonitoringUtils;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -47,6 +48,7 @@ public enum AccessTokenAPI {
      * @return AccessToken object or api error
      * @throws ApiException (optional) if the api call fails
      */
+    @Trace
     public Either<AccessToken, ApiError> getById(final String accessTokenId, final String requestId) throws ApiException {
         final Headers headers = new Headers().add(REQUEST_ID, requestId);
         final URIBuilder url = buildUrl(accessTokenId);

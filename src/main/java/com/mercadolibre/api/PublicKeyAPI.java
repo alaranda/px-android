@@ -14,6 +14,7 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.logs.MonitoringUtils;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -48,6 +49,7 @@ public enum PublicKeyAPI {
      * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
      * @throws ApiException (optional) if the api call fail
      */
+    @Trace
     public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final String requestId, final String publicKey) throws ApiException {
         final Headers headers = getHeaders(requestId);
         final URIBuilder url = getPath(publicKey);
@@ -78,6 +80,7 @@ public enum PublicKeyAPI {
      * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
      * @throws ApiException (optional) if the api call fail
      */
+    @Trace
     public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final String requestId, final String callerId,
                                                                     final Long clientId)
             throws ApiException {

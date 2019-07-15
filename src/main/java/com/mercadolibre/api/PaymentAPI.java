@@ -15,6 +15,7 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.logs.MonitoringUtils;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -37,6 +38,7 @@ public enum PaymentAPI {
         );
     }
 
+    @Trace
     public Either<Payment, ApiError> doPayment(final Long callerId, final Long clientId, final PaymentBody body,
                                                final Headers headers) throws ApiException {
         final URIBuilder url = buildUrl(callerId, clientId);

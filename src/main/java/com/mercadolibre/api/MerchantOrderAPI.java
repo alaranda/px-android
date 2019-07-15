@@ -13,6 +13,7 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.logs.MonitoringUtils;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -34,6 +35,7 @@ public enum MerchantOrderAPI {
         );
     }
 
+    @Trace
     public Either<MerchantOrder, ApiError> createMerchantOrder(final String requestId, final MerchantOrder merchantOrderRequest,
                                                                final String collectorId) throws ApiException {
         final URIBuilder url = buildUrl(collectorId);

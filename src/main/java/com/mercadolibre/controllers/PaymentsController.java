@@ -12,6 +12,7 @@ import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import com.mercadolibre.utils.logs.LogBuilder;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
@@ -39,6 +40,7 @@ public enum PaymentsController {
      * @throws ApiException        si falla el api call (status code is not 2xx)
      * @throws ValidationException falla la validacion
      */
+    @Trace
     public Payment doLegacyPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
         final PaymentRequest paymentRequest = getLegacyPaymentRequest(request);
         final Payment payment = PaymentService.INSTANCE.doPayment(paymentRequest);
@@ -94,6 +96,7 @@ public enum PaymentsController {
      * @throws ApiException        si falla el api call (status code is not 2xx)
      * @throws ValidationException falla la validacion
      */
+    @Trace
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
         final PaymentRequest paymentRequest = getPaymentRequest(request);
         final Payment payment = PaymentService.INSTANCE.doPayment(paymentRequest);

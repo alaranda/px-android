@@ -12,14 +12,17 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.utils.Either;
+import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 import com.mercadolibre.utils.logs.LogBuilder;
 import com.mercadolibre.validators.PreferencesValidator;
+import com.newrelic.api.agent.Trace;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
+import java.net.MalformedURLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -40,7 +43,8 @@ public enum PreferencesController {
      * @return payment
      * @throws ApiException   si falla el api call (status code is not 2xx)
      */
-    public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
+    @Trace
+    public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException, MalformedURLException {
 
         try {
             final String requestId = request.attribute(REQUEST_ID);
@@ -64,7 +68,8 @@ public enum PreferencesController {
                    clientId);
 
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
-            logInitPref(preferenceResponse, clientId);
+            DatadogPreferencesMetric.addPreferenceData(preference);
+            logInitPref(preferenceResponse, preference);
             return preferenceResponse;
         } catch (ApiException e) {
             throw new ApiException(e.getCode(), "En este momento no estamos pudiendo procesar pagos", e.getStatusCode());
@@ -106,11 +111,11 @@ public enum PreferencesController {
         validator.validate(preference);
     }
 
-    private void logInitPref(final PreferenceResponse preferenceResponse, final long clientId) {
+    private void logInitPref(final PreferenceResponse preferenceResponse, final Preference preference) {
         final LogBuilder logBuilder = new LogBuilder(LogBuilder.LEVEL_INFO, LogBuilder.REQUEST_IN)
                 .withSource(CONTROLLER_NAME)
                 .withStatus(org.apache.http.HttpStatus.SC_OK)
-                .withClientId(String.valueOf(clientId))
+                .withClientId(String.valueOf(preference.getClientId()))
                 .withMessage(preferenceResponse.toLog(preferenceResponse));
 
         LOG.info(logBuilder.build());

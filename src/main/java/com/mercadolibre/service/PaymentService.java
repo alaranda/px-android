@@ -12,6 +12,7 @@ import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.Either;
+import com.newrelic.api.agent.Trace;
 import spark.utils.StringUtils;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +22,7 @@ public enum PaymentService {
 
     INSTANCE;
 
+    @Trace
     public Payment doPayment(final PaymentRequest paymentRequest) throws ApiException {
         Either<Payment, ApiError> payment = PaymentAPI.INSTANCE.doPayment(paymentRequest.getCallerId(), paymentRequest.getClientId(),
                 paymentRequest.getBody(), paymentRequest.getHeaders());
@@ -30,6 +32,7 @@ public enum PaymentService {
         return payment.getValue();
     }
 
+    @Trace
     public PaymentRequest getPaymentRequestLegacy(final PaymentRequestBody paymentRequestBody, final String publicKeyId, final String requestId, final Headers headers) throws ApiException, ExecutionException, InterruptedException {
 
         final PublicKeyAndPreference publicKeyAndPreference = getPublicKeyAndPreference(publicKeyId, paymentRequestBody.getPrefId(), requestId);
@@ -43,6 +46,7 @@ public enum PaymentService {
                 .build();
     }
 
+    @Trace
     public PaymentRequest getPaymentRequest(final PaymentDataBody paymentDataBody, final String publicKeyId,
                                             final String callerId, final String clientId, final String requestId, final Headers headers) throws InterruptedException, ApiException, ExecutionException {
 
