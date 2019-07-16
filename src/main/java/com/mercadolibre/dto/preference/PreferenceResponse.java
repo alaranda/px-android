@@ -4,10 +4,12 @@ public final class PreferenceResponse {
 
     final private String prefId;
     final private String publicKey;
+    final private boolean escEnabled;
 
     public PreferenceResponse (final String prefId, final String publicKey) {
         this.prefId = prefId;
         this.publicKey = publicKey;
+        this.escEnabled = true;
     }
 
     public String getPrefId() {
