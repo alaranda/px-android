@@ -47,6 +47,7 @@ public class Payment {
     private String statusDetail;
     private BigDecimal totalPaidAmount;
     private BigDecimal transactionAmount;
+    private String paymentTypeId;
 
     Payment() {}
 
@@ -185,6 +186,8 @@ public class Payment {
     public BigDecimal getTransactionAmount() {
         return transactionAmount;
     }
+
+    public String getPaymentTypeId() { return paymentTypeId; }
 
     public static final class Collector {
         private Long id;
