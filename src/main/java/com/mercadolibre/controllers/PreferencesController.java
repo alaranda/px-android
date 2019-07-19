@@ -3,6 +3,7 @@ package com.mercadolibre.controllers;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyApi;
 import com.mercadolibre.constants.Constants;
+import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceResponse;
@@ -12,6 +13,7 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.utils.Either;
+import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 import com.mercadolibre.utils.logs.LogBuilder;
 import com.mercadolibre.validators.PreferencesValidator;
@@ -23,10 +25,13 @@ import spark.Response;
 import spark.utils.StringUtils;
 
 import java.net.MalformedURLException;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 public enum PreferencesController {
 
@@ -58,7 +63,7 @@ public enum PreferencesController {
 
             if (!futurePreference.get().isValuePresent()) {
                 final ApiError apiError = futurePreference.get().getAlternative();
-                throw new ApiException("external_error", "API call to preference failed", apiError.getStatus());
+                throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.API_CALL_FAILED, apiError.getStatus());
             }
 
             final Preference preference = futurePreference.get().getValue();
@@ -72,7 +77,7 @@ public enum PreferencesController {
             logInitPref(preferenceResponse, preference);
             return preferenceResponse;
         } catch (ApiException e) {
-            throw new ApiException(e.getCode(), "En este momento no estamos pudiendo procesar pagos", e.getStatusCode());
+            throw new ApiException(e.getCode(), ErrorsConstants.getGeneralErrorByLanguage(request.headers(LANGUAGE)), e.getStatusCode());
         }
     }
 
@@ -87,7 +92,7 @@ public enum PreferencesController {
             return request.queryParams(Constants.PREF_ID);
         }
 
-        throw new ApiException("Invalid Params", "Error getting parameters", HttpStatus.BAD_REQUEST_400);
+        throw new ApiException(ErrorsConstants.INVALID_PARAMS, ErrorsConstants.GETTING_PARAMETERS, HttpStatus.BAD_REQUEST_400);
     }
 
     private String isShortKey(final String shortKey, final String requestId) throws ApiException {
@@ -96,13 +101,13 @@ public enum PreferencesController {
             final PreferenceTidy preferenceTidy = PreferenceTidyApi.INSTANCE.getPreferenceByKey(requestId, shortKey);
             String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
             if (splitLongUrl.length != 2) {
-                throw new ApiException("external_error", "invalid preference", HttpStatus.INTERNAL_SERVER_ERROR_500);
+                throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.INVALID_PREFERENCE, HttpStatus.INTERNAL_SERVER_ERROR_500);
             }
             String preId = splitLongUrl[1];
             return preId;
 
         } catch (Exception e) {
-            throw new ApiException(e.getMessage(), "Error getting parameters by short key", HttpStatus.INTERNAL_SERVER_ERROR_500);
+            throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.INTERNAL_SERVER_ERROR_500);
         }
     }
 

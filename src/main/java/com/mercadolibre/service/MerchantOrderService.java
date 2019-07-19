@@ -7,6 +7,7 @@ import com.mercadolibre.dto.payment.BasicUser;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.utils.Either;
+import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 
@@ -29,7 +30,7 @@ public enum MerchantOrderService {
                                              @Nonnull final long payerId) throws ApiException {
 
         if (payerId == preference.getCollectorId()) {
-            throw  new ApiException("internal_error","Payer equals Collector", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()
