@@ -13,6 +13,7 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
+import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.logs.MonitoringUtils;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
@@ -59,7 +60,7 @@ public enum PublicKeyAPI {
             return completableFutureResponse.thenApply(response -> buildResponse(headers, url, response));
         } catch (final RestException e) {
             MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
-            throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

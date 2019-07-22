@@ -12,6 +12,7 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
+import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.logs.MonitoringUtils;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
@@ -48,7 +49,7 @@ public enum MerchantOrderAPI {
             return buildResponse(headers, url, response);
         } catch (RestException e) {
             MonitoringUtils.logException(HttpMethod.POST.name(), POOL_WRITE_NAME, URL, headers, e);
-            throw new ApiException("external_error", "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
