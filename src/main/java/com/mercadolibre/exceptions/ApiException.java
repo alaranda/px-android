@@ -2,7 +2,6 @@ package com.mercadolibre.exceptions;
 
 import com.google.common.collect.ImmutableMap;
 import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.utils.logs.LogBuilder;
 import org.apache.http.HttpStatus;
 
 import java.util.Map;
@@ -110,13 +109,4 @@ public class ApiException extends Exception {
                 + ", statusCode=" + statusCode
                 + '}';
     }
-
-    public String toLog() {
-        final String level = statusCode >= HttpStatus.SC_BAD_REQUEST ? LogBuilder.LEVEL_ERROR : LogBuilder.LEVEL_INFO;
-        LogBuilder logBuilder = new LogBuilder(level, LogBuilder.REQUEST_IN)
-                .withStatus(statusCode)
-                .withException(code, description);
-        return logBuilder.build();
-    }
-
 }

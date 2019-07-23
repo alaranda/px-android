@@ -19,7 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTI
 @SuppressFBWarnings(value = "FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY", justification = "Dependant classes")
 public final class RESTUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(RESTUtils.class);
+    private final static Logger logger = LogManager.getLogger();
 
     private static final ConcurrentMap<String, RestClient> REST_CLIENTS = new ConcurrentHashMap<>();
     private static final String DEFAULT_POOL = "__px_checkout_mobile_payments_default_pool__";
@@ -95,7 +96,7 @@ public final class RESTUtils {
                         .withName(poolName).build();
                 return RestClient.builder().withPool(pool).disableDefault().build();
             } catch (final IOException e) {
-                LOGGER.info(String.format("[method:registerPool] [exception:%s]", e.getMessage(), e));
+                logger.info(String.format("[method:registerPool] [exception:%s]", e.getMessage(), e));
                 throw new RuntimeException("Failed to create pool / REST client for " + poolName, e);
             }
         });
@@ -112,7 +113,7 @@ public final class RESTUtils {
         RestClient client = REST_CLIENTS.get(poolName);
         if (client == null) {
             // Avoid runtime errors, but log a proper error
-            LOGGER.error("Attempting to use a non existing REST pool '" + poolName + "'");
+            logger.error("Attempting to use a non existing REST pool '" + poolName + "'");
             client = REST_CLIENTS.get(DEFAULT_POOL);
         }
 
@@ -148,7 +149,7 @@ public final class RESTUtils {
                 return IOUtils.toString(new GZIPInputStream(new ByteArrayInputStream(
                     response.getBytes())), StandardCharsets.UTF_8);
             } catch (final IOException e) {
-                LOGGER.error(String.format("[method:getBody] [exception:%s]", e.getMessage(), e));
+                logger.error(String.format("[method:getBody] [exception:%s]", e.getMessage(), e));
             }
         }
         if (response.getHeaders().contains(HttpHeaders.CONTENT_TYPE)) {

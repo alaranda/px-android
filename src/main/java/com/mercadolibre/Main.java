@@ -2,7 +2,8 @@ package com.mercadolibre;
 
 import com.mercadolibre.router.Router;
 import com.mercadolibre.security.authentication.filters.impl.ExternalAuthenticationFilter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import spark.Spark;
 import spark.embeddedserver.EmbeddedServers;
@@ -17,6 +18,7 @@ import static spark.embeddedserver.EmbeddedServers.Identifiers.JETTY;
 
 public class Main {
 
+    private final static Logger logger = LogManager.getLogger();
     private static final int FURY_PORT = 8080;
 
     public static void main(String[] args) {
@@ -24,7 +26,7 @@ public class Main {
         Spark.port(FURY_PORT);
         new Router().init();
         Spark.awaitInitialization();
-        Logger.getLogger(Main.class).info("Listening on port " + FURY_PORT);
+        logger.info("Listening on port " + FURY_PORT);
     }
 
     private static void setupSparkServer() {

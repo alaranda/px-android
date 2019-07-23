@@ -3,7 +3,6 @@ package com.mercadolibre.controllers;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyApi;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceResponse;
@@ -11,33 +10,33 @@ import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
-import com.mercadolibre.utils.logs.LogBuilder;
 import com.mercadolibre.validators.PreferencesValidator;
 import com.newrelic.api.agent.Trace;
-import org.apache.log4j.Logger;
-import org.eclipse.jetty.http.HttpStatus;
+import org.apache.http.HttpStatus;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
 import java.net.MalformedURLException;
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public enum PreferencesController {
-
     INSTANCE;
 
-    private static final Logger LOG = Logger.getLogger(PreferencesController.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final String CONTROLLER_NAME = "InitPreferenceController";
 
     /**
@@ -52,12 +51,12 @@ public enum PreferencesController {
     public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException, MalformedURLException {
 
         try {
-            final String requestId = request.attribute(REQUEST_ID);
+            final Context context = new Context(new Context.Builder(request.attribute(REQUEST_ID)));
             final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
-            final String prefId = extractParamPrefId(request, requestId);
+            final String prefId = extractParamPrefId(request, context);
 
             final CompletableFuture<Either<Preference, ApiError>> futurePreference =
-                    PreferenceAPI.INSTANCE.geAsynctPreference(prefId, requestId);
+                    PreferenceAPI.INSTANCE.geAsynctPreference(context, prefId);
 
             CompletableFuture.allOf(futurePreference);
 
@@ -69,45 +68,45 @@ public enum PreferencesController {
             final Preference preference = futurePreference.get().getValue();
             validatePref(preference);
 
-            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(requestId, preference.getCollectorId().toString(),
+            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(),
                    clientId);
 
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
             DatadogPreferencesMetric.addPreferenceData(preference);
-            logInitPref(preferenceResponse, preference);
+            logInitPref(context, preferenceResponse, preference);
             return preferenceResponse;
         } catch (ApiException e) {
             throw new ApiException(e.getCode(), ErrorsConstants.getGeneralErrorByLanguage(request.headers(LANGUAGE)), e.getStatusCode());
         }
     }
 
-    private String extractParamPrefId(final Request request, final String requestId) throws ApiException {
+    private String extractParamPrefId(final Request request, final Context context) throws ApiException {
 
         if (!StringUtils.isBlank(request.queryParams(Constants.SHORT_ID))){
 
-            return isShortKey(request.queryParams(Constants.SHORT_ID), requestId);
+            return isShortKey(context, request.queryParams(Constants.SHORT_ID));
 
         } else if (request.queryParams(Constants.PREF_ID) != null){
 
             return request.queryParams(Constants.PREF_ID);
         }
 
-        throw new ApiException(ErrorsConstants.INVALID_PARAMS, ErrorsConstants.GETTING_PARAMETERS, HttpStatus.BAD_REQUEST_400);
+        throw new ApiException(ErrorsConstants.INVALID_PARAMS, ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_BAD_REQUEST);
     }
 
-    private String isShortKey(final String shortKey, final String requestId) throws ApiException {
+    private String isShortKey(final Context context, final String shortKey) throws ApiException {
 
         try {
-            final PreferenceTidy preferenceTidy = PreferenceTidyApi.INSTANCE.getPreferenceByKey(requestId, shortKey);
+            final PreferenceTidy preferenceTidy = PreferenceTidyApi.INSTANCE.getPreferenceByKey(context, shortKey);
             String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
             if (splitLongUrl.length != 2) {
-                throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.INVALID_PREFERENCE, HttpStatus.INTERNAL_SERVER_ERROR_500);
+                throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.INVALID_PREFERENCE, HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
             String preId = splitLongUrl[1];
             return preId;
 
         } catch (Exception e) {
-            throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.INTERNAL_SERVER_ERROR_500);
+            throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -116,13 +115,13 @@ public enum PreferencesController {
         validator.validate(preference);
     }
 
-    private void logInitPref(final PreferenceResponse preferenceResponse, final Preference preference) {
-        final LogBuilder logBuilder = new LogBuilder(LogBuilder.LEVEL_INFO, LogBuilder.REQUEST_IN)
-                .withSource(CONTROLLER_NAME)
-                .withStatus(org.apache.http.HttpStatus.SC_OK)
-                .withClientId(String.valueOf(preference.getClientId()))
-                .withMessage(preferenceResponse.toLog(preferenceResponse));
+    private void logInitPref(final Context context, final PreferenceResponse preferenceResponse, final Preference preference) {
 
-        LOG.info(logBuilder.build());
+        logger.info(requestInLogBuilder(context.getRequestId())
+                .withSource(CONTROLLER_NAME)
+                .withStatus(HttpStatus.SC_OK)
+                .withClientId(String.valueOf(preference.getClientId()))
+                .withMessage(preferenceResponse.toLog(preferenceResponse))
+                .build());
     }
 }

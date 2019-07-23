@@ -7,6 +7,8 @@ import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
@@ -15,22 +17,23 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.mercadolibre.utils.logs.MonitoringUtils;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 
 public enum PaymentAPI {
-
     INSTANCE;
 
+    private static final Logger logger = LogManager.getLogger();
     public static final String URL = "/v1/payments";
-    public static final String POOL_WRITE_NAME = "PaymentsWrite";
+    public static final String POOl_NAME = "PaymentsWrite";
 
     static {
-        RESTUtils.registerPool(POOL_WRITE_NAME, pool ->
+        RESTUtils.registerPool(POOl_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
                         .withRetryStrategy(
@@ -40,16 +43,16 @@ public enum PaymentAPI {
     }
 
     @Trace
-    public Either<Payment, ApiError> doPayment(final Long callerId, final Long clientId, final PaymentBody body,
+    public Either<Payment, ApiError> doPayment(final Context context, final Long callerId, final Long clientId, final PaymentBody body,
                                                final Headers headers) throws ApiException {
         final URIBuilder url = buildUrl(callerId, clientId);
 
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_WRITE_NAME)
+            final Response response = RESTUtils.newRestRequestBuilder(POOl_NAME)
                     .post(url.toString(), headers, GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8));
-            return buildResponse(headers, url, response);
+            return buildResponse(context, headers, url, response);
         } catch (RestException e) {
-            MonitoringUtils.logException(HttpMethod.POST.name(), POOL_WRITE_NAME, URL, headers, e);
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.POST.name(), POOl_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -63,8 +66,12 @@ public enum PaymentAPI {
                 .addParameter("client.id", String.valueOf(clientId));
     }
 
-    private Either<Payment, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_WRITE_NAME, url.toString(), url.getQueryParams(), response, headers);
+    private Either<Payment, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
+        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
+            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.POST.name(), POOl_NAME, url.toString(),headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        } else {
+            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.POST.name(), POOl_NAME, url.toString(),headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        }
         return RESTUtils.responseToEither(response, Payment.class);
     }
 }

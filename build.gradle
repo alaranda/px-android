@@ -58,12 +58,17 @@ dependencies {
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
 	compile 'commons-configuration:commons-configuration:1.10'
 	compile 'com.mercadolibre.json:json-core:0.0.9'
+	compile 'com.mercadolibre.px:px-toolkit:0.14.1'
 
 	// MLAuth for access_token filter info
 	compile 'com.mercadolibre.security:mlauth:0.0.8'
 
+	// Apache
+	compile 'org.apache.httpcomponents:httpcore:4.4.9'
+
 	// Metrics and logs
-	compile 'log4j:log4j:1.2.17'
+	compile 'org.apache.logging.log4j:log4j-api:2.11.2'
+	compile 'org.apache.logging.log4j:log4j-core:2.11.2'
 	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.11'
 
 	// Test tools

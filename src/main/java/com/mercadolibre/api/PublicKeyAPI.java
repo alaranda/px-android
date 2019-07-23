@@ -6,6 +6,8 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
@@ -14,24 +16,25 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.mercadolibre.utils.logs.MonitoringUtils;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.utils.HeadersUtils.getHeaders;
 
 public enum PublicKeyAPI {
-
     INSTANCE;
 
-    private static final String PATH = "/v1/public_key";
-    private static final String POOL = "PUBLIC_KEY_SERVICE_REST_POOL";
+    private static final Logger logger = LogManager.getLogger();
+    private static final String URL = "/v1/public_key";
+    private static final String POOL_NAME = "PUBLIC_KEY_SERVICE_REST_POOL";
 
     static {
-        RESTUtils.registerPool(POOL, pool ->
+        RESTUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("public_key.socket.timeout"))
                         .withRetryStrategy(
@@ -45,27 +48,31 @@ public enum PublicKeyAPI {
      * The model PublicKey will be returned.
      * If an error occurs while parsing the response then null is returned.
      *
-     * @param requestId request id
+     * @param context context object
      * @param publicKey public key id
      * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
      * @throws ApiException (optional) if the api call fail
      */
     @Trace
-    public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final String requestId, final String publicKey) throws ApiException {
-        final Headers headers = getHeaders(requestId);
+    public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final Context context, final String publicKey) throws ApiException {
+        final Headers headers = getHeaders(context.getRequestId());
         final URIBuilder url = getPath(publicKey);
 
         try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL).asyncGet(url.toString(), headers);
-            return completableFutureResponse.thenApply(response -> buildResponse(headers, url, response));
+            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+            return completableFutureResponse.thenApply(response -> buildResponse(context, headers, url, response));
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private Either<PublicKeyInfo, ApiError> buildResponse(final Headers headers, final URIBuilder url, final Response response) {
-        MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL, PATH, url.getQueryParams(), response, headers);
+    private Either<PublicKeyInfo, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
+        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
+            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        } else {
+            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        }
         return RESTUtils.responseToEither(response, PublicKeyInfo.class);
     }
 
@@ -82,18 +89,18 @@ public enum PublicKeyAPI {
      * @throws ApiException (optional) if the api call fail
      */
     @Trace
-    public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final String requestId, final String callerId,
+    public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final Context context, final String callerId,
                                                                     final Long clientId)
             throws ApiException {
 
-        final Headers headers = getHeaders(requestId);
+        final Headers headers = getHeaders(context.getRequestId());
         final URIBuilder url = getPathWithParams(callerId, clientId);
 
         try {
-            final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL).get(url.toString());
-            return buildResponse(headers, url, serviceResponse);
+            final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
+            return buildResponse(context, headers, url, serviceResponse);
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL, url.toString(), headers, e);
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
             throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -103,7 +110,7 @@ public enum PublicKeyAPI {
         return new URIBuilder()
                 .setScheme(Config.getString(Constants.PUBLIC_KEY_URL_SCHEME))
                 .setHost(Config.getString(Constants.PUBLIC_KEY_URL_HOST))
-                .setPath((PATH + "/" + publicKey));
+                .setPath((URL + "/" + publicKey));
     }
 
 
@@ -112,7 +119,7 @@ public enum PublicKeyAPI {
         return new URIBuilder()
                 .setScheme(Config.getString(Constants.PUBLIC_KEY_URL_SCHEME))
                 .setHost(Config.getString(Constants.PUBLIC_KEY_URL_HOST))
-                .setPath(PATH)
+                .setPath(URL)
                 .addParameter("caller.id", callerId)
                 .addParameter("client.id", String.valueOf(clientId));
     }
