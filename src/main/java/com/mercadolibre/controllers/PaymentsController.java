@@ -5,16 +5,18 @@ import com.mercadolibre.dto.payment.*;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
 import com.mercadolibre.utils.HeadersUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
-import com.mercadolibre.utils.logs.LogBuilder;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import spark.Request;
 import spark.Response;
@@ -23,12 +25,13 @@ import spark.utils.StringUtils;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public enum PaymentsController {
 
     INSTANCE;
 
-    private static final Logger LOG = Logger.getLogger(PaymentsController.class);
+    private static final Logger logger = LogManager.getLogger();
     private static final String CONTROLLER_NAME = "PaymentsController";
 
     /**
@@ -42,10 +45,12 @@ public enum PaymentsController {
      */
     @Trace
     public Payment doLegacyPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
-        final PaymentRequest paymentRequest = getLegacyPaymentRequest(request);
-        final Payment payment = PaymentService.INSTANCE.doPayment(paymentRequest);
+
+        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
+        final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
+        final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
         DatadogTransactionsMetrics.addTransactionData(payment, Constants.FLOW_NAME_LEGACY_PAYMENTS);
-        logPayment(paymentRequest, payment);
+        logPayment(context, paymentRequest, payment);
         return payment;
     }
 
@@ -61,9 +66,8 @@ public enum PaymentsController {
      * @throws ValidationException validation exception
      * @throws ApiException        api exception
      */
-    private PaymentRequest getLegacyPaymentRequest(final Request request) throws ApiException, ExecutionException, InterruptedException {
+    private PaymentRequest getLegacyPaymentRequest(final Request request, final Context context) throws ApiException, ExecutionException, InterruptedException {
 
-        final String requestId = request.attribute(REQUEST_ID);
         final Headers headers = HeadersUtils.fromSparkHeaders(request);
         final PaymentRequestBody paymentRequestBody = getPaymentRequestBody(request);
         final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY)  != null ? request.queryParams(Constants.PUBLIC_KEY) : paymentRequestBody.getPublicKey();
@@ -71,7 +75,7 @@ public enum PaymentsController {
         if (StringUtils.isBlank(paymentRequestBody.getPublicKey()) && StringUtil.isBlank(request.queryParams(Constants.PUBLIC_KEY))){
             throw new ValidationException("public key required");
         }
-        return PaymentService.INSTANCE.getPaymentRequestLegacy(paymentRequestBody, publicKeyId, requestId, headers);
+        return PaymentService.INSTANCE.getPaymentRequestLegacy(context, paymentRequestBody, publicKeyId, headers);
     }
 
     private PaymentRequestBody getPaymentRequestBody(final Request request) throws ApiException {
@@ -98,11 +102,13 @@ public enum PaymentsController {
      */
     @Trace
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
-        final PaymentRequest paymentRequest = getPaymentRequest(request);
-        final Payment payment = PaymentService.INSTANCE.doPayment(paymentRequest);
+
+        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
+        final PaymentRequest paymentRequest = getPaymentRequest(request, context);
+        final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
         final String flow = request.queryParams(Constants.CALLER_ID_PARAM) != null ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
         DatadogTransactionsMetrics.addTransactionData(payment, flow);
-        logPayment(paymentRequest, payment);
+        logPayment(context, paymentRequest, payment);
 
         return payment;
     }
@@ -118,9 +124,8 @@ public enum PaymentsController {
      * @throws ValidationException validation exception
      * @throws ApiException        api exception
      */
-    private PaymentRequest getPaymentRequest(final Request request) throws ApiException, ExecutionException, InterruptedException {
+    private PaymentRequest getPaymentRequest(final Request request, final Context context) throws ApiException, ExecutionException, InterruptedException {
 
-        final String requestId = request.attribute(REQUEST_ID);
         final String publicKeyId = request.queryParams(Constants.PUBLIC_KEY);
         final String callerId = request.queryParams(Constants.CALLER_ID_PARAM);
         final String clientId = request.queryParams(Constants.CLIENT_ID_PARAM);
@@ -128,7 +133,7 @@ public enum PaymentsController {
         final PaymentDataBody paymentDataBody = getListPaymentData(request);
 
         final Headers headers = HeadersUtils.fromSparkHeaders(request);
-        return PaymentService.INSTANCE.getPaymentRequest(paymentDataBody, publicKeyId, callerId, clientId, requestId, headers);
+        return PaymentService.INSTANCE.getPaymentRequest(context, paymentDataBody, publicKeyId, callerId, clientId, headers);
     }
 
     private PaymentDataBody getListPaymentData(final Request request) throws ApiException {
@@ -156,14 +161,13 @@ public enum PaymentsController {
         }
     }
 
-    private void logPayment(final PaymentRequest paymentRequest, final Payment payment) {
-        final LogBuilder logBuilder = new LogBuilder(LogBuilder.LEVEL_INFO, LogBuilder.REQUEST_IN)
+    private void logPayment(final Context context, final PaymentRequest paymentRequest, final Payment payment) {
+
+        logger.info(requestInLogBuilder(context.getRequestId())
                 .withSource(CONTROLLER_NAME)
                 .withStatus(HttpStatus.SC_OK)
                 .withCallerId(String.valueOf(paymentRequest.getCallerId()))
-                .withClientId(String.valueOf(paymentRequest.getClientId()))
-                .withMessage(payment.toLog(payment));
-
-        LOG.info(logBuilder.build());
+                .withClientId(String.valueOf(paymentRequest.getCallerId()))
+                .withMessage(payment.toLog(payment)).build());
     }
 }

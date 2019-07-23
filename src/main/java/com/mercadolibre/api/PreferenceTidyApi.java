@@ -7,6 +7,8 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
@@ -15,22 +17,23 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.mercadolibre.utils.logs.MonitoringUtils;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
 
 public enum PreferenceTidyApi {
-
     INSTANCE;
 
-    public static final String POOL_READ_NAME = "preferenceTidyRead";
+    private static final Logger logger = LogManager.getLogger();
+    public static final String POOL_NAME = "preferenceTidyRead";
     public static final String URL = "/tidy/";
 
     static {
-        RESTUtils.registerPool(POOL_READ_NAME, pool ->
+        RESTUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("preference_tidy.socket.timeout"))
                         .withRetryStrategy(
@@ -39,29 +42,30 @@ public enum PreferenceTidyApi {
         );
     }
 
-
     /**
      * Hace el API call a Preference Tidy para obtener el id de la preferencia
      *
-     * @param requestId id del request
+     * @param context context
      * @return preferenceTidy
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */
     @Trace
-    public PreferenceTidy getPreferenceByKey(final String requestId,
-                                    final String key) throws ApiException {
+    public PreferenceTidy getPreferenceByKey(final Context context, final String key) throws ApiException {
         final Headers headers = new Headers().add(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .add(X_REQUEST_ID, requestId);
+                .add(X_REQUEST_ID, context.getRequestId());
         final String url = buildUrl(key);
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_READ_NAME).get(url, headers);
-            MonitoringUtils.logWithoutResponseBody(HttpMethod.GET.name(), POOL_READ_NAME, url, response, headers);
-            if (RESTUtils.isResponseSuccessful(response)) {
+            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url, headers);
+
+            if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
+                logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
                 return RESTUtils.responseToObject(response, PreferenceTidy.class);
+            } else {
+                logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
             }
             throw new ApiException(GsonWrapper.fromJson(RESTUtils.getBody(response), ApiError.class));
         } catch (final RestException e) {
-            MonitoringUtils.logException(HttpMethod.GET.name(), POOL_READ_NAME, URL, headers, e);
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, e));
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to preferenceTidy failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
     }

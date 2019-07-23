@@ -4,7 +4,7 @@ public class Address {
 
     private String zipCode;
     private String streetName;
-    private Integer streetNumber;
+    private String streetNumber;
 
     Address() {
     }
@@ -13,7 +13,7 @@ public class Address {
         return streetName;
     }
 
-    public Integer getStreetNumber() {
+    public String getStreetNumber() {
         return streetNumber;
     }
 
