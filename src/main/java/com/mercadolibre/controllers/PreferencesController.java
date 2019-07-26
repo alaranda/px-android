@@ -11,7 +11,6 @@ import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
-import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;

@@ -6,7 +6,6 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.dto.Context;
-import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
 import com.mercadolibre.utils.HeadersUtils;
@@ -49,7 +48,7 @@ public enum PaymentsController {
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
         final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
         final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
-        DatadogTransactionsMetrics.addTransactionData(payment, Constants.FLOW_NAME_LEGACY_PAYMENTS);
+        DatadogTransactionsMetrics.addLegacyPaymentsTransactionData(payment, Constants.FLOW_NAME_LEGACY_PAYMENTS);
         logPayment(context, paymentRequest, payment);
         return payment;
     }
@@ -107,7 +106,7 @@ public enum PaymentsController {
         final PaymentRequest paymentRequest = getPaymentRequest(request, context);
         final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
         final String flow = request.queryParams(Constants.CALLER_ID_PARAM) != null ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
-        DatadogTransactionsMetrics.addTransactionData(payment, flow);
+        DatadogTransactionsMetrics.addPaymentsTransactionData(payment, flow);
         logPayment(context, paymentRequest, payment);
 
         return payment;

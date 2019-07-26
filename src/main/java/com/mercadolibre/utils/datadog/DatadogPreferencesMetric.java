@@ -23,7 +23,6 @@ public class DatadogPreferencesMetric {
 
     private static MetricCollector.Tags getMetricTags(final Preference preference) throws MalformedURLException {
         return new MetricCollector.Tags()
-                .add("client_id", preference.getClientId())
                 .add("init_url", formatUrl(preference.getInitPoint()));
     }
 
