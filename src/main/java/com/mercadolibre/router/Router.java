@@ -56,7 +56,7 @@ public class Router implements SparkApplication {
         Spark.path("/px_mobile", () -> {
 
             Spark.post("/legacy_payments", new MeteredRoute(PaymentsController.INSTANCE::doLegacyPayment,
-                    "/payments"), GsonWrapper::toJson);
+                    "/legacy_payments"), GsonWrapper::toJson);
 
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
