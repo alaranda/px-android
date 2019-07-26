@@ -14,23 +14,34 @@ public final class DatadogTransactionsMetrics {
      * @param payment payment
      * @param flow flow
      */
-    public static void addTransactionData(final Payment payment, final String flow) {
-        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", getMetricTags(payment, flow));
+    public static void addLegacyPaymentsTransactionData(final Payment payment, final String flow) {
+        MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
+        tags.add("collector_id", payment.getCollector().getId());
 
-        if (payment.getCouponId() != null) {
-            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
-            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_amount", payment.getCouponAmount().doubleValue());
-        }
+        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", tags);
     }
 
-    private static MetricCollector.Tags getMetricTags(final Payment payment, final String flow) {
+    public static void addPaymentsTransactionData(final Payment payment, final String flow) {
+        MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
+
+        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", tags);
+    }
+
+    private static MetricCollector.Tags getBasicTransactionMetricTags(final Payment payment, final String flow) {
+
+        addDiscountMetrics(payment);
         return new MetricCollector.Tags()
                 .add("site_id", payment.getSiteId())
                 .add("status", payment.getStatus())
                 .add("status_detail", payment.getStatusDetail())
                 .add("payment_method_id", payment.getPaymentMethodId())
-                .add("collector_id", payment.getCollector().getId())
-                .add("client_id", payment.getClientId())
                 .add("flow", flow);
+    }
+
+    private static void addDiscountMetrics(final Payment payment) {
+        if (payment.getCouponId() != null) {
+            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
+            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_amount", payment.getCouponAmount().doubleValue());
+        }
     }
 }
