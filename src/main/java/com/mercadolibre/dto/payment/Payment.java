@@ -214,8 +214,6 @@ public class Payment {
                 .append(String.format("id: %s - ", payment.getId()))
                 .append(String.format("coupon_amount: %s - ", payment.getCouponAmount()))
                 .append(String.format("site_id: %s - ", payment.getSiteId()))
-                .append(String.format("status: %s - ", payment.getStatus()))
-                .append(String.format("status_detail: %s - ", payment.getStatusDetail()))
                 .append(String.format("payment_method_id: %s - ", payment.getPaymentMethodId()))
                 .append(String.format("transaction_amount: %s -", payment.getTransactionAmount()))
                 .toString();

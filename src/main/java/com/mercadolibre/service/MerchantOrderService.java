@@ -28,7 +28,7 @@ public enum MerchantOrderService {
     public MerchantOrder createMerchantOrder(final Context context, final Preference preference, final long payerId) throws ApiException {
 
         if (payerId == preference.getCollectorId()) {
-            throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()
