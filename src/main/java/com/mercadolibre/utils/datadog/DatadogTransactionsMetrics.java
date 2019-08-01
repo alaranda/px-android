@@ -40,8 +40,7 @@ public final class DatadogTransactionsMetrics {
 
     private static void addDiscountMetrics(final Payment payment) {
         if (payment.getCouponId() != null) {
-            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_quantity", 1);
-            METRIC_COLLECTOR.gauge("px.checkout_mobile_payments.payment.coupon_amount", payment.getCouponAmount().doubleValue());
+            METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.coupons");
         }
     }
 }
