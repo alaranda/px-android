@@ -7,6 +7,7 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
@@ -16,7 +17,6 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +24,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.utils.HeadersUtils.getHeaders;
 
 public enum PublicKeyAPI {
@@ -31,7 +33,7 @@ public enum PublicKeyAPI {
 
     private static final Logger logger = LogManager.getLogger();
     private static final String URL = "/v1/public_key";
-    private static final String POOL_NAME = "PUBLIC_KEY_SERVICE_REST_POOL";
+    private static final String POOL_NAME = "PublicKeyRead";
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
@@ -53,16 +55,22 @@ public enum PublicKeyAPI {
      * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
      * @throws ApiException (optional) if the api call fail
      */
-    @Trace
     public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final Context context, final String publicKey) throws ApiException {
         final Headers headers = getHeaders(context.getRequestId());
         final URIBuilder url = getPath(publicKey);
 
         try {
             final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
-            return completableFutureResponse.thenApply(response -> buildResponse(context, headers, url, response));
+            return completableFutureResponse.thenApply(response -> {
+                    DatadogUtils.metricCollector.incrementCounter(
+                            REQUEST_OUT_COUNTER,
+                            DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
+                    );
+                    return buildResponse(context, headers, url, response);
+            });
         } catch (final RestException e) {
             logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
+            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -82,13 +90,12 @@ public enum PublicKeyAPI {
      * The model PublicKey will be returned.
      * If an error occurs while parsing the response then null is returned.
      *
-     * @param requestId request id
+     * @param context context object
      * @param callerId caller id
      * @param clientId client id
      * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
      * @throws ApiException (optional) if the api call fail
      */
-    @Trace
     public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final Context context, final String callerId,
                                                                     final Long clientId)
             throws ApiException {
@@ -97,10 +104,15 @@ public enum PublicKeyAPI {
         final URIBuilder url = getPathWithParams(callerId, clientId);
 
         try {
-            final Response serviceResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
-            return buildResponse(context, headers, url, serviceResponse);
+            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
+            DatadogUtils.metricCollector.incrementCounter(
+                    REQUEST_OUT_COUNTER,
+                    DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
+            );
+            return buildResponse(context, headers, url, response);
         } catch (final RestException e) {
             logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
+            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }

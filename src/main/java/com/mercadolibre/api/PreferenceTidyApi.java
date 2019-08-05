@@ -8,6 +8,7 @@ import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
@@ -23,14 +24,16 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
 
 public enum PreferenceTidyApi {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
-    public static final String POOL_NAME = "preferenceTidyRead";
-    public static final String URL = "/tidy/";
+    private static final String POOL_NAME = "PreferenceTidyRead";
+    private static final String URL = "/tidy/";
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
@@ -57,6 +60,11 @@ public enum PreferenceTidyApi {
         try {
             final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url, headers);
 
+            DatadogUtils.metricCollector.incrementCounter(
+                    REQUEST_OUT_COUNTER,
+                    DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
+            );
+
             if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
                 logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
                 return RESTUtils.responseToObject(response, PreferenceTidy.class);
@@ -64,8 +72,10 @@ public enum PreferenceTidyApi {
                 logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
             }
             throw new ApiException(GsonWrapper.fromJson(RESTUtils.getBody(response), ApiError.class));
+
         } catch (final RestException e) {
             logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, e));
+            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to preferenceTidy failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
     }

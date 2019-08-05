@@ -4,6 +4,7 @@ import com.mercadolibre.metrics.MetricCollector;
 import spark.Request;
 import spark.Response;
 
+import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_IN_COUNTER;
 import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.utils.datadog.DatadogUtils.getStatusPattern;
 
@@ -19,7 +20,7 @@ public final class DatadogRequestMetric {
      * @param response response
      */
     public static void incrementRequestCounter(final Request request, final Response response) {
-        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.request", getMetricTags(request, response));
+        METRIC_COLLECTOR.incrementCounter(REQUEST_IN_COUNTER, getMetricTags(request, response));
     }
 
     private static MetricCollector.Tags getMetricTags(final Request request, final Response response) {

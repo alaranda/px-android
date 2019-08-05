@@ -2,6 +2,9 @@ package com.mercadolibre.utils.datadog;
 
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.metrics.MetricCollector;
+
+import static com.mercadolibre.constants.DatadogMetricsNames.COUPONS_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.PAYMENTS_COUNTER;
 import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public final class DatadogTransactionsMetrics {
@@ -18,13 +21,13 @@ public final class DatadogTransactionsMetrics {
         MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
         tags.add("collector_id", payment.getCollector().getId());
 
-        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", tags);
+        METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
     }
 
     public static void addPaymentsTransactionData(final Payment payment, final String flow) {
         MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
 
-        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.payment", tags);
+        METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
     }
 
     private static MetricCollector.Tags getBasicTransactionMetricTags(final Payment payment, final String flow) {
@@ -40,7 +43,7 @@ public final class DatadogTransactionsMetrics {
 
     private static void addDiscountMetrics(final Payment payment) {
         if (payment.getCouponId() != null) {
-            METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.coupons");
+            METRIC_COLLECTOR.incrementCounter(COUPONS_COUNTER);
         }
     }
 }
