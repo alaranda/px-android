@@ -4,6 +4,8 @@ import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.metrics.MetricCollector;
 import com.sun.jndi.toolkit.url.Uri;
 import java.net.MalformedURLException;
+
+import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
 import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public class DatadogPreferencesMetric {
@@ -18,7 +20,7 @@ public class DatadogPreferencesMetric {
      */
 
     public static void addPreferenceData(final Preference preference) throws MalformedURLException {
-        METRIC_COLLECTOR.incrementCounter("px.checkout_mobile_payments.preference", getMetricTags(preference));
+        METRIC_COLLECTOR.incrementCounter(PREFERENCE_COUNTER, getMetricTags(preference));
     }
 
     private static MetricCollector.Tags getMetricTags(final Preference preference) throws MalformedURLException {

@@ -58,7 +58,7 @@ dependencies {
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
 	compile 'commons-configuration:commons-configuration:1.10'
 	compile 'com.mercadolibre.json:json-core:0.0.9'
-	compile 'com.mercadolibre.px:px-toolkit:0.16.1'
+	compile 'com.mercadolibre.px:px-toolkit:0.18.1'
 
 	// MLAuth for access_token filter info
 	compile 'com.mercadolibre.security:mlauth:0.0.8'

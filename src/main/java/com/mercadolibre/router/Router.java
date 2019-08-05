@@ -26,6 +26,7 @@ import spark.Spark;
 import spark.servlet.SparkApplication;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
@@ -127,10 +128,13 @@ public class Router implements SparkApplication {
             logger.debug(LogBuilder.requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
 
+        final Optional<String> queryParamsOpt = LogUtils.getQueryParams(request.queryString());
+        final String queryParams = queryParamsOpt.isPresent() ? queryParamsOpt.get() : "";
+
         request.attribute(Constants.REQUEST_ID, requestId);
         logger.info(LogUtils.getRequestLog(requestId,
                 request.requestMethod(), request.url(), request.userAgent(),
-                request.headers(SESSION_ID), request.queryString(), request.body()
+                request.headers(SESSION_ID), queryParams, request.body()
         ));
     }
 

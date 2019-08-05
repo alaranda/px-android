@@ -7,6 +7,7 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
 import com.mercadolibre.restclient.Response;
@@ -26,6 +27,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.HeadersConstants.X_CALLER_SCOPES;
 import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
 
@@ -33,8 +36,8 @@ public enum PreferenceAPI {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
-    public static final String POOL_NAME = "PreferencesRead";
-    public static final String URL = "/checkout/preferences";
+    private static final String POOL_NAME = "PreferencesRead";
+    private static final String URL = "/checkout/preferences";
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
@@ -62,9 +65,18 @@ public enum PreferenceAPI {
         final URIBuilder url = buildUrl(preferenceId);
         try {
             final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
-            return completableFutureResponse.thenApply(response -> buildResponse(context, headers, url, response));
+
+            return completableFutureResponse.thenApply(response -> {
+                        DatadogUtils.metricCollector.incrementCounter(
+                                REQUEST_OUT_COUNTER,
+                                DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
+                        );
+                    return buildResponse(context, headers, url, response);
+            });
+
         } catch (final RestException e) {
             logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
+            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to preference failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
     }
