@@ -14,6 +14,7 @@ import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
+import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 import com.mercadolibre.validators.PreferencesValidator;
 import com.newrelic.api.agent.Trace;
@@ -28,7 +29,6 @@ import java.net.MalformedURLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
@@ -49,9 +49,11 @@ public enum PreferencesController {
     @Trace
     public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException, MalformedURLException {
 
+        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
+
         try {
-            final Context context = new Context(new Context.Builder(request.attribute(REQUEST_ID)));
             final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
+            final long callerId = Long.valueOf(request.queryParams(Constants.CALLER_ID_PARAM));
             final String prefId = extractParamPrefId(request, context);
 
             final CompletableFuture<Either<Preference, ApiError>> futurePreference =
@@ -65,7 +67,7 @@ public enum PreferencesController {
             }
 
             final Preference preference = futurePreference.get().getValue();
-            validatePref(preference);
+            validatePref(preference, callerId, context);
 
             final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(),
                    clientId);
@@ -75,7 +77,7 @@ public enum PreferencesController {
             logInitPref(context, preferenceResponse, preference);
             return preferenceResponse;
         } catch (ApiException e) {
-            throw new ApiException(e.getCode(), ErrorsConstants.getGeneralErrorByLanguage(request.headers(LANGUAGE)), e.getStatusCode());
+            throw new ApiException(e.getCode(), ErrorsConstants.getGeneralError(context.getLocale()), e.getStatusCode());
         }
     }
 
@@ -109,9 +111,9 @@ public enum PreferencesController {
         }
     }
 
-    private void validatePref(final Preference preference) throws ValidationException {
+    private void validatePref(final Preference preference, final long callerId, final Context context) throws ValidationException {
         final PreferencesValidator validator = new PreferencesValidator();
-        validator.validate(preference);
+        validator.validate(preference, callerId, context);
     }
 
     private void logInitPref(final Context context, final PreferenceResponse preferenceResponse, final Preference preference) {
