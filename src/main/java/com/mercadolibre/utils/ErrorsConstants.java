@@ -1,8 +1,7 @@
 package com.mercadolibre.utils;
 
 import java.util.Locale;
-
-import static com.mercadolibre.utils.Locale.getLocale;
+import java.util.ResourceBundle;
 
 public final class ErrorsConstants {
     private ErrorsConstants() {
@@ -15,22 +14,19 @@ public final class ErrorsConstants {
     public static final String INVALID_PARAMS = "invalid Params";
     public static final String INVALID_PREFERENCE = "invalid preference";
     public static final String GETTING_PARAMETERS = "Error getting parameters";
-    public static final String GENERAL_ERROR_ES = "En este momento no podemos procesar tu pago.";
-    public static final String GENERAL_ERROR_PT = "Não podemos processar o seu pagamento no momento.";
 
-    public static String getGeneralErrorByLanguage(final String languge) {
+    public static String getGeneralError(final Locale locale) {
 
-        final Locale locale = getLocale(languge);
-        if (locale.getLanguage() == null) {
-            return GENERAL_ERROR_ES;
-        }
-        switch (locale.getLanguage().toLowerCase()){
-            case "es":
-                return GENERAL_ERROR_ES;
-            case "pt":
-                return GENERAL_ERROR_PT;
-            default:
-                return GENERAL_ERROR_ES;
-        }
+        final ResourceBundle resourceBundle = ResourceBundle.getBundle("CustomErrors", locale);
+
+        return resourceBundle.getString("checkout.initpreference.error.generic");
     }
+
+    public static String getInvalidPreferenceError(final Locale locale) {
+
+        final ResourceBundle resourceBundle = ResourceBundle.getBundle("CustomErrors", locale);
+
+        return resourceBundle.getString("checkout.initpreference.error.invalidpreference");
+    }
+
 }

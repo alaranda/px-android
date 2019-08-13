@@ -104,7 +104,7 @@ public class Router implements SparkApplication {
                         .build(), exception);
                 NewRelicUtils.noticeError(exception, request);
 
-                ApiError apiError = new ApiError(exception.getMessage(), "bad request", response.status());
+                ApiError apiError = new ApiError(exception.getMessage(), "bad request", HttpStatus.SC_NOT_FOUND);
                 response.status(HttpStatus.SC_NOT_FOUND);
                 response.type(MediaType.JSON_UTF_8.toString());
                 response.body(GsonWrapper.toJson(apiError));

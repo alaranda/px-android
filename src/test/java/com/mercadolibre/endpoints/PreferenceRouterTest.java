@@ -34,9 +34,10 @@ public class PreferenceRouterTest {
 
 
     @Test
-    public void initCheckout_invalidParams_400() throws URISyntaxException {
+    public void initCheckout_invalidPrefParam_400() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
-                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610")
+                .addParameter(Constants.CALLER_ID_PARAM, "343557477");
 
         final Response response = get(uriBuilder.build());
 
@@ -47,7 +48,8 @@ public class PreferenceRouterTest {
     public void initCheckout_invalidPref_400() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_INVALID)
-                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610")
+                .addParameter(Constants.CALLER_ID_PARAM, "343557477");
 
         MockPreferenceAPI.getById(PREF_ID_INVALID, HttpStatus.SC_NOT_FOUND,
                 IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
@@ -61,7 +63,8 @@ public class PreferenceRouterTest {
     public void initCheckout_validPref_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.SHORT_ID, SHORT_ID)
-                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610")
+                .addParameter(Constants.CALLER_ID_PARAM, "343557477");
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
@@ -93,7 +96,8 @@ public class PreferenceRouterTest {
     public void initCheckout_validOldPrefWithoutShipmentsNode_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/init/preference")
                 .addParameter(Constants.PREF_ID, PREF_ID_WITHOUT_SHIPMENT_NODE)
-                .addParameter(Constants.CLIENT_ID_PARAM, "395662610");
+                .addParameter(Constants.CLIENT_ID_PARAM, "395662610")
+                .addParameter(Constants.CALLER_ID_PARAM, "343557477");
 
         MockPublicKeyAPI.getBycallerIdAndClientId("395662610", 4190463107814393L, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));

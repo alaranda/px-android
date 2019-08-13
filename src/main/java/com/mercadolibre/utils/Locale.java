@@ -11,7 +11,7 @@ public class Locale {
         return isBlank(language) ? java.util.Locale.ROOT : java.util.Locale.forLanguageTag(language);
     }
 
-    public java.util.Locale getLocale(final Request request) {
+    public static java.util.Locale getLocale(final Request request) {
         final String language = request.headers(HeadersConstants.LANGUAGE);
         return isBlank(language) ? java.util.Locale.ROOT : java.util.Locale.forLanguageTag(language);
     }
