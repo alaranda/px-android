@@ -4,6 +4,7 @@ import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.utils.ErrorsConstants;
+import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 
 
 public class PreferencesValidator {
@@ -17,6 +18,7 @@ public class PreferencesValidator {
     public void validate(final Preference preference, final long callerId, final Context context) throws ValidationException {
 
         if (callerId == preference.getCollectorId()) {
+            DatadogPreferencesMetric.addInvalidPreferenceData(preference);
             ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
         }
 

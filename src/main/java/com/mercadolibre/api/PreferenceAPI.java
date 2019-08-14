@@ -71,7 +71,7 @@ public enum PreferenceAPI {
                                 REQUEST_OUT_COUNTER,
                                 DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
                         );
-                    return buildResponse(context, headers, url, response);
+                    return buildResponse(context, headers, url, response, preferenceId);
             });
 
         } catch (final RestException e) {
@@ -81,9 +81,9 @@ public enum PreferenceAPI {
         }
     }
 
-    private Either<Preference, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
+    private Either<Preference, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response, final String preferenceId) {
         if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, preferenceId, response));
         } else {
             logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
         }
