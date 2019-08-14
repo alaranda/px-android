@@ -6,6 +6,7 @@ import com.sun.jndi.toolkit.url.Uri;
 import java.net.MalformedURLException;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_IVALID;
 import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public class DatadogPreferencesMetric {
@@ -19,21 +20,17 @@ public class DatadogPreferencesMetric {
      * @param preference  Preference
      */
 
-    public static void addPreferenceData(final Preference preference) throws MalformedURLException {
+    public static void addPreferenceData(final Preference preference) {
         METRIC_COLLECTOR.incrementCounter(PREFERENCE_COUNTER, getMetricTags(preference));
     }
 
-    private static MetricCollector.Tags getMetricTags(final Preference preference) throws MalformedURLException {
+    private static MetricCollector.Tags getMetricTags(final Preference preference) {
         return new MetricCollector.Tags()
-                .add("init_url", formatUrl(preference.getInitPoint()));
+                .add("operation_type", preference.getOperationType());
     }
 
-    private static String formatUrl(final String url) throws MalformedURLException {
-        String initUrl = "";
-        if (url != null) {
-            final Uri uri = new Uri(url);
-            initUrl = uri.getHost() + uri.getPath();
-        }
-        return initUrl;
+    public static void addInvalidPreferenceData(final Preference preference) {
+        METRIC_COLLECTOR.incrementCounter(PREFERENCE_IVALID, getMetricTags(preference));
     }
+
 }
