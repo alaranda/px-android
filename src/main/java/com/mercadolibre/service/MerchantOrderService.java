@@ -25,8 +25,13 @@ public enum MerchantOrderService {
      */
     public MerchantOrder createMerchantOrder(final Context context, final Preference preference, final long payerId) throws ApiException {
 
+        //TODO Se paso esta validacion a init preference. Se deja?
         if (payerId == preference.getCollectorId()) {
             throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
+        }
+
+        if (null != preference.getOrderId()){
+            return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).buildMerchantOrder();
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()
