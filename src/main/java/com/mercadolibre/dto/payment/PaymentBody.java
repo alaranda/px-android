@@ -33,6 +33,7 @@ public class PaymentBody {
     private BasicUser collector;
     private Order order;
     private String marketplace;
+    private String operationType;
 
     public String getToken() {
         return token;
@@ -121,6 +122,7 @@ public class PaymentBody {
         private BasicUser collector;
         private Order order;
         private String marketplace;
+        private String opetationType;
 
         public static Builder createBlackLabelBuilder(final PaymentData paymentData, final Preference preference){
             final Builder builder = new Builder(preference);
@@ -131,6 +133,7 @@ public class PaymentBody {
             builder.couponAmount = paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
             builder.campaignId = paymentData.hasCampaignId() ? Long.valueOf(paymentData.getCampaign().getId()) : null;
             builder.payer = new PayerBody(paymentData.getPayer().getName(), paymentData.getPayer().getSurname(), null,  paymentData.getPayer().getIdentification());
+
             return builder;
         }
 
@@ -170,6 +173,7 @@ public class PaymentBody {
             if (preference.getDifferentialPricing() != null) {
                 this.differentialPricingId = preference.getDifferentialPricing().getId();
             }
+            this.opetationType = preference.getOperationType();
         }
 
         //Validacion para soportar las distintas firmas del front.
