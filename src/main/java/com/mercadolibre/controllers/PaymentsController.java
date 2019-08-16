@@ -12,7 +12,6 @@ import com.mercadolibre.utils.HeadersUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,6 @@ public enum PaymentsController {
      * @throws ApiException        si falla el api call (status code is not 2xx)
      * @throws ValidationException falla la validacion
      */
-    @Trace
     public Payment doLegacyPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
@@ -99,7 +97,6 @@ public enum PaymentsController {
      * @throws ApiException        si falla el api call (status code is not 2xx)
      * @throws ValidationException falla la validacion
      */
-    @Trace
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();

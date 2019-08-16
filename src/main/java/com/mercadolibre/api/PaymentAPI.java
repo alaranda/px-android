@@ -18,7 +18,6 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -46,7 +45,17 @@ public enum PaymentAPI {
         );
     }
 
-    @Trace
+    /**
+     * Apicall to payments
+     *
+     * @param context context object
+     * @param callerId caller id
+     * @param clientId client id
+     * @param body body
+     * @param headers headers
+     * @return a CompletableFuture<Either<Payment, ApiError>>
+     * @throws ApiException (optional) if the api call fail
+     */
     public Either<Payment, ApiError> doPayment(final Context context, final Long callerId, final Long clientId, final PaymentBody body,
                                                final Headers headers) throws ApiException {
         final URIBuilder url = buildUrl(callerId, clientId);
@@ -68,6 +77,13 @@ public enum PaymentAPI {
         }
     }
 
+    /**
+     * Builds the api call url using the preference id
+     *
+     * @param callerId caller id
+     * @param callerId client id
+     * @return a string with the url
+     */
     static URIBuilder buildUrl(final Long callerId, final Long clientId) {
         return new URIBuilder()
                 .setScheme(Config.getString("payment.url.scheme"))

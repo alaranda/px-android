@@ -26,7 +26,7 @@ public class PreferenceValidatorTest {
         final Preference preference = GsonWrapper.fromJson(
                 IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")),
                 Preference.class);
-        validator.validate(preference, CALLER_ID_VALID, ContextUtilsTestHelper.CONTEXT_ES);
+        validator.validate(ContextUtilsTestHelper.CONTEXT_ES, preference, CALLER_ID_VALID);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PreferenceValidatorTest {
                 IOUtils.toString(getClass().getResourceAsStream("/preference/prefWithShipments.json")),
                 Preference.class);
         try {
-            validator.validate(preference, calllerId, ContextUtilsTestHelper.CONTEXT_ES);
+            validator.validate(ContextUtilsTestHelper.CONTEXT_ES, preference, calllerId);
             fail("Expected Validation Exception");
         } catch (ValidationException e) {
             assertThat(e.getMessage(), is("No puedes pagar con este link de pago. "));

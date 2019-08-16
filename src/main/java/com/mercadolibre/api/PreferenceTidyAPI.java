@@ -18,7 +18,6 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +27,7 @@ import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
 
-public enum PreferenceTidyApi {
+public enum PreferenceTidyAPI {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
@@ -52,7 +51,6 @@ public enum PreferenceTidyApi {
      * @return preferenceTidy
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */
-    @Trace
     public PreferenceTidy getPreferenceByKey(final Context context, final String key) throws ApiException {
         final Headers headers = new Headers().add(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .add(X_REQUEST_ID, context.getRequestId());

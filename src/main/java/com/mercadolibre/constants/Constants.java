@@ -20,6 +20,9 @@ public final class Constants {
     public static final String PUBLIC_KEY_URL_SCHEME = "public_key.url.scheme";
     public static final String PUBLIC_KEY_URL_HOST = "public_key.url.host";
 
+    public static final String USERS_URL_SCHEME = "users.url.scheme";
+    public static final String USERS_URL_HOST = "users.url.host";
+
     public static final String CLIENT_ID_PARAM = "client.id";
     public static final String CALLER_ID_PARAM = "caller.id";
 

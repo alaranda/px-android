@@ -10,12 +10,14 @@ import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 public class PreferencesValidator {
 
     /**
-     * Valida los parametros de la Preference
+     * Valida que el payerId sea distinto al collectorId y que la pref no tenga envios.
      *
-     * @param preference objeto con la preferencia de apgo
+     * @param  context objeto con el contexto del request
+     * @param preference objeto con la preferencia de pago
+     * @param callerId id del payer
      * @throws ValidationException falla la validacion
      */
-    public void validate(final Preference preference, final long callerId, final Context context) throws ValidationException {
+    public void validate( final Context context, final Preference preference, final long callerId) throws ValidationException {
 
         if (callerId == preference.getCollectorId()) {
             DatadogPreferencesMetric.addInvalidPreferenceData(preference);
@@ -30,6 +32,21 @@ public class PreferencesValidator {
 
     private void validateNullValue (String value, final Context context) throws ValidationException {
         if (null != value) {
+            ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
+        }
+    }
+
+    /**
+     * Validacion que se ejecuta solamente cuando el flujo es pago de facturas de meli donde solamente la puede pagar
+     * el creador de la preferencia.
+     *
+     * @param  context objeto con el contexto del request
+     * @param emailPayer email del payer
+     * @param emailPreference email de la pref
+     * @throws ValidationException falla la validacion
+     */
+    public void isDifferent(final Context context, final String emailPayer, final String emailPreference) {
+        if (!emailPreference.equalsIgnoreCase(emailPayer)){
             ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
         }
     }

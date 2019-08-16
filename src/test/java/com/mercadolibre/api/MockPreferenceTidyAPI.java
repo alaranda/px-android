@@ -4,7 +4,7 @@ import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;
 
-import static com.mercadolibre.api.PreferenceTidyApi.buildUrl;
+import static com.mercadolibre.api.PreferenceTidyAPI.buildUrl;
 
 public class MockPreferenceTidyAPI {
 
