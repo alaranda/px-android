@@ -30,13 +30,11 @@ public class PaymentRouterTest {
     public static final String PUBLIC_KEY_MLA_1 = "TEST-c8473389-df81-468c-96a8-71e2c7cd1f89";
     public static final String PREFERENCE_ID_1 = "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014";
     public static final String PUBLIC_KEY_BLACKLABEL_AM = "TEST-d783da36-74a2-4378-85d1-76f498ca92c4";
-    public static final String ACCES_TOKEN_BLACKLABEL_AM = "TEST-6519316523937252-070516-b65bbf874640109e601c32754bacfb6c__LD_LC__-261748045";
     public static final String PREFERENCE_ID_BLACKLABEL_AM = "384414502-d095679d-f7d9-4653-ad71-4fb5feda3494";
     public static final long CALLER_ID_MLA_1 = 204318018L;
     public static final long CLIENT_ID_MLA_1 = 7977122093299909L;
     public static final long CLIENT_ID_MLA = 889238428771302L;
     public static final long CALLER_ID_MLA = 243962506L;
-    public static final String ACCES_TOKEN = "APP_USR-4190463107814393-052112-e3abec7009c820171d714ad739f2b669-395662610";
 
     @Test
     public void legacyPayments_whiteLabelWithoutBody_400() throws URISyntaxException {
@@ -122,7 +120,7 @@ public class PaymentRouterTest {
         MockPaymentAPI.doPayment(CALLER_ID_MLA_1,
                 CLIENT_ID_MLA_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
-        MockMerchantOrderApi.createMerchantOrder("395662610", HttpStatus.SC_OK,
+        MockMerchantOrderAPI.createMerchantOrder("395662610", HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
 
         final Response response = given()
@@ -148,7 +146,7 @@ public class PaymentRouterTest {
         MockPaymentAPI.doPayment(CALLER_ID_MLA,
                 CLIENT_ID_MLA, HttpStatus.SC_BAD_REQUEST,
                 IOUtils.toString(getClass().getResourceAsStream("/payment/400_invalidUser.json")));
-        MockMerchantOrderApi.createMerchantOrder("395662610", HttpStatus.SC_OK,
+        MockMerchantOrderAPI.createMerchantOrder("395662610", HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
 
         final Response response = given()
