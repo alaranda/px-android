@@ -1,0 +1,107 @@
+{
+  "additional_info": "",
+  "auto_return": "",
+  "back_urls": {
+    "failure": "",
+    "pending": "https://www.mercadopago.com/mla/payments",
+    "success": "https://www.mercadopago.com/mla/payments"
+  },
+  "binary_mode": false,
+  "client_id": "48638295529722",
+  "collector": {
+    "tags": [
+      "normal",
+      "user_info_verified",
+      "credits_priority_4",
+      "credits_profile",
+      "mshops",
+      "messages_as_seller",
+      "messages_as_buyer"
+    ],
+    "operator_id": null
+  },
+  "collector_email": "ana.strano@hotmail.com",
+  "collector_id": 220115205,
+  "coupon_code": null,
+  "date_created": "2019-08-16T14:12:46.695-04:00",
+  "expiration_date_from": null,
+  "expiration_date_to": null,
+  "expires": false,
+  "external_reference": "money_request-909cf36e-fe70-4d8d-a360-e6ce092ada6d",
+  "id": "127330977-0f03b540-a8c2-4879-af10-66f619786c0c",
+  "init_point": "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=127330977-0f03b540-a8c2-4879-af10-66f619786c0c",
+  "internal_metadata": {},
+  "items": [
+    {
+      "id": "ON",
+      "currency_id": "ARS",
+      "title": "Envío de dinero a ana.strano@hotmail.com",
+      "picture_url": "",
+      "description": "Segunda Unidad",
+      "category_id": "",
+      "quantity": 1,
+      "unit_price": 7875
+    }
+  ],
+  "live_mode": true,
+  "marketplace": "MELI",
+  "marketplace_fee": 0,
+  "metadata": {},
+  "notification_url": null,
+  "operation_type": "payment_addition",
+  "order_id": 2118246168,
+  "payer": {
+    "phone": {
+      "area_code": "",
+      "number": ""
+    },
+    "address": {
+      "zip_code": "",
+      "street_name": "",
+      "street_number": null
+    },
+    "email": "testuser.mla.02@gmail.com",
+    "identification": {
+      "number": "",
+      "type": ""
+    },
+    "name": "",
+    "surname": "",
+    "date_created": ""
+  },
+  "payment_methods": {
+    "default_card_id": null,
+    "excluded_payment_methods": [
+      {
+        "id": ""
+      }
+    ],
+    "default_installments": null,
+    "default_payment_method_id": null,
+    "excluded_payment_types": [
+      {
+        "id": ""
+      }
+    ],
+    "installments": null
+  },
+  "processing_modes": [],
+  "product_id": "BH90N5TMG2N001KTKN40",
+  "purpose": "",
+  "redirect_urls": {
+    "failure": "",
+    "pending": "",
+    "success": ""
+  },
+  "sandbox_init_point": "https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=127330977-0f03b540-a8c2-4879-af10-66f619786c0c",
+  "shipments": {
+    "receiver_address": {
+      "floor": "",
+      "zip_code": "",
+      "street_name": "",
+      "apartment": "",
+      "street_number": null
+    }
+  },
+  "total_amount": 7875
+}

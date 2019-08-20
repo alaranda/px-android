@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class PaymentApiTest {
+public class PaymentAPITest {
 
     private final long CALLER_ID_MLA = 243962506L;
     private final long CLIENT_ID_MLA = 889238428771302L;

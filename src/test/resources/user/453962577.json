@@ -1,0 +1,163 @@
+{
+  "id": 453962577,
+  "nickname": "TESTUSERMLA02",
+  "registration_date": "2017-02-13T11:07:21.000-04:00",
+  "first_name": "TestUser",
+  "last_name": "MLA02",
+  "gender": "",
+  "country_id": "AR",
+  "email": "testuser.test@gmail.com",
+  "identification": {
+    "number": "37675998",
+    "type": "DNI"
+  },
+  "internal_tags": [],
+  "address": {
+    "address": null,
+    "city": null,
+    "state": "AR-C",
+    "zip_code": null
+  },
+  "phone": {
+    "area_code": " ",
+    "extension": "",
+    "number": "1590230930",
+    "verified": false
+  },
+  "alternative_phone": {
+    "area_code": "",
+    "extension": "",
+    "number": ""
+  },
+  "user_type": "normal",
+  "tags": [
+    "normal",
+    "user_info_verified"
+  ],
+  "logo": null,
+  "points": 0,
+  "site_id": "MLA",
+  "permalink": "http://perfil.mercadolibre.com.ar/TESTUSERMLA02",
+  "shipping_modes": [
+    "custom",
+    "not_specified"
+  ],
+  "seller_experience": "NEWBIE",
+  "bill_data": {
+    "accept_credit_note": null
+  },
+  "seller_reputation": {
+    "level_id": null,
+    "power_seller_status": null,
+    "transactions": {
+      "canceled": 0,
+      "completed": 0,
+      "period": "historic",
+      "ratings": {
+        "negative": 0,
+        "neutral": 0,
+        "positive": 0
+      },
+      "total": 0
+    },
+    "metrics": {
+      "sales": {
+        "period": "60 months",
+        "completed": 0
+      },
+      "claims": {
+        "period": "60 months",
+        "rate": 0
+      },
+      "delayed_handling_time": {
+        "period": "60 months",
+        "rate": 0
+      },
+      "cancellations": {
+        "period": "60 months",
+        "rate": 0
+      }
+    }
+  },
+  "buyer_reputation": {
+    "canceled_transactions": 0,
+    "tags": [],
+    "transactions": {
+      "canceled": {
+        "paid": null,
+        "total": null
+      },
+      "completed": null,
+      "not_yet_rated": {
+        "paid": null,
+        "total": null,
+        "units": null
+      },
+      "period": "historic",
+      "total": null,
+      "unrated": {
+        "paid": null,
+        "total": null
+      }
+    }
+  },
+  "status": {
+    "billing": {
+      "allow": false,
+      "codes": [
+        "address_pending",
+        "address_empty_city"
+      ]
+    },
+    "buy": {
+      "allow": true,
+      "codes": [],
+      "immediate_payment": {
+        "reasons": [],
+        "required": false
+      }
+    },
+    "confirmed_email": false,
+    "shopping_cart": {
+      "buy": "allowed",
+      "sell": "allowed"
+    },
+    "immediate_payment": false,
+    "list": {
+      "allow": false,
+      "codes": [
+        "address_pending",
+        "address_empty_city"
+      ],
+      "immediate_payment": {
+        "reasons": [],
+        "required": false
+      }
+    },
+    "mercadoenvios": "not_accepted",
+    "mercadopago_account_type": "personal",
+    "mercadopago_tc_accepted": true,
+    "required_action": "",
+    "sell": {
+      "allow": true,
+      "codes": [],
+      "immediate_payment": {
+        "reasons": [],
+        "required": false
+      }
+    },
+    "site_status": "active",
+    "user_type": "simple_registration",
+    "verification_status": "NV"
+  },
+  "credit": {
+    "consumed": 0,
+    "credit_level_id": "MLA5",
+    "rank": "newbie"
+  },
+  "context": {
+    "device": "web-desktop",
+    "flow": "normal",
+    "source": "mercadopago"
+  }
+}

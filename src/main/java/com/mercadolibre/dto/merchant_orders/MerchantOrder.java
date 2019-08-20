@@ -1,6 +1,5 @@
 package com.mercadolibre.dto.merchant_orders;
 
-import com.mercadolibre.dto.Item;
 import com.mercadolibre.dto.payment.BasicUser;
 import com.mercadolibre.dto.preference.PreferenceItem;
 
@@ -137,6 +136,7 @@ public class MerchantOrder {
         private String siteId;
         private BigDecimal totalAmount;
         private String additionalInfo;
+        private long orderId;
 
         /**
          * Sets the sponsor id
@@ -267,6 +267,17 @@ public class MerchantOrder {
          */
         public Builder withAdditionalInfo(final String additionalInfo) {
             this.additionalInfo = Objects.requireNonNull(additionalInfo);
+            return this;
+        }
+
+        /**
+         * Sets the order id
+         *
+         * @param orderId the merchant order id
+         * @return this
+         */
+        public Builder withOrderId(final long orderId) {
+            this.orderId = orderId;
             return this;
         }
 

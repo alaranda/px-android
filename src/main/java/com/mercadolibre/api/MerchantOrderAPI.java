@@ -16,7 +16,6 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +41,15 @@ public enum MerchantOrderAPI {
         );
     }
 
-    @Trace
+    /**
+     * Apicall to merchant order
+     *
+     * @param context context object
+     * @param merchantOrderRequest merchant order body
+     * @param collectorId collector id
+     * @return a CompletableFuture<Either<Payment, ApiError>>
+     * @throws ApiException (optional) if the api call fail
+     */
     public Either<MerchantOrder, ApiError> createMerchantOrder(final Context context, final MerchantOrder merchantOrderRequest,
                                                                final String collectorId) throws ApiException {
         final URIBuilder url = buildUrl(collectorId);
@@ -66,6 +73,13 @@ public enum MerchantOrderAPI {
         }
     }
 
+    /**
+     * Builds the api call url using the preference id
+     *
+     * @param callerId caller id
+     * @param callerId client id
+     * @return a string with the url
+     */
     static URIBuilder buildUrl(final String callerId) {
         return new URIBuilder()
                 .setScheme(Config.getString("merchant_orders.url.scheme"))

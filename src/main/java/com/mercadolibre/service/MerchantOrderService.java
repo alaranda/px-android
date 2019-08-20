@@ -9,7 +9,6 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 
 public enum MerchantOrderService {
@@ -24,11 +23,14 @@ public enum MerchantOrderService {
      * @return el objeto Merchant Order
      * @throws ApiException si falla el api call (status code is not 2xx)
      */
-    @Trace
     public MerchantOrder createMerchantOrder(final Context context, final Preference preference, final long payerId) throws ApiException {
 
         if (payerId == preference.getCollectorId()) {
             throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
+        }
+
+        if (null != preference.getOrderId()){
+            return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).buildMerchantOrder();
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()

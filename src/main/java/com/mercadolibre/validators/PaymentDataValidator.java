@@ -2,14 +2,11 @@ package com.mercadolibre.validators;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
-import com.mercadolibre.dto.Payer;
 import com.mercadolibre.dto.payment.Issuer;
 import com.mercadolibre.dto.payment.PayerCost;
 import com.mercadolibre.dto.payment.PaymentData;
 import com.mercadolibre.exceptions.ValidationException;
 import spark.utils.StringUtils;
-
-import java.util.List;
 
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_METHOD_ID;
 import static java.lang.String.format;

@@ -18,7 +18,6 @@ import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -57,7 +56,6 @@ public enum PreferenceAPI {
      * @return preference
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */
-    @Trace
     public CompletableFuture<Either<Preference, ApiError>> geAsynctPreference(final Context context, final String preferenceId) throws ApiException {
         final Headers headers = new Headers().add(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
                 .add(X_CALLER_SCOPES, "admin")
