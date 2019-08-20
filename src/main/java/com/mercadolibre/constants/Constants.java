@@ -1,5 +1,9 @@
 package com.mercadolibre.constants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTIATE_CONSTANTS_CLASS;
 
 public final class Constants {
@@ -40,6 +44,12 @@ public final class Constants {
     public static final String FLOW_NAME_LEGACY_PAYMENTS = "legacy";
     public static final String FLOW_NAME_PAYMENTS_WHITELABEL = "paymentsWhiteLabel";
     public static final String FLOW_NAME_PAYMENTS_BLACKLABEL = "paymentsBlackLabel";
+
+    /**
+     * Collectors de pago de factura de meli.
+     */
+    public static final List<Long> COLLECTORS_MELI = new ArrayList<Long>(Arrays.asList(99754138L, 73220027L,
+            99628543L, 104328393L, 169885973L, 170120870L, 220115205L, 237674564L, 170120736L));
 
     private Constants() {
         throw new AssertionError(CAN_NOT_INSTANTIATE_CONSTANTS_CLASS);

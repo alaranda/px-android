@@ -13,7 +13,6 @@ import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
-import com.mercadolibre.validators.CollectorsValidate;
 import com.mercadolibre.validators.PreferencesValidator;
 import org.apache.http.HttpStatus;
 import spark.Request;
@@ -21,6 +20,8 @@ import spark.utils.StringUtils;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+
+import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
 
 public enum PreferenceService {
     INSTANCE;
@@ -39,7 +40,6 @@ public enum PreferenceService {
 
         final CompletableFuture<Either<Preference, ApiError>> futurePreference =
                 PreferenceAPI.INSTANCE.geAsynctPreference(context, prefId);
-        CompletableFuture.allOf(futurePreference);
 
         if (!futurePreference.get().isValuePresent()) {
             final ApiError apiError = futurePreference.get().getAlternative();
@@ -57,7 +57,7 @@ public enum PreferenceService {
         final PreferencesValidator validator = new PreferencesValidator();
         validator.validate(context, preference, callerId);
 
-        if (CollectorsValidate.containCollector(preference.getCollectorId())) {
+        if (COLLECTORS_MELI.contains(preference.getCollectorId())) {
             final User user = UserAPI.INSTANCE.getById(context, callerId);
             validator.isDifferent(context, user.getEmail(), preference.getPayer().getEmail());
         }
@@ -85,13 +85,12 @@ public enum PreferenceService {
 
         try {
             final PreferenceTidy preferenceTidy = PreferenceTidyAPI.INSTANCE.getPreferenceByKey(context, shortKey);
-            String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
+            final String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
             if (splitLongUrl.length != 2) {
                 throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.INVALID_PREFERENCE, HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
-            String preId = splitLongUrl[1];
+            return splitLongUrl[1];
 
-            return preId;
         } catch (Exception e) {
             throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
