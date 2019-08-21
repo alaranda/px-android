@@ -38,7 +38,8 @@ public final class DatadogTransactionsMetrics {
                 .add("status", payment.getStatus())
                 .add("status_detail", payment.getStatusDetail())
                 .add("payment_method_id", payment.getPaymentMethodId())
-                .add("flow", flow);
+                .add("flow", flow)
+                .add("transaction_amount", payment.getTransactionAmount());
     }
 
     private static void addDiscountMetrics(final Payment payment) {
