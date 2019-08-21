@@ -1,5 +1,6 @@
 package com.mercadolibre.utils.datadog;
 
+import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.metrics.MetricCollector;
 
@@ -26,6 +27,10 @@ public final class DatadogTransactionsMetrics {
     public static void addPaymentsTransactionData(final Payment payment, final String flow) {
 
         MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
+        if (flow.equals(Constants.FLOW_NAME_PAYMENTS_BLACKLABEL)) {
+            tags.add("client_id",  payment.getClientId());
+        }
+
         METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
     }
 

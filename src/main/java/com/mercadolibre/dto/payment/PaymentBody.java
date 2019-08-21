@@ -103,6 +103,7 @@ public class PaymentBody {
         this.collector = builder.collector;
         this.order = builder.order;
         this.marketplace = builder.marketplace;
+        this.operationType = builder.operationType;
     }
 
     public static final class Builder {
@@ -122,7 +123,7 @@ public class PaymentBody {
         private BasicUser collector;
         private Order order;
         private String marketplace;
-        private String opetationType;
+        private String operationType;
 
         public static Builder createBlackLabelBuilder(final PaymentData paymentData, final Preference preference){
             final Builder builder = new Builder(preference);
@@ -173,7 +174,7 @@ public class PaymentBody {
             if (preference.getDifferentialPricing() != null) {
                 this.differentialPricingId = preference.getDifferentialPricing().getId();
             }
-            this.opetationType = preference.getOperationType();
+            this.operationType = preference.getOperationType();
         }
 
         //Validacion para soportar las distintas firmas del front.
