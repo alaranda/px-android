@@ -11,7 +11,7 @@ public final class PreferenceResponse {
         this.prefId = prefId;
         this.publicKey = publicKey;
         this.escEnabled = true;
-        this.expressEnabled = true;
+        this.expressEnabled = false;
     }
 
     public String getPrefId() {
