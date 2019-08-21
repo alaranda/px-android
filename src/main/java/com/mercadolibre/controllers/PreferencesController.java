@@ -42,10 +42,11 @@ public enum PreferencesController {
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
         try {
             final long callerId = Long.valueOf(request.queryParams(Constants.CALLER_ID_PARAM));
+            final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
             final String prefId = PreferenceService.INSTANCE.extractParamPrefId(context, request);
 
             final Preference preference = PreferenceService.INSTANCE.getPreference(context, prefId, callerId);
-            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(), preference.getClientId());
+            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(),clientId);
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
 
             DatadogPreferencesMetric.addPreferenceData(preference);
