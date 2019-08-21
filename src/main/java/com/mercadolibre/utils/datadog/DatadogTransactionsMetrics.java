@@ -27,7 +27,7 @@ public final class DatadogTransactionsMetrics {
     public static void addPaymentsTransactionData(final Payment payment, final String flow) {
 
         MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
-        if (flow.equals(Constants.FLOW_NAME_PAYMENTS_BLACKLABEL)) {
+        if (Constants.FLOW_NAME_PAYMENTS_BLACKLABEL.equals(flow)) {
             tags.add("client_id",  payment.getClientId());
         }
 
