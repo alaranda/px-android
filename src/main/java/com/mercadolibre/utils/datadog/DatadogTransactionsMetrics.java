@@ -3,8 +3,7 @@ package com.mercadolibre.utils.datadog;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.metrics.MetricCollector;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.COUPONS_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.PAYMENTS_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.*;
 import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public final class DatadogTransactionsMetrics {
@@ -18,20 +17,21 @@ public final class DatadogTransactionsMetrics {
      * @param flow flow
      */
     public static void addLegacyPaymentsTransactionData(final Payment payment, final String flow) {
+
         MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
         tags.add("collector_id", payment.getCollector().getId());
-
         METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
     }
 
     public static void addPaymentsTransactionData(final Payment payment, final String flow) {
-        MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
 
+        MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
         METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
     }
 
     private static MetricCollector.Tags getBasicTransactionMetricTags(final Payment payment, final String flow) {
 
+        METRIC_COLLECTOR.gauge(PAYMENTS_AMOUNT, payment.getTransactionAmount().doubleValue());
         addDiscountMetrics(payment);
         return new MetricCollector.Tags()
                 .add("site_id", payment.getSiteId())
@@ -39,7 +39,7 @@ public final class DatadogTransactionsMetrics {
                 .add("status_detail", payment.getStatusDetail())
                 .add("payment_method_id", payment.getPaymentMethodId())
                 .add("flow", flow)
-                .add("transaction_amount", payment.getTransactionAmount());
+                .add("", payment.getTransactionAmount());
     }
 
     private static void addDiscountMetrics(final Payment payment) {
