@@ -191,8 +191,6 @@ public class Payment {
 
     public static final class Collector {
         private Long id;
-        private String email;
-        private Phone phone;
 
         Collector() { }
 
@@ -200,13 +198,6 @@ public class Payment {
             return id;
         }
 
-        public String getEmail() {
-            return email;
-        }
-
-        public Phone getPhone() {
-            return phone;
-        }
     }
 
     public String toLog(final Payment payment){
