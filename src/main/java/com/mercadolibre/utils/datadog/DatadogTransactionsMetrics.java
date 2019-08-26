@@ -36,7 +36,6 @@ public final class DatadogTransactionsMetrics {
 
     private static MetricCollector.Tags getBasicTransactionMetricTags(final Payment payment, final String flow) {
 
-        METRIC_COLLECTOR.gauge(PAYMENTS_AMOUNT, payment.getTransactionAmount().doubleValue());
         addDiscountMetrics(payment);
         return new MetricCollector.Tags()
                 .add("site_id", payment.getSiteId())
