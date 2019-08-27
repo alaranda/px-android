@@ -95,7 +95,7 @@ public enum PaymentService {
                 .withCallerId(Long.valueOf(callerId))
                 .withClientId(Long.valueOf(clientId))
                 .withCollector(publicKey.getOwnerId())
-                .withOrder(merchantOrder.getId())
+                .withOrder(merchantOrder.getId(), merchantOrder.getOrderType())
                 .withHeaderTestToken(pubicKeyId)
                 .build();
     }
