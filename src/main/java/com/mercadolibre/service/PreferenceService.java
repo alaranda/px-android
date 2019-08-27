@@ -3,6 +3,7 @@ package com.mercadolibre.service;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyAPI;
 import com.mercadolibre.api.UserAPI;
+import com.mercadolibre.constants.ClientsIdConstants;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.User;
@@ -95,4 +96,17 @@ public enum PreferenceService {
             throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Intenta obtener el clientId de la pref, si viene el default setea uno nuestro con el site del AT.
+     *
+     * @param siteId  id del site
+     * @param preference preference
+     * @return Long clientId
+     */
+    public Long getClientId(final String siteId, final Preference preference) {
+
+        return ClientsIdConstants.CLIENT_ID_DEFAULT.equals(preference.getClientId()) ? ClientsIdConstants.SITES_CLIENTS_ID().get(siteId) : preference.getClientId();
+    }
+
 }

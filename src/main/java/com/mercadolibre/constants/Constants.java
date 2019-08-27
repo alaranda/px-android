@@ -29,6 +29,7 @@ public final class Constants {
 
     public static final String CLIENT_ID_PARAM = "client.id";
     public static final String CALLER_ID_PARAM = "caller.id";
+    public static final String SITE_ID_PARAM = "site.id";
 
     public static final String INSTALLMENTS = "installments";
 

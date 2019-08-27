@@ -43,6 +43,7 @@ public enum PreferencesController {
         try {
             final long callerId = Long.valueOf(request.queryParams(Constants.CALLER_ID_PARAM));
             final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
+            final String siteId = Constants.SITE_ID_PARAM;
             final String prefId = PreferenceService.INSTANCE.extractParamPrefId(context, request);
 
             final Preference preference = PreferenceService.INSTANCE.getPreference(context, prefId, callerId);
