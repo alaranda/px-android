@@ -24,6 +24,7 @@ public class MerchantOrder {
     private String siteId;
     private BigDecimal totalAmount;
     private String additionalInfo;
+    private String orderType;
 
     private MerchantOrder(final Builder builder) {
         this.id = builder.id;
@@ -39,6 +40,7 @@ public class MerchantOrder {
         this.totalAmount = builder.totalAmount;
         this.sponsorId = builder.sponsorId;
         this.additionalInfo = builder.additionalInfo;
+        this.orderType = builder.orderType;
     }
 
     /* default */ MerchantOrder() {
@@ -101,6 +103,10 @@ public class MerchantOrder {
         this.collector = collector;
     }
 
+    public String getOrderType() {
+        return orderType;
+    }
+
     @Override
     @SuppressWarnings("checkstyle:multiplestringliterals")
     public String toString() {
@@ -137,6 +143,7 @@ public class MerchantOrder {
         private BigDecimal totalAmount;
         private String additionalInfo;
         private long orderId;
+        private String orderType;
 
         /**
          * Sets the sponsor id
@@ -277,7 +284,18 @@ public class MerchantOrder {
          * @return this
          */
         public Builder withOrderId(final long orderId) {
-            this.orderId = orderId;
+            this.id = orderId;
+            return this;
+        }
+
+        /**
+         * Sets the order type
+         *
+         * @param orderType the merchant order id
+         * @return this
+         */
+        public Builder withOrderType(final String orderType) {
+            this.orderType = orderType;
             return this;
         }
 

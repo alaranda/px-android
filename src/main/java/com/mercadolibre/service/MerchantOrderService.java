@@ -1,6 +1,7 @@
 package com.mercadolibre.service;
 
 import com.mercadolibre.api.MerchantOrderAPI;
+import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.merchant_orders.MerchantOrder;
 import com.mercadolibre.dto.payment.BasicUser;
@@ -29,8 +30,12 @@ public enum MerchantOrderService {
             throw  new ApiException(ErrorsConstants.INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
         }
 
+        if (null != preference.getMerchantOrderId()){
+            return new MerchantOrder.Builder().withOrderId(preference.getMerchantOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_MP).buildMerchantOrder();
+        }
+
         if (null != preference.getOrderId()){
-            return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).buildMerchantOrder();
+            return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_ML).buildMerchantOrder();
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()
@@ -41,7 +46,7 @@ public enum MerchantOrderService {
                 .withMarketplace(preference.getMarketplace())
                 .withExternalReference(preference.getExternalReference())
                 .withNotificationUrl(preference.getNotificationUrl())
-                .buildMerchantOrder();;
+                .buildMerchantOrder();
 
         final Either<MerchantOrder, ApiError> merchantOrder = MerchantOrderAPI.INSTANCE.createMerchantOrder(context,
                 merchantOrderRequest, preference.getCollectorId().toString());

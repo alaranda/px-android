@@ -1,5 +1,7 @@
 package com.mercadolibre.dto;
 
+import com.mercadolibre.constants.Constants;
+
 public class Order {
 
     private final long id;
@@ -7,7 +9,12 @@ public class Order {
 
     public Order(final long id, final String type) {
         this.id = id;
-        this.type = type;
+        if (null != type){
+            this.type = type;
+        } else {
+            this.type = Constants.MERCHANT_ORDER_TYPE_MP;
+        }
+
     }
 
     public long getId() {
