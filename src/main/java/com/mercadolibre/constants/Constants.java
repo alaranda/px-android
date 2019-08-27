@@ -39,11 +39,12 @@ public final class Constants {
 
     public static final String PUBLIC_KEY = "public_key";
 
-    public static final String MERCHANT_ORDER_TYPE = "mercadopago";
-
     public static final String FLOW_NAME_LEGACY_PAYMENTS = "legacy";
     public static final String FLOW_NAME_PAYMENTS_WHITELABEL = "paymentsWhiteLabel";
     public static final String FLOW_NAME_PAYMENTS_BLACKLABEL = "paymentsBlackLabel";
+
+    public static final String MERCHANT_ORDER_TYPE_ML = "mercadolibre";
+    public static final String MERCHANT_ORDER_TYPE_MP = "mercadopago";
 
     /**
      * Collectors de pago de factura de meli.

@@ -86,8 +86,8 @@ public class PaymentRequest {
             return this;
         }
 
-        public Builder withOrder(final long merchantOrderId) {
-            body.withOrder(merchantOrderId);
+        public Builder withOrder(final long merchantOrderId, final String merchantOrderType) {
+            body.withOrder(merchantOrderId, merchantOrderType);
             return this;
         }
 

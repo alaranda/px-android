@@ -204,8 +204,8 @@ public class PaymentBody {
             return this;
         }
 
-        public Builder withOrder(final long merchantOrderId){
-            this.order = new Order(merchantOrderId, Constants.MERCHANT_ORDER_TYPE);
+        public Builder withOrder(final long merchantOrderId, final String merchantOrderType){
+            this.order = new Order(merchantOrderId, merchantOrderType);
             return this;
         }
 

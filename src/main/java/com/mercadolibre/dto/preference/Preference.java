@@ -19,6 +19,7 @@ public class Preference {
     protected OffsetDateTime dateCreated;
     protected String operationType;
     private Long orderId;
+    private Long merchantOrderId;
     protected String additionalInfo;
     protected String autoReturn;
     private String externalReference;
@@ -84,6 +85,10 @@ public class Preference {
 
     public Long getOrderId() {
         return orderId;
+    }
+
+    public Long getMerchantOrderId() {
+        return merchantOrderId;
     }
 
     public String getAdditionalInfo() {
