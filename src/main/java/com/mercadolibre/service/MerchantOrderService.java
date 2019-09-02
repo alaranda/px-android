@@ -10,6 +10,7 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
+import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import org.apache.http.HttpStatus;
 
 public enum MerchantOrderService {
@@ -31,10 +32,12 @@ public enum MerchantOrderService {
         }
 
         if (null != preference.getMerchantOrderId()){
+            DatadogTransactionsMetrics.addOrderTypePayment("merchant_order");
             return new MerchantOrder.Builder().withOrderId(preference.getMerchantOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_MP).buildMerchantOrder();
         }
 
         if (null != preference.getOrderId()){
+            DatadogTransactionsMetrics.addOrderTypePayment("order");
             return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_ML).buildMerchantOrder();
         }
 
@@ -53,6 +56,7 @@ public enum MerchantOrderService {
         if (!merchantOrder.isValuePresent()) {
             throw new ApiException(merchantOrder.getAlternative());
         }
+        DatadogTransactionsMetrics.addOrderTypePayment("new_merchant_order");
         return merchantOrder.getValue();
     }
 

@@ -42,12 +42,18 @@ public final class DatadogTransactionsMetrics {
                 .add("status", payment.getStatus())
                 .add("status_detail", payment.getStatusDetail())
                 .add("payment_method_id", payment.getPaymentMethodId())
-                .add("flow", flow);
+                .add("flow", flow)
+                .add("operation_type", payment.getOperationType())
+                .add("marketplace", payment.getMarketplace());
     }
 
     private static void addDiscountMetrics(final Payment payment) {
         if (payment.getCouponId() != null) {
             METRIC_COLLECTOR.incrementCounter(COUPONS_COUNTER);
         }
+    }
+
+    public static void addOrderTypePayment(final String orderType) {
+        METRIC_COLLECTOR.incrementCounter(PAYMENT_ORDER_TYPE, orderType);
     }
 }

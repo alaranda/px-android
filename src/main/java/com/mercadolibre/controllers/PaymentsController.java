@@ -22,6 +22,7 @@ import spark.utils.StringUtils;
 
 import java.util.concurrent.ExecutionException;
 
+import static com.mercadolibre.constants.Constants.ORDER_TYPE_NAME;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
@@ -166,6 +167,7 @@ public enum PaymentsController {
                 .withClientId(String.valueOf(paymentRequest.getCallerId()))
                 .withPaymentStatus(payment.getStatus())
                 .withPaymentStatusDetail(payment.getStatusDetail())
+                .withTag(ORDER_TYPE_NAME, payment.getOperationType())
                 .withMessage(payment.toLog(payment))
                 .build());
     }
