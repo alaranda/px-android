@@ -104,9 +104,14 @@ public enum PreferenceService {
      * @param preference preference
      * @return Long clientId
      */
-    public Long getClientId(final String siteId, final Preference preference) {
-
-        return ClientsIdConstants.CLIENT_ID_DEFAULT.equals(preference.getClientId()) ? ClientsIdConstants.SITES_CLIENTS_ID().get(siteId) : preference.getClientId();
+    public Long getClientId(final String scope, final String siteId, final Preference preference) {
+        String key = siteId+"-";
+        if (scope.equalsIgnoreCase(Constants.API_CONTEXT_V1)){
+            key = key.concat(Constants.SCOPE_PROD);
+        } else {
+            key = key.concat(Constants.TEST);
+        }
+        return ClientsIdConstants.CLIENT_ID_DEFAULT.equals(preference.getClientId()) ? ClientsIdConstants.CLIENTS_ID_MAP().get(key.toUpperCase()) : preference.getClientId();
     }
 
 }

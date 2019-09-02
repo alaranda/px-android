@@ -20,7 +20,9 @@ import spark.Response;
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 
+import static com.mercadolibre.constants.HeadersConstants.API_CONTEXT;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public enum PreferencesController {
@@ -42,11 +44,12 @@ public enum PreferencesController {
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
         try {
             final long callerId = Long.valueOf(request.queryParams(Constants.CALLER_ID_PARAM));
-            final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));
-            final String siteId = Constants.SITE_ID_PARAM;
+            final String siteId = request.queryParams(CALLER_SITE_ID);
+            final String scope = request.attribute(API_CONTEXT);
             final String prefId = PreferenceService.INSTANCE.extractParamPrefId(context, request);
 
             final Preference preference = PreferenceService.INSTANCE.getPreference(context, prefId, callerId);
+            final long clientId = PreferenceService.INSTANCE.getClientId(scope,siteId, preference);
             final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(),clientId);
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
 
