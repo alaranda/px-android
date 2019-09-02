@@ -3,7 +3,6 @@ package com.mercadolibre.service;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyAPI;
 import com.mercadolibre.api.UserAPI;
-import com.mercadolibre.constants.ClientsIdConstants;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.User;
@@ -26,6 +25,8 @@ import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
 
 public enum PreferenceService {
     INSTANCE;
+
+    private long DEFAULT_CLIENT_ID = 963L;
 
     /**
      * Devuelve informacion de la preferencia.
@@ -100,18 +101,12 @@ public enum PreferenceService {
     /**
      * Intenta obtener el clientId de la pref, si viene el default setea uno nuestro con el site del AT.
      *
-     * @param siteId  id del site
-     * @param preference preference
+     * @param clientIdPreference  client id de la pref
+     * @param clientIdAccessToken client id del access token
      * @return Long clientId
      */
-    public Long getClientId(final String scope, final String siteId, final Preference preference) {
-        String key = siteId+"-";
-        if (scope.equalsIgnoreCase(Constants.API_CONTEXT_V1)){
-            key = key.concat(Constants.SCOPE_PROD);
-        } else {
-            key = key.concat(Constants.TEST);
-        }
-        return ClientsIdConstants.CLIENT_ID_DEFAULT.equals(preference.getClientId()) ? ClientsIdConstants.CLIENTS_ID_MAP().get(key.toUpperCase()) : preference.getClientId();
+    public Long getClientId(final long clientIdPreference, final long clientIdAccessToken) {
+        return DEFAULT_CLIENT_ID == (clientIdPreference) ? clientIdAccessToken : clientIdPreference;
     }
 
 }

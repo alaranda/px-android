@@ -57,4 +57,19 @@ public class PreferenceServiceTest {
 
         assertNotNull(preference);
     }
+
+    @Test
+    public void getClientId_setClientIdAT_clientIdAT() {
+
+        final long clientID = PreferenceService.INSTANCE.getClientId(963L, 10101010L);
+        assertThat(clientID, is(10101010L));
+    }
+
+    @Test
+    public void getClientId_setClientIdPref_clientIdPref() {
+
+        final long clientID = PreferenceService.INSTANCE.getClientId(456789L, 10101010L);
+        assertThat(clientID, is(456789L));
+    }
+
 }
