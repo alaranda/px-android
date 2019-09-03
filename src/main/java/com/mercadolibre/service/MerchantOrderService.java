@@ -17,6 +17,10 @@ public enum MerchantOrderService {
 
     INSTANCE;
 
+    private static final String MERCHANT_ORDER = "merchant_order";
+    private static final String ORDER = "order";
+    private static final String NEW_MERCHANT_ORDER = "new_merchant_order";
+
     /**
      * Hace el API call a la API de Merchant Order usando la preferencia y el payerId para obtener la merchant order id.
      * @param context       context object
@@ -32,12 +36,12 @@ public enum MerchantOrderService {
         }
 
         if (null != preference.getMerchantOrderId()){
-            DatadogTransactionsMetrics.addOrderTypePayment("merchant_order");
+            DatadogTransactionsMetrics.addOrderTypePayment(MERCHANT_ORDER);
             return new MerchantOrder.Builder().withOrderId(preference.getMerchantOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_MP).buildMerchantOrder();
         }
 
         if (null != preference.getOrderId()){
-            DatadogTransactionsMetrics.addOrderTypePayment("order");
+            DatadogTransactionsMetrics.addOrderTypePayment(ORDER);
             return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_ML).buildMerchantOrder();
         }
 
@@ -56,7 +60,7 @@ public enum MerchantOrderService {
         if (!merchantOrder.isValuePresent()) {
             throw new ApiException(merchantOrder.getAlternative());
         }
-        DatadogTransactionsMetrics.addOrderTypePayment("new_merchant_order");
+        DatadogTransactionsMetrics.addOrderTypePayment(NEW_MERCHANT_ORDER);
         return merchantOrder.getValue();
     }
 
