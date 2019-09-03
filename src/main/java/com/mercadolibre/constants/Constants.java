@@ -15,7 +15,6 @@ public final class Constants {
     public static final String API_CONTEXT_LOCALHOST = "localhost";
     public static final String API_CONTEXT = "api_context";
     public static final String REQUEST_ID = "request_id";
-    public static final String TEST = "test";
 
     public static final String SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY = "services.connection.timeout";
     public static final String SERVICE_SOCKET_TIMEOUT_PROPERTY_KEY = "services.socket.timeout";
