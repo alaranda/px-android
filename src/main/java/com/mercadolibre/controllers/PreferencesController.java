@@ -46,7 +46,7 @@ public enum PreferencesController {
             final String prefId = PreferenceService.INSTANCE.extractParamPrefId(context, request);
 
             final Preference preference = PreferenceService.INSTANCE.getPreference(context, prefId, callerId);
-            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(),clientId);
+            final PublicKeyInfo publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(), PreferenceService.INSTANCE.getClientId(preference.getClientId(), clientId));
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
 
             DatadogPreferencesMetric.addPreferenceData(preference);

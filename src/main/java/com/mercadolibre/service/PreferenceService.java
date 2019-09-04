@@ -26,6 +26,8 @@ import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
 public enum PreferenceService {
     INSTANCE;
 
+    private long DEFAULT_CLIENT_ID = 963L;
+
     /**
      * Devuelve informacion de la preferencia.
      *
@@ -95,4 +97,16 @@ public enum PreferenceService {
             throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Intenta obtener el clientId de la pref, si viene el default setea uno nuestro con el site del AT.
+     *
+     * @param clientIdPreference  client id de la pref
+     * @param clientIdAccessToken client id del access token
+     * @return Long clientId
+     */
+    public Long getClientId(final long clientIdPreference, final long clientIdAccessToken) {
+        return DEFAULT_CLIENT_ID == (clientIdPreference) ? clientIdAccessToken : clientIdPreference;
+    }
+
 }
