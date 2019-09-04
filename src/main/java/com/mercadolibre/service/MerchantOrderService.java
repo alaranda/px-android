@@ -20,6 +20,9 @@ public enum MerchantOrderService {
     private static final String MERCHANT_ORDER = "merchant_order";
     private static final String ORDER = "order";
     private static final String NEW_MERCHANT_ORDER = "new_merchant_order";
+    private static final String WITHOUT_ORDER = "without_order";
+    private static final String MONEY_TRANSFER_TYPE = "MONEY_TRANSFER";
+
 
     /**
      * Hace el API call a la API de Merchant Order usando la preferencia y el payerId para obtener la merchant order id.
@@ -43,6 +46,11 @@ public enum MerchantOrderService {
         if (null != preference.getOrderId()){
             DatadogTransactionsMetrics.addOrderTypePayment(ORDER);
             return new MerchantOrder.Builder().withOrderId(preference.getOrderId()).withOrderType(Constants.MERCHANT_ORDER_TYPE_ML).buildMerchantOrder();
+        }
+
+        if (preference.getOperationType().equalsIgnoreCase(MONEY_TRANSFER_TYPE)){
+            DatadogTransactionsMetrics.addOrderTypePayment(WITHOUT_ORDER);
+            return null;
         }
 
         final MerchantOrder merchantOrderRequest = new MerchantOrder.Builder()

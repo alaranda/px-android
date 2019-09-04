@@ -52,7 +52,7 @@ public enum PaymentService {
 
         if (StringUtils.isNotBlank(callerId)) {
             final MerchantOrder merchantOrder = MerchantOrderService.INSTANCE.createMerchantOrder(context, preference, Long.valueOf(callerId));
-            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, context.getRequestId(), callerId, clientId ,merchantOrder, publicKeyId);
+            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, context.getRequestId(), callerId, clientId ,merchantOrder , publicKeyId);
         }
         return PaymentRequest.Builder.createWhiteLabelPaymentRequest(headers, paymentDataBody.getPaymentData().get(0), preference, context.getRequestId())
                 .withCallerId(publicKeyInfo.getOwnerId())
@@ -91,12 +91,16 @@ public enum PaymentService {
                                                    final String requestId, final String callerId, final String clientId,
                                                    final MerchantOrder merchantOrder, final String pubicKeyId) {
 
-        return PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
+        PaymentRequest.Builder paymentRequest =  PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
                 .withCallerId(Long.valueOf(callerId))
                 .withClientId(Long.valueOf(clientId))
                 .withCollector(publicKey.getOwnerId())
-                .withOrder(merchantOrder.getId(), merchantOrder.getOrderType())
-                .withHeaderTestToken(pubicKeyId)
-                .build();
+                .withHeaderTestToken(pubicKeyId);
+
+        if (merchantOrder != null){
+            paymentRequest.withOrder(merchantOrder.getId(), merchantOrder.getOrderType());
+        }
+
+        return paymentRequest.build();
     }
 }
