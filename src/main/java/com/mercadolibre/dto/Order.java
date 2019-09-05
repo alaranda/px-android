@@ -1,7 +1,5 @@
 package com.mercadolibre.dto;
 
-import com.mercadolibre.constants.Constants;
-
 import static com.mercadolibre.constants.Constants.MERCHANT_ORDER_TYPE_ML;
 import static com.mercadolibre.constants.Constants.MERCHANT_ORDER_TYPE_MP;
 
@@ -15,11 +13,11 @@ public class Order {
         this.type = type;
     }
 
-    public static Order CreateOrderMP(final long id) {
+    public static Order createOrderMP(final long id) {
         return new Order(id, MERCHANT_ORDER_TYPE_MP);
     }
 
-    public static Order CreateOrderML(final long id) {
+    public static Order createOrderML(final long id) {
         return new Order(id, MERCHANT_ORDER_TYPE_ML);
     }
 

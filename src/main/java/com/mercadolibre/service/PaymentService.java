@@ -113,12 +113,12 @@ public enum PaymentService {
 
         if (null != preference.getMerchantOrderId()){
             DatadogTransactionsMetrics.addOrderTypePayment(MERCHANT_ORDER);
-            return Order.CreateOrderMP(preference.getMerchantOrderId());
+            return Order.createOrderMP(preference.getMerchantOrderId());
         }
 
         if (null != preference.getOrderId()){
             DatadogTransactionsMetrics.addOrderTypePayment(ORDER);
-            return Order.CreateOrderML(preference.getOrderId());
+            return Order.createOrderML(preference.getOrderId());
         }
 
         DatadogTransactionsMetrics.addOrderTypePayment(WITHOUT_ORDER);
