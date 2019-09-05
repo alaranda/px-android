@@ -78,6 +78,10 @@ public class PaymentBody {
         return couponCode;
     }
 
+    public Order getOrder() {
+        return order;
+    }
+
     public boolean isBinaryMode() {
         return binaryMode;
     }
