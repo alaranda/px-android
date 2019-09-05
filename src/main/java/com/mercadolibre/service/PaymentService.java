@@ -2,7 +2,6 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.PublicKeyAndPreference;
@@ -97,7 +96,7 @@ public enum PaymentService {
                                                    final String requestId, final String callerId, final String clientId,
                                                    final Order order, final String pubicKeyId) {
 
-        PaymentRequest paymentRequest =  PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
+        return PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
                 .withCallerId(Long.valueOf(callerId))
                 .withClientId(Long.valueOf(clientId))
                 .withCollector(publicKey.getOwnerId())
@@ -105,7 +104,6 @@ public enum PaymentService {
                 .withHeaderTestToken(pubicKeyId)
                 .build();
 
-        return paymentRequest;
     }
 
     private Order setOrder(final Preference preference, final long payerId) throws ApiException {
@@ -115,12 +113,12 @@ public enum PaymentService {
 
         if (null != preference.getMerchantOrderId()){
             DatadogTransactionsMetrics.addOrderTypePayment(MERCHANT_ORDER);
-            return new Order(preference.getMerchantOrderId(), Constants.MERCHANT_ORDER_TYPE_MP);
+            return Order.CreateOrderMP(preference.getMerchantOrderId());
         }
 
         if (null != preference.getOrderId()){
             DatadogTransactionsMetrics.addOrderTypePayment(ORDER);
-            return new Order(preference.getOrderId(), Constants.MERCHANT_ORDER_TYPE_ML);
+            return Order.CreateOrderML(preference.getOrderId());
         }
 
         DatadogTransactionsMetrics.addOrderTypePayment(WITHOUT_ORDER);
