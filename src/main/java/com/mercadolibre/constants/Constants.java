@@ -47,6 +47,9 @@ public final class Constants {
     public static final String ORDER_TYPE_NAME = "order_type";
     public static final String MERCHANT_ORDER_TYPE_ML = "mercadolibre";
     public static final String MERCHANT_ORDER_TYPE_MP = "mercadopago";
+    public static final String MERCHANT_ORDER = "merchant_order";
+    public static final String ORDER = "order";
+    public static final String WITHOUT_ORDER = "without_order";
 
     /**
      * Collectors de pago de factura de meli.

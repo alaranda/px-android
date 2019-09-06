@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.payment;
 
+import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
@@ -86,8 +87,8 @@ public class PaymentRequest {
             return this;
         }
 
-        public Builder withOrder(final long merchantOrderId, final String merchantOrderType) {
-            body.withOrder(merchantOrderId, merchantOrderType);
+        public Builder withOrder(final Order order) {
+            body.withOrder(order);
             return this;
         }
 

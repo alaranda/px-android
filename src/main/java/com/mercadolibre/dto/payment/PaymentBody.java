@@ -1,6 +1,5 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.Identification;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.Payer;
@@ -77,6 +76,10 @@ public class PaymentBody {
 
     public String getCouponCode() {
         return couponCode;
+    }
+
+    public Order getOrder() {
+        return order;
     }
 
     public boolean isBinaryMode() {
@@ -204,8 +207,8 @@ public class PaymentBody {
             return this;
         }
 
-        public Builder withOrder(final long merchantOrderId, final String merchantOrderType){
-            this.order = new Order(merchantOrderId, merchantOrderType);
+        public Builder withOrder(final Order order){
+            this.order = order;
             return this;
         }
 
