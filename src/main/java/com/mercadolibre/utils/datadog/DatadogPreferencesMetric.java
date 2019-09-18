@@ -2,8 +2,6 @@ package com.mercadolibre.utils.datadog;
 
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.metrics.MetricCollector;
-import com.sun.jndi.toolkit.url.Uri;
-import java.net.MalformedURLException;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_IVALID;

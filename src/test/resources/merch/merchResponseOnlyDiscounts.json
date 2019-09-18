@@ -1,0 +1,25 @@
+{
+  "discounts": {
+    "fallback_link": "deeplink de fallback, instalar mp",
+    "items": [
+      {
+        "image": "imagen del descuento",
+        "link": "mercadopago://discount_center_payers/detail",
+        "subtitle": "Hasta $80",
+        "title": "Havanna"
+      },
+      {
+        "image": "imagen del descuento",
+        "link": "mercadopago://discount_center_payers/detail",
+        "subtitle": "Hasta $30",
+        "title": "Farmacity"
+      }
+    ],
+    "link": "deeplink a la central de descuentos",
+    "pagination": {
+      "limit": 6,
+      "offset": 0,
+      "total": 1
+    }
+  }
+}

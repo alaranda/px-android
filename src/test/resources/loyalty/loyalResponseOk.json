@@ -1,0 +1,13 @@
+{
+  "progress": {
+    "percentage": 0.28,
+    "level_color": "#00A4D5",
+    "level_number": 3
+  },
+  "title": "Sumaste 120 puntos",
+  "action": {
+    "label": "Mis beneficios",
+    "ml_target": "meli://hub",
+    "mp_target": "mercadopago://hub"
+  }
+}

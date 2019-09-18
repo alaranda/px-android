@@ -15,5 +15,7 @@ public final class DatadogMetricsNames {
     public static final String PREFERENCE_COUNTER = "px.checkout_mobile_payments.preference";
     public static final String PREFERENCE_IVALID = "px.checkout_mobile_payments.invalid.preference";
     public static final String PAYMENT_ORDER_TYPE = "px.checkout_mobile_payments.order_type";
-
+    public static final String CONGRATS_DISCOUNTS = "px.checkout_mobile_payments.congrats_discounts";
+    public static final String CONGRATS_POINTS = "px.checkout_mobile_payments.congrats_points";
+    public static final String CONGRATS_CROSS_SELLING = "px.checkout_mobile_payments.congrats_cross_selling";
 }
