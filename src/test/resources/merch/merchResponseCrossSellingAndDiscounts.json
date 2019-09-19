@@ -1,0 +1,56 @@
+{
+  "cross_selling": {
+    "content": {
+      "actions": {
+        "content_link": {
+          "event_data": {},
+          "link": "mercadopago://cross_selling_mgm",
+          "target": "internal_link"
+        }
+      },
+      "content_id": "cross_selling_mgm",
+      "icon": "merchengine_mgm_icon_mp",
+      "subtitle": "Invita a más amigos a usar la app",
+      "title": "Ganá $ 50 de regalo para tus pagos diarios"
+    },
+    "created_at": 1568145694478800000,
+    "end_date": "2999-01-01T12:12:00.000-03:00",
+    "event_data": {
+      "realestates": [
+        {
+          "content_id": "cross_selling_mgm",
+          "origin": "user_journey",
+          "realestate_id": "cross_selling_mgm"
+        }
+      ]
+    },
+    "id": "cross_selling_mgm",
+    "origin": "user_journey",
+    "priority": 3,
+    "realestate_id": "cross_selling_mgm",
+    "start_date": "2019-04-10T12:11:01.000-03:00"
+  },
+  "discounts": {
+    "fallback_link": "deeplink de fallback, instalar mp",
+    "items": [
+      {
+        "image": "imagen del descuento",
+        "link": "mercadopago://discount_center_payers/detail",
+        "subtitle": "Hasta $80",
+        "title": "Havanna"
+      },
+      {
+        "image": "imagen del descuento",
+        "link": "mercadopago://discount_center_payers/detail",
+        "subtitle": "Hasta $30",
+        "title": "Farmacity"
+      }
+    ],
+    "link": "deeplink a la central de descuentos",
+    "pagination": {
+      "limit": 6,
+      "offset": 0,
+      "total": 1
+    }
+  }
+}

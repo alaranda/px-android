@@ -4,6 +4,7 @@ import com.google.common.net.MediaType;
 import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.HeadersConstants;
+import com.mercadolibre.controllers.CongratsController;
 import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
 import com.mercadolibre.dto.ApiError;
@@ -40,7 +41,6 @@ public class Router implements SparkApplication {
     private static final String CONTETBNT_ENCODING_GZIP = "gzip";
 
     private static final String INTERNAL_ERROR = "internal error";
-    private static final int CLIENT_CLOSE_REQUEST = 499;
 
     @Override
     public void init() {
@@ -65,6 +65,9 @@ public class Router implements SparkApplication {
 
             Spark.get("/init/preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
                     "/init/preference"), GsonWrapper::toJson);
+
+            Spark.get("/congrats", new MeteredRoute(CongratsController.INSTANCE::getCongrats,
+                    "/congrats"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
 
@@ -142,7 +145,6 @@ public class Router implements SparkApplication {
         Spark.before("/px_mobile/*", (request, response) -> setRequestIdAndLogRequest(request));
         Spark.before((request, response) ->request.attribute(REQUEST_START_HEADER, System.currentTimeMillis()));
         Spark.after(Router::setHeaders);
-
     }
 
     private static void setHeaders(final Request request, final Response response) {
@@ -152,9 +154,7 @@ public class Router implements SparkApplication {
 
         response.header(HttpHeaders.VARY, "Accept,Accept-Encoding");
 
-        // Has the endpoint decided on cacheability?
         if (response.raw().getHeader(HttpHeaders.CACHE_CONTROL) == null) {
-            // No cache by default
             response.header(HttpHeaders.CACHE_CONTROL, HeadersConstants.NO_CACHE_PARAMS);
         }
     }

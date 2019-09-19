@@ -1,6 +1,7 @@
 package com.mercadolibre;
 
 import com.mercadolibre.endpoints.ApiContextTest;
+import com.mercadolibre.endpoints.CongratsRouterTest;
 import com.mercadolibre.endpoints.PaymentRouterTest;
 import com.mercadolibre.endpoints.PreferenceRouterTest;
 import com.mercadolibre.router.Router;
@@ -15,6 +16,7 @@ import spark.Spark;
 @Suite.SuiteClasses({
         PaymentRouterTest.class,
         PreferenceRouterTest.class,
+        CongratsRouterTest.class,
         ApiContextTest.class
 })
 public class ApiTest {
