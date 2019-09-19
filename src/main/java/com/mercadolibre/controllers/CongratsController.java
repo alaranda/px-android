@@ -65,6 +65,7 @@ public enum CongratsController {
         final UserAgent userAgent = UserAgent.create(request.userAgent());
 
         return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent);
+
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {

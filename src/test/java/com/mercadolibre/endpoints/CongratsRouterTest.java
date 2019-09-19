@@ -39,7 +39,6 @@ public class CongratsRouterTest {
 
     private static final UserAgent userAgent = UserAgent.create("PX/iOS/4.3.4");
 
-
     @Test
     public void getCongrats_allNodesResponse_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")

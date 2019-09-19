@@ -38,4 +38,5 @@ public final class CongratsRequest {
     public String getClientId() { return clientId; }
 
     public UserAgent getUserAgent() { return userAgent; }
+
 }
