@@ -62,9 +62,9 @@ public enum CongratsController {
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final String paymentIds = request.queryParams(PAYMENT_IDS);
         final String platform = request.queryParams(PLATFORM);
-        final String platformVersion = UserAgent.create(request.userAgent()).getVersion().getVersionName();
+        final UserAgent userAgent = UserAgent.create(request.userAgent());
 
-        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, platformVersion);
+        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent);
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {

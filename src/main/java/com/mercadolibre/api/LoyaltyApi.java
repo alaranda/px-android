@@ -6,6 +6,7 @@ import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.Points;
+import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.dto.Context;
@@ -33,7 +34,7 @@ public enum LoyaltyApi {
     INSTANCE;
 
     private static final Logger logger = LogManager.getLogger();
-    private static final String URL = "/loyal_middleend/payment_congrats";
+    private static final String URL = "/loyal_middleend/congrats";
     private static final String POOL_NAME = "LoyalRead";
 
     static {
@@ -54,7 +55,7 @@ public enum LoyaltyApi {
      */
     public CompletableFuture<Either<Points, ApiError>> getAsyncPoints(final Context context, final CongratsRequest congratsRequest) {
 
-        final Headers headers = new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId());
+        final Headers headers = addHeaders(context, congratsRequest.getUserAgent());
         final URIBuilder url = buildUrl(congratsRequest);
         try {
             final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
@@ -82,6 +83,13 @@ public enum LoyaltyApi {
         return RESTUtils.responseToEither(response, Points.class);
     }
 
+    private static Headers addHeaders(final Context context, final UserAgent userAgent) {
+        return new Headers()
+                .add(HeadersConstants.REQUEST_ID, context.getRequestId())
+                .add( "X-Client-Name", userAgent.getOperatingSystem().getName())
+                .add("X-Client-Version", "0.2");
+    }
+
 
     /**
      * Builds the api call url using the loyalty
@@ -96,7 +104,8 @@ public enum LoyaltyApi {
                 .setPath(URL)
                 .addParameter("user_id", congratsRequest.getUserId())
                 .addParameter("site_id", congratsRequest.getSiteId())
-                .addParameter("payment_ids", congratsRequest.getPaymentIds());
+                .addParameter("payments_ids", congratsRequest.getPaymentIds())
+                .addParameter("action", "payment");
     }
 
     public static Optional<Points> getPointsFromFuture(final Context context, final CompletableFuture<Either<Points, ApiError>> future) {

@@ -1,5 +1,7 @@
 package com.mercadolibre.dto.congrats;
 
+import com.mercadolibre.dto.user_agent.UserAgent;
+
 public final class CongratsRequest {
 
     private String userId;
@@ -7,16 +9,16 @@ public final class CongratsRequest {
     private String siteId;
     private String paymentIds;
     private String platform;
-    private String platformVersion;
+    private UserAgent userAgent;
 
     public CongratsRequest(final String userId, final String clientId, final String siteId, final String paymentIds,
-                           final String platform, final String platformVersion) {
+                           final String platform, final UserAgent userAgent) {
         this.userId = userId;
         this.clientId = clientId;
         this.siteId = siteId;
         this.paymentIds = paymentIds;
         this.platform = platform;
-        this.platformVersion = platformVersion;
+        this.userAgent = userAgent;
     }
 
     public String getUserId() {
@@ -35,5 +37,5 @@ public final class CongratsRequest {
 
     public String getClientId() { return clientId; }
 
-    public String getPlatformVersion() { return platformVersion; }
+    public UserAgent getUserAgent() { return userAgent; }
 }

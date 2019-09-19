@@ -4,6 +4,9 @@ import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.dto.user_agent.OperatingSystem;
+import com.mercadolibre.dto.user_agent.UserAgent;
+import com.mercadolibre.dto.user_agent.Version;
 import com.mercadolibre.px.toolkit.constants.Site;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
@@ -34,6 +37,8 @@ public class CongratsRouterTest {
     private static final String PAYMENT_IDS_TEST = "1,2";
     private static final String PLATFORM_TEST_MP = "MP";
 
+    private static final UserAgent userAgent = UserAgent.create("PX/iOS/4.3.4");
+
 
     @Test
     public void getCongrats_allNodesResponse_200() throws URISyntaxException, IOException {
@@ -44,7 +49,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, null);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, userAgent);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
 
@@ -63,7 +68,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, null);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, userAgent);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
 
@@ -82,7 +87,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, null);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, userAgent);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_NOT_FOUND, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
 
@@ -101,7 +106,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, null);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, userAgent);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_NOT_FOUND, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
 
@@ -120,7 +125,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, null);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, userAgent);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_GATEWAY_TIMEOUT, "");
 
