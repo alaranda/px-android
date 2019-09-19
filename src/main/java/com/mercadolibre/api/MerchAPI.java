@@ -100,8 +100,8 @@ public enum MerchAPI {
                 .addParameter(CALLER_SITE_ID, congratsRequest.getSiteId())
                 .addParameter("paymentIds", congratsRequest.getPaymentIds());
 
-        if (null != congratsRequest.getPlatformVersion()) {
-            uriBuilder.addParameter("platform.version", congratsRequest.getPlatformVersion());
+        if (null != congratsRequest.getUserAgent().getVersion().getVersionName()) {
+            uriBuilder.addParameter("platform.version", congratsRequest.getUserAgent().getVersion().getVersionName());
         }
 
         return uriBuilder;
