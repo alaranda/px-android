@@ -15,10 +15,10 @@ import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 
-import java.util.concurrent.ExecutionException;
+import java.util.Locale;
 
 import static com.mercadolibre.constants.Constants.CLIENT_ID_PARAM;
-import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.constants.HeadersConstants.*;
 import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
@@ -39,7 +39,12 @@ public enum CongratsController {
      */
     public Congrats getCongrats(final Request request, final Response response) {
 
-        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
+        final String language = request.headers(LANGUAGE);
+        if (null == language) throw new ValidationException("language required");
+
+        final Context context = new Context.Builder(request.attribute(REQUEST_ID))
+                .locale(new Locale(language)).build();
+
         final CongratsRequest congratsRequest =  getCongratsRequest(request);
 
         final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(context, congratsRequest);
@@ -58,14 +63,23 @@ public enum CongratsController {
     private CongratsRequest getCongratsRequest(final Request request) {
 
         final String callerId = request.queryParams(Constants.CALLER_ID_PARAM);
+        if (null == callerId) throw new ValidationException("invalid user");
+
+        final String paymentIds = request.queryParams(PAYMENT_IDS);
+        if (null == paymentIds) throw new ValidationException("payments ids required");
+
+        final String platform = request.queryParams(PLATFORM);
+        if (null == platform) throw new ValidationException("platform required");
+
+        final String density = request.headers(DENSITY);
+        if (null == density) throw new ValidationException("density required");
+
         final String clientId = request.queryParams(CLIENT_ID_PARAM);
         final String siteId = request.queryParams(CALLER_SITE_ID);
-        final String paymentIds = request.queryParams(PAYMENT_IDS);
-        final String platform = request.queryParams(PLATFORM);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
+        final String productId = request.headers(PRODUCT_ID);
 
-        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent);
-
+        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density, productId);
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {
@@ -75,4 +89,5 @@ public enum CongratsController {
                 .withMessage(congrats.toString())
                 .build());
     }
+
 }

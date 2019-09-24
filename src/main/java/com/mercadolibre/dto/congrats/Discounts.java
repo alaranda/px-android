@@ -1,15 +1,20 @@
 package com.mercadolibre.dto.congrats;
 
+import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.utils.CongratsTexts;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.mercadolibre.utils.CongratsTexts.*;
 
 public class Discounts {
 
     private String title;
     private String subtitle;
     private Action action;
-    private Action actionDownload;
+    private ActionDownload actionDownload;
     private Set<DiscountItem> items;
 
     public Discounts(final Builder builder) {
@@ -25,23 +30,23 @@ public class Discounts {
         private String title;
         private String subtitle;
         private Action action;
-        private Action actionDownload;
+        private ActionDownload actionDownload;
         private Set<DiscountItem> items;
 
-        public Builder(final com.mercadolibre.dto.congrats.merch.Discounts discounts) {
+        public Builder(final Context context, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
 
-            if (null == discounts){
-                return;
-            }
-            this.title = "FALTA QUE NOS MANDEN EL TITLE";
-            this.subtitle = "FALTA QUE NOS MANDEN EL SUBTITLE";
-            this.action = new Action(null, discounts.getLink());
-            this.actionDownload = new Action(null, discounts.getFallbackLink());
+            if (null == discounts || null == discounts.getPaging()) return;
 
+            this.title = CongratsTexts.createTitleDiscount(context.getLocale(), String.valueOf(discounts.getPaging().getTotal()));
+            this.subtitle =  CongratsTexts.createSubtitleDiscount(context.getLocale(), String.valueOf(discounts.getLoyaltyDiscounts()));
+            this.action = new Action(CongratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
+
+            final Action action = new Action(CongratsTexts.getTranslation(context.getLocale(), DOWNLOAD), downloadUrl);
+            this.actionDownload = new ActionDownload(CongratsTexts.getTranslationDownloadForApp(context.getLocale(), platform), action);
             Set<DiscountItem> items = new HashSet<>();
-            if (null == discounts.getItems()){
-                return;
-            }
+
+            if (null == discounts.getItems()) return;
+
             discounts.getItems().stream().map(item ->
                     items.add(new DiscountItem( item.getImage(), item.getTitle(), item.getSubtitle(), item.getLink(), String.valueOf(item.getCampaignId()))))
                     .collect(Collectors.toSet());

@@ -14,6 +14,12 @@ public class Congrats {
         this.crossSelling = crossSelling;
     }
 
+    public Congrats(){
+        this.mpuntos =null;
+        this.discounts = null;
+        this.crossSelling = null;
+    }
+
     public boolean hasPoints() {
         return  null != this.mpuntos ? true : false;
     }

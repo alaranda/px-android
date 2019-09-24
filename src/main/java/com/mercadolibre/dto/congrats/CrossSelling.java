@@ -23,12 +23,12 @@ public class CrossSelling {
         private String contentId;
         private Action action;
 
-        public Builder (final com.mercadolibre.dto.congrats.merch.Content content) {
+        public Builder (final com.mercadolibre.dto.congrats.merch.Content content, final String iconUrl) {
 
             if (null == content) return;
 
             this.title = content.getTitle();
-            this.icon = content.getIcon();
+            this.icon = iconUrl;
             this.contentId = content.getContentId();
 
             if (null == content.getActions() || null == content.getActions().getContentLink()) return;

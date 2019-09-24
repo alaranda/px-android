@@ -4,13 +4,11 @@ import java.util.List;
 
 public class Discounts {
 
-    private String fallbackLink;
     private String link;
+    private int loyaltyDiscounts;
+    private Paging paging;
     private List<Item> items;
 
-    public String getFallbackLink() {
-        return fallbackLink;
-    }
 
     public String getLink() {
         return link;
@@ -18,5 +16,13 @@ public class Discounts {
 
     public List<Item> getItems() {
         return items;
+    }
+
+    public int getLoyaltyDiscounts() {
+        return loyaltyDiscounts;
+    }
+
+    public Paging getPaging() {
+        return paging;
     }
 }
