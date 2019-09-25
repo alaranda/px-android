@@ -50,8 +50,7 @@ public enum LoyaltyApi {
      *
      * @param context context
      * @param congratsRequest request congrats
-     * @return Points object or api error
-     * @throws ApiException (optional) if the api call fails
+     * @return CompletableFutureEitherPointsApiError
      */
     public CompletableFuture<Either<Points, ApiError>> getAsyncPoints(final Context context, final CongratsRequest congratsRequest) {
 

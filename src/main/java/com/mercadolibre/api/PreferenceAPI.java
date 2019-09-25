@@ -53,7 +53,8 @@ public enum PreferenceAPI {
      * Hace el API call a Preference para obtener la preferencia
      *
      * @param context context object
-     * @return preference
+     * @param preferenceId id de la preferencia
+     * @return  CompletableFutureEitherPreferenceApiError
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */
     public CompletableFuture<Either<Preference, ApiError>> geAsynctPreference(final Context context, final String preferenceId) throws ApiException {

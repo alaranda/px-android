@@ -53,7 +53,7 @@ public enum PaymentAPI {
      * @param clientId client id
      * @param body body
      * @param headers headers
-     * @return a CompletableFuture<Either<Payment, ApiError>>
+     * @return EitherPaymentApiError
      * @throws ApiException (optional) if the api call fail
      */
     public Either<Payment, ApiError> doPayment(final Context context, final Long callerId, final Long clientId, final PaymentBody body,

@@ -6,7 +6,6 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.*;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
@@ -34,7 +33,6 @@ public enum  CongratsService {
      * @param context  context
      * @param congratsRequest congrats request
      * @return Congrats congrats object
-     * @throws ApiException   si falla el api call (status code is not 2xx)
      */
     public Congrats getPointsAndDiscounts(final Context context, final CongratsRequest congratsRequest) {
 

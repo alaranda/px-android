@@ -41,10 +41,10 @@ public final class Version implements Comparable<Version> {
     }
 
     /**
-     * compare two versions
+     * compare two versions return -1 if other mayor this; 0 if equals; 1 if other minor this
      *
      * @param other other version
-     * @return -1 if other > this; 0 if equals; 1 if other < this
+     * @return int
      */
     @Override
     public int compareTo(final Version other) {

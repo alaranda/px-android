@@ -35,7 +35,6 @@ public enum CongratsController {
      * @param request  request
      * @param response response
      * @return congrats
-     * @throws ApiException        si falla el api call (status code is not 2xx)
      */
     public Congrats getCongrats(final Request request, final Response response) {
 

@@ -49,7 +49,7 @@ public enum MerchAPI {
      *
      * @param context context
      * @param congratsRequest request congrats
-     * @return Discount and cross selling object or api error
+     * @return CompletableFutureEitherMerchResponseApiError
      */
     public CompletableFuture<Either<MerchResponse, ApiError>> getAsyncCrossSellingAndDiscount(final Context context, final CongratsRequest congratsRequest) {
 
