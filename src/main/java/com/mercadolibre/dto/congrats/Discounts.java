@@ -35,9 +35,9 @@ public class Discounts {
 
         public Builder(final Context context, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
 
-            if (null == discounts || null == discounts.getPaging()) return;
+            if (null == discounts) return;
 
-            this.title = CongratsTexts.createTitleDiscount(context.getLocale(), String.valueOf(discounts.getPaging().getTotal()));
+            this.title = CongratsTexts.createTitleDiscount(context.getLocale(), String.valueOf(discounts.getTotal_discounts()));
             this.subtitle =  CongratsTexts.createSubtitleDiscount(context.getLocale(), String.valueOf(discounts.getLoyaltyDiscounts()));
             this.action = new Action(CongratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
 
