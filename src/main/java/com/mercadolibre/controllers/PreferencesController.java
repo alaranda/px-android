@@ -34,7 +34,7 @@ public enum PreferencesController {
      * @param request  request
      * @param response response
      * @return preferenceResponse response pref
-     * @throws ExecutionException exexution exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
      * @throws InterruptedException  interrupted exception
      */

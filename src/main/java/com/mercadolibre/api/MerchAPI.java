@@ -14,6 +14,7 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,7 +110,7 @@ public enum MerchAPI {
         if (null != congratsRequest.getUserAgent().getVersion().getVersionName()) {
             uriBuilder.addParameter(PLATFORM_VERSION, congratsRequest.getUserAgent().getVersion().getVersionName());
         }
-        if (null != congratsRequest.getCampaignId()) {
+        if (StringUtils.isNotBlank(congratsRequest.getCampaignId())) {
             uriBuilder.addParameter(CAMPAIGN_ID, congratsRequest.getCampaignId());
         }
 

@@ -6,7 +6,7 @@ public class Discounts {
 
     private String link;
     private int loyaltyDiscounts;
-    private int total_discounts;
+    private int totalDiscounts;
     private List<Item> items;
 
 
@@ -22,5 +22,5 @@ public class Discounts {
         return loyaltyDiscounts;
     }
 
-    public int getTotal_discounts() { return total_discounts; }
+    public int getTotalDiscounts() { return totalDiscounts; }
 }

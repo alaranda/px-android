@@ -62,7 +62,7 @@ public enum PaymentsController {
      *
      * @param request request
      * @return instancia el paymentRequest
-     * @throws ExecutionException exexution exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
      * @throws InterruptedException  interrupted exception
      */
@@ -97,7 +97,7 @@ public enum PaymentsController {
      * @param request  request
      * @param response response
      * @return payment
-     * @throws ExecutionException exexution exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
      * @throws InterruptedException  interrupted exception
      */
@@ -121,7 +121,7 @@ public enum PaymentsController {
      *
      * @param request request
      * @return instancia el paymentRequest
-     * @throws ExecutionException exexution exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
      * @throws InterruptedException  interrupted exception
      */

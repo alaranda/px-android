@@ -4,7 +4,6 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.service.CongratsService;
