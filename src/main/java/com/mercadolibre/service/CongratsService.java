@@ -66,7 +66,7 @@ public enum  CongratsService {
                     crossSelling.add(new CrossSelling.Builder(merchResponse.getCrossSelling().getContent(), iconUrl).build());
                 }
 
-                if (null != merchResponse.getDiscounts()){
+                if (null != merchResponse.getDiscounts() && !merchResponse.getDiscounts().getItems().isEmpty()){
                     final String downloadUrl = UrlDownloadUtils.buildDownloadUrl(congratsRequest.getProductId());
                     discounts = new Discounts.Builder(context, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
                 }
