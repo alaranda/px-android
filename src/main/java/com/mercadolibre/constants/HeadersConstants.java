@@ -37,4 +37,6 @@ public final class HeadersConstants {
     public static final String TRACKING = "x-tracking-id";
 
     public static final String LANGUAGE = "Accept-Language";
+
+    public static final String DENSITY = "x-density";
 }

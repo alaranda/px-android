@@ -1,12 +1,10 @@
 package com.mercadolibre.api;
 
 import com.mercadolibre.config.Config;
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
@@ -16,7 +14,6 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +33,9 @@ public enum MerchAPI {
     private static final Logger logger = LogManager.getLogger();
     private static final String URL = "/merch/middle-end/congrats/content";
     private static final String POOL_NAME = "MerchRead";
+    private static final String PAYMENT_IDS = "paymentIds";
+    private static final String LIMIT = "limit";
+    private static final String DISCOUNTS_LIMIT = "6";
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
@@ -98,7 +98,8 @@ public enum MerchAPI {
                 .addParameter(CALLER_ID_PARAM, congratsRequest.getUserId())
                 .addParameter(CLIENT_ID_PARAM, congratsRequest.getClientId())
                 .addParameter(CALLER_SITE_ID, congratsRequest.getSiteId())
-                .addParameter("paymentIds", congratsRequest.getPaymentIds());
+                .addParameter(PAYMENT_IDS, congratsRequest.getPaymentIds())
+                .addParameter(LIMIT, DISCOUNTS_LIMIT);
 
         if (null != congratsRequest.getUserAgent().getVersion().getVersionName()) {
             uriBuilder.addParameter("platform.version", congratsRequest.getUserAgent().getVersion().getVersionName());
