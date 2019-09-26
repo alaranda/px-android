@@ -35,9 +35,11 @@ public enum PaymentAPI {
     private static final String URL = "/v1/payments";
     private static final String POOL_NAME = "PaymentsWrite";
 
+    private static final long MAX_IDLE_5_HOURS_IN_MS = 5 * 60 * 60 * 1000;
+
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
-                    pool.withMaxIdleTime(0)
+                    pool.withMaxIdleTime(MAX_IDLE_5_HOURS_IN_MS)
                         .withMaxTotal(30)
                         .withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
