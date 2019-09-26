@@ -37,7 +37,9 @@ public enum PaymentAPI {
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
-                pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
+                    pool.withMaxIdleTime(0)
+                        .withMaxTotal(30)
+                        .withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
                         .withRetryStrategy(
                                 new SimpleRetryStrategy(Config.getInt("payment.retries"),
