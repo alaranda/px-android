@@ -34,8 +34,10 @@ public enum PreferenceService {
      * @param context  context
      * @param prefId id de la preferencia
      * @param callerId id del payer
+     * @throws ExecutionException exexution exception
+     * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      * @return Preference
-     * @throws ApiException   si falla el api call (status code is not 2xx)
      */
     public Preference getPreference(final Context context, final String prefId, final Long callerId)
             throws ApiException, ExecutionException, InterruptedException {

@@ -44,8 +44,9 @@ public enum UserAPI {
      * The model User will be returned.
      * If an error occurs while parsing the response then null is returned.
      *
+     * @param context    context
      * @param userId    user id
-     * @return User object or api error
+     * @return User object
      * @throws ApiException (optional) if the api call fails
      */
     public User getById(final Context context, final long userId) throws ApiException {
