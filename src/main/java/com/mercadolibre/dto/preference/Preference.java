@@ -35,6 +35,7 @@ public class Preference {
     protected DifferentialPricing differentialPricing;
     protected BigDecimal totalAmount;
     private boolean binaryMode;
+    private String productId;
 
     Preference() {
     }
@@ -142,4 +143,6 @@ public class Preference {
     public boolean isBinaryMode() {
         return binaryMode;
     }
+
+    public String getProductId() { return productId; }
 }

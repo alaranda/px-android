@@ -44,7 +44,8 @@ public final class DatadogTransactionsMetrics {
                 .add("payment_method_id", payment.getPaymentMethodId())
                 .add("flow", flow)
                 .add("operation_type", payment.getOperationType())
-                .add("marketplace", payment.getMarketplace());
+                .add("marketplace", payment.getMarketplace())
+                .add("product_id", payment.getProductId());
     }
 
     private static void addDiscountMetrics(final Payment payment) {
