@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
@@ -35,13 +36,14 @@ public enum PaymentAPI {
     private static final String URL = "/v1/payments";
     private static final String POOL_NAME = "PaymentsWrite";
 
+    private static final long MAX_IDLE_5_HOURS_IN_MS = 5 * 60 * 60 * 1000;
+
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
-                    pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
+                    pool.withMaxIdleTime(MAX_IDLE_5_HOURS_IN_MS)
+                        .withMaxTotal(30)
+                        .withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
-                        .withRetryStrategy(
-                                new SimpleRetryStrategy(Config.getInt("payment.retries"),
-                                        Config.getLong("payment.retry.delay")))
         );
     }
 
@@ -62,7 +64,7 @@ public enum PaymentAPI {
 
         try {
             final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME)
-                    .post(url.toString(), headers, GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8));
+                    .asyncPost(url.toString(), headers, GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8)).get();
 
             DatadogUtils.metricCollector.incrementCounter(
                     REQUEST_OUT_COUNTER,
@@ -70,7 +72,7 @@ public enum PaymentAPI {
             );
 
             return buildResponse(context, headers, url, response);
-        } catch (RestException e) {
+        } catch (final RestException | InterruptedException | ExecutionException e) {
             logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.POST.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
             DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
