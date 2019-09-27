@@ -16,6 +16,7 @@ public class DatadogCongratsMetric {
      * Trackea en datadog los datos de las congrats
      *
      * @param congrats  Congrats
+     * @param congratsRequest  CongratsRequest
      */
     public static void trackCongratsData(final Congrats congrats, final CongratsRequest congratsRequest) {
 

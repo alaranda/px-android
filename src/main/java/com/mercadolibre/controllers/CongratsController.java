@@ -4,7 +4,6 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.service.CongratsService;
@@ -35,7 +34,6 @@ public enum CongratsController {
      * @param request  request
      * @param response response
      * @return congrats
-     * @throws ApiException        si falla el api call (status code is not 2xx)
      */
     public Congrats getCongrats(final Request request, final Response response) {
 
@@ -78,8 +76,9 @@ public enum CongratsController {
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
         final String productId = request.headers(PRODUCT_ID);
+        final String campaignId = request.queryParams(CAMPAIGN_ID);
 
-        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density, productId);
+        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density, productId, campaignId);
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {

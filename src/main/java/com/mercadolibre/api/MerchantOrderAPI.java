@@ -47,7 +47,7 @@ public enum MerchantOrderAPI {
      * @param context context object
      * @param merchantOrderRequest merchant order body
      * @param collectorId collector id
-     * @return a CompletableFuture<Either<Payment, ApiError>>
+     * @return EitherPaymentApiError
      * @throws ApiException (optional) if the api call fail
      */
     public Either<MerchantOrder, ApiError> createMerchantOrder(final Context context, final MerchantOrder merchantOrderRequest,
@@ -77,7 +77,6 @@ public enum MerchantOrderAPI {
      * Builds the api call url using the preference id
      *
      * @param callerId caller id
-     * @param callerId client id
      * @return a string with the url
      */
     static URIBuilder buildUrl(final String callerId) {

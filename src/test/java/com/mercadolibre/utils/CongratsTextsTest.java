@@ -20,13 +20,13 @@ public class CongratsTextsTest {
     @Test
     public void getTranslationDownloadForApp_pt_downloadml() {
         final String discountLevelText = CongratsTexts.getTranslationDownloadForApp(LOCALE_PT, "ML");
-        assertThat(discountLevelText, is("Exclusivo com o aplicativo Mercado Libre"));
+        assertThat(discountLevelText, is("Exclusivo com o app do Mercado Libre"));
     }
 
     @Test
     public void getTranslation_pt_downloadmp() {
         final String discountLevelText = CongratsTexts.getTranslationDownloadForApp(LOCALE_PT, "MP");
-        assertThat(discountLevelText, is("Exclusivo com o aplicativo Mercado Pago"));
+        assertThat(discountLevelText, is("Exclusivo com o app do Mercado Pago"));
     }
 
     @Test
@@ -38,6 +38,6 @@ public class CongratsTextsTest {
     @Test
     public void createSubtitleDiscount_pt_subtitle() {
         final String discountLevelText = CongratsTexts.createSubtitleDiscount(LOCALE_PT, "80");
-        assertThat(discountLevelText, is("80 descontos para o seu nível"));
+        assertThat(discountLevelText, is("80 descontos conforme seu nível"));
     }
 }

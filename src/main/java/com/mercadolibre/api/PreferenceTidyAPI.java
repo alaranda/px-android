@@ -48,6 +48,7 @@ public enum PreferenceTidyAPI {
      * Hace el API call a Preference Tidy para obtener el id de la preferencia
      *
      * @param context context
+     * @param key   key
      * @return preferenceTidy
      * @throws ApiException  si falla el api call (status code is not 2xx)
      */

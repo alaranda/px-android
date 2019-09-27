@@ -52,7 +52,7 @@ public enum PublicKeyAPI {
      *
      * @param context context object
      * @param publicKey public key id
-     * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
+     * @return CompletableFuture Either PublicKeyInfo ApiError
      * @throws ApiException (optional) if the api call fail
      */
     public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final Context context, final String publicKey) throws ApiException {
@@ -93,7 +93,7 @@ public enum PublicKeyAPI {
      * @param context context object
      * @param callerId caller id
      * @param clientId client id
-     * @return a CompletableFuture<Either<PublicKeyInfo, ApiError>>
+     * @return CompletableFutureEitherPublicKeyInfoApiError
      * @throws ApiException (optional) if the api call fail
      */
     public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final Context context, final String callerId,
