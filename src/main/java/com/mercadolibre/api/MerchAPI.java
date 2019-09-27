@@ -14,6 +14,7 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 
 public enum MerchAPI {
@@ -34,6 +36,9 @@ public enum MerchAPI {
     private static final String URL = "/merch/middle-end/congrats/content";
     private static final String POOL_NAME = "MerchRead";
     private static final String PAYMENT_IDS = "paymentIds";
+    private static final String CAMPAIGN_ID = "campaignId";
+    private static final String ORIGIN ="origin";
+    private static final String CHECKOUT_OFF = "checkout_off";
     private static final String LIMIT = "limit";
     private static final String DISCOUNTS_LIMIT = "6";
 
@@ -49,7 +54,7 @@ public enum MerchAPI {
      *
      * @param context context
      * @param congratsRequest request congrats
-     * @return Discount and cross selling object or api error
+     * @return CompletableFutureEitherMerchResponseApiError
      */
     public CompletableFuture<Either<MerchResponse, ApiError>> getAsyncCrossSellingAndDiscount(final Context context, final CongratsRequest congratsRequest) {
 
@@ -99,10 +104,14 @@ public enum MerchAPI {
                 .addParameter(CLIENT_ID_PARAM, congratsRequest.getClientId())
                 .addParameter(CALLER_SITE_ID, congratsRequest.getSiteId())
                 .addParameter(PAYMENT_IDS, congratsRequest.getPaymentIds())
-                .addParameter(LIMIT, DISCOUNTS_LIMIT);
+                .addParameter(LIMIT, DISCOUNTS_LIMIT)
+                .addParameter(ORIGIN, CHECKOUT_OFF);
 
         if (null != congratsRequest.getUserAgent().getVersion().getVersionName()) {
-            uriBuilder.addParameter("platform.version", congratsRequest.getUserAgent().getVersion().getVersionName());
+            uriBuilder.addParameter(PLATFORM_VERSION, congratsRequest.getUserAgent().getVersion().getVersionName());
+        }
+        if (StringUtils.isNotBlank(congratsRequest.getCampaignId())) {
+            uriBuilder.addParameter(CAMPAIGN_ID, congratsRequest.getCampaignId());
         }
 
         return uriBuilder;

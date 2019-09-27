@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 
-import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
@@ -34,10 +33,12 @@ public enum PreferencesController {
      *
      * @param request  request
      * @param response response
-     * @return payment
-     * @throws ApiException   si falla el api call (status code is not 2xx)
+     * @return preferenceResponse response pref
+     * @throws ExecutionException execution exception
+     * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      */
-    public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException, MalformedURLException {
+    public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
         try {

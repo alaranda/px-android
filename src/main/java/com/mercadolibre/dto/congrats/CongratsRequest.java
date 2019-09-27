@@ -12,9 +12,11 @@ public final class CongratsRequest {
     private UserAgent userAgent;
     private String density;
     private String productId;
+    private String campaignId;
 
     public CongratsRequest(final String userId, final String clientId, final String siteId, final String paymentIds,
-                           final String platform, final UserAgent userAgent, final String density, final String productId) {
+                           final String platform, final UserAgent userAgent, final String density, final String productId,
+                           final String campaignId) {
         this.userId = userId;
         this.clientId = clientId;
         this.siteId = siteId;
@@ -23,6 +25,7 @@ public final class CongratsRequest {
         this.userAgent = userAgent;
         this.density = density;
         this.productId = productId;
+        this.campaignId = campaignId;
     }
 
     public String getUserId() {
@@ -48,4 +51,6 @@ public final class CongratsRequest {
     }
 
     public String getProductId() { return productId; }
+
+    public String getCampaignId() { return campaignId; }
 }

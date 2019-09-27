@@ -39,8 +39,9 @@ public enum PaymentsController {
      * @param request  request
      * @param response response
      * @return payment
-     * @throws ApiException        si falla el api call (status code is not 2xx)
-     * @throws ValidationException falla la validacion
+     * @throws ExecutionException exexution exception
+     * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      */
     public Payment doLegacyPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
@@ -61,8 +62,9 @@ public enum PaymentsController {
      *
      * @param request request
      * @return instancia el paymentRequest
-     * @throws ValidationException validation exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      */
     private PaymentRequest getLegacyPaymentRequest(final Request request, final Context context) throws ApiException, ExecutionException, InterruptedException {
 
@@ -95,8 +97,9 @@ public enum PaymentsController {
      * @param request  request
      * @param response response
      * @return payment
-     * @throws ApiException        si falla el api call (status code is not 2xx)
-     * @throws ValidationException falla la validacion
+     * @throws ExecutionException execution exception
+     * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      */
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
@@ -118,8 +121,9 @@ public enum PaymentsController {
      *
      * @param request request
      * @return instancia el paymentRequest
-     * @throws ValidationException validation exception
+     * @throws ExecutionException execution exception
      * @throws ApiException        api exception
+     * @throws InterruptedException  interrupted exception
      */
     private PaymentRequest getPaymentRequest(final Request request, final Context context) throws ApiException, ExecutionException, InterruptedException {
 

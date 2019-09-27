@@ -6,7 +6,7 @@ public class Discounts {
 
     private String link;
     private int loyaltyDiscounts;
-    private Paging paging;
+    private int totalDiscounts;
     private List<Item> items;
 
 
@@ -22,7 +22,5 @@ public class Discounts {
         return loyaltyDiscounts;
     }
 
-    public Paging getPaging() {
-        return paging;
-    }
+    public int getTotalDiscounts() { return totalDiscounts; }
 }
