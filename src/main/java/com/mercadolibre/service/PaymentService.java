@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.Constants.*;
+import static com.mercadolibre.constants.HeadersConstants.PRODUCT_ID;
 
 public enum PaymentService {
 
@@ -57,7 +58,7 @@ public enum PaymentService {
 
         if (StringUtils.isNotBlank(callerId)) {
             final Order order = setOrder(preference, Long.valueOf(callerId));
-            return createBlackLabelRequest(headers, paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, context.getRequestId(), callerId, clientId ,order , publicKeyId);
+            return createBlackLabelRequest(setProductIdPreference(headers, preference), paymentDataBody.getPaymentData().get(0), preference, publicKeyInfo, context.getRequestId(), callerId, clientId ,order , publicKeyId);
         }
         return PaymentRequest.Builder.createWhiteLabelPaymentRequest(headers, paymentDataBody.getPaymentData().get(0), preference, context.getRequestId())
                 .withCallerId(publicKeyInfo.getOwnerId())
@@ -123,5 +124,13 @@ public enum PaymentService {
 
         DatadogTransactionsMetrics.addOrderTypePayment(WITHOUT_ORDER);
         return null;
+    }
+
+    private Headers setProductIdPreference(final Headers headers, final Preference preference) {
+
+        if (null == preference || null == preference.getProductId()) return headers;
+
+        headers.add(PRODUCT_ID, preference.getProductId());
+        return headers;
     }
 }
