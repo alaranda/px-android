@@ -45,6 +45,7 @@ public final class Constants {
     public static final String FLOW_NAME_PAYMENTS_BLACKLABEL = "paymentsBlackLabel";
 
     public static final String ORDER_TYPE_NAME = "order_type";
+    public static final String PRODUCT_ID = "product_id";
     public static final String MERCHANT_ORDER_TYPE_ML = "mercadolibre";
     public static final String MERCHANT_ORDER_TYPE_MP = "mercadopago";
     public static final String MERCHANT_ORDER = "merchant_order";

@@ -40,10 +40,12 @@ public enum PaymentAPI {
 
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
-                    pool.withMaxIdleTime(MAX_IDLE_5_HOURS_IN_MS)
-                        .withMaxTotal(30)
-                        .withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
+                    pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
+                        .withRetryStrategy(
+                                new SimpleRetryStrategy(Config.getInt("payment.retries"),
+                                        Config.getLong("payment.retry.delay")))
+
         );
     }
 
