@@ -29,8 +29,9 @@ public final class NewRelicInterceptor implements RequestInterceptor {
                 segment.reportAsExternal(parameters);
             } catch (final URISyntaxException e) {
                 throw new IllegalStateException(e);
+            } finally {
+                segment.end();
             }
-            segment.end();
         });
     }
 
