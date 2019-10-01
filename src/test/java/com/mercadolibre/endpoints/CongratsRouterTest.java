@@ -177,6 +177,19 @@ public class CongratsRouterTest {
     }
 
     @Test
+    public void getCongrats_invalidParamsPaymentIdsBlank_paymentIdsIsRequired() throws URISyntaxException {
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
+                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
+                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(PLATFORM, PLATFORM_TEST_MP)
+                .addParameter(PAYMENT_IDS, "");
+
+        final Response response = given().headers(HEADERS).get(uriBuilder.build());
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+    }
+
+    @Test
     public void getCongrats_invalidHeaderProductId_productIdIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
                 .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
