@@ -72,11 +72,14 @@ public enum CongratsController {
         final String density = request.headers(DENSITY);
         if (null == density) throw new ValidationException("density required");
 
+        final String productId = request.headers(PRODUCT_ID);
+        if (null == productId) throw new ValidationException("productId required");
+
         final String clientId = request.queryParams(CLIENT_ID_PARAM);
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
-        final String productId = request.headers(PRODUCT_ID);
         final String campaignId = request.queryParams(CAMPAIGN_ID);
+
 
         return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density, productId, campaignId);
     }
