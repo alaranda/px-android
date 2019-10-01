@@ -40,7 +40,7 @@ public class PreferenceValidatorTest {
             validator.validate(ContextUtilsTestHelper.CONTEXT_ES, preference, calllerId);
             fail("Expected Validation Exception");
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is("No puedes pagar con este link de pago. "));
+            assertThat(e.getMessage(), is("No puedes pagar con este link de pago."));
         }
 
     }

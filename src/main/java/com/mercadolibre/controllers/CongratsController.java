@@ -7,14 +7,14 @@ import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.service.CongratsService;
+import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
-
-import java.util.Locale;
 
 import static com.mercadolibre.constants.Constants.CLIENT_ID_PARAM;
 import static com.mercadolibre.constants.HeadersConstants.*;
@@ -41,7 +41,7 @@ public enum CongratsController {
         if (null == language) throw new ValidationException("language required");
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID))
-                .locale(new Locale(language)).build();
+                .locale(Locale.getLocale(request)).build();
 
         final CongratsRequest congratsRequest =  getCongratsRequest(request);
 
@@ -64,7 +64,7 @@ public enum CongratsController {
         if (null == callerId) throw new ValidationException("invalid user");
 
         final String paymentIds = request.queryParams(PAYMENT_IDS);
-        if (null == paymentIds) throw new ValidationException("payments ids required");
+        if (null == paymentIds || !StringUtils.isNotBlank(paymentIds)) throw new ValidationException("payments ids required");
 
         final String platform = request.queryParams(PLATFORM);
         if (null == platform) throw new ValidationException("platform required");
