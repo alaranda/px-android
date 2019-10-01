@@ -195,7 +195,8 @@ public class CongratsRouterTest {
                 .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
                 .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
                 .addParameter(CALLER_SITE_ID, Site.MLA.getName())
-                .addParameter(PLATFORM, PLATFORM_TEST_MP);
+                .addParameter(PLATFORM, PLATFORM_TEST_MP)
+                .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST);
 
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),
                 new Header("user-agent", "PX/iOS/4.3.4"), new Header(HeadersConstants.DENSITY, DENSITY)))
