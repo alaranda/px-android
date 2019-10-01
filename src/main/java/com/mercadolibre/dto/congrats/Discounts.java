@@ -48,7 +48,7 @@ public class Discounts {
             if (null == discounts.getItems()) return;
 
             discounts.getItems().stream().map(item ->
-                    items.add(new DiscountItem( item.getImage(), item.getTitle(), item.getSubtitle(), item.getLink(), String.valueOf(item.getCampaignId()))))
+                    items.add(new DiscountItem( item.getImage(), item.getTitle(), item.getSubtitle(), item.getLink(), item.getTrackingId())))
                     .collect(Collectors.toSet());
 
             this.items = items;
