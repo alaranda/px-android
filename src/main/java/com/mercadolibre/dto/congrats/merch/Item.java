@@ -6,7 +6,7 @@ public class Item {
     private String link;
     private String subtitle;
     private String title;
-    private int campaignId;
+    private String trackingId;
 
     public String getImage() {
         return image;
@@ -24,7 +24,7 @@ public class Item {
         return title;
     }
 
-    public int getCampaignId() {
-        return campaignId;
+    public String getTrackingId() {
+        return trackingId;
     }
 }
