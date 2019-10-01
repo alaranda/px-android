@@ -78,9 +78,10 @@ public class Router implements SparkApplication {
                 );
                 NewRelicUtils.noticeError(exception, request);
 
+                ApiError apiError = new ApiError(exception.getMessage(), "internal_error", HttpStatus.SC_INTERNAL_SERVER_ERROR);
                 response.status(exception.getStatusCode());
                 response.type(MediaType.JSON_UTF_8.toString());
-                response.body(GsonWrapper.toJson(exception.toApiError()));
+                response.body(GsonWrapper.toJson(apiError));
             });
 
             Spark.exception(Exception.class, (exception, request, response) -> {
