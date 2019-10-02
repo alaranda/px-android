@@ -42,7 +42,7 @@ public class PreferenceServiceTest {
             final Preference preference = PreferenceService.INSTANCE.getPreference(CONTEXT_ES, PREF_MELICOLLECTOR, USER_ID_2);
             fail("ValidationException pref");
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is("No puedes pagar con este link de pago. "));
+            assertThat(e.getMessage(), is("No puedes pagar con este link de pago."));
         }
     }
 

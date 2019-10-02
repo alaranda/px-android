@@ -40,7 +40,23 @@ public class PreferenceValidatorTest {
             validator.validate(ContextUtilsTestHelper.CONTEXT_ES, preference, calllerId);
             fail("Expected Validation Exception");
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is("No puedes pagar con este link de pago. "));
+            assertThat(e.getMessage(), is("No puedes pagar con este link de pago."));
+        }
+
+    }
+
+    @Test
+    public void preferenceValidator_payerEqualsCollector_validationFail() throws IOException, ValidationException {
+
+        final long calllerId = Long.valueOf(138275050);
+        final Preference preference = GsonWrapper.fromJson(
+                IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")),
+                Preference.class);
+        try {
+            validator.validate(ContextUtilsTestHelper.CONTEXT_ES, preference, calllerId);
+            fail("Expected Validation Exception");
+        } catch (ValidationException e) {
+            assertThat(e.getMessage(), is("No puedes pagar con este link, solo puedes usarlo para cobrar."));
         }
 
     }

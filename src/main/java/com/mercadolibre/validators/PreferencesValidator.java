@@ -21,7 +21,7 @@ public class PreferencesValidator {
 
         if (callerId == preference.getCollectorId()) {
             DatadogPreferencesMetric.addInvalidPreferenceData(preference);
-            ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
+            ValidatorResult.fail(ErrorsConstants.getPayerEqualsCollectorError(context.getLocale())).throwIfInvalid();
         }
 
         if (preference.getShipments() != null) {
