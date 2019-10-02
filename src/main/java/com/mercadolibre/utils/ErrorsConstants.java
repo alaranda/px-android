@@ -29,4 +29,11 @@ public final class ErrorsConstants {
         return resourceBundle.getString("checkout.initpreference.error.invalidpreference");
     }
 
+    public static String getPayerEqualsCollectorError(final Locale locale) {
+
+        final ResourceBundle resourceBundle = ResourceBundle.getBundle("CustomErrors", locale);
+
+        return resourceBundle.getString("checkout.initpreference.error.payerequalscollector");
+    }
+
 }
