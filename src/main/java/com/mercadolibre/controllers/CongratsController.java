@@ -63,9 +63,6 @@ public enum CongratsController {
         final String callerId = request.queryParams(Constants.CALLER_ID_PARAM);
         if (null == callerId) throw new ValidationException("invalid user");
 
-        final String paymentIds = request.queryParams(PAYMENT_IDS);
-        if (null == paymentIds || !StringUtils.isNotBlank(paymentIds)) throw new ValidationException("payments ids required");
-
         final String platform = request.queryParams(PLATFORM);
         if (null == platform) throw new ValidationException("platform required");
 
@@ -75,6 +72,7 @@ public enum CongratsController {
         final String productId = request.headers(PRODUCT_ID);
         if (null == productId) throw new ValidationException("productId required");
 
+        final String paymentIds = request.queryParams(PAYMENT_IDS);
         final String clientId = request.queryParams(CLIENT_ID_PARAM);
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
