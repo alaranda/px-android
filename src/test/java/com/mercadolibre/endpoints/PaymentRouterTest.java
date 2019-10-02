@@ -58,7 +58,7 @@ public class PaymentRouterTest {
                 .with()
                 .contentType("application/json").post(uriBuilder.build());
 
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test

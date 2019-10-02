@@ -26,6 +26,8 @@ import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
 public enum PreferenceService {
     INSTANCE;
 
+    private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
+
     private long DEFAULT_CLIENT_ID = 963L;
 
     /**
@@ -58,12 +60,11 @@ public enum PreferenceService {
 
     private void validatePref(final Context context, final Preference preference, final long callerId) throws ValidationException, ApiException {
 
-        final PreferencesValidator validator = new PreferencesValidator();
-        validator.validate(context, preference, callerId);
+        PREFERENCES_VALIDATOR.validate(context, preference, callerId);
 
         if (COLLECTORS_MELI.contains(preference.getCollectorId())) {
             final User user = UserAPI.INSTANCE.getById(context, callerId);
-            validator.isDifferent(context, user.getEmail(), preference.getPayer().getEmail());
+            PREFERENCES_VALIDATOR.isDifferent(context, user.getEmail(), preference.getPayer().getEmail());
         }
     }
 

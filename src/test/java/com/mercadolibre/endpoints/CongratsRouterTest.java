@@ -183,7 +183,7 @@ public class CongratsRouterTest {
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
         final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST);
 
         final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -210,7 +210,7 @@ public class CongratsRouterTest {
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),
                 new Header("user-agent", "PX/iOS/4.3.4"), new Header(HeadersConstants.DENSITY, DENSITY)))
                 .get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -224,6 +224,6 @@ public class CongratsRouterTest {
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),
                 new Header("user-agent", "PX/iOS/4.3.4"), new Header(HeadersConstants.PRODUCT_ID, PRODUCT_ID)))
                 .get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 }
