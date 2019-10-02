@@ -13,12 +13,14 @@ public class PaymentRequest {
     private Headers headers;
     private long callerId;
     private long clientId;
+    private Preference preference;
     private PaymentBody body;
 
     private PaymentRequest(final Builder builder) {
         this.headers = builder.headers;
         this.callerId = builder.callerId;
         this.clientId = builder.clientId;
+        this.preference = builder.preference;
         this.body = builder.body.build();
     }
 
@@ -34,6 +36,10 @@ public class PaymentRequest {
         return headers;
     }
 
+    public Preference getPreference() {
+        return preference;
+    }
+
     public PaymentBody getBody() {
         return body;
     }
@@ -43,6 +49,7 @@ public class PaymentRequest {
         private Headers headers;
         private long callerId;
         private long clientId;
+        private Preference preference;
         private PaymentBody.Builder body;
 
         public static Builder createWhiteLabelLegacyPaymentRequest(final Headers headers, final PaymentRequestBody paymentRequestBody,
@@ -53,7 +60,8 @@ public class PaymentRequest {
         }
 
         public static Builder createWhiteLabelPaymentRequest(final Headers headers, final PaymentData paymentData,
-                                                                   final Preference preference, final String requestId){
+                                                             final Preference preference, final String requestId) {
+
             final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
             final Builder builder = new Builder(headers, token, requestId);
             builder.body = PaymentBody.Builder.createWhiteLabelBuilder(paymentData, preference);
@@ -79,6 +87,11 @@ public class PaymentRequest {
 
         public Builder withClientId(final long clientId) {
             this.clientId = clientId;
+            return this;
+        }
+
+        public Builder withPreference(final Preference preference) {
+            this.preference = preference;
             return this;
         }
 

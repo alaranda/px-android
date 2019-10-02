@@ -1,15 +1,20 @@
 package com.mercadolibre.controllers;
 
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.payment.*;
+import com.mercadolibre.dto.payment.Payment;
+import com.mercadolibre.dto.payment.PaymentDataBody;
+import com.mercadolibre.dto.payment.PaymentRequest;
+import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
 import com.mercadolibre.utils.HeadersUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
+import com.mercadolibre.utils.logs.RequestLogUtils;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
 import org.apache.http.HttpStatus;
@@ -20,18 +25,20 @@ import spark.Request;
 import spark.Response;
 import spark.utils.StringUtils;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.Constants.ORDER_TYPE_NAME;
 import static com.mercadolibre.constants.Constants.PRODUCT_ID;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public enum PaymentsController {
 
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String CONTROLLER_NAME = "PaymentsController";
 
     /**
@@ -45,6 +52,8 @@ public enum PaymentsController {
      * @throws InterruptedException  interrupted exception
      */
     public Payment doLegacyPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
+
+        RequestLogUtils.logRawRequest(request);
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
         final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
@@ -106,6 +115,9 @@ public enum PaymentsController {
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
         final PaymentRequest paymentRequest = getPaymentRequest(request, context);
+
+        logPaymentRequest(request, paymentRequest);
+
         final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
         final String flow = request.queryParams(Constants.CALLER_ID_PARAM) != null ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
         DatadogTransactionsMetrics.addPaymentsTransactionData(payment, flow);
@@ -147,7 +159,7 @@ public enum PaymentsController {
                 throw new ValidationException("public key required");
             }
 
-            if ((paymentDataBody.getPaymentData().size() != 1) || (StringUtils.isBlank(paymentDataBody.getPrefId())) ) {
+            if ((paymentDataBody.getPaymentData().size() != 1) || (StringUtils.isBlank(paymentDataBody.getPrefId()))) {
                 //TODO Hacer desarrollo cuando se implemente pago de pref.
                 throw new ApiException("internal_error", "unsupported payment", HttpStatus.SC_BAD_REQUEST);
             }
@@ -158,14 +170,29 @@ public enum PaymentsController {
             });
 
             return paymentDataBody;
+        } catch (ValidationException e) {
+            throw e;
         } catch (Exception e) {
             throw new ApiException("Bad Request", "Error parsing body", HttpStatus.SC_BAD_REQUEST);
         }
     }
 
+    private void logPaymentRequest(Request request, PaymentRequest paymentRequest) {
+        final Optional<String> queryParamsOpt = LogUtils.getQueryParams(request.queryString());
+        final String queryParams = queryParamsOpt.isPresent() ? queryParamsOpt.get() : "";
+
+        LOGGER.info(LogUtils.getRequestLog(request.attribute(Constants.REQUEST_ID),
+                request.requestMethod(), request.url(), request.userAgent(),
+                request.headers(SESSION_ID), queryParams,
+                String.format("{ preferenceId[%s], transactionAmount[%s] }",
+                        paymentRequest.getPreference().getId(),
+                        paymentRequest.getBody().getTransactionAmount().toPlainString())
+        ));
+    }
+
     private void logPayment(final Context context, final PaymentRequest paymentRequest, final Payment payment) {
 
-        logger.info(requestInLogBuilder(context.getRequestId())
+        LOGGER.info(requestInLogBuilder(context.getRequestId())
                 .withSource(CONTROLLER_NAME)
                 .withStatus(HttpStatus.SC_OK)
                 .withCallerId(String.valueOf(paymentRequest.getCallerId()))

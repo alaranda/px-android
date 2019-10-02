@@ -9,7 +9,7 @@ import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.service.CongratsService;
 import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
-import org.apache.commons.lang3.StringUtils;
+import com.mercadolibre.utils.logs.RequestLogUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,8 +17,13 @@ import spark.Request;
 import spark.Response;
 
 import static com.mercadolibre.constants.Constants.CLIENT_ID_PARAM;
-import static com.mercadolibre.constants.HeadersConstants.*;
-import static com.mercadolibre.constants.QueryParamsConstants.*;
+import static com.mercadolibre.constants.HeadersConstants.DENSITY;
+import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
+import static com.mercadolibre.constants.HeadersConstants.PRODUCT_ID;
+import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.constants.QueryParamsConstants.CAMPAIGN_ID;
+import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_IDS;
+import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
@@ -36,6 +41,8 @@ public enum CongratsController {
      * @return congrats
      */
     public Congrats getCongrats(final Request request, final Response response) {
+
+        RequestLogUtils.logRawRequest(request);
 
         final String language = request.headers(LANGUAGE);
         if (null == language) throw new ValidationException("language required");
