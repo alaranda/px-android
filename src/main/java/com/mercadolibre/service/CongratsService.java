@@ -38,7 +38,7 @@ public enum  CongratsService {
     public Congrats getPointsAndDiscounts(final Context context, final CongratsRequest congratsRequest) {
 
         CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
-        if (null == congratsRequest.getPaymentIds() || StringUtils.isNotBlank(congratsRequest.getPaymentIds())) {
+        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())) {
             futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
         }
 
