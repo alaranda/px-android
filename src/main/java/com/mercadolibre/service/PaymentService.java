@@ -45,6 +45,7 @@ public enum PaymentService {
         return PaymentRequest.Builder.createWhiteLabelLegacyPaymentRequest(headers, paymentRequestBody, preference, context.getRequestId())
                 .withCallerId(publicKeyInfo.getOwnerId())
                 .withClientId(publicKeyInfo.getClientId())
+                .withPreference(preference)
                 .withHeaderTestToken(publicKeyId)
                 .build();
     }
@@ -63,6 +64,7 @@ public enum PaymentService {
         return PaymentRequest.Builder.createWhiteLabelPaymentRequest(headers, paymentDataBody.getPaymentData().get(0), preference, context.getRequestId())
                 .withCallerId(publicKeyInfo.getOwnerId())
                 .withClientId(publicKeyInfo.getClientId())
+                .withPreference(preference)
                 .withHeaderTestToken(publicKeyId)
                 .build();
     }
@@ -100,6 +102,7 @@ public enum PaymentService {
         return PaymentRequest.Builder.createBlackLabelPaymentRequest(headers, paymentData, preference, requestId)
                 .withCallerId(Long.valueOf(callerId))
                 .withClientId(Long.valueOf(clientId))
+                .withPreference(preference)
                 .withCollector(publicKey.getOwnerId())
                 .withOrder(order)
                 .withHeaderTestToken(pubicKeyId)

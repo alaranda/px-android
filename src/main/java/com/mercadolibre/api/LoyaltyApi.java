@@ -109,7 +109,7 @@ public enum LoyaltyApi {
 
     public static Optional<Points> getPointsFromFuture(final Context context, final CompletableFuture<Either<Points, ApiError>> future) {
         try {
-            if (future.get().isValuePresent()){
+            if (null != future && future.get().isValuePresent()){
                 return Optional.ofNullable(future.get().getValue());
             } else  {
                 return Optional.empty();

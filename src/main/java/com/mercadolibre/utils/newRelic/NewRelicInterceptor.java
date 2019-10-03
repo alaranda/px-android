@@ -19,7 +19,7 @@ public final class NewRelicInterceptor implements RequestInterceptor {
     @Override
     public void intercept(final Request request) {
         // we start a segment on the current transaction thread
-        final Segment segment = NewRelic.getAgent().getTransaction().startSegment("apiCall");
+        final Segment segment = NewRelic.getAgent().getTransaction().startSegment(request.getPool().getName());
         request.getResponseInterceptors().addLast(response -> {
             try {
                 final ExternalParameters parameters = HttpParameters.library("MeliRestClient")

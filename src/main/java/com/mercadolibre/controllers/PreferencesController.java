@@ -11,6 +11,7 @@ import com.mercadolibre.service.PreferenceService;
 import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
+import com.mercadolibre.utils.logs.RequestLogUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +40,8 @@ public enum PreferencesController {
      * @throws InterruptedException  interrupted exception
      */
     public PreferenceResponse initCheckoutByPref(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
+
+        RequestLogUtils.logRawRequest(request);
 
         final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
         try {

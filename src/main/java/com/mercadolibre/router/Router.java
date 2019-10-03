@@ -12,7 +12,6 @@ import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.mercadolibre.utils.newRelic.NewRelicUtils;
 import com.newrelic.api.agent.NewRelic;
@@ -27,18 +26,16 @@ import spark.Spark;
 import spark.servlet.SparkApplication;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static spark.Spark.afterAfter;
 
 public class Router implements SparkApplication {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String REQUEST_START_HEADER = "request-start";
-    private static final String CONTETBNT_ENCODING_GZIP = "gzip";
+    private static final String CONTENT_ENCODING_GZIP = "gzip";
 
     private static final String INTERNAL_ERROR = "internal error";
 
@@ -71,14 +68,16 @@ public class Router implements SparkApplication {
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
 
-                logger.error(LogBuilder.requestOutLogBuilder(request.attribute(REQUEST_ID))
+                LOGGER.error(LogBuilder.requestOutLogBuilder(request.attribute(REQUEST_ID))
                         .withStatus(exception.getStatusCode())
                         .withExceptionCodeAndDescription(exception.getCode(), exception.getDescription())
                         .build()
                 );
                 NewRelicUtils.noticeError(exception, request);
 
-                ApiError apiError = new ApiError(exception.getMessage(), "internal_error", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                ApiError apiError = new ApiError(exception.getMessage(),
+                        exception.getDescription(), exception.getStatusCode());
+
                 response.status(exception.getStatusCode());
                 response.type(MediaType.JSON_UTF_8.toString());
                 response.body(GsonWrapper.toJson(apiError));
@@ -86,7 +85,7 @@ public class Router implements SparkApplication {
 
             Spark.exception(Exception.class, (exception, request, response) -> {
 
-                logger.error(LogBuilder.requestInLogBuilder(request.attribute(REQUEST_ID))
+                LOGGER.error(LogBuilder.requestInLogBuilder(request.attribute(REQUEST_ID))
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                         .withMessage("Exception thrown")
                         .build(), exception);
@@ -102,21 +101,20 @@ public class Router implements SparkApplication {
 
             Spark.exception(ValidationException.class, (exception, request, response) -> {
 
-                logger.error(LogBuilder.requestInLogBuilder(request.attribute(REQUEST_ID))
-                        .withStatus(HttpStatus.SC_NOT_FOUND)
-                        .withMessage(exception.getMessage())
-                        .build(), exception);
+                LOGGER.error(LogBuilder.requestInLogBuilder(request.attribute(REQUEST_ID))
+                        .withStatus(HttpStatus.SC_BAD_REQUEST)
+                        .withMessage(String.format("Validation exception produced, message[%s]", exception.getMessage()))
+                        .build());
                 NewRelicUtils.noticeError(exception, request);
 
-                ApiError apiError = new ApiError(exception.getMessage(), "bad request", HttpStatus.SC_NOT_FOUND);
-                response.status(HttpStatus.SC_NOT_FOUND);
+                ApiError apiError = new ApiError(exception.getMessage(), "bad request", HttpStatus.SC_BAD_REQUEST);
+                response.status(HttpStatus.SC_BAD_REQUEST);
                 response.type(MediaType.JSON_UTF_8.toString());
                 response.body(GsonWrapper.toJson(apiError));
-
             });
 
             Spark.after((req, res) -> {
-                res.header(HttpHeaders.CONTENT_ENCODING, CONTETBNT_ENCODING_GZIP);
+                res.header(HttpHeaders.CONTENT_ENCODING, CONTENT_ENCODING_GZIP);
             });
         });
 
@@ -129,17 +127,10 @@ public class Router implements SparkApplication {
         String requestId = request.headers(REQUEST_ID);
         if (StringUtils.isBlank(requestId)) {
             requestId = UUID.randomUUID().toString();
-            logger.debug(LogBuilder.requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
+            LOGGER.debug(LogBuilder.requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
 
-        final Optional<String> queryParamsOpt = LogUtils.getQueryParams(request.queryString());
-        final String queryParams = queryParamsOpt.isPresent() ? queryParamsOpt.get() : "";
-
         request.attribute(Constants.REQUEST_ID, requestId);
-        logger.info(LogUtils.getRequestLog(requestId,
-                request.requestMethod(), request.url(), request.userAgent(),
-                request.headers(SESSION_ID), queryParams, request.body()
-        ));
     }
 
     private void setupFilters() {

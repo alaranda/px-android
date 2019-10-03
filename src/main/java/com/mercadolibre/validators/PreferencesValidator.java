@@ -17,7 +17,7 @@ public class PreferencesValidator {
      * @param callerId id del payer
      * @throws ValidationException falla la validacion
      */
-    public void validate( final Context context, final Preference preference, final long callerId) throws ValidationException {
+    public void validate(final Context context, final Preference preference, final long callerId) throws ValidationException {
 
         if (callerId == preference.getCollectorId()) {
             DatadogPreferencesMetric.addInvalidPreferenceData(preference);

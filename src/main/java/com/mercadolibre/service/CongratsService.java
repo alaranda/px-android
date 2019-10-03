@@ -13,6 +13,7 @@ import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import spark.utils.StringUtils;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -36,7 +37,11 @@ public enum  CongratsService {
      */
     public Congrats getPointsAndDiscounts(final Context context, final CongratsRequest congratsRequest) {
 
-        final CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
+        CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
+        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())) {
+            futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
+        }
+
         final CompletableFuture<Either<MerchResponse, ApiError>> futureMerchResponse = MerchAPI.INSTANCE.getAsyncCrossSellingAndDiscount(context, congratsRequest);
 
         Points points = null;

@@ -141,6 +141,40 @@ public class CongratsRouterTest {
     }
 
     @Test
+    public void getCongrats_paymentsIdEmpty_200() throws URISyntaxException, IOException {
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
+                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
+                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(PAYMENT_IDS, "")
+                .addParameter(PLATFORM, PLATFORM_TEST_MP);
+
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+
+        MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
+
+        final Response response = given().headers(HEADERS).get(uriBuilder.build());
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+    }
+
+    @Test
+    public void getCongrats_withoutPaymentsId_200() throws URISyntaxException, IOException {
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
+                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
+                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(PAYMENT_IDS, "")
+                .addParameter(PLATFORM, PLATFORM_TEST_MP);
+
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+
+        MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
+
+        final Response response = given().headers(HEADERS).get(uriBuilder.build());
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+    }
+
+    @Test
     public void getCongrats_invalidParamsCallerId_callerIdIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
                 .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
@@ -149,7 +183,7 @@ public class CongratsRouterTest {
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
         final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -161,32 +195,7 @@ public class CongratsRouterTest {
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST);
 
         final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
-    }
-
-    @Test
-    public void getCongrats_invalidParamsPaymentIds_paymentIdsIsRequired() throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
-                .addParameter(PLATFORM, PLATFORM_TEST_MP);
-
-        final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
-    }
-
-    @Test
-    public void getCongrats_invalidParamsPaymentIdsBlank_paymentIdsIsRequired() throws URISyntaxException {
-        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
-                .addParameter(PLATFORM, PLATFORM_TEST_MP)
-                .addParameter(PAYMENT_IDS, "");
-
-        final Response response = given().headers(HEADERS).get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -201,7 +210,7 @@ public class CongratsRouterTest {
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),
                 new Header("user-agent", "PX/iOS/4.3.4"), new Header(HeadersConstants.DENSITY, DENSITY)))
                 .get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test
@@ -215,6 +224,6 @@ public class CongratsRouterTest {
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),
                 new Header("user-agent", "PX/iOS/4.3.4"), new Header(HeadersConstants.PRODUCT_ID, PRODUCT_ID)))
                 .get(uriBuilder.build());
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 }
