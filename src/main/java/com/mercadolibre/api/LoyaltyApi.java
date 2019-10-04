@@ -1,14 +1,11 @@
 package com.mercadolibre.api;
 
 import com.mercadolibre.config.Config;
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
@@ -18,7 +15,7 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
-import org.apache.http.HttpStatus;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +49,7 @@ public enum LoyaltyApi {
      * @param congratsRequest request congrats
      * @return CompletableFutureEitherPointsApiError
      */
+    @Trace(async = true, dispatcher = true, nameTransaction = true)
     public CompletableFuture<Either<Points, ApiError>> getAsyncPoints(final Context context, final CongratsRequest congratsRequest) {
 
         final Headers headers = addHeaders(context, congratsRequest.getUserAgent());
