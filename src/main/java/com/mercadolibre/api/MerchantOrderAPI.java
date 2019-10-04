@@ -16,6 +16,7 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +51,7 @@ public enum MerchantOrderAPI {
      * @return EitherPaymentApiError
      * @throws ApiException (optional) if the api call fail
      */
+    @Trace(dispatcher = true, nameTransaction = true)
     public Either<MerchantOrder, ApiError> createMerchantOrder(final Context context, final MerchantOrder merchantOrderRequest,
                                                                final String collectorId) throws ApiException {
         final URIBuilder url = buildUrl(collectorId);

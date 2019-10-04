@@ -15,6 +15,7 @@ import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -49,6 +50,7 @@ public enum UserAPI {
      * @return User object
      * @throws ApiException (optional) if the api call fails
      */
+    @Trace(dispatcher = true, nameTransaction = true)
     public User getById(final Context context, final long userId) throws ApiException {
         final Headers headers = new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId());
         final URIBuilder url = buildUrl(userId);
