@@ -13,7 +13,6 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Header;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.newRelic.NewRelicInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +39,6 @@ public final class RESTUtils {
 
     private static final ConcurrentMap<String, RestClient> REST_CLIENTS = new ConcurrentHashMap<>();
     private static final String DEFAULT_POOL = "__px_checkout_mobile_payments_default_pool__";
-    private static final NewRelicInterceptor NEW_RELIC_INTERCEPTOR = new NewRelicInterceptor();
 
     static {
         registerPool(DEFAULT_POOL, pool ->
@@ -92,7 +90,6 @@ public final class RESTUtils {
         REST_CLIENTS.computeIfAbsent(poolName, s -> {
             try {
                 final RESTPool pool = config.apply(RESTPool.builder())
-                        .addInterceptorLast(NEW_RELIC_INTERCEPTOR)
                         .withName(poolName).build();
                 return RestClient.builder().withPool(pool).disableDefault().build();
             } catch (final IOException e) {

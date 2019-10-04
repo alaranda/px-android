@@ -14,6 +14,7 @@ import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.utils.Either;
+import com.newrelic.api.agent.Trace;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +57,7 @@ public enum MerchAPI {
      * @param congratsRequest request congrats
      * @return CompletableFutureEitherMerchResponseApiError
      */
+    @Trace(async = true, dispatcher = true, nameTransaction = true)
     public CompletableFuture<Either<MerchResponse, ApiError>> getAsyncCrossSellingAndDiscount(final Context context, final CongratsRequest congratsRequest) {
 
         final Headers headers = new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId());

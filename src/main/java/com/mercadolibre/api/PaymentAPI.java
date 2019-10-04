@@ -15,9 +15,9 @@ import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
-import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
+import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -36,16 +36,10 @@ public enum PaymentAPI {
     private static final String URL = "/v1/payments";
     private static final String POOL_NAME = "PaymentsWrite";
 
-    private static final long MAX_IDLE_5_HOURS_IN_MS = 5 * 60 * 60 * 1000;
-
     static {
         RESTUtils.registerPool(POOL_NAME, pool ->
                     pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
-                        .withRetryStrategy(
-                                new SimpleRetryStrategy(Config.getInt("payment.retries"),
-                                        Config.getLong("payment.retry.delay")))
-
         );
     }
 
@@ -60,6 +54,7 @@ public enum PaymentAPI {
      * @return EitherPaymentApiError
      * @throws ApiException (optional) if the api call fail
      */
+    @Trace(dispatcher = true, nameTransaction = true)
     public Either<Payment, ApiError> doPayment(final Context context, final Long callerId, final Long clientId, final PaymentBody body,
                                                final Headers headers) throws ApiException {
         final URIBuilder url = buildUrl(callerId, clientId);
