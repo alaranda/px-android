@@ -38,7 +38,8 @@ public enum  CongratsService {
     public Congrats getPointsAndDiscounts(final Context context, final CongratsRequest congratsRequest) {
 
         CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
-        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())) {
+        // TODO La comparacion con "null" esta por un bug donde me pasan el parametro en null y se transforma a string. Sacar validacion cuando muera esa version.
+        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds()) && !congratsRequest.getPaymentIds().equalsIgnoreCase("null") ) {
             futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
         }
 
