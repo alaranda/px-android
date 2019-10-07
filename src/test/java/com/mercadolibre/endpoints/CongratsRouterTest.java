@@ -158,6 +158,23 @@ public class CongratsRouterTest {
     }
 
     @Test
+    public void getCongrats_paymentsIdNullString_200() throws URISyntaxException, IOException {
+        URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
+                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
+                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(PAYMENT_IDS, "null")
+                .addParameter(PLATFORM, PLATFORM_TEST_MP);
+
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+
+        MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
+
+        final Response response = given().headers(HEADERS).get(uriBuilder.build());
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+    }
+
+    @Test
     public void getCongrats_withoutPaymentsId_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
                 .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
