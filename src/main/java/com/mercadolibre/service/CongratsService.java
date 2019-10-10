@@ -73,7 +73,7 @@ public enum  CongratsService {
                 }
 
                 if (null != merchResponse.getDiscounts() && !merchResponse.getDiscounts().getItems().isEmpty()){
-                    final String downloadUrl = UrlDownloadUtils.buildDownloadUrl(congratsRequest.getProductId());
+                    final String downloadUrl = UrlDownloadUtils.buildDownloadUrl(congratsRequest.getPlatform());
                     discounts = new Discounts.Builder(context, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
                 }
             }
