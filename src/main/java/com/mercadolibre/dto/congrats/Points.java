@@ -36,10 +36,10 @@ public class Points {
         }
 
         public Builder action(final Action action, final String platform) {
-            if (platform.equalsIgnoreCase("ML")) {
-                this.action = new Action(action.getLabel(), action.getMlTarget());
-            } else {
+            if (platform.equalsIgnoreCase("MP")) {
                 this.action = new Action(action.getLabel(), action.getMpTarget());
+            } else {
+                this.action = new Action(action.getLabel(), action.getMlTarget());
             }
 
             return this;
