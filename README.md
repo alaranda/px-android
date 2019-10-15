@@ -8,39 +8,39 @@
 
 ## Endpoints
 
-    ###/px_mobile/legacy_payments (POST)
+###/px_mobile/legacy_payments (POST)
 
-    <p align="center">
-      <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/b3b27fbd-3e65-46d5-9f20-11879ca1bcfd">
-    </p>
-
-
-
-    ###/px_mobile/payments (POST)
-
-        <p align="center">
-          <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/ea601ee2-da0c-45d8-a0b0-d812f0b66be5">
-        </p>
+<p align="center">
+  <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/b3b27fbd-3e65-46d5-9f20-11879ca1bcfd">
+</p>
 
 
 
-    ###/px_mobile/init/preference (GET)
+###/px_mobile/payments (POST)
 
-        <p align="center">
-          <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/6a49596d-31b5-4aa2-a1fb-3de40497be20">
-        </p>
-
-
-
-    ###/px_mobile/congrats (GET)
-
-        <p align="center">
-          <img width="460" height="300" src="">
-        </p>
+<p align="center">
+  <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/ea601ee2-da0c-45d8-a0b0-d812f0b66be5">
+</p>
 
 
 
-#  [Change Log]()
+###/px_mobile/init/preference (GET)
+
+<p align="center">
+  <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/6a49596d-31b5-4aa2-a1fb-3de40497be20">
+</p>
+
+
+
+###/px_mobile/congrats (GET)
+
+<p align="center">
+  <img width="460" height="300" src="">
+</p>
+
+
+
+#  [Change Log](https://github.com/mercadolibre/fury_px-checkout-mobile-payments/blob/develop/CHANGELOG.md)
 
 ## Questions
 
