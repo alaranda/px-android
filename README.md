@@ -1,28 +1,47 @@
-# Java Gradle Starter App
+# PX :: Checkout Mobile Payments
 
-![technology Gradle](https://img.shields.io/badge/technology-Gradle-blue.svg)
+![language java8](https://img.shields.io/badge/language-java8-blue.svg?style=flat) ![technology Gradle](https://img.shields.io/badge/technology-Gradle-blue.svg?style=flat)
+[![kibana](https://img.shields.io/badge/-Kibana-%23f058c3.svg?style=flat&logo=kibana)](http://furyshort4.logs.furycloud.io/app/kibana#/dashboard/fury-px-checkout-mobile-payments_dashboard)
+[![datadog](https://img.shields.io/badge/-Datadog-%23672edf.svg?style=flat)](https://app.datadoghq.com/dashboard/x87-vjp-749/px-checkout-mobile-payments?from_ts=1571155273617&live=true&tile_size=s)
+[![new_relic](https://img.shields.io/badge/-New%20Relic-6ebbce.svg?style=flat)](https://rpm.newrelic.com/accounts/989586/applications/312653384)
 
-This is a basic Java Gradle application created by Fury to be used as a starting point for your project.
 
-## Usage
+## Endpoints
 
-1. In your Dockerfile, specify the correct tag for your app.
+    ###/px_mobile/legacy_payments (POST)
 
-   **E.g.:**
+    <p align="center">
+      <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/b3b27fbd-3e65-46d5-9f20-11879ca1bcfd">
+    </p>
 
-   `FROM hub.furycloud.io/mercadolibre/java-gradle:jdk8`
 
-   #### Available tags
 
-   You can find all available tags for your Dockerfile [here](https://github.com/mercadolibre/fury-docker_images/blob/master/java-gradle/README.md#available-tags)
+    ###/px_mobile/payments (POST)
 
-2. Set the CodeCov token environment variable as shown [here](https://github.com/mercadolibre/fury-docker_images/blob/master/java-gradle/README.md#codecov)
+        <p align="center">
+          <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/ea601ee2-da0c-45d8-a0b0-d812f0b66be5">
+        </p>
 
-3. If you need to, modify the default Gradle tasks that you see fit as shown [here](https://github.com/mercadolibre/fury-docker_images/blob/master/java-gradle/README.md##environment-variables)
 
-4. Start coding!
+
+    ###/px_mobile/init/preference (GET)
+
+        <p align="center">
+          <img width="460" height="300" src="blob:https://mercadolibre.atlassian.net/6a49596d-31b5-4aa2-a1fb-3de40497be20">
+        </p>
+
+
+
+    ###/px_mobile/congrats (GET)
+
+        <p align="center">
+          <img width="460" height="300" src="">
+        </p>
+
+
+
+#  [Change Log]()
 
 ## Questions
 
-* [ci-cd@mercadolibre.com](ci-cd@mercadolibre.com)
-* [fury@mercadolibre.com](fury@mercadolibre.com)
+* [px_nativo@mercadolibre.com](px_nativo@mercadolibre.com)
