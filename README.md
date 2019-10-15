@@ -17,8 +17,9 @@
 ### /px_mobile/congrats (GET)
 
 
-# [Change Log](https://github.com/mercadolibre/fury_px-checkout-mobile-payments/blob/develop/CHANGELOG.md)
-
 ## Questions
 
 * [px_nativo@mercadolibre.com](px_nativo@mercadolibre.com)
+
+
+# [Change Log](https://github.com/mercadolibre/fury_px-checkout-mobile-payments/blob/develop/CHANGELOG.md)
