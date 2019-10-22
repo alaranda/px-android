@@ -6,6 +6,7 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.*;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
@@ -39,7 +40,9 @@ public enum  CongratsService {
 
         CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
         // TODO La comparacion con "null" esta por un bug donde me pasan el parametro en null y se transforma a string. Sacar validacion cuando muera esa version.
-        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds()) && !congratsRequest.getPaymentIds().equalsIgnoreCase("null") ) {
+        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())
+                && !congratsRequest.getPaymentIds().equalsIgnoreCase("null")
+                && userAgentIsValid(congratsRequest.getUserAgent())) {
             futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
         }
 
@@ -85,6 +88,20 @@ public enum  CongratsService {
             logger.error(logBuilder.build());
             return new Congrats();
         }
+    }
+
+    /**
+     * Valida que para la version XXX de IOS no se devuelva puntos.
+     *
+     * @param userAgent  user agent
+     * @return boolean user agent is valid
+     */
+    private boolean userAgentIsValid(final UserAgent userAgent) {
+
+        if (userAgent.getOperatingSystem().getName().equals("iOS") && userAgent.getVersion().getVersionName().equals("4.22")){
+            return false;
+        }
+        return true;
     }
 
 }
