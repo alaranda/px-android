@@ -6,6 +6,8 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.*;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.dto.user_agent.OperatingSystem;
+import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
@@ -21,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
+import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS;
 
 
 public enum  CongratsService {
@@ -39,7 +42,9 @@ public enum  CongratsService {
 
         CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
         // TODO La comparacion con "null" esta por un bug donde me pasan el parametro en null y se transforma a string. Sacar validacion cuando muera esa version.
-        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds()) && !congratsRequest.getPaymentIds().equalsIgnoreCase("null") ) {
+        if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())
+                && !congratsRequest.getPaymentIds().equalsIgnoreCase("null")
+                && userAgentIsValid(congratsRequest.getUserAgent())) {
             futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
         }
 
@@ -85,6 +90,20 @@ public enum  CongratsService {
             logger.error(logBuilder.build());
             return new Congrats();
         }
+    }
+
+    /**
+     * Valida que para la version XXX de IOS no se devuelva puntos.
+     *
+     * @param userAgent  user agent
+     * @return boolean user agent is valid
+     */
+    private boolean userAgentIsValid(final UserAgent userAgent) {
+
+        if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.IOS.getName()) && userAgent.getVersion().getVersionName().equals(WITHOUT_LOYALTY_CONGRATS.getVersionName())){
+            return false;
+        }
+        return true;
     }
 
 }

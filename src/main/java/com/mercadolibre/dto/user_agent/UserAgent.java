@@ -18,6 +18,11 @@ public final class UserAgent {
     private static final String SEPARATOR = "/";
 
     /**
+     * Default version assigned when no app version is included in the received user agent
+     */
+    public static final Version NO_VERSION = Version.create("0.0");
+
+    /**
      * Gets an user agent object from an user agent string
      *
      * @param headerValue user agent string
@@ -27,7 +32,7 @@ public final class UserAgent {
     public static UserAgent create(final String headerValue) {
         String product = PX_PRODUCT_NAME;
         OperatingSystem operatingSystem = OperatingSystem.NO_OS;
-        Version version = Version.Frontend.NO_VERSION;
+        Version version = NO_VERSION;
 
         if (headerValue != null) {
             final String[] mobileVersionArray = headerValue.split(SEPARATOR);

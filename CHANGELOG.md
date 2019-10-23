@@ -11,13 +11,19 @@
 
 ### Removed
 
-## [0.57.0] - 2019-10-15
+## [0.57.0]
 
 ### Added
 
-- Changelog file.
+- Changelog.
 
 ### Changed
 
-- Update readme.
+- Actualizacion readme.
+
+## [0.58.0]
+
+### Changed
+
+- Para el user agent PX/iOS/4.22 no se devuelve puntos.
 
