@@ -6,6 +6,7 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.*;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.dto.user_agent.OperatingSystem;
 import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
+import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS;
 
 
 public enum  CongratsService {
@@ -98,7 +100,7 @@ public enum  CongratsService {
      */
     private boolean userAgentIsValid(final UserAgent userAgent) {
 
-        if (userAgent.getOperatingSystem().getName().equals("iOS") && userAgent.getVersion().getVersionName().equals("4.22")){
+        if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.IOS.getName()) && userAgent.getVersion().getVersionName().equals(WITHOUT_LOYALTY_CONGRATS.getVersionName())){
             return false;
         }
         return true;
