@@ -82,57 +82,14 @@ public final class Version implements Comparable<Version> {
         return versionName;
     }
 
-    public static final class OneTapApi {
-
-        public static final Version LAST_API_VERSION = Version.create("1.0");
-
-        private OneTapApi() {
-            // Do nothing
-        }
-    }
-
-    public static final class MobileApi {
-
-        public static final Version NATIVE_ACCOUNT_MONEY_VERSION = Version.create("1.8");
-        public static final Version DISCOUNTS_ENABLED_VERSION = Version.create("1.9");
-        public static final Version NO_CARDS_VERSION = Version.create("2.0");
-        public static final Version LAST_API_VERSION = NO_CARDS_VERSION;
-        public static final Version DISABLED_PAYER_COSTS_VERSION = Version.create("1.9");
-        public static final Version DEFAULT_VERSION = Version.create("1.9");
-
-        private MobileApi() {
-            // Do nothing
-        }
-    }
-
     /**
-     * This class contains the mobile app version for certain features
+     * This class contains the loyalty ignore version
      */
-    public static final class Frontend {
+    public static final class CongratsApi {
 
-        /**
-         * Default version assigned when no app version is included in the received user agent
-         */
-        public static final Version NO_VERSION = Version.create("0.0");
-
-        /**
-         * Soldout with campaign information iOS version
-         */
-        public static final Version SOLDOUT_CAMPAIGN_IOS = Version.create("4.8");
-
-        /**
-         * Soldout with campaign information Android version
-         */
-        public static final Version SOLDOUT_CAMPAIGN_ANDROID = Version.create("4.6.2");
-
-        /**
-         * iOS valid amount decimals: Until this version we have problems rounding amount´s decimals in IOS
-         * non inclusive version.
-         */
-        public static final Version IOS_VALID_AMOUNT_DECIMALS = new Version("4.16.0");
-
-        private Frontend() {
-            // Do nothing
-        }
+        public static final Version WITHOUT_LOYALTY_CONGRATS = Version.create("4.22");
     }
+
+
+
 }
