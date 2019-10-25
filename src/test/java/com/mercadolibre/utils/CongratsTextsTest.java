@@ -31,8 +31,8 @@ public class CongratsTextsTest {
 
     @Test
     public void createTitleDiscount_pt_title() {
-        final String discountLevelText = CongratsTexts.createTitleDiscount(LOCALE_PT, "200");
-        assertThat(discountLevelText, is("200 descontos"));
+        final String discountLevelText = CongratsTexts.createTitleDiscount(LOCALE_PT);
+        assertThat(discountLevelText, is("Descontos pelo seu nível"));
     }
 
     @Test
