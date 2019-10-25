@@ -61,7 +61,7 @@ public enum  CongratsService {
                 final Points loyalPoints = optionalPoints.get();
                 if (null != loyalPoints.getProgress() && null != loyalPoints.getAction() && null != loyalPoints.getTitle()) {
                     points = new Points.Builder(loyalPoints.getProgress(), loyalPoints.getTitle())
-                            .action(loyalPoints.getAction(), congratsRequest.getPlatform())
+                            .action(loyalPoints.getAction(), congratsRequest.getPlatform(), congratsRequest.getUserAgent())
                             .build();
                 }
             }

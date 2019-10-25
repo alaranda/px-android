@@ -37,8 +37,8 @@ public class Discounts {
 
             if (null == discounts) return;
 
-            this.title = CongratsTexts.createTitleDiscount(context.getLocale(), String.valueOf(discounts.getTotalDiscounts()));
-            this.subtitle =  CongratsTexts.createSubtitleDiscount(context.getLocale(), String.valueOf(discounts.getLoyaltyDiscounts()));
+            this.title = CongratsTexts.createTitleDiscount(context.getLocale());
+            this.subtitle = "";
             this.action = new Action(CongratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
 
             final Action action = new Action(CongratsTexts.getTranslation(context.getLocale(), DOWNLOAD), downloadUrl);

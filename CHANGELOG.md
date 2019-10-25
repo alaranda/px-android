@@ -27,3 +27,10 @@
 
 - Para el user agent PX/iOS/4.22 no se devuelve puntos.
 
+## [0.59.0]
+
+### Changed
+
+- Para los user agent menores o igual a PX/iOS/4.24.2 en la congrats, en el link de loyalty se setea "".
+- Se cambian el titulo y se saca el subtitulo de la seccion de descuentos en la congrats.
+

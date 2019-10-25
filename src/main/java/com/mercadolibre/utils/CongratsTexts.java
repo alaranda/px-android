@@ -32,9 +32,8 @@ public final class CongratsTexts {
         return  getResourceBundle(locale).getString(DISCOUNTS_DOWNLOAD_ML);
     }
 
-    public static String createTitleDiscount(final Locale locale, final String quantityDiscounts) {
-        final String totalDiscounts = getResourceBundle(locale).getString(DISCOUNTS);
-        return quantityDiscounts.concat(" ").concat(totalDiscounts);
+    public static String createTitleDiscount(final Locale locale) {
+        return getResourceBundle(locale).getString(DISCOUNTS);
     }
 
     public static String createSubtitleDiscount(final Locale locale, final String quantityDiscounts) {
