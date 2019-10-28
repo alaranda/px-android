@@ -23,4 +23,8 @@ public class Action {
     public String getLabel() {
         return label;
     }
+
+    public String getTarget() {
+        return target;
+    }
 }
