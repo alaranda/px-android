@@ -35,4 +35,6 @@ public class Congrats {
     public Set<CrossSelling> getCrossSelling() {
         return crossSelling;
     }
+
+    public Points getMpuntos() {return mpuntos; }
 }
