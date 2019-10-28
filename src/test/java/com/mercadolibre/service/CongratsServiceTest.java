@@ -34,6 +34,7 @@ public class CongratsServiceTest {
     private static final String CLIENT_ID_TEST = "0000000";
     private static final String PAYMENT_IDS_TEST = "333,222";
     private static final String PLATFORM_TEST_MP = "ML";
+    private static final String PLATFORM_OTHER = "OTHER";
     private static final String DENSITY = "xxhdpi";
     private static final String PRODUCT_ID = "test";
     private static final String CAMPAIGN_ID_TEST = "5656565656";
@@ -73,5 +74,19 @@ public class CongratsServiceTest {
         assertThat(congrats.getCrossSelling(), notNullValue());
         assertThat(congrats.hasDiscounts(), is(true));
         assertThat(congrats.hasPoints(), is(false));
+    }
+
+    @Test
+    public void getPointsAndDiscounts_platformOTHER_LoyaltyTargetMP() throws IOException {
+
+        final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.25");
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_OTHER, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+
+        MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+        MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+        assertThat(congrats.getMpuntos().getAction().getTarget(), is("mercadopago://hub"));
     }
 }
