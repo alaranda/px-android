@@ -27,7 +27,7 @@
 
 - Para el user agent PX/iOS/4.22 no se devuelve puntos.
 
-## [0.59.0]
+## [0.60.0]
 
 ### Changed
 
