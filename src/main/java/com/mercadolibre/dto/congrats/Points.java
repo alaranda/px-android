@@ -43,7 +43,7 @@ public class Points {
         public Builder action(final Action action, final String platform, final UserAgent userAgent) {
             //Fix para no mostrar el link en versiones iOS < 4.24 - no anda el link que mandan.
             if (platform.equalsIgnoreCase("MP") && OperatingSystem.isIOS(userAgent.getOperatingSystem()) && LOYALTY_LINK_INVALID_VERSION_LESS.compareTo(userAgent.getVersion()) > 0) {
-                this.action = new Action(action.getLabel(),"");
+                this.action = new Action("","");
                 //Se compara con platform OTHER por un fix en iOS donde no nos setean el parametro.
             } else if(platform.equalsIgnoreCase("MP") || platform.equalsIgnoreCase("OTHER")) {
                 this.action = new Action(action.getLabel(), action.getMpTarget());
