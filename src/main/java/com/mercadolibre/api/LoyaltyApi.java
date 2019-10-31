@@ -83,7 +83,7 @@ public enum LoyaltyApi {
     private static Headers addHeaders(final Context context, final UserAgent userAgent) {
         return new Headers()
                 .add(HeadersConstants.REQUEST_ID, context.getRequestId())
-                .add( "X-Client-Name", userAgent.getOperatingSystem().getName())
+                .add( "X-Client-Name", userAgent.getOperatingSystem().getName().toLowerCase())
                 .add("X-Client-Version", "0.2");
     }
 
@@ -102,7 +102,8 @@ public enum LoyaltyApi {
                 .addParameter("user_id", congratsRequest.getUserId())
                 .addParameter("site_id", congratsRequest.getSiteId())
                 .addParameter("payments_ids", congratsRequest.getPaymentIds())
-                .addParameter("action", "payment");
+                .addParameter("action", "payment")
+                .addParameter("platform", congratsRequest.getPlatform());
     }
 
     public static Optional<Points> getPointsFromFuture(final Context context, final CompletableFuture<Either<Points, ApiError>> future) {
