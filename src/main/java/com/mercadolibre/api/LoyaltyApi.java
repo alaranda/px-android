@@ -102,7 +102,8 @@ public enum LoyaltyApi {
                 .addParameter("user_id", congratsRequest.getUserId())
                 .addParameter("site_id", congratsRequest.getSiteId())
                 .addParameter("payments_ids", congratsRequest.getPaymentIds())
-                .addParameter("action", "payment");
+                .addParameter("action", "payment")
+                .addParameter("platform", congratsRequest.getPlatform());
     }
 
     public static Optional<Points> getPointsFromFuture(final Context context, final CompletableFuture<Either<Points, ApiError>> future) {
