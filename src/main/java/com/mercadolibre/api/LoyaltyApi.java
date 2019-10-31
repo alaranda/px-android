@@ -83,7 +83,7 @@ public enum LoyaltyApi {
     private static Headers addHeaders(final Context context, final UserAgent userAgent) {
         return new Headers()
                 .add(HeadersConstants.REQUEST_ID, context.getRequestId())
-                .add( "X-Client-Name", userAgent.getOperatingSystem().getName())
+                .add( "X-Client-Name", userAgent.getOperatingSystem().getName().toLowerCase())
                 .add("X-Client-Version", "0.2");
     }
 
