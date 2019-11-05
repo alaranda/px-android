@@ -23,7 +23,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
-import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS;
+import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS_ANDROID;
+import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS_IOS;
 
 
 public enum  CongratsService {
@@ -100,9 +101,16 @@ public enum  CongratsService {
      */
     private boolean userAgentIsValid(final UserAgent userAgent) {
 
-        if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.IOS.getName()) && userAgent.getVersion().getVersionName().equals(WITHOUT_LOYALTY_CONGRATS.getVersionName())){
+        //Validacion iOS
+        if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.IOS.getName()) && userAgent.getVersion().getVersionName().equals(WITHOUT_LOYALTY_CONGRATS_IOS.getVersionName())){
             return false;
         }
+
+        //Validacion Android
+        if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.ANDROID.getName()) && WITHOUT_LOYALTY_CONGRATS_ANDROID.compareTo(userAgent.getVersion()) == 1){
+            return false;
+        }
+
         return true;
     }
 

@@ -61,7 +61,7 @@ public class CongratsServiceTest {
     }
 
     @Test
-    public void getPointsAndDiscounts_invalidUserAgent_crossSellingAndDiscounts() throws URISyntaxException, IOException {
+    public void getPointsAndDiscounts_invalidUserAgentIOS_crossSellingAndDiscounts() throws URISyntaxException, IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.22");
         final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
@@ -88,5 +88,21 @@ public class CongratsServiceTest {
         final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getMpuntos().getAction().getTarget(), is("meli://hub"));
+    }
+
+    @Test
+    public void getPointsAndDiscounts_invalidUserAgentAndroid_crossSellingAndDiscounts() throws URISyntaxException, IOException {
+
+        final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.0");
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+
+        MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+        MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+        assertThat(congrats.getCrossSelling(), notNullValue());
+        assertThat(congrats.hasDiscounts(), is(true));
+        assertThat(congrats.hasPoints(), is(false));
     }
 }
