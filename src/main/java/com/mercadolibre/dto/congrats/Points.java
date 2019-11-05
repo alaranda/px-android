@@ -45,9 +45,9 @@ public class Points {
             if (platform.equalsIgnoreCase("MP") && OperatingSystem.isIOS(userAgent.getOperatingSystem()) && LOYALTY_LINK_INVALID_VERSION_LESS.compareTo(userAgent.getVersion()) > 0) {
                 this.action = new Action(action.getLabel(),"");
                 //Se compara con platform OTHER por un fix en iOS donde no nos setean el parametro.
-            } else if(platform.equalsIgnoreCase("MP") || platform.equalsIgnoreCase("OTHER")) {
+            } else if(platform.equalsIgnoreCase("MP")) {
                 this.action = new Action(action.getLabel(), action.getMpTarget());
-            } else if (platform.equalsIgnoreCase("ML")) {
+            } else if (platform.equalsIgnoreCase("ML") || platform.equalsIgnoreCase("OTHER")) {
                 this.action = new Action(action.getLabel(), action.getMlTarget());
             }
 

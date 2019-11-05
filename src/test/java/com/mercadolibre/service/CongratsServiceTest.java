@@ -87,6 +87,6 @@ public class CongratsServiceTest {
 
         final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
-        assertThat(congrats.getMpuntos().getAction().getTarget(), is("mercadopago://hub"));
+        assertThat(congrats.getMpuntos().getAction().getTarget(), is("meli://hub"));
     }
 }
