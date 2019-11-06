@@ -88,7 +88,9 @@ public final class Version implements Comparable<Version> {
      */
     public static final class CongratsApi {
 
-        public static final Version WITHOUT_LOYALTY_CONGRATS = Version.create("4.22");
+        public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
+
+        public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
     }
 
 
