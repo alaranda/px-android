@@ -125,7 +125,7 @@ public class CongratsServiceTest {
     @Test
     public void getPointsAndDiscounts_MPIOSPxVersion_linkLoyaltyBlank() throws IOException {
 
-        final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.24.3");
+        final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.24.2");
         final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
