@@ -13,6 +13,12 @@
 
 -------------
 
+## [0.66.0]
+
+### Changed
+
+- Para los user agent menores a PX/iOS/4.26 en la congrats, en el titulo del link de loyalty se setea "".
+
 ## [0.65.0]
 
 ### Changed
