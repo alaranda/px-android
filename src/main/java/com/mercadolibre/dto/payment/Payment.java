@@ -30,7 +30,6 @@ public class Payment {
     private Long differentialPricingId;
     private String externalReference;
     private BigDecimal installmentAmount;
-    private Map<String, String> internalMetadata;
     private OffsetDateTime lastModified;
     private String marketplace;
     private BigDecimal marketplaceFee;
@@ -118,10 +117,6 @@ public class Payment {
 
     public BigDecimal getInstallmentAmount() {
         return installmentAmount;
-    }
-
-    public Map<String, String> getInternalMetadata() {
-        return internalMetadata;
     }
 
     public OffsetDateTime getLastModified() {

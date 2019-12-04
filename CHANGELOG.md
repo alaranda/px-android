@@ -1,17 +1,13 @@
-
 # PX :: Checkout Mobile Payments
 
 # Change Log
 
-## [Unreleased] - yyyy-mm-dd
-
-### Added
-
-### Changed
+## [0.67.0]
 
 ### Removed
 
--------------
+- Se eliminó el parseo de internal_meta_data al generar el pago
+
 
 ## [0.66.0]
 
