@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [0.68.0]
+
+### Changed
+
+- Se vuelve a setear el link de loyalty para las versiones iugal o mayores a PX/iOS/4.24.3 en la congrats.
+
 ## [0.67.0]
 
 ### Removed
