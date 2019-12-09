@@ -11,7 +11,7 @@ public final class Version implements Comparable<Version> {
     private static final String INVALID_VERSION_MESSAGE = "Invalid version format.";
     private static final Pattern DOT_PATTERN = Pattern.compile("\\.");
     private static final int VERSION_LENGTH = 3;
-    public static final Version LOYALTY_LINK_INVALID_VERSION_LESS = Version.create("4.26");
+    public static final Version LOYALTY_LINK_INVALID_VERSION_LESS = Version.create("4.24.3");
 
 
     private final String versionName;
