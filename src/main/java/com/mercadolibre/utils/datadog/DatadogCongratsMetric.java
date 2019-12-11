@@ -39,6 +39,7 @@ public class DatadogCongratsMetric {
         final MetricCollector.Tags tags = new MetricCollector.Tags();
         tags.add("site", congratsRequest.getSiteId());
         tags.add("platform", congratsRequest.getPlatform());
+        tags.add("productId", congratsRequest.getProductId());
 
         if (quantity > 0){
             tags.add("quantity", quantity);
