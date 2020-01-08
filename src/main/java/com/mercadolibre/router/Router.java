@@ -39,6 +39,8 @@ public class Router implements SparkApplication {
 
     private static final String INTERNAL_ERROR = "internal error";
 
+    private final CongratsController congratsController = new CongratsController();
+
     @Override
     public void init() {
 
@@ -63,7 +65,7 @@ public class Router implements SparkApplication {
             Spark.get("/init/preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
                     "/init/preference"), GsonWrapper::toJson);
 
-            Spark.get("/congrats", new MeteredRoute(CongratsController.INSTANCE::getCongrats,
+            Spark.get("/congrats", new MeteredRoute(congratsController::getCongrats,
                     "/congrats"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {

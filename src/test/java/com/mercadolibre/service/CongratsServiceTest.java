@@ -16,7 +16,6 @@ import org.junit.Test;
 import spark.utils.IOUtils;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static com.mercadolibre.utils.ContextUtilsTestHelper.CONTEXT_ES;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -42,6 +41,7 @@ public class CongratsServiceTest {
     private static final Headers HEADERS = new Headers(new Header("accept-language", "es_AR"),
             new Header("user-agent", "PX/iOS/4.5.0"), new Header(HeadersConstants.DENSITY, DENSITY),
             new Header(HeadersConstants.PRODUCT_ID, PRODUCT_ID));
+    private static final CongratsService congratsService = new CongratsService();
 
 
     @Test
@@ -53,7 +53,7 @@ public class CongratsServiceTest {
 
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getCrossSelling(), notNullValue());
         assertThat(congrats.hasDiscounts(), is(true));
@@ -69,7 +69,7 @@ public class CongratsServiceTest {
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getCrossSelling(), notNullValue());
         assertThat(congrats.hasDiscounts(), is(true));
@@ -85,7 +85,7 @@ public class CongratsServiceTest {
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getMpuntos().getAction().getTarget(), is("meli://hub"));
     }
@@ -99,7 +99,7 @@ public class CongratsServiceTest {
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getCrossSelling(), notNullValue());
         assertThat(congrats.hasDiscounts(), is(true));
@@ -115,7 +115,7 @@ public class CongratsServiceTest {
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getCrossSelling(), notNullValue());
         assertThat(congrats.hasDiscounts(), is(true));
@@ -131,7 +131,7 @@ public class CongratsServiceTest {
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
         assertThat(congrats.getMpuntos().getAction().getTarget(), is(""));
     }

@@ -4,8 +4,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public final class CongratsTexts {
-    private CongratsTexts() {
-        throw new IllegalAccessError();
+    public CongratsTexts() {
+        Locale.setDefault(new Locale("DEFAULT"));
     }
 
     public static final String DISCOUNTS = "congrats.discounts";
@@ -15,29 +15,39 @@ public final class CongratsTexts {
     public static final String DOWNLOAD = "congrats.download";
     public static final String SEE_ALL = "congrats.see.all.discounts";
 
-    private static ResourceBundle getResourceBundle(final Locale locale){
+    private ResourceBundle getResourceBundle(final Locale locale){
         return ResourceBundle.getBundle("Congrats", locale);
     }
 
-    public static String getTranslation(final Locale locale, final String key) {
+    public String getTranslation(final Locale locale, final String key) {
 
-        return getResourceBundle(locale).getString(key);
+        return getResourceBundle(getLocale(locale)).getString(key);
     }
 
-    public static String getTranslationDownloadForApp(final Locale locale, final String platform) {
+    public String getTranslationDownloadForApp(final Locale locale, final String platform) {
 
         if (platform.equalsIgnoreCase("MP")) {
-            return  getResourceBundle(locale).getString(DISCOUNTS_DOWNLOAD_MP);
+            return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_MP);
         }
-        return  getResourceBundle(locale).getString(DISCOUNTS_DOWNLOAD_ML);
+        return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_ML);
     }
 
-    public static String createTitleDiscount(final Locale locale) {
-        return getResourceBundle(locale).getString(DISCOUNTS);
+    public String createTitleDiscount(final Locale locale) {
+        return getResourceBundle(getLocale(locale)).getString(DISCOUNTS);
     }
 
-    public static String createSubtitleDiscount(final Locale locale, final String quantityDiscounts) {
-        final String totalDiscounts = getResourceBundle(locale).getString(DISCOUNTS_LEVEL);
+    public String createSubtitleDiscount(final Locale locale, final String quantityDiscounts) {
+        final String totalDiscounts = getResourceBundle(getLocale(locale)).getString(DISCOUNTS_LEVEL);
         return quantityDiscounts.concat(" ").concat(totalDiscounts);
+    }
+
+    private Locale getLocale(Locale locale) {
+        Locale localeToUse = locale;
+
+        if (locale == null) {
+            localeToUse = new Locale("DEFAULT");
+        }
+
+        return localeToUse;
     }
 }

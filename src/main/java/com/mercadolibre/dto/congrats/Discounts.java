@@ -33,16 +33,17 @@ public class Discounts {
         private ActionDownload actionDownload;
         private Set<DiscountItem> items;
 
-        public Builder(final Context context, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
+        public Builder(final Context context, final CongratsTexts congratsTexts, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
 
             if (null == discounts) return;
 
-            this.title = CongratsTexts.createTitleDiscount(context.getLocale());
+            this.title = congratsTexts.createTitleDiscount(context.getLocale());
             this.subtitle = "";
-            this.action = new Action(CongratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
 
-            final Action action = new Action(CongratsTexts.getTranslation(context.getLocale(), DOWNLOAD), downloadUrl);
-            this.actionDownload = new ActionDownload(CongratsTexts.getTranslationDownloadForApp(context.getLocale(), platform), action);
+            this.action = new Action(congratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
+
+            final Action action = new Action(congratsTexts.getTranslation(context.getLocale(), DOWNLOAD), downloadUrl);
+            this.actionDownload = new ActionDownload(congratsTexts.getTranslationDownloadForApp(context.getLocale(), platform), action);
             Set<DiscountItem> items = new HashSet<>();
 
             if (null == discounts.getItems()) return;
