@@ -11,6 +11,7 @@ import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.dto.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
+import com.mercadolibre.utils.CongratsTexts;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,15 @@ import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALT
 import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS_IOS;
 
 
-public enum  CongratsService {
-    INSTANCE;
+public class CongratsService {
 
     private static final Logger logger = LogManager.getLogger();
+
+    private final CongratsTexts congratsTexts;
+
+    public CongratsService() {
+        this.congratsTexts = new CongratsTexts();
+    }
 
     /**
      * Retorna los puntos sumados en el pago y los acmulados mas los descuentos otorgados.
@@ -80,7 +86,7 @@ public enum  CongratsService {
 
                 if (null != merchResponse.getDiscounts() && !merchResponse.getDiscounts().getItems().isEmpty()){
                     final String downloadUrl = UrlDownloadUtils.buildDownloadUrl(congratsRequest.getPlatform());
-                    discounts = new Discounts.Builder(context, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
+                    discounts = new Discounts.Builder(context, congratsTexts, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
                 }
             }
 

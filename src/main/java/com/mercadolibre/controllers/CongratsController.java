@@ -27,11 +27,15 @@ import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
-public enum CongratsController {
-
-    INSTANCE;
+public class CongratsController {
 
     private static final Logger logger = LogManager.getLogger();
+
+    private final CongratsService congratsService;
+
+    public CongratsController() {
+        this.congratsService = new CongratsService();
+    }
 
     /**
      * Recibe un accestoken y pamentsId para mostrarle al usaurio puntos y descuentos.
@@ -52,7 +56,7 @@ public enum CongratsController {
 
         final CongratsRequest congratsRequest =  getCongratsRequest(request);
 
-        final Congrats congrats = CongratsService.INSTANCE.getPointsAndDiscounts(context, congratsRequest);
+        final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
 
         DatadogCongratsMetric.trackCongratsData(congrats, congratsRequest);
         logCongrats(context, congrats);
