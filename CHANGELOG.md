@@ -2,7 +2,13 @@
 
 # Change Log
 
-## [0.67.1]
+## [0.68.0]
+
+### Changed
+
+- Se deja en español el lenguaje default.
+
+## [0.67.2]
 
 ### Changed
 
