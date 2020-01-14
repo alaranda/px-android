@@ -10,4 +10,5 @@ public final class QueryParamsConstants {
     public static final String PLATFORM = "platform";
     public static final String CAMPAIGN_ID = "campaign_id";
     public static final String PLATFORM_VERSION = "platform_version";
+    public static final String FOLLOW_NAME = "follow_name";
 }

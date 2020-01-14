@@ -21,9 +21,7 @@ import static com.mercadolibre.constants.HeadersConstants.DENSITY;
 import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.constants.QueryParamsConstants.CAMPAIGN_ID;
-import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_IDS;
-import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
+import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
@@ -88,9 +86,10 @@ public class CongratsController {
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
         final String campaignId = request.queryParams(CAMPAIGN_ID);
+        final String followName = request.queryParams(FOLLOW_NAME);
 
-
-        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density, productId, campaignId);
+        return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density,
+                productId, campaignId, followName);
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {
