@@ -108,7 +108,7 @@ public enum MerchAPI {
                 .addParameter(PAYMENT_IDS, congratsRequest.getPaymentIds())
                 .addParameter(LIMIT, DISCOUNTS_LIMIT)
                 .addParameter(ORIGIN, CHECKOUT_OFF)
-                .addParameter(FOLLOW_ID, congratsRequest.getFollowName());
+                .addParameter(FLOW_ID, congratsRequest.getFlowName());
 
         if (null != congratsRequest.getUserAgent().getVersion().getVersionName()) {
             uriBuilder.addParameter(PLATFORM_VERSION, congratsRequest.getUserAgent().getVersion().getVersionName());
