@@ -13,10 +13,11 @@ public final class CongratsRequest {
     private String density;
     private String productId;
     private String campaignId;
+    private String flowName;
 
     public CongratsRequest(final String userId, final String clientId, final String siteId, final String paymentIds,
                            final String platform, final UserAgent userAgent, final String density, final String productId,
-                           final String campaignId) {
+                           final String campaignId, final String flowName) {
         this.userId = userId;
         this.clientId = clientId;
         this.siteId = siteId;
@@ -26,6 +27,7 @@ public final class CongratsRequest {
         this.density = density;
         this.productId = productId;
         this.campaignId = campaignId;
+        this.flowName = flowName;
     }
 
     public String getUserId() {
@@ -53,4 +55,7 @@ public final class CongratsRequest {
     public String getProductId() { return productId; }
 
     public String getCampaignId() { return campaignId; }
+
+    public String getFlowName() { return flowName; }
+
 }
