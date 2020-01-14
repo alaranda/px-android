@@ -86,10 +86,10 @@ public class CongratsController {
         final String siteId = request.queryParams(CALLER_SITE_ID);
         final UserAgent userAgent = UserAgent.create(request.userAgent());
         final String campaignId = request.queryParams(CAMPAIGN_ID);
-        final String followName = request.queryParams(FLOW_NAME);
+        final String flowName = request.queryParams(FLOW_NAME);
 
         return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density,
-                productId, campaignId, followName);
+                productId, campaignId, flowName);
     }
 
     private void logCongrats(final Context context, final Congrats congrats) {

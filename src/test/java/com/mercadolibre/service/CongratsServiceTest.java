@@ -37,6 +37,7 @@ public class CongratsServiceTest {
     private static final String DENSITY = "xxhdpi";
     private static final String PRODUCT_ID = "test";
     private static final String CAMPAIGN_ID_TEST = "5656565656";
+    private static final String FLOW_NAME = "paymentsBlackLabel";
     private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
     private static final Headers HEADERS = new Headers(new Header("accept-language", "es_AR"),
             new Header("user-agent", "PX/iOS/4.5.0"), new Header(HeadersConstants.DENSITY, DENSITY),
@@ -47,7 +48,7 @@ public class CongratsServiceTest {
     @Test
     public void getPointsAndDiscounts_validParams_crossSellingDiscountsAndPoints() throws IOException {
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
 
@@ -64,7 +65,7 @@ public class CongratsServiceTest {
     public void getPointsAndDiscounts_invalidUserAgentIOS_crossSellingAndDiscounts() throws IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.22");
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
@@ -80,7 +81,7 @@ public class CongratsServiceTest {
     public void getPointsAndDiscounts_platformOTHER_LoyaltyTargetMP() throws IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.25");
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_OTHER, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_OTHER, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
@@ -94,7 +95,7 @@ public class CongratsServiceTest {
     public void getPointsAndDiscounts_invalidUserAgentAndroid_crossSellingAndDiscounts() throws IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.0");
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
@@ -110,7 +111,7 @@ public class CongratsServiceTest {
     public void getPointsAndDiscounts_validUserAgentAndroid_crossSellingAndDiscounts() throws IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
@@ -126,7 +127,7 @@ public class CongratsServiceTest {
     public void getPointsAndDiscounts_MPIOSPxVersion_linkLoyaltyBlank() throws IOException {
 
         final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.24.2");
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, invalidUserAgent, DENSITY, PRODUCT_ID, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
