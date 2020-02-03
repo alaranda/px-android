@@ -142,15 +142,6 @@ public final class RESTUtils {
      * @return the response body
      */
     public static String getBody(final Response response) {
-        final Optional<Header> encodingHeader = Optional.ofNullable(response.getHeader(HttpHeaders.CONTENT_ENCODING));
-        if (encodingHeader.isPresent() && "gzip".equals(encodingHeader.get().getValue())) {
-            try {
-                return IOUtils.toString(new GZIPInputStream(new ByteArrayInputStream(
-                    response.getBytes())), StandardCharsets.UTF_8);
-            } catch (final IOException e) {
-                logger.error(String.format("[method:getBody] [exception:%s]", e.getMessage(), e));
-            }
-        }
         if (response.getHeaders().contains(HttpHeaders.CONTENT_TYPE)) {
             return response.getString();
         }
