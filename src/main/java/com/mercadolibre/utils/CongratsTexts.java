@@ -27,9 +27,9 @@ public final class CongratsTexts {
     public String getTranslationDownloadForApp(final Locale locale, final String platform) {
 
         if (platform.equalsIgnoreCase("MP")) {
-            return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_MP);
+            return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_ML);
         }
-        return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_ML);
+        return  getResourceBundle(getLocale(locale)).getString(DISCOUNTS_DOWNLOAD_MP);
     }
 
     public String createTitleDiscount(final Locale locale) {

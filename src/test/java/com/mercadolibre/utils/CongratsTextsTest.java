@@ -29,13 +29,13 @@ public class CongratsTextsTest {
 
     @Test
     public void testGetTranslationDownloadForApp_onPtLocale_returnsPTdownloadml() {
-        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(LOCALE_PT, "ML");
+        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(LOCALE_PT, "MP");
         assertThat(discountLevelText, is("Exclusivo com o app do Mercado Libre"));
     }
 
     @Test
     public void testGetTranslationDownloadForApp_onPTLocale_returnsPTTitleDownloadmp() {
-        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(LOCALE_PT, "MP");
+        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(LOCALE_PT, "ML");
         assertThat(discountLevelText, is("Exclusivo com o app do Mercado Pago"));
     }
 
@@ -65,7 +65,7 @@ public class CongratsTextsTest {
 
     @Test
     public void testGetTranslationDownloadForApp_onInvalidLocale_returnsDefaultLanguageSpanish() {
-        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(INVALID_LOCALE, "MP");
+        final String discountLevelText = congratsTexts.getTranslationDownloadForApp(INVALID_LOCALE, "ML");
         assertThat(discountLevelText, is("Exclusivo con la app de Mercado Pago"));
     }
 

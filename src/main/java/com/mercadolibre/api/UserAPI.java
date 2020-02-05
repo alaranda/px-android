@@ -90,6 +90,6 @@ public enum UserAPI {
                 .setScheme(Config.getString(Constants.USERS_URL_SCHEME))
                 .setHost(Config.getString(Constants.USERS_URL_HOST))
                 .setPath(String.format("%s/%s", URL, String.valueOf(userId)))
-                .addParameter(X_CALLER_SCOPES, ADMIN);
+                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(userId));
     }
 }
