@@ -2,6 +2,19 @@
 
 # Change Log
 
+## [0.69.2]
+
+### Changed
+
+- Cuando el platform es MP se le sugiera descargar ML y cuando es ML se le sugiere descargar MP.
+- Cambio parametro de pegada a la api de users para obtener el email.
+
+## [0.69.1]
+
+### Changed
+
+- Se saca validacion de headers que genera errores en el RestUtils.
+
 ## [0.68.0]
 
 ### Changed
