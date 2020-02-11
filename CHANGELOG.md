@@ -2,7 +2,13 @@
 
 # Change Log
 
-## [0.69.2]
+## [0.70.0]
+
+### Changed
+
+- Se cambia el nombre del nodo express por el de onetap y se setea en true.
+
+## [0.69.3]
 
 ### Changed
 
