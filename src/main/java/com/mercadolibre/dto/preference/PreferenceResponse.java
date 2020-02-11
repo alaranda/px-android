@@ -5,13 +5,13 @@ public final class PreferenceResponse {
     final private String prefId;
     final private String publicKey;
     final private boolean escEnabled;
-    final private boolean expressEnabled;
+    final private boolean onetapEnabled;
 
     public PreferenceResponse (final String prefId, final String publicKey) {
         this.prefId = prefId;
         this.publicKey = publicKey;
         this.escEnabled = true;
-        this.expressEnabled = false;
+        this.onetapEnabled = true;
     }
 
     public String getPrefId() {
@@ -26,8 +26,8 @@ public final class PreferenceResponse {
         return escEnabled;
     }
 
-    public boolean isExpressEnabled() {
-        return expressEnabled;
+    public boolean isOnetapEnabled() {
+        return onetapEnabled;
     }
 
     public String toLog(final PreferenceResponse preferenceResponse){
@@ -35,7 +35,7 @@ public final class PreferenceResponse {
                 .append(String.format("public_key: %s - ", preferenceResponse.getPublicKey()))
                 .append(String.format("pref_id: %s - ", preferenceResponse.getPrefId()))
                 .append(String.format("esc_enabled: %s - ", preferenceResponse.isEscEnabled()))
-                .append(String.format("express_enabled: %s - ", preferenceResponse.isExpressEnabled()))
+                .append(String.format("onetap_enabled: %s - ", preferenceResponse.isOnetapEnabled()))
                 .toString();
     }
 }
