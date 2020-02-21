@@ -1,6 +1,6 @@
 package com.mercadolibre.dto.congrats;
 
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.CongratsTexts;
 
 import java.util.HashSet;

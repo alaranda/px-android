@@ -7,7 +7,7 @@ import spark.Request;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
-import static com.mercadolibre.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 
 
 /**

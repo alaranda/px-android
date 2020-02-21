@@ -1,12 +1,11 @@
 package com.mercadolibre.api;
 
 import com.mercadolibre.config.Config;
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
@@ -26,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 
 public enum LoyaltyApi {
     INSTANCE;
@@ -82,7 +82,7 @@ public enum LoyaltyApi {
 
     private static Headers addHeaders(final Context context, final UserAgent userAgent) {
         return new Headers()
-                .add(HeadersConstants.REQUEST_ID, context.getRequestId())
+                .add(REQUEST_ID, context.getRequestId())
                 .add( "X-Client-Name", userAgent.getOperatingSystem().getName().toLowerCase())
                 .add("X-Client-Version", "0.2");
     }
@@ -114,7 +114,7 @@ public enum LoyaltyApi {
                 return Optional.empty();
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId()), null, e));
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(REQUEST_ID, context.getRequestId()), null, e));
             DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return Optional.empty();
         }

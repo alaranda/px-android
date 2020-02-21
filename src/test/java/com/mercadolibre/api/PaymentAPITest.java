@@ -5,7 +5,7 @@ import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.Either;
@@ -23,7 +23,7 @@ public class PaymentAPITest {
 
     private final long CALLER_ID_MLA = 243962506L;
     private final long CLIENT_ID_MLA = 889238428771302L;
-    private final Context context = new Context.Builder( UUID.randomUUID().toString()).build();
+    private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
     private final PaymentAPI service = PaymentAPI.INSTANCE;
 
     @Test

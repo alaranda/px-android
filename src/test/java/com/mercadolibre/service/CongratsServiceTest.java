@@ -2,7 +2,6 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.user_agent.UserAgent;
@@ -40,8 +39,8 @@ public class CongratsServiceTest {
     private static final String FLOW_NAME = "paymentsBlackLabel";
     private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
     private static final Headers HEADERS = new Headers(new Header("accept-language", "es_AR"),
-            new Header("user-agent", "PX/iOS/4.5.0"), new Header(HeadersConstants.DENSITY, DENSITY),
-            new Header(HeadersConstants.PRODUCT_ID, PRODUCT_ID));
+            new Header("user-agent", "PX/iOS/4.5.0"), new Header(DENSITY, DENSITY),
+            new Header(PRODUCT_ID, PRODUCT_ID));
     private static final CongratsService congratsService = new CongratsService();
 
 

@@ -3,7 +3,7 @@ package com.mercadolibre.router;
 import com.google.common.net.MediaType;
 import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.constants.HeadersConstants;
+import com.mercadolibre.controllers.CapEscController;
 import com.mercadolibre.controllers.CongratsController;
 import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
@@ -11,9 +11,10 @@ import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.dto.NewRelicRequest;
+import com.mercadolibre.px.toolkit.new_relic.NewRelicUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
-import com.mercadolibre.utils.newRelic.NewRelicUtils;
 import com.newrelic.api.agent.NewRelic;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
@@ -28,7 +29,8 @@ import spark.servlet.SparkApplication;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
-import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
 import static spark.Spark.afterAfter;
 
 public class Router implements SparkApplication {
@@ -40,6 +42,7 @@ public class Router implements SparkApplication {
     private static final String INTERNAL_ERROR = "internal error";
 
     private final CongratsController congratsController = new CongratsController();
+    private final CapEscController capEscController = new CapEscController();
 
     @Override
     public void init() {
@@ -68,6 +71,9 @@ public class Router implements SparkApplication {
             Spark.get("/congrats", new MeteredRoute(congratsController::getCongrats,
                     "/congrats"), GsonWrapper::toJson);
 
+            Spark.delete("/v1/esc_cap/:cardId", new MeteredRoute(capEscController::resetCapEsc,
+                    "/v1/esc_cap/:cardId"), GsonWrapper::toJson);
+
             Spark.exception(ApiException.class, (exception, request, response) -> {
 
                 LOGGER.error(LogBuilder.requestOutLogBuilder(request.attribute(REQUEST_ID))
@@ -75,7 +81,10 @@ public class Router implements SparkApplication {
                         .withExceptionCodeAndDescription(exception.getCode(), exception.getDescription())
                         .build()
                 );
-                NewRelicUtils.noticeError(exception, request);
+                NewRelicRequest NRRequest = NewRelicRequest.builder()
+                        .withRequestId(request.attribute(REQUEST_ID))
+                        .build();
+                NewRelicUtils.noticeError(exception, NRRequest);
 
                 ApiError apiError = new ApiError(exception.getMessage(),
                         exception.getDescription(), exception.getStatusCode());
@@ -91,7 +100,10 @@ public class Router implements SparkApplication {
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                         .withMessage("Exception thrown")
                         .build(), exception);
-                NewRelicUtils.noticeError(exception, request);
+                NewRelicRequest NRRequest = NewRelicRequest.builder()
+                        .withRequestId(request.attribute(REQUEST_ID))
+                        .build();
+                NewRelicUtils.noticeError(exception, NRRequest);
 
                 final String apiErrorJson = GsonWrapper.toJson(new ApiError(INTERNAL_ERROR,
                         "internal_error", HttpStatus.SC_INTERNAL_SERVER_ERROR));
@@ -107,7 +119,10 @@ public class Router implements SparkApplication {
                         .withStatus(HttpStatus.SC_BAD_REQUEST)
                         .withMessage(String.format("Validation exception produced, message[%s]", exception.getMessage()))
                         .build());
-                NewRelicUtils.noticeError(exception, request);
+                NewRelicRequest NRRequest = NewRelicRequest.builder()
+                        .withRequestId(request.attribute(REQUEST_ID))
+                        .build();
+                NewRelicUtils.noticeError(exception, NRRequest);
 
                 ApiError apiError = new ApiError(exception.getMessage(), "bad request", HttpStatus.SC_BAD_REQUEST);
                 response.status(HttpStatus.SC_BAD_REQUEST);
@@ -132,7 +147,7 @@ public class Router implements SparkApplication {
             LOGGER.debug(LogBuilder.requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
 
-        request.attribute(Constants.REQUEST_ID, requestId);
+        request.attribute(REQUEST_ID, requestId);
     }
 
     private void setupFilters() {
@@ -149,7 +164,7 @@ public class Router implements SparkApplication {
         response.header(HttpHeaders.VARY, "Accept,Accept-Encoding");
 
         if (response.raw().getHeader(HttpHeaders.CACHE_CONTROL) == null) {
-            response.header(HttpHeaders.CACHE_CONTROL, HeadersConstants.NO_CACHE_PARAMS);
+            response.header(HttpHeaders.CACHE_CONTROL, NO_CACHE_PARAMS);
         }
     }
 

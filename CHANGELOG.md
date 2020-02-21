@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [0.71.0]
+
+### Changed
+
+- Agrego endpoint que resetea el cap del esc.
+
 ## [0.70.0]
 
 ### Changed

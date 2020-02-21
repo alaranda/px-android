@@ -3,7 +3,7 @@ package com.mercadolibre.api;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.Either;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class PreferenceAPITest {
 
     final PreferenceAPI service = PreferenceAPI.INSTANCE;
     private static final String PREFERENCE_ID = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
-    private final Context context = new Context.Builder(UUID.randomUUID().toString()).build();
+    private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
 
     @Test
     public void getPreference_validPreferenceId_isOk() throws ApiException, IOException, ExecutionException, InterruptedException {
