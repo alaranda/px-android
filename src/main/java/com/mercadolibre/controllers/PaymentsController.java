@@ -8,7 +8,7 @@ import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.Constants.ORDER_TYPE_NAME;
 import static com.mercadolibre.constants.Constants.PRODUCT_ID;
-import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
@@ -55,7 +55,7 @@ public enum PaymentsController {
 
         RequestLogUtils.logRawRequest(request);
 
-        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
+        final Context context = Context.builder().requestId(request.attribute(REQUEST_ID)).build();
         final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
         final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
         DatadogTransactionsMetrics.addLegacyPaymentsTransactionData(payment, Constants.FLOW_NAME_LEGACY_PAYMENTS);
@@ -113,7 +113,7 @@ public enum PaymentsController {
      */
     public Payment doPayment(final Request request, final Response response) throws ApiException, ExecutionException, InterruptedException {
 
-        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).build();
+        final Context context = Context.builder().requestId(request.attribute(REQUEST_ID)).build();
         final PaymentRequest paymentRequest = getPaymentRequest(request, context);
 
         logPaymentRequest(request, paymentRequest);
@@ -181,7 +181,7 @@ public enum PaymentsController {
         final Optional<String> queryParamsOpt = LogUtils.getQueryParams(request.queryString());
         final String queryParams = queryParamsOpt.isPresent() ? queryParamsOpt.get() : "";
 
-        LOGGER.info(LogUtils.getRequestLog(request.attribute(Constants.REQUEST_ID),
+        LOGGER.info(LogUtils.getRequestLog(request.attribute(REQUEST_ID),
                 request.requestMethod(), request.url(), request.userAgent(),
                 request.headers(SESSION_ID), queryParams,
                 String.format("{ preferenceId[%s], transactionAmount[%s] }",

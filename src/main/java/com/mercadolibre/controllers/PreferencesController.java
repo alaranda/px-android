@@ -5,7 +5,7 @@ import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.service.PreferenceService;
 import com.mercadolibre.utils.ErrorsConstants;
@@ -20,7 +20,7 @@ import spark.Response;
 
 import java.util.concurrent.ExecutionException;
 
-import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public enum PreferencesController {
@@ -43,7 +43,7 @@ public enum PreferencesController {
 
         RequestLogUtils.logRawRequest(request);
 
-        final Context context = new Context.Builder(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
+        final Context context = Context.builder().requestId(request.attribute(REQUEST_ID)).locale(Locale.getLocale(request)).build();
         try {
             final long callerId = Long.valueOf(request.queryParams(Constants.CALLER_ID_PARAM));
             final long clientId = Long.valueOf(request.queryParams(Constants.CLIENT_ID_PARAM));

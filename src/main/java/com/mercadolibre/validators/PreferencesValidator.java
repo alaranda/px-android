@@ -2,7 +2,7 @@ package com.mercadolibre.validators;
 
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ValidationException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 

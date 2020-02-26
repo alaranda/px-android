@@ -8,7 +8,7 @@ import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.dto.user_agent.OperatingSystem;
 import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
 import com.mercadolibre.utils.CongratsTexts;

@@ -5,31 +5,26 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.exceptions.UnsuccessfulResponseException;
 import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.new_relic.NewRelicInterceptor;
 import com.mercadolibre.restclient.RESTPool;
 import com.mercadolibre.restclient.RequestBuilder;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.RestClient;
 import com.mercadolibre.restclient.exception.RestException;
-import com.mercadolibre.restclient.http.Header;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.newRelic.NewRelicInterceptor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.UnaryOperator;
-import java.util.zip.GZIPInputStream;
 
 import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTIATE_UTILITY_CLASS;
 

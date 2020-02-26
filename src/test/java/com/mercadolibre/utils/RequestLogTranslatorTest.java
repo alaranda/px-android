@@ -7,7 +7,7 @@ import spark.Request;
 
 import java.util.Optional;
 
-import static com.mercadolibre.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;

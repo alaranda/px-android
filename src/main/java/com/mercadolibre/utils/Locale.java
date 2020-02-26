@@ -1,6 +1,6 @@
 package com.mercadolibre.utils;
 
-import com.mercadolibre.constants.HeadersConstants;
+import com.mercadolibre.px.toolkit.constants.HeadersConstants;
 import spark.Request;
 
 import static org.apache.commons.lang.StringUtils.isBlank;

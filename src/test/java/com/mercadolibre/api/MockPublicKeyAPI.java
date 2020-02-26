@@ -1,9 +1,10 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;
+
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
 
 public class MockPublicKeyAPI {
 
@@ -13,7 +14,7 @@ public class MockPublicKeyAPI {
                 .withMethod(HttpMethod.GET)
                 .withStatusCode(statusCode)
                 .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
-                .withResponseHeader(HeadersConstants.NO_CACHE_PARAMS, "max-age=0")
+                .withResponseHeader(NO_CACHE_PARAMS, "max-age=0")
                 .withResponseBody(body)
                 .build();
     }
@@ -24,7 +25,7 @@ public class MockPublicKeyAPI {
                 .withMethod(HttpMethod.GET)
                 .withStatusCode(statusCode)
                 .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
-                .withResponseHeader(HeadersConstants.NO_CACHE_PARAMS, "max-age=0")
+                .withResponseHeader(NO_CACHE_PARAMS, "max-age=0")
                 .withResponseBody(body)
                 .build();
     }
