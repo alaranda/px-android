@@ -2,12 +2,11 @@ package com.mercadolibre.api;
 
 import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.User;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
@@ -23,7 +22,7 @@ import org.apache.logging.log4j.Logger;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.constants.HeadersConstants.X_CALLER_SCOPES;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 
 public enum UserAPI {
     INSTANCE;
@@ -52,7 +51,7 @@ public enum UserAPI {
      */
     @Trace(dispatcher = true, nameTransaction = true)
     public User getById(final Context context, final long userId) throws ApiException {
-        final Headers headers = new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId());
+        final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
         final URIBuilder url = buildUrl(userId);
         try {
             final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME)

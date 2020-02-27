@@ -5,7 +5,7 @@ import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.exceptions.ValidationException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.service.CongratsService;
 import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
@@ -17,12 +17,12 @@ import spark.Request;
 import spark.Response;
 
 import static com.mercadolibre.constants.Constants.CLIENT_ID_PARAM;
-import static com.mercadolibre.constants.HeadersConstants.DENSITY;
-import static com.mercadolibre.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.constants.HeadersConstants.PRODUCT_ID;
-import static com.mercadolibre.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.DENSITY;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.px.toolkit.utils.logs.LogBuilder.requestInLogBuilder;
 
 public class CongratsController {
@@ -49,7 +49,7 @@ public class CongratsController {
         final String language = request.headers(LANGUAGE);
         if (null == language) throw new ValidationException("language required");
 
-        final Context context = new Context.Builder(request.attribute(REQUEST_ID))
+        final Context context = Context.builder().requestId(request.attribute(REQUEST_ID))
                 .locale(Locale.getLocale(request)).build();
 
         final CongratsRequest congratsRequest =  getCongratsRequest(request);

@@ -9,7 +9,7 @@ import com.mercadolibre.dto.payment.*;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.mercadolibre.constants.Constants.*;
-import static com.mercadolibre.constants.HeadersConstants.PRODUCT_ID;
 
 public enum PaymentService {
 

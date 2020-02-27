@@ -10,7 +10,7 @@ import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.Either;
 import com.mercadolibre.utils.ErrorsConstants;
 import com.mercadolibre.validators.PreferencesValidator;

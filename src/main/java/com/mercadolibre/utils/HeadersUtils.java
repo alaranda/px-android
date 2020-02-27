@@ -10,7 +10,8 @@ import spark.Request;
 
 import java.util.*;
 
-import static com.mercadolibre.constants.HeadersConstants.*;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.*;
+
 
 public enum HeadersUtils {
     ;

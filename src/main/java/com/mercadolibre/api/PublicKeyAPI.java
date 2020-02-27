@@ -6,7 +6,7 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;

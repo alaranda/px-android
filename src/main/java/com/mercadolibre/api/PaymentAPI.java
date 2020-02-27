@@ -7,7 +7,7 @@ import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;

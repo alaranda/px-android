@@ -6,7 +6,7 @@ import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
@@ -29,8 +29,8 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.constants.HeadersConstants.X_CALLER_SCOPES;
-import static com.mercadolibre.constants.HeadersConstants.X_REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_CALLER_SCOPES;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_REQUEST_ID;
 
 public enum PreferenceAPI {
     INSTANCE;

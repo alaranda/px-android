@@ -8,6 +8,7 @@ import spark.Request;
 
 import java.util.Optional;
 
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 
 public class RequestLogUtils {
@@ -19,7 +20,7 @@ public class RequestLogUtils {
         final Optional<String> queryParamsOpt = LogUtils.getQueryParams(request.queryString());
         final String queryParams = queryParamsOpt.isPresent() ? queryParamsOpt.get() : "";
 
-        LOGGER.info(LogUtils.getRequestLog(request.attribute(Constants.REQUEST_ID),
+        LOGGER.info(LogUtils.getRequestLog(request.attribute(REQUEST_ID),
                 request.requestMethod(), request.url(), request.userAgent(),
                 request.headers(SESSION_ID), queryParams, request.body()
         ));

@@ -4,7 +4,7 @@ import com.mercadolibre.api.PublicKeyAPI;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.public_key.PublicKeyInfo;
 import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.Either;
 import java.util.concurrent.CompletableFuture;
 

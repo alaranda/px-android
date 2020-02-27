@@ -1,11 +1,10 @@
 package com.mercadolibre.api;
 
 import com.mercadolibre.config.Config;
-import com.mercadolibre.constants.HeadersConstants;
 import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
-import com.mercadolibre.px.toolkit.dto.Context;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.DatadogUtils;
 import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
 import com.mercadolibre.rest.RESTUtils;
@@ -29,6 +28,7 @@ import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 
 public enum MerchAPI {
     INSTANCE;
@@ -60,7 +60,7 @@ public enum MerchAPI {
     @Trace(async = true, dispatcher = true, nameTransaction = true)
     public CompletableFuture<Either<MerchResponse, ApiError>> getAsyncCrossSellingAndDiscount(final Context context, final CongratsRequest congratsRequest) {
 
-        final Headers headers = new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId());
+        final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
         final URIBuilder url = buildUrl(congratsRequest);
 
         try {
@@ -128,7 +128,7 @@ public enum MerchAPI {
                 return Optional.empty();
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(HeadersConstants.REQUEST_ID, context.getRequestId()), null, e));
+            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(REQUEST_ID, context.getRequestId()), null, e));
             DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return Optional.empty();
         }
