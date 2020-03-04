@@ -4,6 +4,7 @@ import com.mercadolibre.dto.fraud.ResetStatus;
 import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
 import com.mercadolibre.service.CapEscService;
 import com.mercadolibre.utils.Locale;
 import com.mercadolibre.utils.logs.RequestLogUtils;
@@ -13,7 +14,6 @@ import spark.Request;
 import spark.Response;
 
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_CLIENT_ID;
 
 public class CapEscController {
 
@@ -39,9 +39,9 @@ public class CapEscController {
             throw new ValidationException("card_id is required");
         }
 
-        final String clientId = request.headers(X_CLIENT_ID);
-        if (null == cardId) {
-            throw new ValidationException("x-client-id is required");
+        final String clientId = request.queryParams(CommonParametersNames.CLIENT_ID);
+        if (null == clientId) {
+            throw new ValidationException("client id is required");
         }
 
         final ResetStatus resetStatus = capEscService.resetCapEsc(context, cardId, clientId);

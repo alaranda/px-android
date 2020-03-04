@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [0.71.1]
+
+### Changed
+
+- Se deja de recibir el x-clinet-id y toma el client id del access token para hacer el reset.
+
 ## [0.71.0]
 
 ### Changed
