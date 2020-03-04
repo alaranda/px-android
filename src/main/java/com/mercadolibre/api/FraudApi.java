@@ -47,7 +47,7 @@ public class FraudApi {
             final Response response = RestUtils.newRestRequestBuilder(POOL_NAME).delete(url.toString());
             METRIC_COLLECTOR.incrementCounter(
                     REQUEST_OUT_COUNTER,
-                    DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
+                    DatadogUtils.getRequestOutCounterTags(HttpMethod.DELETE.name(), POOL_NAME, response.getStatus())
             );
 
             if (isSuccess(response.getStatus())) {

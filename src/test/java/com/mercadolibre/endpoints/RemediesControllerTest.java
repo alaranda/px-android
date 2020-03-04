@@ -1,0 +1,80 @@
+package com.mercadolibre.endpoints;
+
+import com.mercadolibre.api.MockPaymentAPI;
+import com.mercadolibre.controllers.RemediesController;
+import com.mercadolibre.dto.remedies.RemediesResponse;
+import com.mercadolibre.dto.remedies.ResponseCallForAuth;
+import com.mercadolibre.exceptions.ApiException;
+import com.mercadolibre.exceptions.ValidationException;
+import com.mercadolibre.restclient.mock.RequestMockHolder;
+import org.apache.http.HttpStatus;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import spark.Request;
+import spark.Response;
+import spark.utils.IOUtils;
+
+import java.io.IOException;
+
+import static com.mercadolibre.constants.Constants.PAYMENT_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
+
+public class RemediesControllerTest {
+
+    private static final String PAYMENT_ID_TEST = "123456789";
+    private static final String CALLER_ID_TEST = "11111";
+    private static final String CLIENT_ID_TEST = "999999";
+
+    private RemediesController remediesController =  new RemediesController();
+
+    @Before
+    public void before() {
+        RequestMockHolder.clear();
+    }
+
+    @Test
+    public void getRemedy_statusDetailCallForAuthIcbc_200RemedyCallForAuth() throws ApiException, IOException {
+
+        MockPaymentAPI.getPayment(PAYMENT_ID_TEST, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/payment/11111_callForAuth.json")));
+
+        final Request request = Mockito.mock(Request.class);
+        when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);
+        when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
+        when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
+        when(request.attribute(REQUEST_ID)).thenReturn("REQUEST_ID_TEST");
+        when(request.body()).thenReturn(IOUtils.toString(getClass().getResourceAsStream("/remedies/remedyRequest.json")));
+        final Response response = Mockito.mock(Response.class);
+
+        final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
+
+        final ResponseCallForAuth responseCallForAuth = remediesResponse.getResponseCallForAuth();
+        assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago."));
+        assertThat(responseCallForAuth.getMessage(), is("Llama a ICBC para autorizar 123.00 a Mercado Pago o paga de otra forma."));
+    }
+
+    @Test
+    public void getRemedy_withoutPaymentId_400BadRequest() throws ApiException {
+
+        final Request request = Mockito.mock(Request.class);
+        when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
+        when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
+        when(request.params(PAYMENT_ID)).thenReturn(null);
+        final Response response = Mockito.mock(Response.class);
+
+        try {
+            final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
+            fail("Error payment id");
+        } catch (final ValidationException e) {
+            assertThat(e.getMessage(), is("payment id required"));
+        }
+
+    }
+}

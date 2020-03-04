@@ -18,6 +18,9 @@ public final class DatadogMetricsNames {
     public static final String CONGRATS_DISCOUNTS = "px.checkout_mobile_payments.congrats_discounts";
     public static final String CONGRATS_POINTS = "px.checkout_mobile_payments.congrats_points";
     public static final String CONGRATS_CROSS_SELLING = "px.checkout_mobile_payments.congrats_cross_selling";
-    public static final String CONGRATS_ERROR_BUILD_CONGRATS = "px.checkout_mobile_payments.congrats_error_build_congrats";
+    public static final String CONGRATS_ERROR_BUILD_CONGRATS = "px.RemediesRequest.congrats_error_build_congrats";
+    public static final String REMEDIES_COUNTER = "px.checkout_mobile_payments.remedies.counter";
+    public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD = "px.checkout_mobile_payments.remedies.alternative_payment_method";
+    public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD_ESC = "px.checkout_mobile_payments.remedies.alternative_payment_method.esc";
 
 }
