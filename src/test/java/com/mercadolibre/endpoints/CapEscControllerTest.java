@@ -3,9 +3,9 @@ package com.mercadolibre.endpoints;
 import com.mercadolibre.api.MockFraudApi;
 import com.mercadolibre.controllers.CapEscController;
 import com.mercadolibre.dto.fraud.ResetStatus;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +36,8 @@ public class CapEscControllerTest {
         final Response response = Mockito.mock(Response.class);
         when(request.params("cardId")).thenReturn("123");
         when(request.queryParams(CommonParametersNames.CLIENT_ID)).thenReturn("321");
+        when(request.requestMethod()).thenReturn("GET");
+        when(request.url()).thenReturn("URL");
 
         final ResetStatus resetStatus = capEscController.resetCapEsc(request, response);
 
@@ -49,12 +51,32 @@ public class CapEscControllerTest {
         final Response response = Mockito.mock(Response.class);
         when(request.params("cardId")).thenReturn("123");
         when(request.queryParams(CommonParametersNames.CLIENT_ID)).thenReturn(null);
+        when(request.requestMethod()).thenReturn("GET");
+        when(request.url()).thenReturn("URL");
 
         try {
             final ResetStatus resetStatus = capEscController.resetCapEsc(request, response);
             fail("ValidationException clientId");
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is("client id is required"));
+            assertThat(e.getDescription(), is("client id is required"));
+        }
+    }
+
+    @Test
+    public void resetCapEsc_resetCap_400_invalidClientId() throws ApiException {
+
+        final Request request = Mockito.mock(Request.class);
+        final Response response = Mockito.mock(Response.class);
+        when(request.params("cardId")).thenReturn(null);
+        when(request.queryParams(CommonParametersNames.CLIENT_ID)).thenReturn("1234");
+        when(request.requestMethod()).thenReturn("GET");
+        when(request.url()).thenReturn("URL");
+
+        try {
+            final ResetStatus resetStatus = capEscController.resetCapEsc(request, response);
+            fail("ValidationException cardId");
+        } catch (ValidationException e) {
+            assertThat(e.getDescription(), is("card_id is required"));
         }
     }
 }

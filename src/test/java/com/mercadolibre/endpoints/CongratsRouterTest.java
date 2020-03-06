@@ -2,10 +2,9 @@ package com.mercadolibre.endpoints;
 
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.congrats.CongratsRequest;
-import com.mercadolibre.dto.user_agent.UserAgent;
-import com.mercadolibre.px.toolkit.constants.Site;
+import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
@@ -19,8 +18,11 @@ import spark.utils.IOUtils;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static com.mercadolibre.constants.QueryParamsConstants.*;
+import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_IDS;
+import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.DENSITY;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
 import static io.restassured.RestAssured.given;
@@ -50,13 +52,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_allNodesResponse_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
 
@@ -69,13 +71,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_onlyPoints_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
 
@@ -88,13 +90,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_onlyCrossSelling_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_NOT_FOUND, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
 
@@ -107,13 +109,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_onlyDiscounts_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_NOT_FOUND, IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
 
@@ -126,13 +128,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_onlyDiscountsTimeoutPoints_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_GATEWAY_TIMEOUT, "");
 
@@ -145,13 +147,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_paymentsIdEmpty_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, "")
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
 
@@ -162,13 +164,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_paymentsIdNullString_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, "null")
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
 
@@ -179,13 +181,13 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_withoutPaymentsId_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, "")
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
-        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.getName(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
+        final CongratsRequest congratsRequest = new CongratsRequest(USER_ID_TEST, CLIENT_ID_TEST, Site.MLA.name(), PAYMENT_IDS_TEST, PLATFORM_TEST_MP, USER_AGENT_IOS, DENSITY, PRODUCT_ID_1, CAMPAIGN_ID_TEST, FLOW_NAME);
 
         MockMerchAPI.getAsyncCrosselingAndDiscount(congratsRequest, HttpStatus.SC_OK, IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
 
@@ -196,8 +198,8 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_invalidParamsCallerId_callerIdIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
@@ -208,9 +210,9 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_invalidParamsPlatform_platformIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST);
 
         final Response response = given().headers(HEADERS).get(uriBuilder.build());
@@ -220,9 +222,9 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_invalidHeaderProductId_productIdIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PLATFORM, PLATFORM_TEST_MP)
                 .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST);
 
@@ -235,9 +237,9 @@ public class CongratsRouterTest {
     @Test
     public void getCongrats_invalidHeaderDensity_densityIsRequired() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/congrats")
-                .addParameter(Constants.CALLER_ID_PARAM, USER_ID_TEST)
-                .addParameter(Constants.CLIENT_ID_PARAM, CLIENT_ID_TEST)
-                .addParameter(CALLER_SITE_ID, Site.MLA.getName())
+                .addParameter(CALLER_ID, USER_ID_TEST)
+                .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+                .addParameter(CALLER_SITE_ID, Site.MLA.name())
                 .addParameter(PLATFORM, PLATFORM_TEST_MP);
 
         final Response response = given().headers(new Headers(new Header("accept-language", "es_AR"),

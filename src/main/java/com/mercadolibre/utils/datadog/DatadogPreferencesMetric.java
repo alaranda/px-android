@@ -1,11 +1,11 @@
 package com.mercadolibre.utils.datadog;
 
-import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.metrics.MetricCollector;
+import com.mercadolibre.px.dto.lib.preference.Preference;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_IVALID;
-import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public class DatadogPreferencesMetric {
 
@@ -22,13 +22,13 @@ public class DatadogPreferencesMetric {
         METRIC_COLLECTOR.incrementCounter(PREFERENCE_COUNTER, getMetricTags(preference));
     }
 
+    public static void addInvalidPreferenceData(final Preference preference) {
+        METRIC_COLLECTOR.incrementCounter(PREFERENCE_IVALID, getMetricTags(preference));
+    }
+
     private static MetricCollector.Tags getMetricTags(final Preference preference) {
         return new MetricCollector.Tags()
                 .add("operation_type", preference.getOperationType());
-    }
-
-    public static void addInvalidPreferenceData(final Preference preference) {
-        METRIC_COLLECTOR.incrementCounter(PREFERENCE_IVALID, getMetricTags(preference));
     }
 
 }

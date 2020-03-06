@@ -1,9 +1,9 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.dto.Identification;
 import com.mercadolibre.dto.Order;
-import com.mercadolibre.dto.Payer;
-import com.mercadolibre.dto.preference.Preference;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.user.Identification;
+import com.mercadolibre.px.dto.lib.user.Payer;
 import spark.utils.StringUtils;
 
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ public class PaymentBody {
     private String couponCode;
     private boolean binaryMode;
     private String externalReference;
-    private BasicUser collector;
+    private Long collectorId;
     private Order order;
     private String marketplace;
     private String operationType;
@@ -103,7 +103,7 @@ public class PaymentBody {
         this.campaignId = builder.campaignId;
         this.couponCode = builder.couponCode;
         this.differentialPricingId = builder.differentialPricingId;
-        this.collector = builder.collector;
+        this.collectorId = builder.collectorId;
         this.order = builder.order;
         this.marketplace = builder.marketplace;
         this.operationType = builder.operationType;
@@ -123,7 +123,7 @@ public class PaymentBody {
         private String couponCode;
         private boolean binaryMode;
         private String externalReference;
-        private BasicUser collector;
+        private Long collectorId;
         private Order order;
         private String marketplace;
         private String operationType;
@@ -202,8 +202,8 @@ public class PaymentBody {
             return builder;
         }
 
-        public Builder withCollector(long collector) {
-            this.collector = new BasicUser(collector);
+        public Builder withCollector(Long collectorId) {
+            this.collectorId = collectorId;
             return this;
         }
 

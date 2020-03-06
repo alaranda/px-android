@@ -5,23 +5,23 @@ import static com.mercadolibre.constants.Constants.MERCHANT_ORDER_TYPE_MP;
 
 public class Order {
 
-    private final long id;
+    private final Long id;
     private final String type;
 
-    private Order(final long id, final String type) {
+    private Order(final Long id, final String type) {
         this.id = id;
         this.type = type;
     }
 
-    public static Order createOrderMP(final long id) {
+    public static Order createOrderMP(final Long id) {
         return new Order(id, MERCHANT_ORDER_TYPE_MP);
     }
 
-    public static Order createOrderML(final long id) {
+    public static Order createOrderML(final Long id) {
         return new Order(id, MERCHANT_ORDER_TYPE_ML);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

@@ -2,17 +2,19 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
-import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.dto.congrats.*;
+import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.dto.congrats.CrossSelling;
+import com.mercadolibre.dto.congrats.Discounts;
+import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
-import com.mercadolibre.dto.user_agent.OperatingSystem;
-import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogBuilder;
-import com.mercadolibre.utils.CongratsTexts;
-import com.mercadolibre.utils.Either;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.dto.Version;
+import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,19 +26,16 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
-import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS_ANDROID;
-import static com.mercadolibre.dto.user_agent.Version.CongratsApi.WITHOUT_LOYALTY_CONGRATS_IOS;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 
 public class CongratsService {
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    private final CongratsTexts congratsTexts;
+    public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
+    public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
 
-    public CongratsService() {
-        this.congratsTexts = new CongratsTexts();
-    }
 
     /**
      * Retorna los puntos sumados en el pago y los acmulados mas los descuentos otorgados.
@@ -64,7 +63,6 @@ public class CongratsService {
         final Optional<Points> optionalPoints = LoyaltyApi.INSTANCE.getPointsFromFuture(context, futureLoyalPoints);
         try {
             if (optionalPoints.isPresent()){
-
                 final Points loyalPoints = optionalPoints.get();
                 if (null != loyalPoints.getProgress() && null != loyalPoints.getAction() && null != loyalPoints.getTitle()) {
                     points = new Points.Builder(loyalPoints.getProgress(), loyalPoints.getTitle())
@@ -76,7 +74,6 @@ public class CongratsService {
             Optional<MerchResponse> optionalMerchResponse = MerchAPI.INSTANCE.getMerchResponseFromFuture(context, futureMerchResponse);
 
             if (optionalMerchResponse.isPresent()){
-
                 final MerchResponse merchResponse = optionalMerchResponse.get();
                 if (null != merchResponse.getCrossSelling()){
                     crossSelling = new HashSet<>();
@@ -86,15 +83,19 @@ public class CongratsService {
 
                 if (null != merchResponse.getDiscounts() && !merchResponse.getDiscounts().getItems().isEmpty()){
                     final String downloadUrl = UrlDownloadUtils.buildDownloadUrl(congratsRequest.getPlatform());
-                    discounts = new Discounts.Builder(context, congratsTexts, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
+                    discounts = new Discounts.Builder(context, merchResponse.getDiscounts(), congratsRequest.getPlatform(), downloadUrl).build();
                 }
             }
 
             return new Congrats(points, discounts, crossSelling);
         } catch (Exception e) {
-            DatadogUtils.metricCollector.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
-            final LogBuilder logBuilder = new LogBuilder().withException(e);
-            logger.error(logBuilder.build());
+            METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
+            LOGGER.error(
+                    LogUtils.getServiceExceptionLog(
+                            context,
+                            "Congrats Service",
+                            congratsRequest.toString(),
+                            e));
             return new Congrats();
         }
     }

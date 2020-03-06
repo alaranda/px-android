@@ -1,8 +1,8 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.dto.Address;
 import com.mercadolibre.dto.Item;
-import com.mercadolibre.dto.Phone;
+import com.mercadolibre.px.dto.lib.user.Address;
+import com.mercadolibre.px.dto.lib.user.Phone;
 
 import java.util.List;
 

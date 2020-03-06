@@ -1,7 +1,9 @@
 package com.mercadolibre.endpoints;
 
-import com.mercadolibre.api.*;
-import com.mercadolibre.constants.Constants;
+import com.mercadolibre.api.MockMerchantOrderAPI;
+import com.mercadolibre.api.MockPaymentAPI;
+import com.mercadolibre.api.MockPreferenceAPI;
+import com.mercadolibre.api.MockPublicKeyAPI;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
@@ -13,11 +15,14 @@ import spark.utils.IOUtils;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.PUBLIC_KEY;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 public class PaymentRouterTest {
@@ -31,10 +36,10 @@ public class PaymentRouterTest {
     public static final String PREFERENCE_ID_1 = "138275050-21ff9440-f9ab-4467-8ad7-c2847c064014";
     public static final String PUBLIC_KEY_BLACKLABEL_AM = "TEST-d783da36-74a2-4378-85d1-76f498ca92c4";
     public static final String PREFERENCE_ID_BLACKLABEL_AM = "384414502-d095679d-f7d9-4653-ad71-4fb5feda3494";
-    public static final long CALLER_ID_MLA_1 = 204318018L;
-    public static final long CLIENT_ID_MLA_1 = 7977122093299909L;
-    public static final long CLIENT_ID_MLA = 889238428771302L;
-    public static final long CALLER_ID_MLA = 243962506L;
+    public static final Long CALLER_ID_MLA_1 = 204318018L;
+    public static final Long CLIENT_ID_MLA_1 = 7977122093299909L;
+    public static final Long CLIENT_ID_MLA = 889238428771302L;
+    public static final Long CALLER_ID_MLA = 243962506L;
 
     @Test
     public void legacyPayments_whiteLabelWithoutBody_400() throws URISyntaxException {
@@ -110,9 +115,9 @@ public class PaymentRouterTest {
     @Test
     public void payments_blackLabelAccountMoney_200() throws URISyntaxException, IOException {
         URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(CALLER_ID_MLA_1))
-                .addParameter(Constants.CLIENT_ID_PARAM, String.valueOf(CLIENT_ID_MLA_1))
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
+                .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA_1))
+                .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA_1))
+                .addParameter(PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_BLACKLABEL_AM, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_BLACKLABEL_AM, HttpStatus.SC_OK,
@@ -136,9 +141,9 @@ public class PaymentRouterTest {
     @Test
     public void payments_invalidUsers_400() throws URISyntaxException, IOException {
         final URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(CALLER_ID_MLA))
-                .addParameter(Constants.CLIENT_ID_PARAM, String.valueOf(CLIENT_ID_MLA))
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
+                .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA))
+                .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA))
+                .addParameter(PUBLIC_KEY, PUBLIC_KEY_MLA_1);
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_MLA_1, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
         MockPreferenceAPI.getById(PREFERENCE_ID_1, HttpStatus.SC_OK,
@@ -161,9 +166,9 @@ public class PaymentRouterTest {
     @Test
     public void payments_unsupportPaymentMethods_400() throws URISyntaxException, IOException {
         final URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(CALLER_ID_MLA))
-                .addParameter(Constants.CLIENT_ID_PARAM, String.valueOf(CLIENT_ID_MLA))
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_MLA_1);
+                .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA))
+                .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA))
+                .addParameter(PUBLIC_KEY, PUBLIC_KEY_MLA_1);
 
         final Response response = given()
                 .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithTwoPaymentMethods.json")))
@@ -177,8 +182,8 @@ public class PaymentRouterTest {
     @Test
     public void payments_withoutPK_400() throws URISyntaxException, IOException {
         final URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(CALLER_ID_MLA))
-                .addParameter(Constants.CLIENT_ID_PARAM, String.valueOf(CLIENT_ID_MLA));
+                .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA))
+                .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA));
 
         final Response response = given()
                 .body(IOUtils.toString(getClass().getResourceAsStream("/paymentRequestBody/bodyWithAccountMoney.json")))
@@ -192,9 +197,9 @@ public class PaymentRouterTest {
     @Test
     public void payments_blackLabelInvalidPref_400() throws URISyntaxException, IOException {
         final URIBuilder uriBuilder = new URIBuilder("/px_mobile/payments")
-                .addParameter(Constants.CALLER_ID_PARAM, String.valueOf(CALLER_ID_MLA))
-                .addParameter(Constants.CLIENT_ID_PARAM, String.valueOf(CLIENT_ID_MLA))
-                .addParameter(Constants.PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
+                .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA))
+                .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA))
+                .addParameter(PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
 
         MockPublicKeyAPI.getPublicKey(PUBLIC_KEY_BLACKLABEL_AM, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));

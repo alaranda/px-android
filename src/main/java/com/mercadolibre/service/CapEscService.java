@@ -2,14 +2,12 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.FraudApi;
 import com.mercadolibre.dto.fraud.ResetStatus;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class CapEscService {
-
-    private static final Logger logger = LogManager.getLogger();
 
     private final FraudApi fraudApi;
 

@@ -1,46 +1,48 @@
 package com.mercadolibre.api;
 
 import com.google.common.net.HttpHeaders;
-import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
-import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import java.util.concurrent.CompletableFuture;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_CALLER_SCOPES;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_REQUEST_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum PreferenceAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String POOL_NAME = "PreferencesRead";
     private static final String URL = "/checkout/preferences";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("preference.socket.timeout"))
                         .withRetryStrategy(
@@ -65,10 +67,10 @@ public enum PreferenceAPI {
                 .add(X_REQUEST_ID, context.getRequestId());
         final URIBuilder url = buildUrl(preferenceId);
         try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+            final CompletableFuture<Response> completableFutureResponse = RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
 
             return completableFutureResponse.thenApply(response -> {
-                        DatadogUtils.metricCollector.incrementCounter(
+                        METRIC_COLLECTOR.incrementCounter(
                                 REQUEST_OUT_COUNTER,
                                 DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
                         );
@@ -76,19 +78,44 @@ public enum PreferenceAPI {
             });
 
         } catch (final RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to preference failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PREFERENCE_FAILED, HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
         }
     }
 
     private Either<Preference, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response, final String preferenceId) {
-        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, preferenceId, response));
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            preferenceId,
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, Preference.class);
+        return RestUtils.responseToEither(response, Preference.class);
     }
 
     /**

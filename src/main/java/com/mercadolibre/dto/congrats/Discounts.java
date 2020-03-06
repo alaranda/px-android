@@ -1,13 +1,17 @@
 package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.utils.CongratsTexts;
+import com.mercadolibre.utils.Translations;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mercadolibre.utils.CongratsTexts.*;
+import static com.mercadolibre.utils.Translations.DISCOUNTS;
+import static com.mercadolibre.utils.Translations.DISCOUNTS_DOWNLOAD_ML;
+import static com.mercadolibre.utils.Translations.DISCOUNTS_DOWNLOAD_MP;
+import static com.mercadolibre.utils.Translations.DOWNLOAD;
+import static com.mercadolibre.utils.Translations.SEE_ALL;
 
 public class Discounts {
 
@@ -33,17 +37,23 @@ public class Discounts {
         private ActionDownload actionDownload;
         private Set<DiscountItem> items;
 
-        public Builder(final Context context, final CongratsTexts congratsTexts, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
+        public Builder(final Context context, final com.mercadolibre.dto.congrats.merch.Discounts discounts, final String platform, final String downloadUrl) {
 
             if (null == discounts) return;
 
-            this.title = congratsTexts.createTitleDiscount(context.getLocale());
+            this.title = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DISCOUNTS);
             this.subtitle = "";
 
-            this.action = new Action(congratsTexts.getTranslation(context.getLocale(), SEE_ALL), discounts.getLink());
+            this.action = new Action(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), SEE_ALL), discounts.getLink());
 
-            final Action action = new Action(congratsTexts.getTranslation(context.getLocale(), DOWNLOAD), downloadUrl);
-            this.actionDownload = new ActionDownload(congratsTexts.getTranslationDownloadForApp(context.getLocale(), platform), action);
+            final Action action = new Action(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DOWNLOAD), downloadUrl);
+
+            String downloadKey = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DISCOUNTS_DOWNLOAD_MP);
+            if (platform.equalsIgnoreCase("MP")) {
+                downloadKey = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DISCOUNTS_DOWNLOAD_ML);
+            }
+
+            this.actionDownload = new ActionDownload(downloadKey, action);
             Set<DiscountItem> items = new HashSet<>();
 
             if (null == discounts.getItems()) return;

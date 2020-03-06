@@ -1,6 +1,6 @@
 package com.mercadolibre.dto.congrats;
 
-import com.mercadolibre.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 
 public final class CongratsRequest {
 
@@ -57,5 +57,11 @@ public final class CongratsRequest {
     public String getCampaignId() { return campaignId; }
 
     public String getFlowName() { return flowName; }
+
+    public String toString() {
+        return String.format("CongratsRequest{[userId=%s], [clientId=%s], [siteId=%s], [paymentsIds=%s], " +
+                "[platform=%s], [userAgent=%s], [density=%s], [productId=%s], [campaignId=%s], [flowName=%s]}",
+                userId, clientId, siteId, paymentIds, platform, userAgent.toString(), density, productId, campaignId, flowName);
+    }
 
 }

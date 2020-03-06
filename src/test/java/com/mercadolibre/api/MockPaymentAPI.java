@@ -22,4 +22,11 @@ public class MockPaymentAPI {
 
         builder.build();
     }
+
+    public static void doPaymentFail(final Long callerId, final Long clientId) {
+        MockResponse.builder()
+                .withURL(PaymentAPI.buildUrl(callerId, clientId).toString())
+                .withMethod(HttpMethod.POST)
+                .shouldFail().build();
+    }
 }

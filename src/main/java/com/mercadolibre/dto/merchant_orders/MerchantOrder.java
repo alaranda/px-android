@@ -1,7 +1,6 @@
 package com.mercadolibre.dto.merchant_orders;
 
-import com.mercadolibre.dto.payment.BasicUser;
-import com.mercadolibre.dto.preference.PreferenceItem;
+import com.mercadolibre.px.dto.lib.item.Item;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,11 +10,11 @@ import java.util.OptionalLong;
 
 public class MerchantOrder {
 
-    private long id;
+    private Long id;
     private String preferenceId;
-    private BasicUser collector;
-    private BasicUser payer;
-    private List<PreferenceItem> items;
+    private Long collectorId;
+    private Long payerId;
+    private List<Item> items;
     private String marketplace;
     private String externalReference;
     private BigDecimal shippingCost;
@@ -29,8 +28,8 @@ public class MerchantOrder {
     private MerchantOrder(final Builder builder) {
         this.id = builder.id;
         this.preferenceId = builder.preferenceId;
-        this.collector = builder.collector;
-        this.payer = builder.payer;
+        this.collectorId = builder.collectorId;
+        this.payerId = builder.payerId;
         this.items = builder.items;
         this.marketplace = builder.marketplace;
         this.externalReference = builder.externalReference;
@@ -47,7 +46,7 @@ public class MerchantOrder {
         // nothing to be done
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -63,12 +62,12 @@ public class MerchantOrder {
         return shippingCost;
     }
 
-    public BasicUser getCollector() {
-        return collector;
+    public Long getCollectorId() {
+        return collectorId;
     }
 
-    public BasicUser getPayer() {
-        return payer;
+    public Long getPayerId() {
+        return payerId;
     }
 
     public String getExternalReference() {
@@ -95,12 +94,12 @@ public class MerchantOrder {
         return Optional.ofNullable(additionalInfo);
     }
 
-    public List<PreferenceItem> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setCollector(final BasicUser collector) {
-        this.collector = collector;
+    public void setCollectorId(final Long collectorId) {
+        this.collectorId = collectorId;
     }
 
     public String getOrderType() {
@@ -113,8 +112,8 @@ public class MerchantOrder {
         return "MerchantOrder{"
                 + "id=" + id
                 + ", preferenceId='" + preferenceId + '\''
-                + ", collector=" + collector
-                + ", payer=" + payer
+                + ", collector=" + collectorId
+                + ", payer=" + payerId
                 + ", items=" + items
                 + ", marketplace='" + marketplace + '\''
                 + ", externalReference='" + externalReference
@@ -129,11 +128,11 @@ public class MerchantOrder {
 
     public static class Builder {
 
-        private long id;
+        private Long id;
         private String preferenceId;
-        private BasicUser collector;
-        private BasicUser payer;
-        private List<PreferenceItem> items;
+        private Long collectorId;
+        private Long payerId;
+        private List<Item> items;
         private String marketplace;
         private String externalReference;
         private String notificationUrl;
@@ -142,7 +141,7 @@ public class MerchantOrder {
         private String siteId;
         private BigDecimal totalAmount;
         private String additionalInfo;
-        private long orderId;
+        private Long orderId;
         private String orderType;
 
         /**
@@ -151,7 +150,7 @@ public class MerchantOrder {
          * @param sponsorId the sponsor id
          * @return this
          */
-        public Builder withSponsorId(final long sponsorId) {
+        public Builder withSponsorId(final Long sponsorId) {
             this.sponsorId = sponsorId;
             return this;
         }
@@ -206,8 +205,8 @@ public class MerchantOrder {
          * @param collector the collector
          * @return this
          */
-        public Builder withCollector(final BasicUser collector) {
-            this.collector = collector;
+        public Builder withCollector(final Long collector) {
+            this.collectorId = collector;
             return this;
         }
 
@@ -217,8 +216,8 @@ public class MerchantOrder {
          * @param payer the payer
          * @return this
          */
-        public Builder withPayer(final BasicUser payer) {
-            this.payer = payer;
+        public Builder withPayer(final Long payer) {
+            this.payerId = payer;
             return this;
         }
 
@@ -228,7 +227,7 @@ public class MerchantOrder {
          * @param items the items
          * @return this
          */
-        public Builder withItems(final List<PreferenceItem> items) {
+        public Builder withItems(final List<Item> items) {
             this.items = items;
             return this;
         }
@@ -283,7 +282,7 @@ public class MerchantOrder {
          * @param orderId the merchant order id
          * @return this
          */
-        public Builder withOrderId(final long orderId) {
+        public Builder withOrderId(final Long orderId) {
             this.id = orderId;
             return this;
         }
@@ -313,8 +312,8 @@ public class MerchantOrder {
             return "Builder{"
                     + "id=" + id
                     + ", preferenceId='" + preferenceId + '\''
-                    + ", collector=" + collector
-                    + ", payer=" + payer
+                    + ", collectorId=" + collectorId
+                    + ", payerId=" + payerId
                     + ", items=" + items
                     + ", marketplace='" + marketplace + '\''
                     + ", externalReference='" + externalReference + '\''

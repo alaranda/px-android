@@ -9,7 +9,7 @@ import static com.mercadolibre.api.UserAPI.buildUrl;
 
 public class MockUserAPI {
 
-    public static void getById(final long userId, final int statusCode, final String body) {
+    public static void getById(final Long userId, final int statusCode, final String body) {
         MockResponse.builder()
                 .withURL(buildUrl(userId).toString())
                 .withMethod(HttpMethod.GET)

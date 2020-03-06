@@ -1,42 +1,45 @@
 package com.mercadolibre.api;
 
 import com.google.common.net.HttpHeaders;
-import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.preference.PreferenceTidy;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
-import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_TIDY_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_REQUEST_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum PreferenceTidyAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String POOL_NAME = "PreferenceTidyRead";
     private static final String URL = "/tidy/";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("preference_tidy.socket.timeout"))
                         .withRetryStrategy(
@@ -59,25 +62,51 @@ public enum PreferenceTidyAPI {
                 .add(X_REQUEST_ID, context.getRequestId());
         final String url = buildUrl(key);
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url, headers);
+            final Response response = RestUtils.newRestRequestBuilder(POOL_NAME).get(url, headers);
 
-            DatadogUtils.metricCollector.incrementCounter(
+            METRIC_COLLECTOR.incrementCounter(
                     REQUEST_OUT_COUNTER,
                     DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
             );
 
-            if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-                logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
-                return RESTUtils.responseToObject(response, PreferenceTidy.class);
+            if (isSuccess(response.getStatus())) {
+                LOGGER.info(
+                        LogUtils.getResponseLogWithoutResponseBody(
+                                context.getRequestId(),
+                                HttpMethod.GET.name(),
+                                POOL_NAME,
+                                URL,
+                                headers,
+                                key,
+                                response));
+
+                return RestUtils.responseToObject(response, PreferenceTidy.class);
             } else {
-                logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, response));
+                LOGGER.error(
+                        LogUtils.getResponseLogWithResponseBody(
+                                context.getRequestId(),
+                                HttpMethod.GET.name(),
+                                POOL_NAME,
+                                URL,
+                                headers,
+                                key,
+                                response));
             }
-            throw new ApiException(GsonWrapper.fromJson(RESTUtils.getBody(response), ApiError.class));
+            throw new ApiException(GsonWrapper.fromJson(RestUtils.getBody(response), ApiError.class));
 
         } catch (final RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, key, e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to preferenceTidy failed", HttpStatus.SC_INTERNAL_SERVER_ERROR, e);
+            LogUtils.getExceptionLog(
+                    context.getRequestId(),
+                    HttpMethod.GET.name(),
+                    POOL_NAME,
+                    URL,
+                    headers,
+                    null,
+                    HttpStatus.SC_GATEWAY_TIMEOUT,
+                    e);
+
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PREFERENCE_TIDY_FAILED, HttpStatus.SC_BAD_GATEWAY, e);
         }
     }
 

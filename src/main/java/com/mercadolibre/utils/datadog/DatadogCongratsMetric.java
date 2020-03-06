@@ -4,8 +4,10 @@ import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.metrics.MetricCollector;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.*;
-import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_CROSS_SELLING;
+import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_DISCOUNTS;
+import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_POINTS;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public class DatadogCongratsMetric {
 
