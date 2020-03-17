@@ -1,7 +1,7 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.dto.Order;
-import com.mercadolibre.dto.preference.Preference;
+import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
 
@@ -11,8 +11,8 @@ import com.mercadolibre.utils.HeadersUtils;
 public class PaymentRequest {
 
     private Headers headers;
-    private long callerId;
-    private long clientId;
+    private Long callerId;
+    private Long clientId;
     private Preference preference;
     private PaymentBody body;
 
@@ -24,11 +24,11 @@ public class PaymentRequest {
         this.body = builder.body.build();
     }
 
-    public long getCallerId() {
+    public Long getCallerId() {
         return callerId;
     }
 
-    public long getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
@@ -47,8 +47,8 @@ public class PaymentRequest {
     public static final class Builder {
 
         private Headers headers;
-        private long callerId;
-        private long clientId;
+        private Long callerId;
+        private Long clientId;
         private Preference preference;
         private PaymentBody.Builder body;
 
@@ -80,12 +80,12 @@ public class PaymentRequest {
             this.headers = HeadersUtils.completePaymentHeaders(headers, token, requestId);
         }
 
-        public Builder withCallerId(final long callerId) {
+        public Builder withCallerId(final Long callerId) {
             this.callerId = callerId;
             return this;
         }
 
-        public Builder withClientId(final long clientId) {
+        public Builder withClientId(final Long clientId) {
             this.clientId = clientId;
             return this;
         }
@@ -95,7 +95,7 @@ public class PaymentRequest {
             return this;
         }
 
-        public Builder withCollector(final long collectorId) {
+        public Builder withCollector(final Long collectorId) {
             body.withCollector(collectorId);
             return this;
         }

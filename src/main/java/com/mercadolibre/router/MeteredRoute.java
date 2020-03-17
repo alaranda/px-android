@@ -28,12 +28,12 @@ public class MeteredRoute implements Route {
     @Override
     public Object handle(final Request request, final Response response) throws Exception {
         NewRelic.setTransactionName(CATEGORY_NAME, this.transactionName);
-        long executionStart = System.currentTimeMillis();
+        Long executionStart = System.currentTimeMillis();
         try {
             return innerRoute.handle(request, response);
         }
         finally {
-            long executionEnd = System.currentTimeMillis();
+            Long executionEnd = System.currentTimeMillis();
             NewRelic.recordResponseTimeMetric(this.transactionName, (executionEnd - executionStart));
         }
     }

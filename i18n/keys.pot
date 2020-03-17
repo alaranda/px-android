@@ -1,0 +1,54 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-03-10 15:19-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:31
+msgid "Descuentos por tu nivel"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:33
+msgid "descuentos por tu nivel"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:35
+msgid "Exclusivo con la app de Mercado Pago"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:37
+msgid "Exclusivo con la app de Mercado Libre"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:39
+msgid "Descargar"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:41
+msgid "Ver todos los descuentos"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:43
+msgid "No pudimos procesar tu pago, discúlpanos."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:45
+msgid "No puedes pagar con este link de pago."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:47
+msgid "No puedes pagar con este link, solo puedes usarlo para cobrar."
+msgstr ""

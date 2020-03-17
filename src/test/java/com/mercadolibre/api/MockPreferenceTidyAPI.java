@@ -1,4 +1,4 @@
-package com.mercadolibre.mocks;
+package com.mercadolibre.api;
 
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
@@ -16,6 +16,14 @@ public class MockPreferenceTidyAPI {
                 .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
                 .withResponseHeader("Cache-Control", "max-age=0")
                 .withResponseBody(body)
+                .build();
+    }
+
+    public static void getPreferenceByKeyFail(final String key) {
+        MockResponse.builder()
+                .withURL(buildUrl(key))
+                .withMethod(HttpMethod.GET)
+                .shouldFail()
                 .build();
     }
 }

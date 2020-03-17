@@ -6,6 +6,30 @@
 [![new_relic](https://img.shields.io/badge/-New%20Relic-6ebbce.svg?style=flat)](https://rpm.newrelic.com/accounts/989586/applications/312653384)
 [![fury](https://img.shields.io/badge/-Fury-6ECE80.svg?style=flat)](http://fury.ml.com/#/px-checkout-mobile-payments/general)
 
+### Traducciones
+Excel de textos a traducir:
+https://docs.google.com/spreadsheets/d/1RvPhyh3am0uKOBySjqO4zm1nWpiVBUf_Z5CUU1lv6UQ
+ 
+Para ver el estado de las traducciones:
+```
+./gradlew i18n-status
+```
+Para obtener todos los mensajes utilizados en el proyecto:
+```
+./gradlew i18n-gettext
+```
+Si se agregan o actualizan mensajes
+```
+./gradlew i18n-upload
+```
+Para descargar los mensajes traducidos
+```
+./gradlew i18n-download
+```
+Para compilar mensajes y empaquetarlos
+```
+./gradlew i18n-makemo
+```
 
 ## Endpoints
 

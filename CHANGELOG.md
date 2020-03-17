@@ -2,6 +2,15 @@
 
 # Change Log
 
+## [1.0.0]
+
+### Added
+
+- Integración con Babel (traducciones)
+
+### Changed
+- Actualización de lib de DTOs a versión 0.1.6 y toolkit 0.33.0.
+
 ## [0.71.1]
 
 ### Changed

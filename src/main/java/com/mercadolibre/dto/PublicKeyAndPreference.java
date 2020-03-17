@@ -1,19 +1,19 @@
 package com.mercadolibre.dto;
 
-import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.dto.public_key.PublicKeyInfo;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.user.PublicKey;
 
 public class PublicKeyAndPreference {
 
-    private final PublicKeyInfo publicKey;
+    private final PublicKey publicKey;
     private final Preference preference;
 
-    public PublicKeyAndPreference(final PublicKeyInfo publicKey, final Preference preference) {
+    public PublicKeyAndPreference(final PublicKey publicKey, final Preference preference) {
         this.publicKey = publicKey;
         this.preference = preference;
     }
 
-    public PublicKeyInfo getPublicKey() {
+    public PublicKey getPublicKey() {
         return publicKey;
     }
 

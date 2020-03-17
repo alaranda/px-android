@@ -1,21 +1,21 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.merchant_orders.MerchantOrder;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.constants.ErrorCodes;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
-import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -24,19 +24,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.utils.HeadersUtils.getHeaders;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum MerchantOrderAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String POOL_NAME = "MerchantOrdersWrite";
     private static final String URL = "/merchant_orders";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("merchant_orders.socket.timeout"))
         );
@@ -59,19 +62,28 @@ public enum MerchantOrderAPI {
         final String body = GsonWrapper.toJson(merchantOrderRequest);
 
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME)
+            final Response response = RestUtils.newRestRequestBuilder(POOL_NAME)
                     .post(url.toString(), headers, body.getBytes(StandardCharsets.UTF_8));
 
-            DatadogUtils.metricCollector.incrementCounter(
+            METRIC_COLLECTOR.incrementCounter(
                     REQUEST_OUT_COUNTER,
                     DatadogUtils.getRequestOutCounterTags(HttpMethod.POST.name(), POOL_NAME, response.getStatus())
             );
 
             return buildResponse(context.getRequestId(), headers, url, response);
         } catch (RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.POST.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(ErrorCodes.EXTERNAL_ERROR, API_CALL_PAYMENTS_FAILED, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -91,12 +103,28 @@ public enum MerchantOrderAPI {
 
     private Either<MerchantOrder, ApiError> buildResponse(final String requestId, final Headers headers, final URIBuilder url, final Response response) {
 
-        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-            logger.info(LogUtils.getResponseLog(requestId, HttpMethod.POST.name(), POOL_NAME, url.toString(), headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            requestId,
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            url.toString(),
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(requestId, HttpMethod.POST.name(), POOL_NAME, url.toString(), headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            requestId,
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            url.toString(),
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, MerchantOrder.class);
+        return RestUtils.responseToEither(response, MerchantOrder.class);
     }
 
 }

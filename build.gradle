@@ -8,7 +8,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath group: 'com.mercadolibre', name: 'i18n', version: '1.5'
+		classpath group: 'com.mercadolibre', name: 'i18n', version: "$i18nVersion"
 	}
 }
 
@@ -50,6 +50,7 @@ sourceSets {
 }
 
 repositories {
+	mavenLocal()
 	jcenter()
 	maven { url "http://git.ml.com/nexus/content/groups/Arquitectura" }
 }
@@ -60,10 +61,10 @@ dependencies {
 	compile "com.sparkjava:spark-core:$sparkVersion"
 	compile "com.mercadolibre.restclient:restclient-default:$restClientVersion"
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
-	compile 'commons-configuration:commons-configuration:1.10'
-	compile 'com.mercadolibre.json:json-core:0.0.9'
-	compile 'com.mercadolibre.px:px-toolkit:0.29.1'
-	compile 'com.mercadolibre.px:px-dto-lib:0.1.2'
+	compile "commons-configuration:commons-configuration:$commonsConfigurationVersion"
+	compile "com.mercadolibre.json:json-core:$jsonCoreVersion"
+	compile "com.mercadolibre.px:px-toolkit:$toolkitVersion"
+	compile "com.mercadolibre.px:px-dto-lib:$dtoLibVersion"
 
 	// MLAuth for access_token filter info
 	compile 'com.mercadolibre.security:mlauth:0.0.8'
@@ -79,8 +80,15 @@ dependencies {
 	// Test tools
 	testCompile 'junit:junit:4.12'
 	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
-	testCompile 'io.rest-assured:rest-assured:3.0.2'
-	testCompile 'org.mockito:mockito-core:2.28.2'
+	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
+	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
+
+	// Babel
+	compile ("com.mercadolibre:i18n:$i18nVersion") {
+		exclude group: "org.apache.commons", module: "commons-io"
+	}
+
+	runtime files('lib/i18ngettext.jar') // i18n generated jar containing all the strings
 }
 
 defaultTasks 'run'
@@ -94,7 +102,7 @@ jacocoTestReport {
 		classDirectories = files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
 					'com/mercadolibre/constants',
-					'com/mercadolibre/Main.java',
+					'com/mercadolibre/Main.class',
 					'com/mercadolibre/dto',
 			])
 		})
@@ -145,6 +153,8 @@ distributions {
 	}
 }
 
+apply plugin: 'com.mercadolibre.i18n'
+
 def buildJavadocFolder = "$buildDir/docs/javadoc"
 def javadocFolder = "documentation/javadoc"
 
@@ -170,3 +180,8 @@ task deleteJavadocBuildFolder(type: Delete) {
 }
 
 createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder);
+
+i18n {
+	app = "px-checkout-mobile-payments"
+	project = "mp-apps-px"
+}

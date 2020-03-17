@@ -1,18 +1,14 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.dto.Phone;
-import com.mercadolibre.gson.GsonWrapper;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.Map;
 
 /**
  * Objeto que representa la respuesta de payments
  */
 public class Payment {
 
-    private long id;
+    private Long id;
 
     private AdditionalInfo additionalInfo;
     private BigDecimal transactionAmountRefunded;
@@ -36,7 +32,7 @@ public class Payment {
     private Long merchantOrderId;
     private String operationType;
     private Long orderId;
-    private long payerId;
+    private Long payerId;
     private String paymentMethodId;
     private String paymentMethodReferenceId;
     private String paymentType;
@@ -51,7 +47,7 @@ public class Payment {
 
     Payment() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -143,7 +139,7 @@ public class Payment {
         return orderId;
     }
 
-    public long getPayerId() {
+    public Long getPayerId() {
         return payerId;
     }
 

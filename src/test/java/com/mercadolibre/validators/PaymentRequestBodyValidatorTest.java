@@ -3,18 +3,16 @@ package com.mercadolibre.validators;
 import com.google.gson.reflect.TypeToken;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
-import com.mercadolibre.exceptions.ValidationException;
-import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import org.junit.Test;
 import spark.utils.IOUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_METHOD_ID;
-import static org.hamcrest.Matchers.describedAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -41,7 +39,7 @@ public class PaymentRequestBodyValidatorTest {
             validator.validate(paymentRequestBody);
             fail();
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is(String.format("%s is required.", PAYMENT_METHOD_ID)));
+            assertThat(e.getDescription(), is(String.format("%s is required.", PAYMENT_METHOD_ID)));
         }
     }
 
@@ -54,7 +52,7 @@ public class PaymentRequestBodyValidatorTest {
             validator.validate(paymentRequestBody);
             fail();
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is(String.format("%s is required.", PaymentsRequestBodyParams.PREF_ID)));
+            assertThat(e.getDescription(), is(String.format("%s is required.", PaymentsRequestBodyParams.PREF_ID)));
         }
     }
 
@@ -67,7 +65,7 @@ public class PaymentRequestBodyValidatorTest {
             validator.validate(paymentRequestBody);
             fail();
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is(String.format("%s is required.", PaymentsRequestBodyParams.EMAIL)));
+            assertThat(e.getDescription(), is(String.format("%s is required.", PaymentsRequestBodyParams.EMAIL)));
         }
     }
 
@@ -80,7 +78,7 @@ public class PaymentRequestBodyValidatorTest {
             validator.validate(paymentRequestBody);
             fail();
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is(String.format("%s must be number.", PaymentsRequestBodyParams.ISSUER_ID)));
+            assertThat(e.getDescription(), is(String.format("%s must be number.", PaymentsRequestBodyParams.ISSUER_ID)));
         }
     }
 
@@ -93,7 +91,7 @@ public class PaymentRequestBodyValidatorTest {
             validator.validate(paymentRequestBody);
             fail();
         } catch (ValidationException e) {
-            assertThat(e.getMessage(), is(String.format("%s must be positive.", PaymentsRequestBodyParams.INSTALLMENTS)));
+            assertThat(e.getDescription(), is(String.format("%s must be positive.", PaymentsRequestBodyParams.INSTALLMENTS)));
         }
     }
 

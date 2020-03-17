@@ -1,15 +1,16 @@
 package com.mercadolibre.dto.congrats;
 
-import com.mercadolibre.dto.user_agent.OperatingSystem;
-import com.mercadolibre.dto.user_agent.UserAgent;
-
-import static com.mercadolibre.dto.user_agent.Version.LOYALTY_LINK_INVALID_VERSION_LESS;
+import com.mercadolibre.px.toolkit.dto.Version;
+import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 
 public class Points {
 
     private PointsProgress progress;
     private String title;
     private Action action;
+
+    public static final Version LOYALTY_LINK_INVALID_VERSION_LESS = Version.create("4.24.3");
 
     public Action getAction() {
         return action;

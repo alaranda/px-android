@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.payment;
 
-import com.mercadolibre.dto.Payer;
+import com.mercadolibre.px.dto.lib.card.Issuer;
+import com.mercadolibre.px.dto.lib.user.Payer;
 
 import java.math.BigDecimal;
 

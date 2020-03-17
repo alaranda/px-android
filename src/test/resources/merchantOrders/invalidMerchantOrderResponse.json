@@ -1,0 +1,16 @@
+{
+  "cause": [
+    {
+      "Code": "invalid_id",
+      "Message": "Invalid preference_id."
+    },
+    {
+      "Code": "invalid_id",
+      "Message": "Invalid preference_id."
+    }
+  ],
+  "code": "invalid_id",
+  "error": "bad_request",
+  "message": "Invalid preference_id.",
+  "status": 400
+}

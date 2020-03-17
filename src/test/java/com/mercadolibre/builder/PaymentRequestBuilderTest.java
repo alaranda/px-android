@@ -2,8 +2,8 @@ package com.mercadolibre.builder;
 
 import com.mercadolibre.dto.payment.PaymentRequest;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
-import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.gson.GsonWrapper;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.restclient.http.Headers;
 import org.junit.Test;
 import spark.utils.IOUtils;

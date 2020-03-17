@@ -18,7 +18,7 @@ import static spark.embeddedserver.EmbeddedServers.Identifiers.JETTY;
 
 public class Main {
 
-    private final static Logger logger = LogManager.getLogger();
+    private final static Logger LOGGER = LogManager.getLogger();
     private static final int FURY_PORT = 8080;
 
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class Main {
         Spark.port(FURY_PORT);
         new Router().init();
         Spark.awaitInitialization();
-        logger.info("Listening on port " + FURY_PORT);
+        LOGGER.info("Listening on port " + FURY_PORT);
     }
 
     private static void setupSparkServer() {

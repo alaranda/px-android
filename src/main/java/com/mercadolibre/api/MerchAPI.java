@@ -1,20 +1,21 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.config.Config;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
-import com.mercadolibre.utils.Either;
 import com.newrelic.api.agent.Trace;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,17 +24,21 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.mercadolibre.constants.Constants.*;
+import static com.mercadolibre.constants.Constants.FLOW_NAME;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum MerchAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String URL = "/merch/middle-end/congrats/content";
     private static final String POOL_NAME = "MerchRead";
     private static final String PAYMENT_IDS = "paymentIds";
@@ -44,7 +49,7 @@ public enum MerchAPI {
     private static final String DISCOUNTS_LIMIT = "6";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong("merch.connection.timeout"))
                         .withSocketTimeout(Config.getLong("merch.socket.timeout"))
         );
@@ -64,30 +69,55 @@ public enum MerchAPI {
         final URIBuilder url = buildUrl(congratsRequest);
 
         try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME)
+            final CompletableFuture<Response> completableFutureResponse = RestUtils.newRestRequestBuilder(POOL_NAME)
                     .asyncGet(url.toString(), headers);
 
             return completableFutureResponse.thenApply(response -> {
-                DatadogUtils.metricCollector.incrementCounter(
+                METRIC_COLLECTOR.incrementCounter(
                         REQUEST_OUT_COUNTER,
                         DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
                 );
                 return buildResponse(context, headers, url, response);
             });
         } catch (RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return CompletableFuture.completedFuture(Either.alternative(ApiError.EXTERNAL_API));
         }
     }
 
     private Either<MerchResponse, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
-        if (org.eclipse.jetty.http.HttpStatus.isSuccess(response.getStatus())) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, MerchResponse.class);
+        return RestUtils.responseToEither(response, MerchResponse.class);
     }
 
 
@@ -102,8 +132,8 @@ public enum MerchAPI {
                 .setScheme(Config.getString("merch.url.scheme"))
                 .setHost(Config.getString("merch.url.host"))
                 .setPath(URL)
-                .addParameter(CALLER_ID_PARAM, congratsRequest.getUserId())
-                .addParameter(CLIENT_ID_PARAM, congratsRequest.getClientId())
+                .addParameter(CALLER_ID, congratsRequest.getUserId())
+                .addParameter(CLIENT_ID, congratsRequest.getClientId())
                 .addParameter(CALLER_SITE_ID, congratsRequest.getSiteId())
                 .addParameter(PAYMENT_IDS, congratsRequest.getPaymentIds())
                 .addParameter(LIMIT, DISCOUNTS_LIMIT)
@@ -128,8 +158,17 @@ public enum MerchAPI {
                 return Optional.empty();
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(REQUEST_ID, context.getRequestId()), null, e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            new Headers().add(REQUEST_ID, context.getRequestId()),
+                            null,
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return Optional.empty();
         }
     }

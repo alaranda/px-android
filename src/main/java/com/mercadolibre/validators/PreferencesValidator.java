@@ -1,10 +1,13 @@
 package com.mercadolibre.validators;
 
-import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.utils.ErrorsConstants;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
+
+import static com.mercadolibre.utils.Translations.CANNOT_PAY_JUST_FOR_COLLECT;
+import static com.mercadolibre.utils.Translations.CANNOT_PAY_WITH_LINK;
 
 
 public class PreferencesValidator {
@@ -17,11 +20,11 @@ public class PreferencesValidator {
      * @param callerId id del payer
      * @throws ValidationException falla la validacion
      */
-    public void validate(final Context context, final Preference preference, final long callerId) throws ValidationException {
+    public void validate(final Context context, final Preference preference, final Long callerId) throws ValidationException {
 
-        if (callerId == preference.getCollectorId()) {
+        if (callerId.equals(preference.getCollectorId())) {
             DatadogPreferencesMetric.addInvalidPreferenceData(preference);
-            ValidatorResult.fail(ErrorsConstants.getPayerEqualsCollectorError(context.getLocale())).throwIfInvalid();
+            ValidatorResult.fail(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), CANNOT_PAY_JUST_FOR_COLLECT)).throwIfInvalid();
         }
 
         if (preference.getShipments() != null) {
@@ -32,7 +35,7 @@ public class PreferencesValidator {
 
     private void validateNullValue (String value, final Context context) throws ValidationException {
         if (null != value) {
-            ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
+            ValidatorResult.fail(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), CANNOT_PAY_WITH_LINK)).throwIfInvalid();
         }
     }
 
@@ -45,9 +48,9 @@ public class PreferencesValidator {
      * @param emailPreference email de la pref
      * @throws ValidationException falla la validacion
      */
-    public void isDifferent(final Context context, final String emailPayer, final String emailPreference) {
+    public void isDifferent(final Context context, final String emailPayer, final String emailPreference) throws ValidationException {
         if (!emailPreference.equalsIgnoreCase(emailPayer)){
-            ValidatorResult.fail(ErrorsConstants.getInvalidPreferenceError(context.getLocale())).throwIfInvalid();
+            ValidatorResult.fail(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), CANNOT_PAY_WITH_LINK)).throwIfInvalid();
         }
     }
 

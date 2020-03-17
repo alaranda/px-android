@@ -1,5 +1,6 @@
 .gradle
 build/
+config/
 !gradle/wrapper/gradle-wrapper.jar
 .vscode/
 bin/
@@ -34,3 +35,7 @@ out/
 
 create-order-db.sql
 create-sku-db.sql
+
+### Babel ###
+*.po
+/i18n/i18ngettext/
