@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.0.1]
+
+### Changed
+
+- Se arregla nombre de parámetros que habían sido renombrados collectorId y payerId
+
 ## [1.0.0]
 
 ### Added
