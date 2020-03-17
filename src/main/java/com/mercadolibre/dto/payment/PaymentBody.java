@@ -29,7 +29,7 @@ public class PaymentBody {
     private String couponCode;
     private boolean binaryMode;
     private String externalReference;
-    private Long collectorId;
+    private Long collector;
     private Order order;
     private String marketplace;
     private String operationType;
@@ -103,7 +103,7 @@ public class PaymentBody {
         this.campaignId = builder.campaignId;
         this.couponCode = builder.couponCode;
         this.differentialPricingId = builder.differentialPricingId;
-        this.collectorId = builder.collectorId;
+        this.collector = builder.collector;
         this.order = builder.order;
         this.marketplace = builder.marketplace;
         this.operationType = builder.operationType;
@@ -123,7 +123,7 @@ public class PaymentBody {
         private String couponCode;
         private boolean binaryMode;
         private String externalReference;
-        private Long collectorId;
+        private Long collector;
         private Order order;
         private String marketplace;
         private String operationType;
@@ -203,7 +203,7 @@ public class PaymentBody {
         }
 
         public Builder withCollector(Long collectorId) {
-            this.collectorId = collectorId;
+            this.collector = collectorId;
             return this;
         }
 
