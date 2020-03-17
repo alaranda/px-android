@@ -163,13 +163,14 @@ public enum PaymentAPI {
     }
 
 
-    private Either<Payment, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
+    private Either<Payment, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url,
+                                                    final Response response,final String httpMethod, final String poolName) {
         if (isSuccess(response.getStatus())) {
             LOGGER.info(
                     LogUtils.getResponseLogWithoutResponseBody(
                             context.getRequestId(),
-                            HttpMethod.POST.name(),
-                            POOL_NAME,
+                            httpMethod,
+                            poolName,
                             url.toString(),
                             headers,
                             LogUtils.convertQueryParam(url.getQueryParams()),
@@ -178,12 +179,14 @@ public enum PaymentAPI {
             LOGGER.error(
                     LogUtils.getResponseLogWithResponseBody(
                             context.getRequestId(),
-                            HttpMethod.POST.name(),
-                            POOL_NAME,
+                            httpMethod,
+                            poolName,
                             url.toString(),
                             headers,
                             LogUtils.convertQueryParam(url.getQueryParams()),
                             response));
         }
+        return RestUtils.responseToEither(response, Payment.class);
+    }
 
 }

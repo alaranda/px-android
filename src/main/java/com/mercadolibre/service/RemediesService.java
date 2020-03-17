@@ -1,15 +1,15 @@
 package com.mercadolibre.service;
 
 import com.mercadolibre.api.PaymentAPI;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.remedies.RemediesRequest;
 import com.mercadolibre.dto.remedies.RemediesResponse;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.service.remedies.RemedyInterface;
 import com.mercadolibre.service.remedies.RemedyTypes;
-import com.mercadolibre.utils.Either;
 
 import java.util.List;
 

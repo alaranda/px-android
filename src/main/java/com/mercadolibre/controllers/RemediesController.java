@@ -2,13 +2,15 @@ package com.mercadolibre.controllers;
 
 import com.mercadolibre.dto.remedies.RemediesRequest;
 import com.mercadolibre.dto.remedies.RemediesResponse;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
+import com.mercadolibre.px.toolkit.constants.HeadersConstants;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.service.RemediesService;
-import com.mercadolibre.utils.Locale;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,17 +20,20 @@ import spark.utils.StringUtils;
 
 import static com.mercadolibre.constants.Constants.PAYMENT_ID;
 import static com.mercadolibre.constants.QueryParamsConstants.FLOW_NAME;
-import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATTFORM;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
+import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 
 public class RemediesController {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final RemediesService remediesService;
+    private static final String CONTROLLER_NAME = "RemediesController";
 
     public RemediesController(){
         this.remediesService = new RemediesService();
@@ -43,16 +48,32 @@ public class RemediesController {
      */
     public RemediesResponse getRemedy(final Request request, final Response response) throws ApiException {
 
+        final Context context = Context.builder()
+                .requestId(request.attribute(CommonParametersNames.REQUEST_ID))
+                .locale(request.headers(LANGUAGE))
+                .platform(request.headers(PLATTFORM))
+                .flow(request.queryParams(FLOW_NAME))
+                .build();
+
+        LOGGER.info(
+                new LogBuilder(request.attribute(HeadersConstants.REQUEST_ID), REQUEST_IN)
+                        .withSource(CONTROLLER_NAME)
+                        .withMethod(request.requestMethod())
+                        .withUrl(request.url())
+                        .withUserAgent(request.userAgent())
+                        .withSessionId(request.headers(SESSION_ID))
+                        .withParams(request.queryParams().toString())
+        );
+
         final String paymentId = request.params(PAYMENT_ID);
 
         validateParams(paymentId);
 
-        final Context context = Context.builder().requestId(request.attribute(REQUEST_ID))
-                .locale(Locale.getLocale(request)).plattform(request.queryParams(PLATFORM)).flow(request.queryParams(FLOW_NAME)).build();
-
         final RemediesRequest remediesRequest = getRemedyRequest(request);
 
         final RemediesResponse remediesResponse = remediesService.getRemedy(context, paymentId, remediesRequest);
+
+        logRemedies(context, remediesResponse);
 
         return remediesResponse;
     }
@@ -69,13 +90,21 @@ public class RemediesController {
         }
     }
 
-    private void validateParams(final String paymentId) {
+    private void validateParams(final String paymentId) throws ValidationException {
 
         if (StringUtils.isBlank(paymentId)) {
             final ValidationException validationException = new ValidationException("payment id required");
             LOGGER.error(validationException);
             throw validationException;
         }
+    }
+
+    private void logRemedies(final Context context, final RemediesResponse remediesResponse) {
+        LOGGER.info(requestInLogBuilder(context.getRequestId())
+                .withSource(RemediesController.class.getSimpleName())
+                .withStatus(HttpStatus.SC_OK)
+                .withResponse(remediesResponse.toLog(remediesResponse))
+                .build());
     }
 
 }

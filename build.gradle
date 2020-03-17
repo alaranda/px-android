@@ -9,6 +9,7 @@ buildscript {
 
 	dependencies {
 		classpath group: 'com.mercadolibre', name: 'i18n', version: "$i18nVersion"
+
 	}
 }
 
@@ -77,6 +78,10 @@ dependencies {
 	compile 'org.apache.logging.log4j:log4j-core:2.11.2'
 	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.11'
 
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
 	// Test tools
 	testCompile 'junit:junit:4.12'
 	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
@@ -131,7 +136,7 @@ task app(type: FatCapsule) {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.7'
+	gradleVersion = '4.10.3'
 }
 
 staticCodeAnalysis {

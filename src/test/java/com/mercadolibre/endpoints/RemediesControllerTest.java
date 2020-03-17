@@ -4,8 +4,8 @@ import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.controllers.RemediesController;
 import com.mercadolibre.dto.remedies.RemediesResponse;
 import com.mercadolibre.dto.remedies.ResponseCallForAuth;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -31,6 +31,7 @@ public class RemediesControllerTest {
     private static final String PAYMENT_ID_TEST = "123456789";
     private static final String CALLER_ID_TEST = "11111";
     private static final String CLIENT_ID_TEST = "999999";
+    private static final String USER_AGENT_HEADER = "PX/Android/4.23.2";
 
     private RemediesController remediesController =  new RemediesController();
 
@@ -50,7 +51,9 @@ public class RemediesControllerTest {
         when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
         when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
         when(request.attribute(REQUEST_ID)).thenReturn("REQUEST_ID_TEST");
-        when(request.body()).thenReturn(IOUtils.toString(getClass().getResourceAsStream("/remedies/remedyRequest.json")));
+        when(request.userAgent()).thenReturn(USER_AGENT_HEADER);
+        when(request.url()).thenReturn("url-test");
+        when(request.body()).thenReturn(IOUtils.toString(getClass().getResourceAsStream("/remedies/remedy_request.json")));
         final Response response = Mockito.mock(Response.class);
 
         final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
@@ -67,13 +70,15 @@ public class RemediesControllerTest {
         when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
         when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
         when(request.params(PAYMENT_ID)).thenReturn(null);
+        when(request.userAgent()).thenReturn(USER_AGENT_HEADER);
+        when(request.url()).thenReturn("url-test");
         final Response response = Mockito.mock(Response.class);
 
         try {
             final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
             fail("Error payment id");
         } catch (final ValidationException e) {
-            assertThat(e.getMessage(), is("payment id required"));
+            assertThat(e.getDescription(), is("payment id required"));
         }
 
     }

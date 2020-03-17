@@ -22,5 +22,7 @@ public final class DatadogMetricsNames {
     public static final String REMEDIES_COUNTER = "px.checkout_mobile_payments.remedies.counter";
     public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD = "px.checkout_mobile_payments.remedies.alternative_payment_method";
     public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD_ESC = "px.checkout_mobile_payments.remedies.alternative_payment_method.esc";
+    public static final String REMEDIES_KYC_FAIL_COUNTER = "px.checkout_mobile_payments.remedies.counter";
+
 
 }

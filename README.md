@@ -41,6 +41,10 @@ Para compilar mensajes y empaquetarlos
 
 ### /px_mobile/congrats (GET)
 
+### /px_mobile/esc_cap (DELETE)
+
+### /px_mobile/remedies (POST)
+
 
 ## Questions
 

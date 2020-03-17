@@ -56,4 +56,27 @@ public class RemediesResponse {
     public void setSuggestionPaymentMethod(SuggestionPaymentMethodResponse suggestionPaymentMethod) {
         this.suggestionPaymentMethod = suggestionPaymentMethod;
     }
+
+    public String toLog(final RemediesResponse remediesResponse) {
+
+        final StringBuilder stringBuilder =  new StringBuilder();
+        if (null  != remediesResponse.getResponseCvv()) {
+           appendTitleAndMessage(stringBuilder, remediesResponse.getResponseCvv().getTitle(), remediesResponse.getResponseCvv().getMessage());
+           stringBuilder.append(String.format("field_setting", remediesResponse.getResponseCvv().getFieldSetting().toString()));
+        }
+        if (null != remediesResponse.getResponseCallForAuth()){
+            appendTitleAndMessage(stringBuilder, remediesResponse.getResponseCallForAuth().getTitle(), remediesResponse.getResponseCallForAuth().getMessage());
+        }
+        if (null != remediesResponse.getHighRisk()) {
+            appendTitleAndMessage(stringBuilder, remediesResponse.getResponseCallForAuth().getTitle(), remediesResponse.getResponseCallForAuth().getMessage());
+            stringBuilder.append(String.format("deeplink", remediesResponse.getHighRisk().getDeepLink()));
+        }
+        return stringBuilder.toString();
+    }
+
+
+    private void appendTitleAndMessage(final StringBuilder stringBuilder, final String title, final String message) {
+        stringBuilder.append(String.format("title: %s - ", title));
+        stringBuilder.append(String.format("message: %s - ", message));
+    }
 }
