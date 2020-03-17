@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.merchant_orders;
 
+import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.item.Item;
 
 import java.math.BigDecimal;
@@ -12,8 +13,8 @@ public class MerchantOrder {
 
     private Long id;
     private String preferenceId;
-    private Long collectorId;
-    private Long payerId;
+    private User collector;
+    private User payer;
     private List<Item> items;
     private String marketplace;
     private String externalReference;
@@ -28,8 +29,8 @@ public class MerchantOrder {
     private MerchantOrder(final Builder builder) {
         this.id = builder.id;
         this.preferenceId = builder.preferenceId;
-        this.collectorId = builder.collectorId;
-        this.payerId = builder.payerId;
+        this.collector = builder.collector;
+        this.payer = builder.payer;
         this.items = builder.items;
         this.marketplace = builder.marketplace;
         this.externalReference = builder.externalReference;
@@ -62,12 +63,12 @@ public class MerchantOrder {
         return shippingCost;
     }
 
-    public Long getCollectorId() {
-        return collectorId;
+    public User getCollector() {
+        return collector;
     }
 
-    public Long getPayerId() {
-        return payerId;
+    public User getPayer() {
+        return payer;
     }
 
     public String getExternalReference() {
@@ -98,8 +99,8 @@ public class MerchantOrder {
         return items;
     }
 
-    public void setCollectorId(final Long collectorId) {
-        this.collectorId = collectorId;
+    public void setCollector(final User collector) {
+        this.collector = collector;
     }
 
     public String getOrderType() {
@@ -112,8 +113,8 @@ public class MerchantOrder {
         return "MerchantOrder{"
                 + "id=" + id
                 + ", preferenceId='" + preferenceId + '\''
-                + ", collector=" + collectorId
-                + ", payer=" + payerId
+                + ", collector=" + collector
+                + ", payer=" + payer
                 + ", items=" + items
                 + ", marketplace='" + marketplace + '\''
                 + ", externalReference='" + externalReference
@@ -130,8 +131,8 @@ public class MerchantOrder {
 
         private Long id;
         private String preferenceId;
-        private Long collectorId;
-        private Long payerId;
+        private User collector;
+        private User payer;
         private List<Item> items;
         private String marketplace;
         private String externalReference;
@@ -205,8 +206,8 @@ public class MerchantOrder {
          * @param collector the collector
          * @return this
          */
-        public Builder withCollector(final Long collector) {
-            this.collectorId = collector;
+        public Builder withCollector(final User collector) {
+            this.collector = collector;
             return this;
         }
 
@@ -216,8 +217,8 @@ public class MerchantOrder {
          * @param payer the payer
          * @return this
          */
-        public Builder withPayer(final Long payer) {
-            this.payerId = payer;
+        public Builder withPayer(final User payer) {
+            this.payer = payer;
             return this;
         }
 
@@ -312,8 +313,8 @@ public class MerchantOrder {
             return "Builder{"
                     + "id=" + id
                     + ", preferenceId='" + preferenceId + '\''
-                    + ", collectorId=" + collectorId
-                    + ", payerId=" + payerId
+                    + ", collector=" + collector
+                    + ", payer=" + payer
                     + ", items=" + items
                     + ", marketplace='" + marketplace + '\''
                     + ", externalReference='" + externalReference + '\''
