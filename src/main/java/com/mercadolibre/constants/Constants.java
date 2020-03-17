@@ -8,11 +8,6 @@ import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTI
 
 public final class Constants {
 
-    public static final String SCOPE_PROD = "production";
-    public static final String SCOPE_BETA = "beta";
-    public static final String SCOPE_ALPHA = "alpha";
-    public static final String API_CONTEXT_V1 = "v1";
-    public static final String API_CONTEXT_LOCALHOST = "localhost";
     public static final String API_CONTEXT = "api_context";
 
     public static final String SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY = "services.connection.timeout";
@@ -26,19 +21,12 @@ public final class Constants {
     public static final String USERS_URL_SCHEME = "users.url.scheme";
     public static final String USERS_URL_HOST = "users.url.host";
 
-    public static final String CLIENT_ID_PARAM = "client.id";
-    public static final String CALLER_ID_PARAM = "caller.id";
-    public static final String SITE_ID_PARAM = "site.id";
     public static final String FLOW_NAME = "flow_name";
 
     public static final String INSTALLMENTS = "installments";
 
-    public static final String ACCESS_TOKEN = "access_token";
-
     public static final String PREF_ID = "pref_id";
     public static final String SHORT_ID = "short_id";
-
-    public static final String PUBLIC_KEY = "public_key";
 
     public static final String FLOW_NAME_LEGACY_PAYMENTS = "legacy";
     public static final String FLOW_NAME_PAYMENTS_WHITELABEL = "paymentsWhiteLabel";
@@ -51,6 +39,14 @@ public final class Constants {
     public static final String MERCHANT_ORDER = "merchant_order";
     public static final String ORDER = "order";
     public static final String WITHOUT_ORDER = "without_order";
+
+    public static final String API_CALL_PREFERENCE_FAILED = "API call to preference failed"; // todo add in toolkit
+    public static final String API_CALL_PREFERENCE_TIDY_FAILED = "API call to preferenceTidy failed"; // TODO
+    public static final String API_CALL_PAYMENTS_FAILED = "API call to payments failed"; // TODO
+    public static final String API_CALL_PUBLIC_KEY_FAILED = "API call to public key failed"; // TODO
+    public static final String INVALID_PARAMS = "invalid Params"; // TODO
+    public static final String INVALID_PREFERENCE = "invalid preference"; // TODO
+    public static final String GETTING_PARAMETERS = "Error getting parameters"; // TODO
 
     /**
      * Collectors de pago de factura de meli.

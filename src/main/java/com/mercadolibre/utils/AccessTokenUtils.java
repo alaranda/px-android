@@ -11,6 +11,7 @@ import static com.mercadolibre.constants.QueryParamsConstants.ACCESS_TOKEN;
  * Access Token Utils
  */
 public class AccessTokenUtils {
+    // todo update in toolkit and replace
     private AccessTokenUtils() {
         throw new AssertionError();
     }

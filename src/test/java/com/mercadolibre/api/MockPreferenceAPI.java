@@ -1,6 +1,5 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;

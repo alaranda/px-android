@@ -1,14 +1,16 @@
 package com.mercadolibre.dto;
 
+import com.mercadolibre.px.dto.lib.user.Identification;
+
 public final class User {
 
-    private String id;
+    private Long id;
     private Identification identification;
     private String email;
 
     User() {};
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

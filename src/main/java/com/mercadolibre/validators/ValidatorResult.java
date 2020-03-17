@@ -1,6 +1,6 @@
 package com.mercadolibre.validators;
 
-import com.mercadolibre.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 
 import javax.annotation.Nonnull;
 
@@ -8,6 +8,7 @@ public class ValidatorResult {
 
     private boolean valid;
     private String message;
+
 
     public ValidatorResult(final boolean valid, @Nonnull final String message) {
         this.valid = valid;
@@ -26,13 +27,13 @@ public class ValidatorResult {
         return valid;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     public void throwIfInvalid() throws ValidationException {
         if (!isValid()) {
             throw new ValidationException(message);
         }
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

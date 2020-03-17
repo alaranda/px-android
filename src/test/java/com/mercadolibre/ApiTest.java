@@ -1,6 +1,5 @@
 package com.mercadolibre;
 
-import com.mercadolibre.endpoints.ApiContextTest;
 import com.mercadolibre.endpoints.CapEscControllerTest;
 import com.mercadolibre.endpoints.CongratsRouterTest;
 import com.mercadolibre.endpoints.PaymentRouterTest;
@@ -18,7 +17,6 @@ import spark.Spark;
         PaymentRouterTest.class,
         PreferenceRouterTest.class,
         CongratsRouterTest.class,
-        ApiContextTest.class,
         CapEscControllerTest.class
 })
 public class ApiTest {

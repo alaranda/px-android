@@ -4,15 +4,14 @@ import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyAPI;
 import com.mercadolibre.api.UserAPI;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.User;
-import com.mercadolibre.dto.preference.Preference;
 import com.mercadolibre.dto.preference.PreferenceTidy;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.exceptions.ValidationException;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.ErrorsConstants;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.validators.PreferencesValidator;
 import org.apache.http.HttpStatus;
 import spark.Request;
@@ -21,14 +20,19 @@ import spark.utils.StringUtils;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_FAILED;
 import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
+import static com.mercadolibre.constants.Constants.GETTING_PARAMETERS;
+import static com.mercadolibre.constants.Constants.INVALID_PARAMS;
+import static com.mercadolibre.constants.Constants.INVALID_PREFERENCE;
+import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
 
 public enum PreferenceService {
     INSTANCE;
 
     private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
 
-    private long DEFAULT_CLIENT_ID = 963L;
+    private Long DEFAULT_CLIENT_ID = 963L;
 
     /**
      * Devuelve informacion de la preferencia.
@@ -49,7 +53,7 @@ public enum PreferenceService {
 
         if (!futurePreference.get().isValuePresent()) {
             final ApiError apiError = futurePreference.get().getAlternative();
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.API_CALL_FAILED, apiError.getStatus());
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PREFERENCE_FAILED, apiError.getStatus());
         }
 
         final Preference preference = futurePreference.get().getValue();
@@ -58,8 +62,7 @@ public enum PreferenceService {
         return preference;
     }
 
-    private void validatePref(final Context context, final Preference preference, final long callerId) throws ValidationException, ApiException {
-
+    private void validatePref(final Context context, final Preference preference, final Long callerId) throws ValidationException, ApiException {
         PREFERENCES_VALIDATOR.validate(context, preference, callerId);
 
         if (COLLECTORS_MELI.contains(preference.getCollectorId())) {
@@ -83,7 +86,7 @@ public enum PreferenceService {
         } else if (request.queryParams(Constants.PREF_ID) != null){
             return request.queryParams(Constants.PREF_ID);
         }
-        throw new ApiException(ErrorsConstants.INVALID_PARAMS, ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_BAD_REQUEST);
+        throw new ApiException(INVALID_PARAMS, GETTING_PARAMETERS, HttpStatus.SC_BAD_REQUEST);
     }
 
     private String isShortKey(final Context context, final String shortKey) throws ApiException {
@@ -92,12 +95,12 @@ public enum PreferenceService {
             final PreferenceTidy preferenceTidy = PreferenceTidyAPI.INSTANCE.getPreferenceByKey(context, shortKey);
             final String[] splitLongUrl = preferenceTidy.getLongUrl().split("=");
             if (splitLongUrl.length != 2) {
-                throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, ErrorsConstants.INVALID_PREFERENCE, HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                throw new ApiException(EXTERNAL_ERROR, INVALID_PREFERENCE, HttpStatus.SC_INTERNAL_SERVER_ERROR);
             }
             return splitLongUrl[1];
 
         } catch (Exception e) {
-            throw new ApiException(e.getMessage(), ErrorsConstants.GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            throw new ApiException(e.getMessage(), GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -108,8 +111,8 @@ public enum PreferenceService {
      * @param clientIdAccessToken client id del access token
      * @return Long clientId
      */
-    public Long getClientId(final long clientIdPreference, final long clientIdAccessToken) {
-        return DEFAULT_CLIENT_ID == (clientIdPreference) ? clientIdAccessToken : clientIdPreference;
+    public Long getClientId(final Long clientIdPreference, final Long clientIdAccessToken) {
+        return DEFAULT_CLIENT_ID.equals(clientIdPreference) ? clientIdAccessToken : clientIdPreference;
     }
 
 }

@@ -1,20 +1,21 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.config.Config;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.Points;
-import com.mercadolibre.dto.user_agent.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
-import com.mercadolibre.utils.Either;
 import com.newrelic.api.agent.Trace;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,16 +27,18 @@ import java.util.concurrent.ExecutionException;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum LoyaltyApi {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String URL = "/loyal_middleend/congrats";
     private static final String POOL_NAME = "LoyalRead";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong("loyal.connection.timeout"))
                         .withSocketTimeout(Config.getLong("loyal.socket.timeout"))
         );
@@ -55,29 +58,54 @@ public enum LoyaltyApi {
         final Headers headers = addHeaders(context, congratsRequest.getUserAgent());
         final URIBuilder url = buildUrl(congratsRequest);
         try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+            final CompletableFuture<Response> completableFutureResponse = RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
 
             return completableFutureResponse.thenApply(response -> {
-                DatadogUtils.metricCollector.incrementCounter(
+                METRIC_COLLECTOR.incrementCounter(
                         REQUEST_OUT_COUNTER,
                         DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
                 );
                 return buildResponse(context, headers, url, response);
             });
         } catch (RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return CompletableFuture.completedFuture(Either.alternative(ApiError.EXTERNAL_API));
         }
     }
 
     private Either<Points, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
-        if (org.eclipse.jetty.http.HttpStatus.isSuccess(response.getStatus())) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, Points.class);
+        return RestUtils.responseToEither(response, Points.class);
     }
 
     private static Headers addHeaders(final Context context, final UserAgent userAgent) {
@@ -114,8 +142,17 @@ public enum LoyaltyApi {
                 return Optional.empty();
             }
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, new Headers().add(REQUEST_ID, context.getRequestId()), null, e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            new Headers().add(REQUEST_ID, context.getRequestId()),
+                            null,
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
             return Optional.empty();
         }
     }

@@ -2,6 +2,7 @@ package com.mercadolibre.dto.payment;
 
 import java.util.List;
 
+// todo ver nombre correcto
 public class PaymentMethod {
 
     private String id;

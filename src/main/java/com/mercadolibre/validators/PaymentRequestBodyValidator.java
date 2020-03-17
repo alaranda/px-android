@@ -3,7 +3,7 @@ package com.mercadolibre.validators;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
-import com.mercadolibre.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import spark.utils.StringUtils;
 
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_METHOD_ID;

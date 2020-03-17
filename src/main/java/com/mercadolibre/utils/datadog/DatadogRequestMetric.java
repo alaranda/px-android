@@ -1,18 +1,14 @@
 package com.mercadolibre.utils.datadog;
 
 import com.mercadolibre.metrics.MetricCollector;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import spark.Request;
 import spark.Response;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_IN_COUNTER;
-import static com.mercadolibre.utils.datadog.DatadogUtils.METRIC_COLLECTOR;
-import static com.mercadolibre.utils.datadog.DatadogUtils.getStatusPattern;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 public final class DatadogRequestMetric {
-
-    private DatadogRequestMetric() {
-    }
-
     /**
      * Trackea en datadog todos los request in
      *
@@ -28,7 +24,7 @@ public final class DatadogRequestMetric {
                 .add("request_method", request.requestMethod())
                 .add("request_path", request.pathInfo())
                 .add("response_status", response.status())
-                .add("response_status_pattern", getStatusPattern(response.status()))
+                .add("response_status_pattern", LogUtils.getHttpStatusCodePattern(response.status()))
                 .add("user_agent", request.userAgent());
     }
 }

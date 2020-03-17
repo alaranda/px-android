@@ -1,22 +1,21 @@
 package com.mercadolibre.api;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.dto.public_key.PublicKeyInfo;
-import com.mercadolibre.exceptions.ApiException;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.dto.lib.user.PublicKey;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
-import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -25,19 +24,23 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PUBLIC_KEY_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.utils.HeadersUtils.getHeaders;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum PublicKeyAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String URL = "/v1/public_key";
     private static final String POOL_NAME = "PublicKeyRead";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                 pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("public_key.socket.timeout"))
                         .withRetryStrategy(
@@ -57,33 +60,58 @@ public enum PublicKeyAPI {
      * @throws ApiException (optional) if the api call fail
      */
     @Trace(async = true, dispatcher = true, nameTransaction = true)
-    public CompletableFuture<Either<PublicKeyInfo, ApiError>> getAsyncById(final Context context, final String publicKey) throws ApiException {
+    public CompletableFuture<Either<PublicKey, ApiError>> getAsyncById(final Context context, final String publicKey) throws ApiException {
         final Headers headers = getHeaders(context.getRequestId());
         final URIBuilder url = getPath(publicKey);
 
         try {
-            final CompletableFuture<Response> completableFutureResponse = RESTUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+            final CompletableFuture<Response> completableFutureResponse = RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
             return completableFutureResponse.thenApply(response -> {
-                    DatadogUtils.metricCollector.incrementCounter(
+                    METRIC_COLLECTOR.incrementCounter(
                             REQUEST_OUT_COUNTER,
                             DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
                     );
                     return buildResponse(context, headers, url, response);
             });
         } catch (final RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PUBLIC_KEY_FAILED, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private Either<PublicKeyInfo, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
-        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+    private Either<PublicKey, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, PublicKeyInfo.class);
+        return RestUtils.responseToEither(response, PublicKey.class);
     }
 
 
@@ -99,24 +127,33 @@ public enum PublicKeyAPI {
      * @throws ApiException (optional) if the api call fail
      */
     @Trace(dispatcher = true, nameTransaction = true)
-    public Either<PublicKeyInfo, ApiError> getBycallerIdAndClientId(final Context context, final String callerId,
-                                                                    final Long clientId)
+    public Either<PublicKey, ApiError> getBycallerIdAndClientId(final Context context, final String callerId,
+                                                                final Long clientId)
             throws ApiException {
 
         final Headers headers = getHeaders(context.getRequestId());
         final URIBuilder url = getPathWithParams(callerId, clientId);
 
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
-            DatadogUtils.metricCollector.incrementCounter(
+            final Response response = RestUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
+            METRIC_COLLECTOR.incrementCounter(
                     REQUEST_OUT_COUNTER,
                     DatadogUtils.getRequestOutCounterTags(HttpMethod.GET.name(), POOL_NAME, response.getStatus())
             );
             return buildResponse(context, headers, url, response);
         } catch (final RestException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.GET.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException("external_error", "API call to public key failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.GET.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PUBLIC_KEY_FAILED, HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

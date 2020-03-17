@@ -1,22 +1,21 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.config.Config;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.ApiError;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.gson.GsonWrapper;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.utils.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.logs.LogUtils;
-import com.mercadolibre.rest.RESTUtils;
+import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
-import com.mercadolibre.utils.Either;
-import com.mercadolibre.utils.ErrorsConstants;
 import com.newrelic.api.agent.Trace;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -26,18 +25,22 @@ import org.apache.logging.log4j.Logger;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 
+import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 public enum PaymentAPI {
     INSTANCE;
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String URL = "/v1/payments";
     private static final String POOL_NAME = "PaymentsWrite";
 
     static {
-        RESTUtils.registerPool(POOL_NAME, pool ->
+        RestUtils.registerPool(POOL_NAME, pool ->
                     pool.withConnectionTimeout(Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                         .withSocketTimeout(Config.getLong("payment.socket.timeout"))
         );
@@ -60,19 +63,28 @@ public enum PaymentAPI {
         final URIBuilder url = buildUrl(callerId, clientId);
 
         try {
-            final Response response = RESTUtils.newRestRequestBuilder(POOL_NAME)
+            final Response response = RestUtils.newRestRequestBuilder(POOL_NAME)
                     .asyncPost(url.toString(), headers, GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8)).get();
 
-            DatadogUtils.metricCollector.incrementCounter(
+            METRIC_COLLECTOR.incrementCounter(
                     REQUEST_OUT_COUNTER,
                     DatadogUtils.getRequestOutCounterTags(HttpMethod.POST.name(), POOL_NAME, response.getStatus())
             );
 
             return buildResponse(context, headers, url, response);
         } catch (final RestException | InterruptedException | ExecutionException e) {
-            logger.error(LogUtils.getExceptionLog(context.getRequestId(), HttpMethod.POST.name(), POOL_NAME, URL, headers, LogUtils.convertQueryParam(url.getQueryParams()), e));
-            DatadogUtils.metricCollector.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
-            throw new ApiException(ErrorsConstants.EXTERNAL_ERROR, "API call to payments failed", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error(
+                    LogUtils.getExceptionLog(
+                            context.getRequestId(),
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            URL,
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            HttpStatus.SC_GATEWAY_TIMEOUT,
+                            e));
+            METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+            throw new ApiException(EXTERNAL_ERROR, API_CALL_PAYMENTS_FAILED, HttpStatus.SC_BAD_GATEWAY);
         }
     }
 
@@ -93,11 +105,27 @@ public enum PaymentAPI {
     }
 
     private Either<Payment, ApiError> buildResponse(final Context context, final Headers headers, final URIBuilder url, final Response response) {
-        if (response.getStatus() < HttpStatus.SC_BAD_REQUEST) {
-            logger.info(LogUtils.getResponseLog(context.getRequestId(), HttpMethod.POST.name(), POOL_NAME, url.toString(),headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+        if (isSuccess(response.getStatus())) {
+            LOGGER.info(
+                    LogUtils.getResponseLogWithoutResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            url.toString(),
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         } else {
-            logger.error(LogUtils.getResponseLogWithBody(context.getRequestId(), HttpMethod.POST.name(), POOL_NAME, url.toString(),headers, LogUtils.convertQueryParam(url.getQueryParams()), response));
+            LOGGER.error(
+                    LogUtils.getResponseLogWithResponseBody(
+                            context.getRequestId(),
+                            HttpMethod.POST.name(),
+                            POOL_NAME,
+                            url.toString(),
+                            headers,
+                            LogUtils.convertQueryParam(url.getQueryParams()),
+                            response));
         }
-        return RESTUtils.responseToEither(response, Payment.class);
+        return RestUtils.responseToEither(response, Payment.class);
     }
 }
