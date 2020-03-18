@@ -35,8 +35,8 @@ public class UserAPITest extends RestClientTestBase {
                 IOUtils.toString(getClass().getResourceAsStream("/user/243962506.json"))
         );
         User user = userAPI.getById(context, USER_ID);
-        assertEquals(user.getId(), USER_ID);
-        assertEquals(user.getEmail(), USER_EMAIL);
+        assertEquals(String.valueOf(USER_ID), user.getId());
+        assertEquals(USER_EMAIL, user.getEmail());
     }
 
     @Test
