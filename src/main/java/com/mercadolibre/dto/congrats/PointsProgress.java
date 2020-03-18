@@ -10,4 +10,9 @@ public class PointsProgress {
 
 
     public PointsProgress() { }
+
+    public String toString() {
+        return String.format("PointsProgress{percentage=[%s], levelColor=[%s], levelNumber=[%s]}",
+                percentage.toString(), levelColor, levelNumber.toString());
+    }
 }

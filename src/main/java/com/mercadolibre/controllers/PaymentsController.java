@@ -67,7 +67,9 @@ public enum PaymentsController {
                         .withUrl(request.url())
                         .withUserAgent(request.userAgent())
                         .withSessionId(request.headers(SESSION_ID))
-                        .withParams(request.queryParams().toString())
+                        .withAcceptLanguage(context.getLocale().toString())
+                        .withParams(request.queryString())
+                        .build()
         );
 
         final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
@@ -139,8 +141,10 @@ public enum PaymentsController {
                         .withUrl(request.url())
                         .withUserAgent(request.userAgent())
                         .withSessionId(request.headers(SESSION_ID))
-                        .withParams(request.queryParams().toString())
+                        .withParams(request.queryString())
                         .withPreferenceId(paymentRequest.getPreference().getId())
+                        .withAcceptLanguage(context.getLocale().toString())
+                        .build()
         );
 
         final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);

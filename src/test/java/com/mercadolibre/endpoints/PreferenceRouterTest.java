@@ -92,7 +92,7 @@ public class PreferenceRouterTest {
 
         final Response response = get(uriBuilder.build());
 
-        assertThat(response.getStatusCode(), is(HttpStatus.SC_INTERNAL_SERVER_ERROR));
+        assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
     }
 
     @Test

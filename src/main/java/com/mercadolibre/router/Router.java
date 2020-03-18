@@ -14,6 +14,7 @@ import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.new_relic.NewRelicUtils;
 import com.mercadolibre.px.toolkit.utils.ApiContext;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.newrelic.api.agent.NewRelic;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestOutLogBuilder;
@@ -119,7 +121,7 @@ public class Router implements SparkApplication {
 
                 LOGGER.error(requestInLogBuilder(request.attribute(REQUEST_ID))
                         .withStatus(HttpStatus.SC_BAD_REQUEST)
-                        .withMessage(String.format("Validation exception produced, message[%s]", exception.getMessage()))
+                        .withMessage(String.format("Validation exception produced, message[%s]", exception.getDescription()))
                         .build());
                 NewRelicRequest NRRequest = NewRelicRequest.builder()
                         .withRequestId(request.attribute(REQUEST_ID))
@@ -148,8 +150,8 @@ public class Router implements SparkApplication {
             requestId = UUID.randomUUID().toString();
             LOGGER.debug(requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
-        LOGGER.info(String.format("[request_in] [RequestId: %s] [url: %s] [Method: %s] [Header: %s] [Body: %s]",
-                requestId, request.url(), request.requestMethod(), request.headers(), request.body()));
+        LOGGER.info(String.format("[request_in] [RequestId: %s] [url: %s] [Method: %s] [Language: %s] [QueryParams: %s] [Body: %s]",
+                requestId, request.url(), request.requestMethod(), request.headers(LANGUAGE), request.queryString(), request.body()));
 
         request.attribute(REQUEST_ID, requestId);
     }
