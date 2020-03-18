@@ -37,4 +37,9 @@ public class Congrats {
     }
 
     public Points getMpuntos() {return mpuntos; }
+
+    public String toString() {
+        return String.format("Congrats{Points=[%s], Discounts=[%s]}",
+                mpuntos.toString(), discounts.toString());
+    }
 }

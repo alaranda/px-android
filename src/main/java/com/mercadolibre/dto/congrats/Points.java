@@ -58,4 +58,8 @@ public class Points {
         public Points build() { return new Points(this ); }
     }
 
+    public String toString() {
+        return String.format("Points{PointsProgress=[%s]}, Title=[%s], Action=[%s]",
+                progress.toString(), title, action.toString());
+    }
 }

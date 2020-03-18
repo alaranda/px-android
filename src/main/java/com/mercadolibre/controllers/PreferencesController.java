@@ -6,6 +6,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.toolkit.constants.HeadersConstants;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.service.AuthService;
 import com.mercadolibre.service.PreferenceService;
@@ -57,16 +58,25 @@ public enum PreferencesController {
                         .withUrl(request.url())
                         .withUserAgent(request.userAgent())
                         .withSessionId(request.headers(SESSION_ID))
-                        .withParams(request.queryParams().toString())
+                        .withAcceptLanguage(context.getLocale().toString())
+                        .withParams(request.queryString())
+                        .build()
         );
 
         try {
-            final Long callerId = Long.valueOf(request.queryParams(CALLER_ID));
-            final Long clientId = Long.valueOf(request.queryParams(CLIENT_ID));
+
+            final String callerIdQuery = request.queryParams(CALLER_ID);
+            if (null == callerIdQuery) { throw new ValidationException("caller id required"); }
+            final Long callerId = Long.valueOf(callerIdQuery);
+
+            final String clientIdQuery = request.queryParams(CLIENT_ID);
+            if (null == clientIdQuery) { throw new ValidationException("client id required"); }
+            final Long clientId = Long.valueOf(clientIdQuery);
+
             final String prefId = PreferenceService.INSTANCE.extractParamPrefId(context, request);
 
             final Preference preference = PreferenceService.INSTANCE.getPreference(context, prefId, callerId);
-            final PublicKey publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId().toString(), PreferenceService.INSTANCE.getClientId(preference.getClientId(), clientId));
+            final PublicKey publicKey = AuthService.INSTANCE.getPublicKey(context, preference.getCollectorId(), PreferenceService.INSTANCE.getClientId(preference.getClientId(), clientId));
             final PreferenceResponse preferenceResponse = new PreferenceResponse(prefId, publicKey.getPublicKey());
 
             DatadogPreferencesMetric.addPreferenceData(preference);

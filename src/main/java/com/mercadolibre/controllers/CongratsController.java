@@ -9,7 +9,6 @@ import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.service.CongratsService;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
-import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.Request;
@@ -28,7 +27,6 @@ import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 
 public class CongratsController {
 
@@ -57,6 +55,7 @@ public class CongratsController {
         final Context context = Context.builder().requestId(request.attribute(REQUEST_ID))
                 .locale(language, request.queryParams(CALLER_SITE_ID)).build();
 
+        final CongratsRequest congratsRequest =  getCongratsRequest(request);
         LOGGER.info(
                 new LogBuilder(context.getRequestId(), REQUEST_IN)
                         .withSource(CONTROLLER_NAME)
@@ -64,14 +63,14 @@ public class CongratsController {
                         .withUrl(request.url())
                         .withUserAgent(request.userAgent())
                         .withSessionId(request.headers(SESSION_ID))
-                        .withParams(request.queryParams().toString())
+                        .withAcceptLanguage(context.getLocale().toString())
+                        .withParams(congratsRequest.toString())
+                        .build()
         );
-        final CongratsRequest congratsRequest =  getCongratsRequest(request);
 
         final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
 
         DatadogCongratsMetric.trackCongratsData(congrats, congratsRequest);
-        logCongrats(context, congrats);
         return congrats;
     }
 
@@ -104,14 +103,6 @@ public class CongratsController {
 
         return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density,
                 productId, campaignId, flowName);
-    }
-
-    private void logCongrats(final Context context, final Congrats congrats) {
-        LOGGER.info(requestInLogBuilder(context.getRequestId())
-                .withSource(CongratsController.class.getSimpleName())
-                .withStatus(HttpStatus.SC_OK)
-                .withMessage(congrats.toString())
-                .build());
     }
 
 }

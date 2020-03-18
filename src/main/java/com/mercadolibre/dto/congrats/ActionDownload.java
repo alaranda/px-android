@@ -9,4 +9,9 @@ public class ActionDownload {
         this.title = title;
         this.action = action;
     }
+
+    public String toString() {
+        return String.format("ActionDownload{Title=[%s], Action=[%s]}",
+                title, action.toString());
+    }
 }

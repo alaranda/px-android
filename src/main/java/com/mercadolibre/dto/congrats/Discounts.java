@@ -74,4 +74,9 @@ public class Discounts {
         }
         return items.size();
     }
+
+    public String toString() {
+        return String.format("Discounts{Title=[%s], Subtitle=[%s], Action=[%s], ActionDownload=[%s]}",
+               title, subtitle, action.toString(), actionDownload.toString());
+    }
 }

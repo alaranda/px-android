@@ -41,7 +41,9 @@ public class CapEscController {
                         .withUrl(request.url())
                         .withUserAgent(request.userAgent())
                         .withSessionId(request.headers(SESSION_ID))
-                        .withParams(request.queryParams().toString())
+                        .withAcceptLanguage(context.getLocale().toString())
+                        .withParams(request.queryString())
+                        .build()
         );
 
         final String cardId = request.params("cardId");
