@@ -2,6 +2,24 @@
 
 # Change Log
 
+## [1.1.0]
+
+### Added
+
+- Se agrega nuevo endpoint de remedies.
+
+## [1.0.3]
+
+### Changed
+
+- Se mejoraron logs y se cambió validación que daba 500 en lugar de 400.
+
+## [1.0.2]
+
+### Changed
+
+- Se cambiaron el tipo del campo id en el DTO User de Long a String y en PaymentBody el collector paso de ser Long a User
+
 ## [1.0.1]
 
 ### Changed

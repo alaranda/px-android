@@ -1,0 +1,12 @@
+{
+  "payer_payment_method_rejected":{
+    "payment_method_id":"visa",
+    "issuer_name":"ICBC",
+    "last_four_digit":"4444",
+    "security_code_location":"back",
+    "security_code_length":3,
+    "total_amount":123.00,
+    "installments": 2
+  },
+  "alternative_payer_payment_methods":[]
+}

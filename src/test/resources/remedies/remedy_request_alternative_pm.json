@@ -1,0 +1,55 @@
+{
+  "payer_payment_method_rejected":{
+    "payment_method_id":"visa",
+    "payment_type_id":"credit_card",
+    "issuer_name":"ICBC",
+    "last_four_digit":"4444",
+    "security_code_location":"back",
+    "security_code_length":3,
+    "total_amount":123.00,
+    "installments": 2,
+    "esc": true
+  },
+  "alternative_payer_payment_methods": [
+    {
+      "pament_method_id": "master",
+      "payment_type_id": "credit_card",
+      "esc": true,
+      "installments": [
+        {
+          "installments": 1,
+          "total_amount": 150.33,
+          "labels": ["label1","label2"],
+          "recommended_message": "texto recomendado 1 cuota"
+        },
+        {
+          "installments": 2,
+          "total_amount": 123.00,
+          "labels": ["label1","label2"],
+          "recommended_message": "texto recomendado 2 cuotas"
+        }
+      ],
+      "selected_payer_cost_index": 0
+    },
+    {
+      "pament_method_id": "amex",
+      "payment_type_id": "credit_card",
+      "esc": true,
+      "installments": [
+        {
+          "installments": 1,
+          "total_amount": 333.33,
+          "labels": ["label1","label2"],
+          "recommended_message": "texto recomendado 1 cuota"
+        },
+        {
+          "installments": 2,
+          "total_amount": 123.13,
+          "labels": ["label1","label2"],
+          "recommended_message": "texto recomendado 2 cuotas"
+        }
+      ],
+      "selected_payer_cost_index": 0
+    }
+  ]
+}

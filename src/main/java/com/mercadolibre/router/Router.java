@@ -6,6 +6,7 @@ import com.mercadolibre.controllers.CapEscController;
 import com.mercadolibre.controllers.CongratsController;
 import com.mercadolibre.controllers.PaymentsController;
 import com.mercadolibre.controllers.PreferencesController;
+import com.mercadolibre.controllers.RemediesController;
 import com.mercadolibre.px.toolkit.config.Config;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.NewRelicRequest;
@@ -46,6 +47,7 @@ public class Router implements SparkApplication {
 
     private final CongratsController congratsController = new CongratsController();
     private final CapEscController capEscController = new CapEscController();
+    private final RemediesController remediesController = new RemediesController();
 
     @Override
     public void init() {
@@ -67,7 +69,6 @@ public class Router implements SparkApplication {
             Spark.post("/payments", new MeteredRoute(PaymentsController.INSTANCE::doPayment,
                     "/payments"), GsonWrapper::toJson);
 
-
             Spark.get("/init/preference", new MeteredRoute(PreferencesController.INSTANCE::initCheckoutByPref,
                     "/init/preference"), GsonWrapper::toJson);
 
@@ -76,6 +77,9 @@ public class Router implements SparkApplication {
 
             Spark.delete("/v1/esc_cap/:cardId", new MeteredRoute(capEscController::resetCapEsc,
                     "/v1/esc_cap/:cardId"), GsonWrapper::toJson);
+
+            Spark.post("/v1/remedies/:paymentId", new MeteredRoute(remediesController::getRemedy,
+                    "/v1/remedies/:paymentId"), GsonWrapper::toJson);
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
 

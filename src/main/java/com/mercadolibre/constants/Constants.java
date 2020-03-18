@@ -22,6 +22,7 @@ public final class Constants {
     public static final String USERS_URL_HOST = "users.url.host";
 
     public static final String FLOW_NAME = "flow_name";
+    public static final String PAYMENT_ID = "paymentId";
 
     public static final String INSTALLMENTS = "installments";
 
