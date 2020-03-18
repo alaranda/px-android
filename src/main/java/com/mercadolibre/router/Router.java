@@ -77,6 +77,7 @@ public class Router implements SparkApplication {
 
             Spark.exception(ApiException.class, (exception, request, response) -> {
 
+
                 LOGGER.error(requestOutLogBuilder(request.attribute(REQUEST_ID))
                         .withStatus(exception.getStatusCode())
                         .withException(exception.getCode(), exception.getDescription())
@@ -147,6 +148,8 @@ public class Router implements SparkApplication {
             requestId = UUID.randomUUID().toString();
             LOGGER.debug(requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
+        LOGGER.info(String.format("[request_in] [RequestId: %s] [url: %s] [Method: %s] [Header: %s] [Body: %s]",
+                requestId, request.url(), request.requestMethod(), request.headers(), request.body()));
 
         request.attribute(REQUEST_ID, requestId);
     }

@@ -119,7 +119,7 @@ public enum PaymentService {
     }
 
     private Order setOrder(final Preference preference, final Long payerId) throws ApiException {
-        if (payerId.equals(preference.getCollectorId())) {
+        if (String.valueOf(payerId).equals(preference.getCollectorId())) {
             throw  new ApiException(INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
         }
 

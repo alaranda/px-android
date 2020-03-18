@@ -65,7 +65,7 @@ public enum PreferenceService {
     private void validatePref(final Context context, final Preference preference, final Long callerId) throws ValidationException, ApiException {
         PREFERENCES_VALIDATOR.validate(context, preference, callerId);
 
-        if (COLLECTORS_MELI.contains(preference.getCollectorId())) {
+        if (COLLECTORS_MELI.contains(Long.valueOf(preference.getCollectorId()))) {
             final User user = UserAPI.INSTANCE.getById(context, callerId);
             PREFERENCES_VALIDATOR.isDifferent(context, user.getEmail(), preference.getPayer().getEmail());
         }

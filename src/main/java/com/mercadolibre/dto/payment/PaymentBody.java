@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.dto.Order;
+import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
@@ -29,7 +30,7 @@ public class PaymentBody {
     private String couponCode;
     private boolean binaryMode;
     private String externalReference;
-    private Long collector;
+    private User collector;
     private Order order;
     private String marketplace;
     private String operationType;
@@ -123,7 +124,7 @@ public class PaymentBody {
         private String couponCode;
         private boolean binaryMode;
         private String externalReference;
-        private Long collector;
+        private User collector;
         private Order order;
         private String marketplace;
         private String operationType;
@@ -202,8 +203,8 @@ public class PaymentBody {
             return builder;
         }
 
-        public Builder withCollector(Long collectorId) {
-            this.collector = collectorId;
+        public Builder withCollector(final Long collectorId) {
+            this.collector = new User(String.valueOf(collectorId));
             return this;
         }
 

@@ -37,7 +37,7 @@ public class PreferenceAPITest extends RestClientTestBase {
 
         assertThat(preference.getTotalAmount(), is(BigDecimal.valueOf(4823)));
         assertThat(preference.getExternalReference(), is(""));
-        assertThat(preference.getCollectorId(), is(138275050L));
+        assertThat(preference.getCollectorId(), is("138275050"));
     }
 
     @Test

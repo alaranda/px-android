@@ -22,7 +22,7 @@ public class PreferencesValidator {
      */
     public void validate(final Context context, final Preference preference, final Long callerId) throws ValidationException {
 
-        if (callerId.equals(preference.getCollectorId())) {
+        if (String.valueOf(callerId).equals(preference.getCollectorId())) {
             DatadogPreferencesMetric.addInvalidPreferenceData(preference);
             ValidatorResult.fail(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), CANNOT_PAY_JUST_FOR_COLLECT)).throwIfInvalid();
         }
