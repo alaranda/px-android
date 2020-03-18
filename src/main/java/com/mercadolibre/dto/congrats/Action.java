@@ -27,4 +27,9 @@ public class Action {
     public String getTarget() {
         return target;
     }
+
+    public String toString() {
+        return String.format("Action{label=[%s], target=[%s], mlTarget=[%s], mpTarget=[%s]}",
+                label, target, mlTarget, mpTarget);
+    }
 }
