@@ -4,13 +4,15 @@ import com.mercadolibre.px.dto.lib.user.Identification;
 
 public final class User {
 
-    private Long id;
+    private String id;
     private Identification identification;
     private String email;
 
-    User() {};
+    public User(final String id) {
+        this.id = id;
+    };
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
