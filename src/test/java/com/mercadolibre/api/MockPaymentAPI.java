@@ -29,4 +29,16 @@ public class MockPaymentAPI {
                 .withMethod(HttpMethod.POST)
                 .shouldFail().build();
     }
+
+    public static void getPayment(final String paymentId, final int statusCode, final String body) {
+        MockResponse.Builder builder = MockResponse.builder()
+                .withURL(PaymentAPI.buildGetPaymentUrl(paymentId).toString())
+                .withMethod(HttpMethod.GET)
+                .withStatusCode(statusCode)
+                .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
+                .withResponseHeader("Cache-Control", "max-age=0")
+                .withResponseBody(body);
+
+        builder.build();
+    }
 }

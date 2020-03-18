@@ -40,7 +40,7 @@ public class PreferenceServiceTest {
     private static final Long USER_ID_1 = 243962506L;
     private static final Long USER_ID_2 = 453962577L;
     public static final String REQUEST_ID = UUID.randomUUID().toString();
-    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es_AR").build();
+    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es_AR").platform("MP").build();
 
     @Test
     public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException() throws IOException, InterruptedException, ApiException, ExecutionException {
