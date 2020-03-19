@@ -5,7 +5,6 @@ import com.mercadolibre.api.RiskApi;
 import com.mercadolibre.dto.remedies.Remedy;
 import com.mercadolibre.utils.RemediesTexts;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +19,11 @@ public class RemedyTypes {
         {
             put(Remedy.CC_REJECTED_HIGH_RISK, Arrays.asList(new RemedyHighRisk(REMEDIES_TEXTS, RISK_API)));
 
-            put(Remedy.REJECTED_HIGH_RISK, Arrays.asList(new RemedyCvv(REMEDIES_TEXTS), new RemedyBadFilledDate(REMEDIES_TEXTS)));
+            put(Remedy.REJECTED_HIGH_RISK, Arrays.asList(new RemedyCvv(), new RemedyBadFilledDate(REMEDIES_TEXTS)));
 
             put(Remedy.CC_REJECTED_BAD_FILLED_DATE, Arrays.asList(new RemedyBadFilledDate(REMEDIES_TEXTS)));
 
-            put(Remedy.CC_REJECTED_BAD_FILLED_SECURITY_CODE, Arrays.asList(new RemedyCvv(REMEDIES_TEXTS)));
+            put(Remedy.CC_REJECTED_BAD_FILLED_SECURITY_CODE, Arrays.asList(new RemedyCvv()));
 
             put(Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE, Arrays.asList(new RemedyCallForAuthorize(REMEDIES_TEXTS)));
 

@@ -25,8 +25,13 @@ public final class SuggestionPaymentMehodsUtils {
                     payerPaymentMethodRejected.getInstallments(), payerPaymentMethodRejected.getTotalAmount());
 
             if (null != installment) {
-                alternativePayerPaymentMethodSelected =  new AlternativePayerPaymentMethod(alternativePayerPaymentMethod.getPaymentMethodId(),
-                        alternativePayerPaymentMethod.getPaymentTypeId(), Arrays.asList(installment), alternativePayerPaymentMethod.isEsc());
+                alternativePayerPaymentMethodSelected = AlternativePayerPaymentMethod.builder()
+                        .paymentMethodId(alternativePayerPaymentMethod.getPaymentMethodId())
+                        .paymentTypeId(alternativePayerPaymentMethod.getPaymentTypeId())
+                        .installments(Arrays.asList(installment))
+                        .esc(alternativePayerPaymentMethod.isEsc())
+                        .build();
+
                 break;
             }
         }

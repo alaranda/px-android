@@ -1,13 +1,13 @@
 package com.mercadolibre.service.remedies;
 
 import com.mercadolibre.api.RiskApi;
-import com.mercadolibre.dto.Platform;
 import com.mercadolibre.dto.remedies.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedies.RemediesRequest;
 import com.mercadolibre.dto.remedies.RemediesResponse;
 import com.mercadolibre.dto.remedies.ResponseHighRisk;
 import com.mercadolibre.dto.risk.RiskResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.utils.RemediesTexts;
@@ -25,10 +25,9 @@ public class RemedyHighRisk implements RemedyInterface {
     private RemediesTexts remediesTexts;
     private RiskApi riskApi;
 
-    private final String KEY_TITLE = "rejected_high_risk.title";
-    private final String KEY_MESSAGE = "rejected_high_risk.message";
     private final static String KYC_REMEDY = "available_for_remedy";
-
+    private final static String REMEDY_HIGH_RISK_TITLE = "remedy.highrisk.title";
+    private final static String REMEDY_HIGH_RISK_MESSAGE = "remedy.highrisk.message";
     private static final String KYC_DEEPLINK = "%s://kyc/?initiative=px-high-risk&callback=%s://example-callback/";
 
     public RemedyHighRisk(final RemediesTexts remediesTexts, final RiskApi riskApi) {
@@ -59,15 +58,20 @@ public class RemedyHighRisk implements RemedyInterface {
 
             if (remedyKyc(riskResponse)) {
 
-                final String title = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_TITLE), payerPaymentMethodRejected.getPaymentMethodId(),
+                final String title = String.format(remediesTexts.getTranslation(context.getLocale(), REMEDY_HIGH_RISK_TITLE), payerPaymentMethodRejected.getPaymentMethodId(),
                         payerPaymentMethodRejected.getIssuerName(), payerPaymentMethodRejected.getLastFourDigit());
 
-                final String message = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_MESSAGE),
+                final String message = String.format(remediesTexts.getTranslation(context.getLocale(), REMEDY_HIGH_RISK_MESSAGE),
                         payerPaymentMethodRejected.getIssuerName(),  payerPaymentMethodRejected.getTotalAmount());
 
                 final String deppLink = String.format(KYC_DEEPLINK, platform.toLowerCase(), platform.toLowerCase());
 
-                final ResponseHighRisk responseHighRisk = new ResponseHighRisk(title, message, deppLink);
+                final ResponseHighRisk responseHighRisk = ResponseHighRisk.builder()
+                        .title(title)
+                        .message(message)
+                        .deepLink(deppLink)
+                        .build();
+
                 remediesResponse.setHighRisk(responseHighRisk);
 
                 DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
