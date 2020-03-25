@@ -58,8 +58,8 @@ public class RemediesControllerTest {
 
         final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
 
-        final ResponseCallForAuth responseCallForAuth = remediesResponse.getResponseCallForAuth();
-        assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago."));
+        final ResponseCallForAuth responseCallForAuth = remediesResponse.getCallForAuth();
+        assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago"));
         assertThat(responseCallForAuth.getMessage(), is("Llama a ICBC para autorizar 123.00 a Mercado Pago o paga de otra forma."));
     }
 

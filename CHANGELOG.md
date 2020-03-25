@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.1.1]
+
+### Changed
+
+- Se agregan las traducciones con babel y lombok.
+
 ## [1.1.0]
 
 ### Added

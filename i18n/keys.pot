@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-18 15:45-0300\n"
+"POT-Creation-Date: 2020-03-25 16:38-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,38 +17,58 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:31
+#: src/main/java/com/mercadolibre/utils/Translations.java:36
 msgid "Descuentos por tu nivel"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:33
+#: src/main/java/com/mercadolibre/utils/Translations.java:38
 msgid "descuentos por tu nivel"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:35
+#: src/main/java/com/mercadolibre/utils/Translations.java:40
 msgid "Exclusivo con la app de Mercado Pago"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:37
+#: src/main/java/com/mercadolibre/utils/Translations.java:42
 msgid "Exclusivo con la app de Mercado Libre"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:39
+#: src/main/java/com/mercadolibre/utils/Translations.java:44
 msgid "Descargar"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:41
+#: src/main/java/com/mercadolibre/utils/Translations.java:46
 msgid "Ver todos los descuentos"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:43
+#: src/main/java/com/mercadolibre/utils/Translations.java:48
 msgid "No pudimos procesar tu pago, discúlpanos."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:45
+#: src/main/java/com/mercadolibre/utils/Translations.java:50
 msgid "No puedes pagar con este link de pago."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:47
+#: src/main/java/com/mercadolibre/utils/Translations.java:52
 msgid "No puedes pagar con este link, solo puedes usarlo para cobrar."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:54
+msgid "El código de seguridad es inválido"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:56
+msgid "Vuelve a ingresarlo para confirmar el pago."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:58
+msgid "Código de seguridad"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:60
+msgid "Los 3 números están al dorso de tu tarjeta"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:62
+msgid "Los 4 números están al frente de tu tarjeta"
 msgstr ""

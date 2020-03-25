@@ -24,7 +24,7 @@ public class PreferencesValidatorTest {
     private static final Long CALLER_ID_INVALID = Long.valueOf(138275050);
 
     public static final String REQUEST_ID = UUID.randomUUID().toString();
-    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es_AR").build();
+    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es-AR").build();
 
     @Before
     public void setUp() {
@@ -49,7 +49,7 @@ public class PreferencesValidatorTest {
             validator.validate(CONTEXT_ES, preference, CALLER_ID_VALID);
             fail("Expected Validation Exception");
         } catch (ApiException e) {
-            assertThat(e.getDescription(), is("No puedes pagar con este link de pago."));
+            assertThat(e.getDescription(), is("No podés pagar con este link de pago."));
         }
     }
 
@@ -62,7 +62,7 @@ public class PreferencesValidatorTest {
             validator.validate(CONTEXT_ES, preference, CALLER_ID_INVALID);
             fail("Expected Validation Exception");
         } catch (ApiException e) {
-            assertThat(e.getDescription(), is("No puedes pagar con este link, solo puedes usarlo para cobrar."));
+            assertThat(e.getDescription(), is("No podés pagar con este link, solo podés usarlo para cobrar."));
         }
 
     }

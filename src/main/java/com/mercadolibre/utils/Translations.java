@@ -16,6 +16,11 @@ public enum Translations {
     public static final String PAYMENT_NOT_PROCESSED = "checkout.initpreference.error.generic";
     public static final String CANNOT_PAY_WITH_LINK= "checkout.initpreference.error.invalidpreference";
     public static final String CANNOT_PAY_JUST_FOR_COLLECT = "checkout.initpreference.error.payerequalscollector";
+    public static final String REMEDY_CVV_TITLE = "remedy.cvv.title";
+    public static final String REMEDY_CVV_MESSAGE = "remedy.cvv.message";
+    public static final String REMEDY_FIELD_SETTING_CVV_TITLE = "remedy.fieldsetting.cvv.title";
+    public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK = "remedy.fieldsetting.cvv.hintmessage.back";
+    public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT = "remedy.fieldsetting.cvv.hintmessage.front";
 
     private I18nService i18nService = new I18nService();
 
@@ -27,25 +32,35 @@ public enum Translations {
     public String getTranslationByLocale(Locale locale, final String key) {
         // i18nService is expecting literal string
         switch (key) {
-            case "congrats.discounts":
+            case DISCOUNTS:
                 return i18nService.tr("Descuentos por tu nivel", locale);
-            case "congrats.discount.level":
+            case DISCOUNTS_LEVEL:
                 return i18nService.tr("descuentos por tu nivel", locale);
-            case "congrats.download.app.mp":
+            case DISCOUNTS_DOWNLOAD_MP:
                 return i18nService.tr("Exclusivo con la app de Mercado Pago", locale);
-            case "congrats.download.app.ml":
+            case DISCOUNTS_DOWNLOAD_ML:
                 return i18nService.tr("Exclusivo con la app de Mercado Libre", locale);
-            case "congrats.download":
+            case DOWNLOAD:
                 return i18nService.tr("Descargar", locale);
-            case "congrats.see.all.discounts":
+            case SEE_ALL:
                 return i18nService.tr("Ver todos los descuentos", locale);
-            case "checkout.initpreference.error.generic":
+            case PAYMENT_NOT_PROCESSED:
                 return i18nService.tr("No pudimos procesar tu pago, discúlpanos.", locale);
-            case "checkout.initpreference.error.invalidpreference":
+            case CANNOT_PAY_WITH_LINK:
                 return i18nService.tr("No puedes pagar con este link de pago.", locale);
-            case "checkout.initpreference.error.payerequalscollector":
+            case CANNOT_PAY_JUST_FOR_COLLECT:
                 return i18nService.tr("No puedes pagar con este link, solo puedes usarlo para cobrar.", locale);
-        }
+            case REMEDY_CVV_TITLE:
+                return i18nService.tr("El código de seguridad es inválido", locale);
+            case REMEDY_CVV_MESSAGE:
+                return i18nService.tr("Vuelve a ingresarlo para confirmar el pago.", locale);
+            case REMEDY_FIELD_SETTING_CVV_TITLE:
+                return i18nService.tr("Código de seguridad", locale);
+            case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK:
+                return i18nService.tr("Los 3 números están al dorso de tu tarjeta", locale);
+            case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT:
+                return i18nService.tr("Los 4 números están al frente de tu tarjeta", locale);
+           }
         return "";
     }
 

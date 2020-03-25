@@ -40,7 +40,7 @@ public class PreferenceServiceTest {
     private static final Long USER_ID_1 = 243962506L;
     private static final Long USER_ID_2 = 453962577L;
     public static final String REQUEST_ID = UUID.randomUUID().toString();
-    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es_AR").platform("MP").build();
+    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es-AR").platform("MP").build();
 
     @Test
     public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException() throws IOException, InterruptedException, ApiException, ExecutionException {
@@ -53,7 +53,7 @@ public class PreferenceServiceTest {
             final Preference preference = PreferenceService.INSTANCE.getPreference(CONTEXT_ES, PREF_MELICOLLECTOR, USER_ID_2);
             fail("ValidationException pref");
         } catch (ValidationException e) {
-            assertThat(e.getDescription(), is("No puedes pagar con este link de pago."));
+            assertThat(e.getDescription(), is("No podés pagar con este link de pago."));
         }
     }
 

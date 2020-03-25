@@ -1,7 +1,10 @@
 package com.mercadolibre.dto.remedies;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 
+@Getter
 public class PayerPaymentMethodRejected {
 
     private String paymentMethodId;
@@ -13,35 +16,4 @@ public class PayerPaymentMethodRejected {
     private BigDecimal totalAmount;
     private int installments;
 
-    public String getPaymentMethodId() {
-        return paymentMethodId;
-    }
-
-    public String getIssuerName() {
-        return issuerName;
-    }
-
-    public String getLastFourDigit() {
-        return lastFourDigit;
-    }
-
-    public String getSecurityCodeLocation() {
-        return securityCodeLocation;
-    }
-
-    public int getSecurityCodeLength() {
-        return securityCodeLength;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public int getInstallments() {
-        return installments;
-    }
-
-    public String getPaymentTypeId() {
-        return paymentTypeId;
-    }
 }

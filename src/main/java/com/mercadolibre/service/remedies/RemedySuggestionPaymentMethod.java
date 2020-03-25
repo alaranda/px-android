@@ -40,7 +40,11 @@ public class RemedySuggestionPaymentMethod  implements RemedyInterface {
             final String message = String.format(remediesTexts.getTranslation(context.getLocale(), statusDetail.concat(".message")),
                     payerPaymentMethodRejected.getPaymentMethodId(), payerPaymentMethodRejected.getIssuerName(), payerPaymentMethodRejected.getLastFourDigit());
 
-            final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse = new SuggestionPaymentMethodResponse(title, message, alternativePayerPaymentMethod);
+            final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse = SuggestionPaymentMethodResponse.builder()
+                    .title(title)
+                    .message(message)
+                    .alternativePayerPaymentMethod(alternativePayerPaymentMethod)
+                    .build();
 
             DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_ALTERNATIVE_PAYMENT_METHOD, context, remediesRequest);
 

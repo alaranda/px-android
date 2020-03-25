@@ -14,8 +14,8 @@ public class RemedyCallForAuthorize  implements RemedyInterface {
 
     private RemediesTexts remediesTexts;
 
-    private final String KEY_TITLE = "callForAuthorize.title";
-    private final String KEY_MESSAGE = "callForAuthorize.message";
+    private final static String REMEDY_CALL_FOR_AUTH_TITLE = "remedy.callforauth.title";
+    private final static String REMEDY_CALL_FOR_AUTH_MESSAGE = "remedy.callforauth.message";
 
     public RemedyCallForAuthorize(final RemediesTexts remediesTexts) {
         this.remediesTexts = remediesTexts;
@@ -26,15 +26,18 @@ public class RemedyCallForAuthorize  implements RemedyInterface {
 
         final PayerPaymentMethodRejected payerPaymentMethodRejected = remediesRequest.getPayerPaymentMethodRejected();
 
-        final String title = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_TITLE), payerPaymentMethodRejected.getPaymentMethodId(),
+        final String title = String.format(remediesTexts.getTranslation(context.getLocale(), REMEDY_CALL_FOR_AUTH_TITLE), payerPaymentMethodRejected.getPaymentMethodId(),
                 payerPaymentMethodRejected.getIssuerName(), payerPaymentMethodRejected.getLastFourDigit());
 
-        final String message = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_MESSAGE),
+        final String message = String.format(remediesTexts.getTranslation(context.getLocale(), REMEDY_CALL_FOR_AUTH_MESSAGE),
                 payerPaymentMethodRejected.getIssuerName(),  payerPaymentMethodRejected.getTotalAmount());
 
-        final ResponseCallForAuth responseCallForAuth = new ResponseCallForAuth(title, message);
+        final ResponseCallForAuth responseCallForAuth = ResponseCallForAuth.builder()
+                .title(title)
+                .message(message)
+                .build();
 
-        remediesResponse.setResponseCallForAuth(responseCallForAuth);
+        remediesResponse.setCallForAuth(responseCallForAuth);
 
         DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
 
