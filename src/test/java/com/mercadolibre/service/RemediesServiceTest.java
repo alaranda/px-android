@@ -56,8 +56,8 @@ public class RemediesServiceTest {
 
         final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
 
-        final ResponseCallForAuth responseCallForAuth = remediesResponse.getResponseCallForAuth();
-        assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago."));
+        final ResponseCallForAuth responseCallForAuth = remediesResponse.getCallForAuth();
+        assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago"));
         assertThat(responseCallForAuth.getMessage(), is("Llama a ICBC para autorizar 123 a Mercado Pago o paga de otra forma."));
     }
 
@@ -73,11 +73,11 @@ public class RemediesServiceTest {
 
         final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
 
-        final ResponseCvv responseCvv = remediesResponse.getResponseCvv();
-        assertThat(responseCvv.getTitle(), is("El codigo de seguridad es invalido"));
-        assertThat(responseCvv.getMessage(), is("Vuelve a ingresarlo para confirmar el pago con tu Santander **** 5555"));
-        assertThat(responseCvv.getFieldSetting().getTitle(), is("Codigo de seguridad"));
-        assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Los 3 numeros estan al back de tu tarjeta"));
+        final ResponseCvv responseCvv = remediesResponse.getCvv();
+        assertThat(responseCvv.getTitle(), is("El código de seguridad es inválido"));
+        assertThat(responseCvv.getMessage(), is("Vuelve a ingresarlo para confirmar el pago."));
+        assertThat(responseCvv.getFieldSetting().getTitle(), is("Código de seguridad"));
+        assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Los 3 números están al dorso de tu tarjeta"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RemediesServiceTest {
 
         final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
 
-        final ResponseBadFilledDate responseBadFilledDate = remediesResponse.getResponseBadFilledDate();
+        final ResponseBadFilledDate responseBadFilledDate = remediesResponse.getBadFilledDate();
         assertThat(responseBadFilledDate.getTitle(), is("El vencimiento es invalido"));
         assertThat(responseBadFilledDate.getMessage(), is("Vuelve a ingresarlo para confirmar el pago con tu Hsbc **** 3333"));
         assertThat(responseBadFilledDate.getFieldSetting().getTitle(), is("Vencimiento"));
@@ -111,7 +111,7 @@ public class RemediesServiceTest {
 
         final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
 
-        final ResponseRemedyDefault responseRemedyDefault = remediesResponse.getResponseWithOutRemedy();
+        final ResponseRemedyDefault responseRemedyDefault = remediesResponse.getWithOutRemedy();
         assertThat(responseRemedyDefault, nullValue());
     }
 

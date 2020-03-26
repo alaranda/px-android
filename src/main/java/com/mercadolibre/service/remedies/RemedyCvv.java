@@ -6,45 +6,44 @@ import com.mercadolibre.dto.remedies.RemediesRequest;
 import com.mercadolibre.dto.remedies.RemediesResponse;
 import com.mercadolibre.dto.remedies.ResponseCvv;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.utils.RemediesTexts;
+import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDIES_COUNTER;
+import static com.mercadolibre.utils.Translations.*;
 
 public class RemedyCvv implements RemedyInterface {
 
-    private RemediesTexts remediesTexts;
-
-    private final String KEY_TITLE = "badCvv.title";
-    private final String KEY_MESSAGE = "badCvv.message";
-    private final String KEY_FIELD_SETTING_TITLE ="fieldSetting.cvv.title";
-    private final String KEY_FIELD_SETTING_HINT_MESSAGE ="fieldSetting.cvv.hintMessage";
-
     private final String FIELD_SETTING_NAME = "security_code";
-
-    public RemedyCvv(final RemediesTexts remediesTexts) {
-        this.remediesTexts = remediesTexts;
-    }
+    private static final String LOCATION_BACK = "back";
 
     @Override
     public RemediesResponse applyRemedy(final Context context, final RemediesRequest remediesRequest, final RemediesResponse remediesResponse) {
 
         final PayerPaymentMethodRejected payerPaymentMethodRejected = remediesRequest.getPayerPaymentMethodRejected();
 
-        final String title = remediesTexts.getTranslation(context.getLocale(), KEY_TITLE);
+        final String title = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_CVV_TITLE);
 
-        final String message = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_MESSAGE),
-                payerPaymentMethodRejected.getIssuerName(), payerPaymentMethodRejected.getLastFourDigit());
+        final String message = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_CVV_MESSAGE);
 
-        final FieldSetting fieldSetting = new FieldSetting.Builder(FIELD_SETTING_NAME, remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_TITLE),
-                null, String.format(remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_HINT_MESSAGE),
-                payerPaymentMethodRejected.getSecurityCodeLength(), payerPaymentMethodRejected.getSecurityCodeLocation()))
-                .withLength(payerPaymentMethodRejected.getSecurityCodeLength())
+        final FieldSetting.FieldSettingBuilder fieldSettingBuilder = FieldSetting.builder()
+                .name(FIELD_SETTING_NAME)
+                .title(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_FIELD_SETTING_CVV_TITLE))
+                .length(payerPaymentMethodRejected.getSecurityCodeLength());
+
+        if (!payerPaymentMethodRejected.getSecurityCodeLocation().equalsIgnoreCase(LOCATION_BACK)){
+            fieldSettingBuilder.hintMessage(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT));
+        } else {
+            fieldSettingBuilder.hintMessage(Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK));
+        }
+
+        final ResponseCvv responseCvv = ResponseCvv.builder()
+                .title(title)
+                .message(message)
+                .fieldSetting(fieldSettingBuilder.build())
                 .build();
 
-        final ResponseCvv responseCvv = new ResponseCvv(title, message, fieldSetting);
-
-        remediesResponse.setResponseCvv(responseCvv);
+        remediesResponse.setCvv(responseCvv);
 
         DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
 

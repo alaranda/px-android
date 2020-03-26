@@ -45,7 +45,7 @@ public class CongratsServiceTest {
     private static final CongratsService congratsService = new CongratsService();
 
     public static final String REQUEST_ID = UUID.randomUUID().toString();
-    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es_AR").build();
+    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es-AR").build();
 
 
     @Test

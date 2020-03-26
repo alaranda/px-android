@@ -36,12 +36,19 @@ public class RemedyBadFilledDate implements RemedyInterface {
         final String message = String.format(remediesTexts.getTranslation(context.getLocale(), KEY_MESSAGE),
                 payerPaymentMethodRejected.getIssuerName(), payerPaymentMethodRejected.getLastFourDigit());
 
-        final FieldSetting fieldSetting = new FieldSetting.Builder(FIELD_SETTING_NAME, remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_TITLE),
-                null, remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_HINT_MESSAGE)).build();
+        final FieldSetting fieldSetting = FieldSetting.builder()
+                .name(FIELD_SETTING_NAME)
+                .title(remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_TITLE))
+                .validationMessage(null)
+                .hintMessage(remediesTexts.getTranslation(context.getLocale(), KEY_FIELD_SETTING_HINT_MESSAGE))
+                .build();
 
-        final ResponseBadFilledDate responseBadFilledDate = new ResponseBadFilledDate(title, message, fieldSetting);
+        final ResponseBadFilledDate responseBadFilledDate = ResponseBadFilledDate.builder()
+                .title(title)
+                .message(message)
+                .fieldSetting(fieldSetting).build();
 
-        remediesResponse.setResponseBadFilledDate(responseBadFilledDate);
+        remediesResponse.setBadFilledDate(responseBadFilledDate);
 
         DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
 

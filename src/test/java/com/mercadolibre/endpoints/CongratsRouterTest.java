@@ -45,7 +45,7 @@ public class CongratsRouterTest {
     private static final String PRODUCT_ID_1 = "BJEO9NVBF6RG01IIIOTG";
     private static final String CAMPAIGN_ID_TEST = "12345678";
     private static final String FLOW_NAME = "paymentsBlackLabel";
-    private static final Headers HEADERS = new Headers(new Header("accept-language", "es_AR"),
+    private static final Headers HEADERS = new Headers(new Header("accept-language", "es-AR"),
             new Header("user-agent", "PX/iOS/4.3.4"), new Header(DENSITY, DENSITY_XXHDPI),
             new Header(PRODUCT_ID, PRODUCT_ID_1));
 
