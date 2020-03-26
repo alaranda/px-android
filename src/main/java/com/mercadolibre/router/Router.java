@@ -15,6 +15,7 @@ import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.new_relic.NewRelicUtils;
 import com.mercadolibre.px.toolkit.utils.ApiContext;
+import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.newrelic.api.agent.NewRelic;
@@ -29,14 +30,18 @@ import spark.Spark;
 import spark.servlet.SparkApplication;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestOutLogBuilder;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static spark.Spark.afterAfter;
 
 public class Router implements SparkApplication {
@@ -150,12 +155,24 @@ public class Router implements SparkApplication {
         request.attribute(Constants.API_CONTEXT, ApiContext.getApiContextFromScope(Config.getSCOPE()));
 
         String requestId = request.headers(REQUEST_ID);
-        if (StringUtils.isBlank(requestId)) {
+        if (isBlank(requestId)) {
             requestId = UUID.randomUUID().toString();
             LOGGER.debug(requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
         }
-        LOGGER.info(String.format("[request_in] [RequestId: %s] [url: %s] [Method: %s] [Language: %s] [QueryParams: %s] [Body: %s]",
-                requestId, request.url(), request.requestMethod(), request.headers(LANGUAGE), request.queryString(), request.body()));
+
+        LogBuilder logBuilder = new LogBuilder(requestId, REQUEST_IN)
+                .withMethod(request.requestMethod())
+                .withUrl(request.url())
+                .withUserAgent(request.userAgent())
+                .withSessionId(request.headers(SESSION_ID))
+                .withAcceptLanguage(request.headers(LANGUAGE));
+
+        LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
+        if (!isBlank(request.body())) {
+            logBuilder.withMessage(String.format("Body: %s", request.body()));
+        }
+
+        LOGGER.info(logBuilder.build());
 
         request.attribute(REQUEST_ID, requestId);
     }
