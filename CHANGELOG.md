@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.1.2]
+
+### Changed
+
+- Se arregla log de request y se actualiza readme
+- Se actualiza versión de babel
+
 ## [1.1.1]
 
 ### Changed

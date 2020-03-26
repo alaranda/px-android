@@ -4,6 +4,8 @@ import com.mercadolibre.framework.i18n.I18nService;
 
 import java.util.Locale;
 
+import static org.apache.commons.lang3.LocaleUtils.isAvailableLocale;
+
 public enum Translations {
     INSTANCE;
 
@@ -30,6 +32,9 @@ public enum Translations {
      * @return
      */
     public String getTranslationByLocale(Locale locale, final String key) {
+        if (!isAvailableLocale(locale)) {
+            locale = Locale.forLanguageTag("es-AR");
+        }
         // i18nService is expecting literal string
         switch (key) {
             case DISCOUNTS:
@@ -60,8 +65,9 @@ public enum Translations {
                 return i18nService.tr("Los 3 números están al dorso de tu tarjeta", locale);
             case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT:
                 return i18nService.tr("Los 4 números están al frente de tu tarjeta", locale);
-           }
-        return "";
+            default:
+                return "";
+        }
     }
 
 

@@ -24,7 +24,7 @@ public class OnDemandResourcesTest extends RestClientTestBase {
 
     private static final OnDemandResources onDemandResources = OnDemandResources.INSTANCE;
 
-    public static final Locale LOCALE_ES = new Locale("es-AR");
+    public static final Locale LOCALE_ES = Locale.forLanguageTag("es-AR");
 
 
     @Test

@@ -10,6 +10,11 @@
 Excel de textos a traducir:
 https://docs.google.com/spreadsheets/d/1RvPhyh3am0uKOBySjqO4zm1nWpiVBUf_Z5CUU1lv6UQ
  
+En caso de ser necesario instalar gettext (para poder sincronizar mensajes)
+```
+brew install gettext
+brew link gettext --force
+```
 Para ver el estado de las traducciones:
 ```
 ./gradlew i18n-status
