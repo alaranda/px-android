@@ -26,6 +26,8 @@ public enum Translations {
     public static final String REMEDY_HIGH_RISK_TITLE = "remedy.highrisk.title";
     public static final String REMEDY_HIGH_RISK_MESSAGE = "remedy.highrisk.message";
     public static final String REMEDY_HIGH_RISK_BUTTON_LOUD = "remedy.highrisk.button.loud";
+    public static final String VIEW_RECEIPT = "view.receipt";
+    public static final String IFPE_COMPLIANCE_MESSAGE = "ifpe.compliance_message";
 
     private I18nService i18nService = new I18nService();
 
@@ -74,6 +76,10 @@ public enum Translations {
                 return i18nService.tr("Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos.", locale);
             case REMEDY_HIGH_RISK_BUTTON_LOUD:
                 return i18nService.tr("Validar identidad", locale);
+            case VIEW_RECEIPT:
+                return i18nService.tr("Ver comprobante de pago", locale);
+            case IFPE_COMPLIANCE_MESSAGE:
+                return i18nService.tr("A partir de ahora, tu cuenta estará bajo la modalidad Mercado Libre IFPE. Usaremos el método de seguridad de tu teléfono para ingresar y pagar con la aplicación.", locale);
             default:
                 return "";
         }

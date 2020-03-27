@@ -49,6 +49,8 @@ public final class Constants {
     public static final String INVALID_PREFERENCE = "invalid preference"; // TODO
     public static final String GETTING_PARAMETERS = "Error getting parameters"; // TODO
 
+    public static final String IFPE_MESSAGE_COLOR = "#cc000000";
+
     /**
      * Collectors de pago de factura de meli.
      */
