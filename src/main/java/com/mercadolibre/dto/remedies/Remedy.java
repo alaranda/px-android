@@ -15,6 +15,8 @@ public enum Remedy {
     //CALL FOR AUTH
     CC_REJECTED_CALL_FOR_AUTHORIZE("cc_rejected_call_for_authorize"),
 
+    /*
+
     //INSUFFICIENT_AMOUNT
     CC_REJECTED_INSUFFICIENT_AMOUNT("cc_rejected_insufficient_amount"),
 
@@ -36,7 +38,10 @@ public enum Remedy {
     //BAD FILLED OTHER
     CC_REJECTED_BAD_FILLED_OTHER("cc_rejected_bad_filled_other"),
 
+       */
     WITHOUT_REMEDY("without_remedy");
+
+
 
     private String id;
 
