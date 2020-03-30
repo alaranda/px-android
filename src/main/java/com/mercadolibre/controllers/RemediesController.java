@@ -51,7 +51,7 @@ public class RemediesController {
         final Context context = Context.builder()
                 .requestId(request.attribute(CommonParametersNames.REQUEST_ID))
                 .locale(request.headers(LANGUAGE))
-                .platform(request.headers(PLATTFORM))
+                //.platform(request.headers(PLATTFORM))
                 .flow(request.queryParams(FLOW_NAME))
                 .build();
 
