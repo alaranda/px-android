@@ -5,6 +5,7 @@ import com.mercadolibre.api.MockPreferenceTidyAPI;
 import com.mercadolibre.api.MockUserAPI;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.exceptions.ValidationException;
@@ -40,7 +41,7 @@ public class PreferenceServiceTest {
     private static final Long USER_ID_1 = 243962506L;
     private static final Long USER_ID_2 = 453962577L;
     public static final String REQUEST_ID = UUID.randomUUID().toString();
-    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es-AR").platform("MP").build();
+    public static final Context CONTEXT_ES = Context.builder().requestId(REQUEST_ID).locale("es-AR").platform(Platform.MP).build();
 
     @Test
     public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException() throws IOException, InterruptedException, ApiException, ExecutionException {

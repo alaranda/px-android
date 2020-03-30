@@ -1,8 +1,9 @@
 package com.mercadolibre.controllers;
 
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
 import com.mercadolibre.px.toolkit.constants.HeadersConstants;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
@@ -23,7 +24,7 @@ import static com.mercadolibre.constants.QueryParamsConstants.FLOW_NAME;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATTFORM;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
@@ -48,12 +49,17 @@ public class RemediesController {
      */
     public RemediesResponse getRemedy(final Request request, final Response response) throws ApiException {
 
-        final Context context = Context.builder()
+        final Context.ContextBuilder contextBuilder = Context.builder()
                 .requestId(request.attribute(CommonParametersNames.REQUEST_ID))
                 .locale(request.headers(LANGUAGE))
-                //.platform(request.headers(PLATTFORM))
-                .flow(request.queryParams(FLOW_NAME))
-                .build();
+                .flow(request.queryParams(FLOW_NAME));
+
+        if (StringUtils.isNotBlank(request.headers(PLATFORM))){
+            final Platform platform =  Platform.from(request.headers(PLATFORM));
+            contextBuilder.platform(platform);
+        }
+
+        final Context context = contextBuilder.build();
 
         LOGGER.info(
                 new LogBuilder(request.attribute(HeadersConstants.REQUEST_ID), REQUEST_IN)
