@@ -9,11 +9,11 @@ public enum Remedy {
     //SECURITY CODE
     CC_REJECTED_BAD_FILLED_SECURITY_CODE("cc_rejected_bad_filled_security_code"),
 
-    //BAD FILLED DATE
-    CC_REJECTED_BAD_FILLED_DATE("cc_rejected_bad_filled_date"),
-
     //CALL FOR AUTH
     CC_REJECTED_CALL_FOR_AUTHORIZE("cc_rejected_call_for_authorize"),
+
+    //BAD FILLED DATE
+    CC_REJECTED_BAD_FILLED_DATE("cc_rejected_bad_filled_date"),
 
     //INSUFFICIENT_AMOUNT
     CC_REJECTED_INSUFFICIENT_AMOUNT("cc_rejected_insufficient_amount"),
@@ -37,6 +37,8 @@ public enum Remedy {
     CC_REJECTED_BAD_FILLED_OTHER("cc_rejected_bad_filled_other"),
 
     WITHOUT_REMEDY("without_remedy");
+
+
 
     private String id;
 
