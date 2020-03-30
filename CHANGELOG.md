@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.1.3]
+
+### Changed
+
+- Se dejan de usar remedies no mapeados.
+
 ## [1.1.2]
 
 ### Changed
