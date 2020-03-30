@@ -22,7 +22,7 @@ public class DatadogRemediesMetrics {
 
         final MetricCollector.Tags tags = new MetricCollector.Tags();
         tags.add("flow", context.getFlow());
-        tags.add("bussunes", context.getPlatform());
+        //tags.add("bussunes", context.getPlatform());
         tags.add("plattform", remediesRequest.getUserAgent().getOperatingSystem().getName());
         tags.add("site", remediesRequest.getSiteId());
         tags.add("status_detail", remediesRequest.getStatusDetail());
