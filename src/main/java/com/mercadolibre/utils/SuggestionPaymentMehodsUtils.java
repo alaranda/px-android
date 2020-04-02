@@ -1,9 +1,9 @@
 package com.mercadolibre.utils;
 
-import com.mercadolibre.dto.remedies.AlternativePayerPaymentMethod;
-import com.mercadolibre.dto.remedies.Installment;
-import com.mercadolibre.dto.remedies.PayerPaymentMethodRejected;
-import com.mercadolibre.dto.remedies.RemediesRequest;
+import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.Installment;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.RemediesRequest;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

@@ -1,14 +1,12 @@
-package com.mercadolibre.dto.remedies;
+package com.mercadolibre.dto.remedy;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class ResponseCvv {
+public class ResponseRemedyDefault {
 
     private final String title;
     private final String message;
-    private final FieldSetting fieldSetting;
-
 }

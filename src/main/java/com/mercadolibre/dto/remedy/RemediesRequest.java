@@ -1,4 +1,4 @@
-package com.mercadolibre.dto.remedies;
+package com.mercadolibre.dto.remedy;
 
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import lombok.Getter;

@@ -1,10 +1,10 @@
-package com.mercadolibre.service.remedies;
+package com.mercadolibre.service.remedy;
 
-import com.mercadolibre.dto.remedies.FieldSetting;
-import com.mercadolibre.dto.remedies.PayerPaymentMethodRejected;
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
-import com.mercadolibre.dto.remedies.ResponseCvv;
+import com.mercadolibre.dto.remedy.FieldSetting;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
+import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;

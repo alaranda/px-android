@@ -1,8 +1,8 @@
-package com.mercadolibre.service.remedies;
+package com.mercadolibre.service.remedy;
 
 
 import com.mercadolibre.api.RiskApi;
-import com.mercadolibre.dto.remedies.Remedy;
+import com.mercadolibre.dto.remedy.Remedy;
 import com.mercadolibre.utils.RemediesTexts;
 
 import java.util.Arrays;
@@ -17,7 +17,7 @@ public class RemedyTypes {
 
     private static final Map<Remedy, List<RemedyInterface>> mapRemediesInterface = new HashMap<Remedy, List<RemedyInterface>>(){
         {
-           // put(Remedy.CC_REJECTED_HIGH_RISK, Arrays.asList(new RemedyHighRisk(REMEDIES_TEXTS, RISK_API)));
+            put(Remedy.CC_REJECTED_HIGH_RISK, Arrays.asList(new RemedyHighRisk(REMEDIES_TEXTS, RISK_API)));
 
            // put(Remedy.REJECTED_HIGH_RISK, Arrays.asList(new RemedyCvv(), new RemedyBadFilledDate(REMEDIES_TEXTS)));
 

@@ -1,7 +1,7 @@
-package com.mercadolibre.service.remedies;
+package com.mercadolibre.service.remedy;
 
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 
 public interface RemedyInterface {

@@ -1,8 +1,7 @@
-package com.mercadolibre.service.remedies;
+package com.mercadolibre.service.remedy;
 
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
-import com.mercadolibre.dto.remedies.ResponseRemedyDefault;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.RemediesTexts;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;

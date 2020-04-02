@@ -1,5 +1,10 @@
 package com.mercadolibre.dto.congrats;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class Action {
 
     private String label;
@@ -12,20 +17,8 @@ public class Action {
         this.target = target;
     }
 
-    public String getMlTarget() {
-        return mlTarget;
-    }
-
-    public String getMpTarget() {
-        return mpTarget;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public String getTarget() {
-        return target;
+    public Action(final String label) {
+        this(label, null);
     }
 
     public String toString() {

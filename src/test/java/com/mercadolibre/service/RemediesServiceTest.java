@@ -2,21 +2,21 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockRiskApi;
-import com.mercadolibre.dto.remedies.PayerPaymentMethodRejected;
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
-import com.mercadolibre.dto.remedies.ResponseBadFilledDate;
-import com.mercadolibre.dto.remedies.ResponseCallForAuth;
-import com.mercadolibre.dto.remedies.ResponseCvv;
-import com.mercadolibre.dto.remedies.ResponseHighRisk;
-import com.mercadolibre.dto.remedies.ResponseRemedyDefault;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
+import com.mercadolibre.dto.remedy.ResponseCallForAuth;
+import com.mercadolibre.dto.remedy.ResponseCvv;
+import com.mercadolibre.dto.remedy.ResponseHighRisk;
+import com.mercadolibre.dto.remedy.ResponseRemedyDefault;
+import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import spark.utils.IOUtils;
@@ -37,7 +37,6 @@ public class RemediesServiceTest {
     private static final String PAYMENT_ID_TEST = "123456789";
     private static final String CALLER_ID_TEST = "11111";
     private static final UserAgent USER_AGENT_TEST = UserAgent.create("PX/Android/0.0.0");
-    private static final String PLATFORM = "MP";
 
     @Before
     public void before() {
@@ -76,29 +75,9 @@ public class RemediesServiceTest {
 
         final ResponseCvv responseCvv = remediesResponse.getCvv();
         assertThat(responseCvv.getTitle(), is("El código de seguridad es inválido"));
-        assertThat(responseCvv.getMessage(), is("Vuelve a ingresarlo para confirmar el pago."));
+        assertThat(responseCvv.getMessage(), is("Volvé a ingresarlo para confirmar el pago."));
         assertThat(responseCvv.getFieldSetting().getTitle(), is("Código de seguridad"));
         assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Los 3 números están al dorso de tu tarjeta"));
-    }
-
-    @Ignore
-    @Test
-    public void getRemedy_statusDetailBadFilledDateHsbc_remedyBadFilledDate() throws IOException, ApiException {
-
-        MockPaymentAPI.getPayment(PAYMENT_ID_TEST, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/payment/11111_badFilledDate.json")));
-
-        final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-        mocks(remediesRequest, null, "3333", "Hsbc", null, USER_AGENT_TEST,
-                null, 0, 0L, null, null);
-
-        final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
-
-        final ResponseBadFilledDate responseBadFilledDate = remediesResponse.getBadFilledDate();
-        assertThat(responseBadFilledDate.getTitle(), is("El vencimiento es invalido"));
-        assertThat(responseBadFilledDate.getMessage(), is("Vuelve a ingresarlo para confirmar el pago con tu Hsbc **** 3333"));
-        assertThat(responseBadFilledDate.getFieldSetting().getTitle(), is("Vencimiento"));
-        assertThat(responseBadFilledDate.getFieldSetting().getHintMessage(), is("MM/AA"));
     }
 
     @Test
@@ -117,7 +96,6 @@ public class RemediesServiceTest {
         assertThat(responseRemedyDefault, nullValue());
     }
 
-    @Ignore
     @Test
     public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRisk() throws IOException, ApiException {
 
@@ -131,15 +109,15 @@ public class RemediesServiceTest {
         mocks(remediesRequest, null, "2222", "Patagonia", null,
                 USER_AGENT_TEST, null, 0, 123L, CALLER_ID_TEST, Site.MLA.name());
 
-        final RemediesResponse remediesResponse = remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
+        final Context context = Context.builder().requestId("").locale("es-AR").platform(Platform.MP).build();
+        final RemediesResponse remediesResponse = remediesService.getRemedy(context, "123456789", remediesRequest);
 
         final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-        assertThat(responseHighRisk.getTitle(), is("Valida tu identidad para poder realizar el pago."));
-        assertThat(responseHighRisk.getMessage(), is("Te pediremos que completes algunos datos y que tengas a mano tu DNI para sacarle una foto. Solo te llevara 2 minutos."));
+        assertThat(responseHighRisk.getTitle(), is("Validá tu identidad para realizar el pago"));
+        assertThat(responseHighRisk.getMessage(), is("Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos."));
         assertThat(responseHighRisk.getDeepLink(), is("mercadopago://kyc/?initiative=px-high-risk&callback=mercadopago://example-callback/"));
     }
 
-    @Ignore
     @Test
     public void getRemedy_statusDetailHighRiskWithOutKycTag_remedyHighRisk() throws IOException, ApiException {
 
@@ -162,7 +140,6 @@ public class RemediesServiceTest {
         assertThat(responseHighRisk, nullValue());
     }
 
-    @Ignore
     @Test
     public void getRemedy_statusDetailHighRiskInvalidSiteKyc_withoutRemedy() throws IOException, ApiException {
 
@@ -182,7 +159,6 @@ public class RemediesServiceTest {
         assertThat(responseHighRisk, nullValue());
     }
 
-    @Ignore
     @Test
     public void getRemedy_statusDetailHighRiskWithoutAccessToken_withoutRemedy() throws IOException, ApiException {
 
@@ -202,7 +178,6 @@ public class RemediesServiceTest {
         assertThat(responseHighRisk, nullValue());
     }
 
-    @Ignore
     @Test
     public void getRemedy_riskIdError_withoutRemedy() throws IOException, ApiException {
 

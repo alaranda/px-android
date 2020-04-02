@@ -1,4 +1,4 @@
-package com.mercadolibre.dto.remedies;
+package com.mercadolibre.dto.remedy;
 
 import lombok.Builder;
 import lombok.Getter;
