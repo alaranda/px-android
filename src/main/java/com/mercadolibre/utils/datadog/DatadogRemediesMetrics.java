@@ -1,6 +1,6 @@
 package com.mercadolibre.utils.datadog;
 
-import com.mercadolibre.dto.remedies.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.metrics.MetricCollector;
 import com.mercadolibre.px.dto.lib.context.Context;
 
@@ -9,7 +9,7 @@ import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.
 public class DatadogRemediesMetrics {
 
     /**
-     * Trackea en datadog los datos de los remedies
+     * Trackea en datadog los datos de los remedy
      *
      * @param context  Context
      * @param remediesRequest  Remedies Request
@@ -22,7 +22,7 @@ public class DatadogRemediesMetrics {
 
         final MetricCollector.Tags tags = new MetricCollector.Tags();
         tags.add("flow", context.getFlow());
-        //tags.add("bussunes", context.getPlatform());
+        tags.add("bussines", context.getPlatform());
         tags.add("plattform", remediesRequest.getUserAgent().getOperatingSystem().getName());
         tags.add("site", remediesRequest.getSiteId());
         tags.add("status_detail", remediesRequest.getStatusDetail());

@@ -1,10 +1,10 @@
-package com.mercadolibre.dto.remedies;
+package com.mercadolibre.dto.remedy;
 
 public enum Remedy {
 
     //HIGH RISK
-    CC_REJECTED_HIGH_RISK("without_remedy"),
-    REJECTED_HIGH_RISK("without_remedy"),
+    CC_REJECTED_HIGH_RISK("cc_rejected_high_risk"),
+    REJECTED_HIGH_RISK("rejected_high_risk"),
 
     //SECURITY CODE
     CC_REJECTED_BAD_FILLED_SECURITY_CODE("cc_rejected_bad_filled_security_code"),

@@ -1,7 +1,7 @@
 package com.mercadolibre.utils;
 
-import com.mercadolibre.dto.remedies.AlternativePayerPaymentMethod;
-import com.mercadolibre.dto.remedies.RemediesRequest;
+import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.px.toolkit.utils.FileParserUtils;
 import org.junit.Test;
 

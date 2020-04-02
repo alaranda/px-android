@@ -20,9 +20,16 @@ public final class DatadogRequestMetric {
     }
 
     private static MetricCollector.Tags getMetricTags(final Request request, final Response response) {
+
+        String path = request.pathInfo();
+
+        if (request.pathInfo().contains("/esc_cap/") || request.pathInfo().contains("/remedy/")) {
+            path = path.substring(0, path.lastIndexOf("/"));
+        }
+
         return new MetricCollector.Tags()
                 .add("request_method", request.requestMethod())
-                .add("request_path", request.pathInfo())
+                .add("request_path", path)
                 .add("response_status", response.status())
                 .add("response_status_pattern", LogUtils.getHttpStatusCodePattern(response.status()))
                 .add("user_agent", request.userAgent());

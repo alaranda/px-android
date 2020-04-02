@@ -2,6 +2,18 @@
 
 # Change Log
 
+## [1.1.5]
+
+### Changed
+
+- Se agrega el nodo del boton a la respuesta de high risk, traducciones de babel y formateo del path (esc_cap y remedies).
+
+## [1.1.4]
+
+### Changed
+
+- Todos los remedies sin deesarrollo son seteadoscomo remedies genericos.
+
 ## [1.1.3]
 
 ### Changed

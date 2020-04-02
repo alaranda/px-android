@@ -2,20 +2,16 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.dto.payment.Payment;
-import com.mercadolibre.dto.remedies.RemediesRequest;
-import com.mercadolibre.dto.remedies.RemediesResponse;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.service.remedies.RemedyInterface;
-import com.mercadolibre.service.remedies.RemedyTypes;
+import com.mercadolibre.service.remedy.RemedyInterface;
+import com.mercadolibre.service.remedy.RemedyTypes;
 
 import java.util.List;
-
-import static com.mercadolibre.dto.remedies.Remedy.CC_REJECTED_BAD_FILLED_SECURITY_CODE;
-import static com.mercadolibre.dto.remedies.Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE;
-import static com.mercadolibre.dto.remedies.Remedy.CC_REJECTED_HIGH_RISK;
 
 public class RemediesService {
 
