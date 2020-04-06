@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.2.1]
+
+### Changed
+
+- Se modifica el link a kyc y se reemplaza mercadolibre por meli en el link.
+
 ## [1.2.0]
 
 ### Added
