@@ -14,10 +14,7 @@ import org.apache.logging.log4j.Logger;
 import spark.Request;
 import spark.Response;
 
-import static com.mercadolibre.constants.QueryParamsConstants.CAMPAIGN_ID;
-import static com.mercadolibre.constants.QueryParamsConstants.FLOW_NAME;
-import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_IDS;
-import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
+import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
@@ -100,9 +97,11 @@ public class CongratsController {
         final UserAgent userAgent = UserAgent.create(request.userAgent());
         final String campaignId = request.queryParams(CAMPAIGN_ID);
         final String flowName = request.queryParams(FLOW_NAME);
+        final boolean ifpe = Boolean.parseBoolean(request.queryParams(IFPE));
+        final String paymentMethodsIds = request.queryParams(PAYMENT_METHODS_IDS);
 
         return new CongratsRequest(callerId, clientId, siteId, paymentIds, platform, userAgent, density,
-                productId, campaignId, flowName);
+                productId, campaignId, flowName, ifpe, paymentMethodsIds);
     }
 
 }

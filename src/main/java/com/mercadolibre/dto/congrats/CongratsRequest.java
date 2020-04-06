@@ -1,8 +1,10 @@
 package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import lombok.ToString;
 
-public final class CongratsRequest {
+@ToString
+public class CongratsRequest {
 
     private String userId;
     private String clientId;
@@ -14,10 +16,12 @@ public final class CongratsRequest {
     private String productId;
     private String campaignId;
     private String flowName;
+    private boolean ifpe;
+    private String paymentMehotdsIds;
 
     public CongratsRequest(final String userId, final String clientId, final String siteId, final String paymentIds,
                            final String platform, final UserAgent userAgent, final String density, final String productId,
-                           final String campaignId, final String flowName) {
+                           final String campaignId, final String flowName, final boolean ifpe, final String paymentMehotdsIds ) {
         this.userId = userId;
         this.clientId = clientId;
         this.siteId = siteId;
@@ -28,6 +32,8 @@ public final class CongratsRequest {
         this.productId = productId;
         this.campaignId = campaignId;
         this.flowName = flowName;
+        this.ifpe = ifpe;
+        this.paymentMehotdsIds = paymentMehotdsIds;
     }
 
     public String getUserId() {
@@ -58,10 +64,10 @@ public final class CongratsRequest {
 
     public String getFlowName() { return flowName; }
 
-    public String toString() {
-        return String.format("CongratsRequest{[userId=%s], [clientId=%s], [siteId=%s], [paymentsIds=%s], " +
-                "[platform=%s], [userAgent=%s], [density=%s], [productId=%s], [campaignId=%s], [flowName=%s]}",
-                userId, clientId, siteId, paymentIds, platform, userAgent.toString(), density, productId, campaignId, flowName);
+    public boolean isIfpe() { return ifpe; }
+
+    public String getPaymentMehotdsIds() {
+        return paymentMehotdsIds;
     }
 
 }

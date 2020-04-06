@@ -2,6 +2,14 @@
 
 # Change Log
 
+## [1.2.0]
+
+### Added
+
+- Se agrega nuevo parametro de entrada ifpe.
+- Se agrega en la respuesta el nodo view_receipt con link a activities.
+- Se agrega en el caso que sea ifpe un mensaje en la respuesta del tipo Text.
+
 ## [1.1.5]
 
 ### Changed

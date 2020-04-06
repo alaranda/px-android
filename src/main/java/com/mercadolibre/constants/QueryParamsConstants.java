@@ -11,4 +11,6 @@ public final class QueryParamsConstants {
     public static final String CAMPAIGN_ID = "campaign_id";
     public static final String PLATFORM_VERSION = "platform_version";
     public static final String FLOW_NAME = "flow_name";
+    public static final String IFPE = "ifpe";
+    public static final String PAYMENT_METHODS_IDS = "payment_methods_ids";
 }

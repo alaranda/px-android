@@ -2,6 +2,7 @@ package com.mercadolibre.service;
 
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
+import com.mercadolibre.dto.congrats.Action;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.CrossSelling;
@@ -9,23 +10,29 @@ import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.Version;
 import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.utils.StringUtils;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import static com.mercadolibre.constants.Constants.IFPE_MESSAGE_COLOR;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 
@@ -35,6 +42,7 @@ public class CongratsService {
 
     public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
     public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
+    private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
 
     /**
@@ -87,7 +95,11 @@ public class CongratsService {
                 }
             }
 
-            return new Congrats(points, discounts, crossSelling);
+            final Action viewReceipt = viewReceipt(context.getLocale(), congratsRequest.getSiteId());
+
+            final Text ifpeCompliance = textIfpeCompliance(congratsRequest.isIfpe(), congratsRequest.getPaymentMehotdsIds(), context.getLocale());
+
+            return new Congrats(points, discounts, crossSelling, viewReceipt, ifpeCompliance);
         } catch (Exception e) {
             METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
             LOGGER.error(
@@ -119,6 +131,26 @@ public class CongratsService {
         }
 
         return true;
+    }
+
+    private Text textIfpeCompliance(final boolean ifpe, final String paymentMethodsIds, final Locale locale) {
+
+        if (ifpe && paymentMethodsIds!= null && paymentMethodsIds.contains(ACCOUNT_MONEY)){
+            return new Text(Translations.INSTANCE.getTranslationByLocale(locale, Translations.IFPE_COMPLIANCE_MESSAGE),
+                    null, IFPE_MESSAGE_COLOR, null);
+        }
+
+        return null;
+    }
+
+    private Action viewReceipt(final Locale locale, final String siteId) {
+
+        //Agregar validacion para desactivar hasta la homologacion.
+        if(Site.MLM.name().equalsIgnoreCase(siteId)) {
+            return new Action(Translations.INSTANCE.getTranslationByLocale(locale, Translations.VIEW_RECEIPT), ACTIVITIES_LINK);
+        }
+
+        return null;
     }
 
 }
