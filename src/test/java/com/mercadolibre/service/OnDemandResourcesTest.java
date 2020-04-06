@@ -30,22 +30,22 @@ public class OnDemandResourcesTest extends RestClientTestBase {
     @Test
     public void createOnDemandResoucesUrlByContent_fail() {
 
-        final CongratsRequest congratsRequest = new CongratsRequest(null, null,null,
-                null, null, null, "density", null, null, null);
+        final CongratsRequest congratsRequest = Mockito.mock(CongratsRequest.class);
+        when(congratsRequest.getDensity()).thenReturn("density");
 
-        String response = onDemandResources.createOnDemandResoucesUrlByContent(congratsRequest, null, LOCALE_ES);
+        final String response = onDemandResources.createOnDemandResoucesUrlByContent(congratsRequest, null, LOCALE_ES);
         assertThat(response, nullValue());
     }
 
     @Test
     public void createOnDemandResoucesUrlByContent_success() {
 
-        final CongratsRequest congratsRequest = new CongratsRequest(null, null,null,
-                null, null, null, "density", null, null, null);
+        final CongratsRequest congratsRequest = Mockito.mock(CongratsRequest.class);
+        when(congratsRequest.getDensity()).thenReturn("density");
         final Content content = Mockito.mock(Content.class);
         when(content.getIcon()).thenReturn("icon");
 
-        String response = onDemandResources.createOnDemandResoucesUrlByContent(congratsRequest, content, LOCALE_ES);
+        final String response = onDemandResources.createOnDemandResoucesUrlByContent(congratsRequest, content, LOCALE_ES);
         assertTrue(response.contains("remote_resources/image/"));
     }
 }
