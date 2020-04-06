@@ -5,19 +5,19 @@ import com.mercadolibre.px.dto.lib.user.PublicKey;
 
 public class PublicKeyAndPreference {
 
-    private final PublicKey publicKey;
-    private final Preference preference;
+  private final PublicKey publicKey;
+  private final Preference preference;
 
-    public PublicKeyAndPreference(final PublicKey publicKey, final Preference preference) {
-        this.publicKey = publicKey;
-        this.preference = preference;
-    }
+  public PublicKeyAndPreference(final PublicKey publicKey, final Preference preference) {
+    this.publicKey = publicKey;
+    this.preference = preference;
+  }
 
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
+  public PublicKey getPublicKey() {
+    return publicKey;
+  }
 
-    public Preference getPreference() {
-        return preference;
-    }
+  public Preference getPreference() {
+    return preference;
+  }
 }

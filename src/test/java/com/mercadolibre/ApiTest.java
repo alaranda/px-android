@@ -15,23 +15,23 @@ import spark.Spark;
 @SuppressWarnings("PMD.UseUtilityClass")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        PaymentRouterTest.class,
-        PreferenceRouterTest.class,
-        CongratsRouterTest.class,
-        CapEscControllerTest.class,
-        RemediesControllerTest.class
+  PaymentRouterTest.class,
+  PreferenceRouterTest.class,
+  CongratsRouterTest.class,
+  CapEscControllerTest.class,
+  RemediesControllerTest.class
 })
 public class ApiTest {
 
-    @BeforeClass
-    public static void beforeSuite() {
-        Spark.port(8080);
-        new Router().init();
-        Spark.awaitInitialization();
-    }
+  @BeforeClass
+  public static void beforeSuite() {
+    Spark.port(8080);
+    new Router().init();
+    Spark.awaitInitialization();
+  }
 
-    @AfterClass
-    public static void afterSuite() {
-        Spark.stop();
-    }
+  @AfterClass
+  public static void afterSuite() {
+    Spark.stop();
+  }
 }

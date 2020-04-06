@@ -7,8 +7,7 @@ import lombok.Getter;
 @Builder
 public class ResponseCvv {
 
-    private final String title;
-    private final String message;
-    private final FieldSetting fieldSetting;
-
+  private final String title;
+  private final String message;
+  private final FieldSetting fieldSetting;
 }

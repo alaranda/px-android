@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class ResponseRemedyDefault {
 
-    private final String title;
-    private final String message;
+  private final String title;
+  private final String message;
 }

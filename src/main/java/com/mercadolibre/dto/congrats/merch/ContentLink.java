@@ -2,9 +2,9 @@ package com.mercadolibre.dto.congrats.merch;
 
 public class ContentLink {
 
-    private String link;
+  private String link;
 
-    public String getLink() {
-        return link;
-    }
+  public String getLink() {
+    return link;
+  }
 }
