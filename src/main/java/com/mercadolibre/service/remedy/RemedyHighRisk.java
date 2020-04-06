@@ -2,12 +2,12 @@ package com.mercadolibre.service.remedy;
 
 import com.mercadolibre.api.RiskApi;
 import com.mercadolibre.dto.congrats.Action;
-import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseHighRisk;
 import com.mercadolibre.dto.risk.RiskResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.utils.RemediesTexts;
@@ -26,14 +26,13 @@ import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_TITLE;
 public class RemedyHighRisk implements RemedyInterface {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private RemediesTexts remediesTexts;
     private RiskApi riskApi;
 
     private final static String KYC_REMEDY = "available_for_remedy";
-    private static final String KYC_DEEPLINK = "%s://kyc/?initiative=px-high-risk&callback=%s://example-callback/";
+    private static final String KYC_DEEPLINK = "%s://kyc/?initiative=px-high-risk&callback=%s://px/one_tap";
+    private static final String PLATFORM_KYC_MELI = "meli";
 
     public RemedyHighRisk(final RemediesTexts remediesTexts, final RiskApi riskApi) {
-        this.remediesTexts = remediesTexts;
         this.riskApi = riskApi;
     }
 
@@ -46,8 +45,6 @@ public class RemedyHighRisk implements RemedyInterface {
                 LOGGER.info("Invalid userId for Kyc Remedy");
                 return null;
             }
-
-            final PayerPaymentMethodRejected payerPaymentMethodRejected = remediesRequest.getPayerPaymentMethodRejected();
 
             if (!remediesRequest.getSiteId().equalsIgnoreCase(Site.MLA.name()) && !remediesRequest.getSiteId().equalsIgnoreCase(Site.MLB.name())){
                 LOGGER.info("Invalid site for Kyc Remedy");
@@ -62,7 +59,12 @@ public class RemedyHighRisk implements RemedyInterface {
 
                 final String message = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_HIGH_RISK_MESSAGE);
 
-                final String deppLink = String.format(KYC_DEEPLINK, context.getPlatform().getName().toLowerCase(), context.getPlatform().getName().toLowerCase());
+                String platformName = context.getPlatform().getName().toLowerCase();
+                if (platformName.equalsIgnoreCase(Platform.ML.getName())) {
+                    platformName = PLATFORM_KYC_MELI;
+                }
+
+                final String deppLink = String.format(KYC_DEEPLINK, platformName, platformName);
 
                 final ResponseHighRisk responseHighRisk = ResponseHighRisk.builder()
                         .title(title)

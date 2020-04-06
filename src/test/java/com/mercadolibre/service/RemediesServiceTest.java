@@ -97,7 +97,7 @@ public class RemediesServiceTest {
     }
 
     @Test
-    public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRisk() throws IOException, ApiException {
+    public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRiskMP() throws IOException, ApiException {
 
         MockPaymentAPI.getPayment(PAYMENT_ID_TEST, HttpStatus.SC_OK,
                 IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
@@ -115,7 +115,27 @@ public class RemediesServiceTest {
         final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
         assertThat(responseHighRisk.getTitle(), is("Validá tu identidad para realizar el pago"));
         assertThat(responseHighRisk.getMessage(), is("Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos."));
-        assertThat(responseHighRisk.getDeepLink(), is("mercadopago://kyc/?initiative=px-high-risk&callback=mercadopago://example-callback/"));
+        assertThat(responseHighRisk.getDeepLink(), is("mercadopago://kyc/?initiative=px-high-risk&callback=mercadopago://px/one_tap"));
+    }
+
+    @Test
+    public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRiskML() throws IOException, ApiException {
+
+        MockPaymentAPI.getPayment(PAYMENT_ID_TEST, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
+
+        MockRiskApi.getRisk(123L, HttpStatus.SC_OK,
+                IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
+
+        final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
+        mocks(remediesRequest, null, "2222", "Patagonia", null,
+                USER_AGENT_TEST, null, 0, 123L, CALLER_ID_TEST, Site.MLA.name());
+
+        final Context context = Context.builder().requestId("").locale("es-AR").platform(Platform.ML).build();
+        final RemediesResponse remediesResponse = remediesService.getRemedy(context, "123456789", remediesRequest);
+
+        final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
+        assertThat(responseHighRisk.getDeepLink(), is("meli://kyc/?initiative=px-high-risk&callback=meli://px/one_tap"));
     }
 
     @Test
