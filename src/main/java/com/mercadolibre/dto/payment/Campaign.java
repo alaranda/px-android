@@ -5,34 +5,34 @@ import java.util.Date;
 
 public class Campaign {
 
-    private String id;
-    private String codeType;
-    private BigDecimal maxCouponAmount;
-    private int maxRedeemPerUser;
-    private Date endDate;
-    private String legalTerms;
+  private String id;
+  private String codeType;
+  private BigDecimal maxCouponAmount;
+  private int maxRedeemPerUser;
+  private Date endDate;
+  private String legalTerms;
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getCodeType() {
-        return codeType;
-    }
+  public String getCodeType() {
+    return codeType;
+  }
 
-    public BigDecimal getMaxCouponAmount() {
-        return maxCouponAmount;
-    }
+  public BigDecimal getMaxCouponAmount() {
+    return maxCouponAmount;
+  }
 
-    public int getMaxRedeemPerUser() {
-        return maxRedeemPerUser;
-    }
+  public int getMaxRedeemPerUser() {
+    return maxRedeemPerUser;
+  }
 
-    public Date getEndDate() {
-        return endDate;
-    }
+  public Date getEndDate() {
+    return endDate;
+  }
 
-    public String getLegalTerms() {
-        return legalTerms;
-    }
+  public String getLegalTerms() {
+    return legalTerms;
+  }
 }

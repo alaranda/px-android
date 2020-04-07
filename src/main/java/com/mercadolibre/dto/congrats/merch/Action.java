@@ -2,9 +2,9 @@ package com.mercadolibre.dto.congrats.merch;
 
 public class Action {
 
-    private ContentLink contentLink;
+  private ContentLink contentLink;
 
-    public ContentLink getContentLink() {
-        return contentLink;
-    }
+  public ContentLink getContentLink() {
+    return contentLink;
+  }
 }

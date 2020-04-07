@@ -2,14 +2,14 @@ package com.mercadolibre.dto.fraud;
 
 public class ResetStatus {
 
-    private String status;
+  private String status;
 
-    public ResetStatus(){
-        this.status = "ok";
-        return;
-    }
+  public ResetStatus() {
+    this.status = "ok";
+    return;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 }

@@ -7,8 +7,7 @@ import lombok.Getter;
 @Getter
 public class ResponseBadFilledDate {
 
-    private final String title;
-    private final String message;
-    private final FieldSetting fieldSetting;
-
+  private final String title;
+  private final String message;
+  private final FieldSetting fieldSetting;
 }

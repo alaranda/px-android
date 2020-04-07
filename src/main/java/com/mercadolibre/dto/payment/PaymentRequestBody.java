@@ -1,87 +1,83 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.px.dto.lib.user.Payer;
-
 import java.math.BigDecimal;
 
-/**
- * Objeto que mapea el body que recibe el endpoint /px_mobile_api/legacy_payments
- */
+/** Objeto que mapea el body que recibe el endpoint /px_mobile_api/legacy_payments */
 public class PaymentRequestBody {
 
-    private String prefId;
-    private String publicKey;
+  private String prefId;
+  private String publicKey;
 
-    private Payer payer;
-    private String email;
-    private String paymentMethodId;
-    private Long collectorId;
+  private Payer payer;
+  private String email;
+  private String paymentMethodId;
+  private Long collectorId;
 
-    // card fields
-    private String issuerId;
-    private String token;
+  // card fields
+  private String issuerId;
+  private String token;
 
+  private Integer installments;
 
-    private Integer installments;
+  // coupon fields
+  private BigDecimal couponAmount;
+  private Long campaignId;
+  private String couponCode;
 
-    // coupon fields
-    private BigDecimal couponAmount;
-    private Long campaignId;
-    private String couponCode;
+  private boolean binaryMode;
 
-    private boolean binaryMode;
+  PaymentRequestBody() {}
 
+  public String getPrefId() {
+    return prefId;
+  }
 
-    PaymentRequestBody(){}
+  public Integer getInstallments() {
+    return installments;
+  }
 
-    public String getPrefId() {
-        return prefId;
-    }
+  public String getToken() {
+    return token;
+  }
 
-    public Integer getInstallments() {
-        return installments;
-    }
+  public Payer getPayer() {
+    return payer;
+  }
 
-    public String getToken() {
-        return token;
-    }
+  public String getPaymentMethodId() {
+    return paymentMethodId;
+  }
 
-    public Payer getPayer() {
-        return payer;
-    }
+  public String getIssuerId() {
+    return issuerId;
+  }
 
-    public String getPaymentMethodId() {
-        return paymentMethodId;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public String getIssuerId() {
-        return issuerId;
-    }
+  public Long getCollectorId() {
+    return collectorId;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public BigDecimal getCouponAmount() {
+    return couponAmount;
+  }
 
-    public Long getCollectorId() {
-        return collectorId;
-    }
+  public Long getCampaignId() {
+    return campaignId;
+  }
 
-    public BigDecimal getCouponAmount() {
-        return couponAmount;
-    }
+  public String getCouponCode() {
+    return couponCode;
+  }
 
-    public Long getCampaignId() {
-        return campaignId;
-    }
+  public boolean isBinaryMode() {
+    return binaryMode;
+  }
 
-    public String getCouponCode() {
-        return couponCode;
-    }
-
-    public boolean isBinaryMode() {
-        return binaryMode;
-    }
-
-    public String getPublicKey() { return publicKey; }
-
+  public String getPublicKey() {
+    return publicKey;
+  }
 }
