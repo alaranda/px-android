@@ -8,8 +8,8 @@ import lombok.Getter;
 @Builder
 public class ResponseHighRisk {
 
-    private String title;
-    private String message;
-    private String deepLink;
-    private Action actionLoud;
+  private String title;
+  private String message;
+  private String deepLink;
+  private Action actionLoud;
 }

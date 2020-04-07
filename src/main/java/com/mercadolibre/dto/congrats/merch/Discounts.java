@@ -4,23 +4,24 @@ import java.util.List;
 
 public class Discounts {
 
-    private String link;
-    private int loyaltyDiscounts;
-    private int totalDiscounts;
-    private List<Item> items;
+  private String link;
+  private int loyaltyDiscounts;
+  private int totalDiscounts;
+  private List<Item> items;
 
+  public String getLink() {
+    return link;
+  }
 
-    public String getLink() {
-        return link;
-    }
+  public List<Item> getItems() {
+    return items;
+  }
 
-    public List<Item> getItems() {
-        return items;
-    }
+  public int getLoyaltyDiscounts() {
+    return loyaltyDiscounts;
+  }
 
-    public int getLoyaltyDiscounts() {
-        return loyaltyDiscounts;
-    }
-
-    public int getTotalDiscounts() { return totalDiscounts; }
+  public int getTotalDiscounts() {
+    return totalDiscounts;
+  }
 }

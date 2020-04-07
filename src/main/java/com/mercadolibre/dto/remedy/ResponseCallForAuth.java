@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class ResponseCallForAuth {
 
-    private final String title;
-    private final String message;
+  private final String title;
+  private final String message;
 }

@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.3.0]
+
+### Added
+
+- Se agrega java code formatter
+
 ## [1.2.1]
 
 ### Changed
