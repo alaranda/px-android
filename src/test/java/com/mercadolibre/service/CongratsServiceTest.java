@@ -1,9 +1,12 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockLoyaltyApi;
@@ -14,6 +17,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
+import com.mercadolibre.utils.IfpeUtils;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
 import java.io.IOException;
@@ -48,7 +52,9 @@ public class CongratsServiceTest {
           new Header("user-agent", "PX/iOS/4.5.0"),
           new Header(DENSITY, DENSITY),
           new Header(PRODUCT_ID, PRODUCT_ID));
-  private static final CongratsService congratsService = new CongratsService();
+
+  private static final IfpeUtils ifpeUtils = Mockito.mock(IfpeUtils.class);
+  private static final CongratsService congratsService = new CongratsService(ifpeUtils);
 
   public static final String REQUEST_ID = UUID.randomUUID().toString();
   public static final Context CONTEXT_ES =
@@ -210,7 +216,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_mlmIfpe_vieReceiptAndIfpeCompliance() throws IOException {
+  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() throws IOException {
 
     final Context context = Mockito.mock(Context.class);
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
@@ -219,11 +225,29 @@ public class CongratsServiceTest {
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
     when(congratsRequest.getPaymentMehotdsIds()).thenReturn(ACCOUNT_MONEY);
+    when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(true);
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
 
     assertThat(congrats.getViewReceipt().getTarget(), notNullValue());
     assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
+  }
+
+  @Test
+  public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() throws IOException {
+
+    final Context context = Mockito.mock(Context.class);
+    when(context.getLocale()).thenReturn(new Locale("es", "MX"));
+    when(context.getRequestId()).thenReturn(REQUEST_ID);
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+    when(congratsRequest.isIfpe()).thenReturn(true);
+    when(congratsRequest.getSiteId()).thenReturn("MLM");
+    when(congratsRequest.getPaymentMehotdsIds()).thenReturn(MERCADOPAGO_CC);
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
+
+    assertThat(congrats.getViewReceipt(), nullValue());
+    assertThat(congrats.getTopTextBox(), nullValue());
   }
 
   private CongratsRequest getDefaultCongratsRequestMock() {
@@ -238,6 +262,8 @@ public class CongratsServiceTest {
     when(congratsRequest.getDensity()).thenReturn(DENSITY);
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
+    when(congratsRequest.getPaymentMehotdsIds()).thenReturn(null);
+    when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(false);
     return congratsRequest;
   }
 }
