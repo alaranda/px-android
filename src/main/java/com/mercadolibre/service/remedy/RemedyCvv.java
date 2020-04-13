@@ -15,7 +15,7 @@ import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 public class RemedyCvv implements RemedyInterface {
 
   private final String FIELD_SETTING_NAME = "security_code";
-  private static final String LOCATION_BACK = "back";
+  private static final String SECURITY_CODE_LOCATION_FRONT = "front";
 
   @Override
   public RemediesResponse applyRemedy(
@@ -25,6 +25,10 @@ public class RemedyCvv implements RemedyInterface {
 
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
+
+    if (payerPaymentMethodRejected == null) {
+      return remediesResponse;
+    }
 
     final String title =
         Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_CVV_TITLE);
@@ -40,7 +44,8 @@ public class RemedyCvv implements RemedyInterface {
                     context.getLocale(), REMEDY_FIELD_SETTING_CVV_TITLE))
             .length(payerPaymentMethodRejected.getSecurityCodeLength());
 
-    if (!payerPaymentMethodRejected.getSecurityCodeLocation().equalsIgnoreCase(LOCATION_BACK)) {
+    if (SECURITY_CODE_LOCATION_FRONT.equalsIgnoreCase(
+        payerPaymentMethodRejected.getSecurityCodeLocation())) {
       fieldSettingBuilder.hintMessage(
           Translations.INSTANCE.getTranslationByLocale(
               context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT));
