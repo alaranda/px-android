@@ -135,6 +135,10 @@ task app(type: FatCapsule) {
 	}
 }
 
+task checkCodeFormat(type: Exec) {
+	commandLine './bin/check_code_format.sh'
+}
+
 task wrapper(type: Wrapper) {
 	gradleVersion = '4.10.3'
 }
@@ -185,6 +189,7 @@ task deleteJavadocBuildFolder(type: Delete) {
 }
 
 createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder);
+test.finalizedBy(checkCodeFormat)
 
 i18n {
 	app = "px-checkout-mobile-payments"

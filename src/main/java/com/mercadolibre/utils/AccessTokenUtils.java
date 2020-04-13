@@ -1,6 +1,5 @@
 package com.mercadolibre.utils;
 
-
 import static com.mercadolibre.constants.QueryParamsConstants.ACCESS_TOKEN;
 
 import java.util.regex.Pattern;

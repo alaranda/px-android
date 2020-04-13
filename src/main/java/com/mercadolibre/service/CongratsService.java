@@ -15,7 +15,6 @@ import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.Version;
@@ -23,6 +22,7 @@ import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.utils.IfpeUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import java.util.HashSet;
@@ -35,6 +35,12 @@ import org.apache.logging.log4j.Logger;
 import spark.utils.StringUtils;
 
 public class CongratsService {
+
+  private IfpeUtils ifpeUtils;
+
+  public CongratsService(final IfpeUtils ifpeUtils) {
+    this.ifpeUtils = ifpeUtils;
+  }
 
   private static final Logger LOGGER = LogManager.getLogger();
 
@@ -117,7 +123,11 @@ public class CongratsService {
         }
       }
 
-      final Action viewReceipt = viewReceipt(context.getLocale(), congratsRequest.getSiteId());
+      final Action viewReceipt =
+          viewReceipt(
+              context.getLocale(),
+              congratsRequest.getSiteId(),
+              congratsRequest.getPaymentMehotdsIds());
 
       final Text ifpeCompliance =
           textIfpeCompliance(
@@ -164,7 +174,7 @@ public class CongratsService {
   private Text textIfpeCompliance(
       final boolean ifpe, final String paymentMethodsIds, final Locale locale) {
 
-    if (ifpe && paymentMethodsIds != null && paymentMethodsIds.contains(ACCOUNT_MONEY)) {
+    if (ifpe && validateAccountMoneyId(paymentMethodsIds)) {
       return new Text(
           Translations.INSTANCE.getTranslationByLocale(
               locale, Translations.IFPE_COMPLIANCE_MESSAGE),
@@ -176,15 +186,23 @@ public class CongratsService {
     return null;
   }
 
-  private Action viewReceipt(final Locale locale, final String siteId) {
+  private Action viewReceipt(
+      final Locale locale, final String siteId, final String paymentMethodsIds) {
 
-    // Agregar validacion para desactivar hasta la homologacion.
-    if (Site.MLM.name().equalsIgnoreCase(siteId)) {
+    if (ifpeUtils.isIfpeEnabled(siteId) && validateAccountMoneyId(paymentMethodsIds)) {
       return new Action(
           Translations.INSTANCE.getTranslationByLocale(locale, Translations.VIEW_RECEIPT),
           ACTIVITIES_LINK);
     }
 
     return null;
+  }
+
+  private boolean validateAccountMoneyId(final String paymentMethodsIds) {
+
+    if (paymentMethodsIds != null && paymentMethodsIds.contains(ACCOUNT_MONEY)) {
+      return true;
+    }
+    return false;
   }
 }
