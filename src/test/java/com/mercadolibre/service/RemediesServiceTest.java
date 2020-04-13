@@ -129,6 +129,59 @@ public class RemediesServiceTest {
   }
 
   @Test
+  public void getRemedy_statusDetailCvvIcbcSecurtyCodeFront_remedyCvvSecurityCodeFront()
+      throws IOException, ApiException {
+
+    MockPaymentAPI.getPayment(
+        PAYMENT_ID_TEST,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_cvv.json")));
+
+    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
+    mocks(
+        remediesRequest,
+        null,
+        "8888",
+        "Icbc",
+        new BigDecimal(321),
+        USER_AGENT_TEST,
+        "front",
+        4,
+        0l,
+        null,
+        null);
+
+    final RemediesResponse remediesResponse =
+        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
+
+    final ResponseCvv responseCvv = remediesResponse.getCvv();
+    assertThat(
+        responseCvv.getFieldSetting().getHintMessage(),
+        is("Los 4 números están al frente de tu tarjeta"));
+  }
+
+  @Test
+  public void getRemedy_statusDetailCvvwithoutPaymentMethodRejected_remedyEmpty()
+      throws IOException, ApiException {
+
+    MockPaymentAPI.getPayment(
+        PAYMENT_ID_TEST,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_cvv.json")));
+
+    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
+    when(remediesRequest.getUserAgent()).thenReturn(USER_AGENT_TEST);
+    when(remediesRequest.getRiskExcecutionId()).thenReturn(0l);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(null);
+
+    final RemediesResponse remediesResponse =
+        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
+
+    final ResponseCvv responseCvv = remediesResponse.getCvv();
+    assertThat(responseCvv, is(nullValue()));
+  }
+
+  @Test
   public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRiskMP()
       throws IOException, ApiException {
 
