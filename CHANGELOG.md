@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.3.1]
+
+### Added
+
+- Se agrega IfpeUtils.
+
+### Changed
+
+- Se modifica validacion para mostrar nodo viewReceipt.
+
 ## [1.3.0]
 
 ### Added
