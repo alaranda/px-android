@@ -89,7 +89,7 @@ public enum PreferencesController {
       final PreferenceResponse preferenceResponse =
           new PreferenceResponse(prefId, publicKey.getPublicKey());
 
-      DatadogPreferencesMetric.addPreferenceData(preference);
+      DatadogPreferencesMetric.addPreferenceData(preference, publicKey, request.userAgent());
       logInitPref(context, preferenceResponse, preference);
 
       return preferenceResponse;
