@@ -54,6 +54,9 @@ public final class Constants {
 
   public static final String IFPE_MESSAGE_COLOR = "#cc000000";
 
+  public static final String ANDROID = "android";
+  public static final String IOS = "ios";
+
   /** Collectors de pago de factura de meli. */
   public static final List<Long> COLLECTORS_MELI =
       new ArrayList<Long>(
