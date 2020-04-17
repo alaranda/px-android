@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.3.4]
+
+### Added
+
+- Se agrega métrica para trackear request al endpoint /congrats, se agregan tags en métricas de endpoint de preferencias.
+
 ## [1.3.3]
 
 ### Changed

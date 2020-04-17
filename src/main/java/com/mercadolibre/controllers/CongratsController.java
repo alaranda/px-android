@@ -59,6 +59,8 @@ public class CongratsController {
             .build();
 
     final CongratsRequest congratsRequest = getCongratsRequest(request);
+
+    DatadogCongratsMetric.requestCongratsMetric(congratsRequest);
     LOGGER.info(
         new LogBuilder(context.getRequestId(), REQUEST_IN)
             .withSource(CONTROLLER_NAME)
