@@ -5,10 +5,8 @@ import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_DISCOUNTS;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_POINTS;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_REQUEST;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
-import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.metrics.MetricCollector;
