@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.controllers.RemediesController;
 import com.mercadolibre.dto.remedy.RemediesResponse;
-import com.mercadolibre.dto.remedy.ResponseCallForAuth;
 import com.mercadolibre.dto.remedy.ResponseHighRisk;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
@@ -46,36 +45,6 @@ public class RemediesControllerTest {
   }
 
   @Test
-  public void getRemedy_statusDetailCallForAuthIcbc_200RemedyCallForAuth()
-      throws ApiException, IOException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_callForAuth.json")));
-
-    final Request request = Mockito.mock(Request.class);
-    when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);
-    when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
-    when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
-    when(request.attribute(REQUEST_ID)).thenReturn(REQUEST_ID_TEST);
-    when(request.userAgent()).thenReturn(USER_AGENT_HEADER);
-    when(request.url()).thenReturn("url-test");
-    when(request.body())
-        .thenReturn(
-            IOUtils.toString(getClass().getResourceAsStream("/remedies/remedy_request.json")));
-    final Response response = Mockito.mock(Response.class);
-
-    final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
-
-    final ResponseCallForAuth responseCallForAuth = remediesResponse.getCallForAuth();
-    assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago"));
-    assertThat(
-        responseCallForAuth.getMessage(),
-        is("Llama a ICBC para autorizar 123.00 a Mercado Pago o paga de otra forma."));
-  }
-
-  @Test
   public void getRemedy_withoutPaymentId_400BadRequest() throws ApiException {
 
     final Request request = Mockito.mock(Request.class);
@@ -100,7 +69,7 @@ public class RemediesControllerTest {
     MockPaymentAPI.getPayment(
         PAYMENT_ID_TEST,
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
+        IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_highRisk.json")));
 
     final Request request = Mockito.mock(Request.class);
     when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);

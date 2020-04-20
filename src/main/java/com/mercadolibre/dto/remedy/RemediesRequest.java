@@ -16,4 +16,5 @@ public class RemediesRequest {
   @Setter private UserAgent userAgent;
   @Setter private String siteId;
   @Setter private String userId;
+  @Setter private boolean oneTap;
 }

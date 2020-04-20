@@ -21,6 +21,7 @@ public enum Translations {
       "checkout.initpreference.error.payerequalscollector";
   public static final String REMEDY_CVV_TITLE = "remedy.cvv.title";
   public static final String REMEDY_CVV_MESSAGE = "remedy.cvv.message";
+  public static final String REMEDY_CVV_SUGGESTION_PM_MESSAGE = "remedy.cvv_suggestion_pm.message";
   public static final String REMEDY_FIELD_SETTING_CVV_TITLE = "remedy.fieldsetting.cvv.title";
   public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK =
       "remedy.fieldsetting.cvv.hintmessage.back";
@@ -31,6 +32,30 @@ public enum Translations {
   public static final String REMEDY_HIGH_RISK_BUTTON_LOUD = "remedy.highrisk.button.loud";
   public static final String VIEW_RECEIPT = "view.receipt";
   public static final String IFPE_COMPLIANCE_MESSAGE = "ifpe.compliance_message";
+  public static final String REMEDY_INSUFFICIENT_AMOUNT_TITLE = "remedy.insufficient_amount.title";
+  public static final String REMEDY_INSUFFICIENT_AMOUNT_MESSAGE =
+      "remedy.insufficient_amount.message";
+  public static final String REMEDY_OTHER_REASON_TITLE = "remedy.other_reason.title";
+  public static final String REMEDY_OTHER_REASON_MESSAGE = "remedy.other_reason.message";
+  public static final String REMEDY_MAX_ATTEMPTS_TITLE = "remedy.max_attempts.title";
+  public static final String REMEDY_MAX_ATTEMPTS_MESSAGE = "remedy.max_attempts.message";
+  public static final String REMEDY_BLACKLIST_TITLE = "remedy.blacklist.title";
+  public static final String REMEDY_BLACKLIST_MESSAGE = "remedy.blacklist.message";
+  public static final String REMEDY_INVALID_INSTALLMENTS_TITLE =
+      "remedy.invalid_installments.title";
+  public static final String REMEDY_INVALID_INSTALLMENTS_MESSAGE =
+      "remedy.invalid_installments.message";
+  public static final String REMEDY_BAD_FILLED_CARD_NUMBER_TITLE =
+      "remedy.bad_filled_card_number.title";
+  public static final String REMEDY_BAD_FILLED_CARD_NUMBER_MESSAGE =
+      "remedy.bad_filled_card_number.message";
+  public static final String REMEDY_BAD_FILLED_OTHER_TITLE = "remedy.bad_filled_other.title";
+  public static final String REMEDY_BAD_FILLED_OTHER_MESSAGE = "remedy.bad_filled_other.message";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE_TITLE = "remedy.call_for_authorize.title";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE_MESSAGE =
+      "remedy.call_for_authorize.message";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD =
+      "remedy.call_for_authorize.button.loud";
 
   private I18nService i18nService = new I18nService();
 
@@ -68,6 +93,10 @@ public enum Translations {
         return i18nService.tr("El código de seguridad es inválido", locale);
       case REMEDY_CVV_MESSAGE:
         return i18nService.tr("Vuelve a ingresarlo para confirmar el pago.", locale);
+      case REMEDY_CVV_SUGGESTION_PM_MESSAGE:
+        return i18nService.tr(
+            "Te sugerimos ingresar el código de seguridad de tu %s **** %s para reintentar con este medio:",
+            locale);
       case REMEDY_FIELD_SETTING_CVV_TITLE:
         return i18nService.tr("Código de seguridad", locale);
       case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK:
@@ -87,6 +116,45 @@ public enum Translations {
         return i18nService.tr(
             "A partir de ahora, tu cuenta estará bajo la modalidad Mercado Libre IFPE. Usaremos el método de seguridad de tu teléfono para ingresar y pagar con la aplicación.",
             locale);
+      case REMEDY_INSUFFICIENT_AMOUNT_TITLE:
+        return i18nService.tr(
+            "Tus fondos son insuficientes o superaste el límite de compra", locale);
+      case REMEDY_INSUFFICIENT_AMOUNT_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_OTHER_REASON_TITLE:
+        return i18nService.tr("Tu %s *** %s rechazó el pago", locale);
+      case REMEDY_OTHER_REASON_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_MAX_ATTEMPTS_TITLE:
+        return i18nService.tr("Llegaste al límite de intentos de pago posibles.", locale);
+      case REMEDY_MAX_ATTEMPTS_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_BLACKLIST_TITLE:
+        return i18nService.tr("Tu tarjeta está bloqueada.", locale);
+      case REMEDY_BLACKLIST_MESSAGE:
+        return i18nService.tr(
+            "Comunicate con tu banco para solucionarlo. Mientras tanto, te sugerimos reintentar con este medio:",
+            locale);
+      case REMEDY_INVALID_INSTALLMENTS_TITLE:
+        return i18nService.tr("Tu tarjeta no acepta esta cantidad de cuotas.", locale);
+      case REMEDY_INVALID_INSTALLMENTS_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_BAD_FILLED_CARD_NUMBER_TITLE:
+        return i18nService.tr("El número de tu %s es inválido", locale);
+      case REMEDY_BAD_FILLED_CARD_NUMBER_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_BAD_FILLED_OTHER_TITLE:
+        return i18nService.tr("Algún dato de tu tarjeta es inválido.", locale);
+      case REMEDY_BAD_FILLED_OTHER_MESSAGE:
+        return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
+      case REMEDY_CALL_FOR_AUTHORIZE_TITLE:
+        return i18nService.tr("Tu %s *** %s no autorizó el pago.", locale);
+      case REMEDY_CALL_FOR_AUTHORIZE_MESSAGE:
+        return i18nService.tr(
+            "Llama a %s para autorizar %s a Mercado Pago o reintenta con otro medio de pago.",
+            locale);
+      case REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD:
+        return i18nService.tr("Autorizar el pago.", locale);
       default:
         return "";
     }

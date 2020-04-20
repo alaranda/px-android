@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.remedy;
 
+import com.mercadolibre.dto.congrats.Action;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class ResponseCallForAuth {
 
-  private final String title;
-  private final String message;
+  private String title;
+  private String message;
+  private Action actionLoud;
 }

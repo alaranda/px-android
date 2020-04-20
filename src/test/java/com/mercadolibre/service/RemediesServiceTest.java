@@ -1,28 +1,31 @@
 package com.mercadolibre.service;
 
-import static com.mercadolibre.service.PreferenceServiceTest.CONTEXT_ES;
+import static com.mercadolibre.helper.MockTestHelper.CONTEXT_ES;
+import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
+import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
+import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.CREDIT_CARD;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockRiskApi;
+import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.Installment;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
-import com.mercadolibre.dto.remedy.ResponseCallForAuth;
 import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.dto.remedy.ResponseHighRisk;
-import com.mercadolibre.dto.remedy.ResponseRemedyDefault;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,48 +34,13 @@ import spark.utils.IOUtils;
 
 public class RemediesServiceTest {
 
-  private RemediesService remediesService = new RemediesService();
-
   private static final String PAYMENT_ID_TEST = "123456789";
   private static final String CALLER_ID_TEST = "11111";
-  private static final UserAgent USER_AGENT_TEST = UserAgent.create("PX/Android/0.0.0");
+  private RemediesService remediesService = new RemediesService();
 
   @Before
   public void before() {
     RequestMockHolder.clear();
-  }
-
-  @Test
-  public void getRemedy_satusDetailCallForAuthIcbc_remedyCallForAuth()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_callForAuth.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        "visa",
-        "4444",
-        "ICBC",
-        new BigDecimal(123),
-        USER_AGENT_TEST,
-        null,
-        0,
-        0l,
-        null,
-        null);
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
-
-    final ResponseCallForAuth responseCallForAuth = remediesResponse.getCallForAuth();
-    assertThat(responseCallForAuth.getTitle(), is("Tu visa ICBC **** 4444 no autorizo el pago"));
-    assertThat(
-        responseCallForAuth.getMessage(),
-        is("Llama a ICBC para autorizar 123 a Mercado Pago o paga de otra forma."));
   }
 
   @Test
@@ -81,147 +49,22 @@ public class RemediesServiceTest {
     MockPaymentAPI.getPayment(
         PAYMENT_ID_TEST,
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_cvv.json")));
+        IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_cvv.json")));
 
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "5555",
-        "Santander",
-        new BigDecimal(123),
-        USER_AGENT_TEST,
-        "back",
-        3,
-        0l,
-        null,
-        null);
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethod("5555", "Santander", new BigDecimal(123), "back", 3);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
         remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
-    assertThat(responseCvv.getTitle(), is("El código de seguridad es inválido"));
-    assertThat(responseCvv.getMessage(), is("Volvé a ingresarlo para confirmar el pago."));
-    assertThat(responseCvv.getFieldSetting().getTitle(), is("Código de seguridad"));
-    assertThat(
-        responseCvv.getFieldSetting().getHintMessage(),
-        is("Los 3 números están al dorso de tu tarjeta"));
-  }
-
-  @Test
-  public void getRemedy_statusDetailDefaultBbvv_remedyDefault() throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_default.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest, "credit_card", null, null, null, USER_AGENT_TEST, null, 0, 0l, null, null);
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
-
-    final ResponseRemedyDefault responseRemedyDefault = remediesResponse.getWithOutRemedy();
-    assertThat(responseRemedyDefault, nullValue());
-  }
-
-  @Test
-  public void getRemedy_statusDetailCvvIcbcSecurtyCodeFront_remedyCvvSecurityCodeFront()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_cvv.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "8888",
-        "Icbc",
-        new BigDecimal(321),
-        USER_AGENT_TEST,
-        "front",
-        4,
-        0l,
-        null,
-        null);
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
-
-    final ResponseCvv responseCvv = remediesResponse.getCvv();
-    assertThat(
-        responseCvv.getFieldSetting().getHintMessage(),
-        is("Los 4 números están al frente de tu tarjeta"));
-  }
-
-  @Test
-  public void getRemedy_statusDetailCvvwithoutPaymentMethodRejected_remedyEmpty()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_cvv.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    when(remediesRequest.getUserAgent()).thenReturn(USER_AGENT_TEST);
-    when(remediesRequest.getRiskExcecutionId()).thenReturn(0l);
-    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(null);
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
-
-    final ResponseCvv responseCvv = remediesResponse.getCvv();
-    assertThat(responseCvv, is(nullValue()));
-  }
-
-  @Test
-  public void getRemedy_statusDetailHighRiskKycPatagonia_remedyHighRiskMP()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
-
-    MockRiskApi.getRisk(
-        123L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        CALLER_ID_TEST,
-        Site.MLA.name());
-
-    final Context context =
-        Context.builder().requestId("").locale("es-AR").platform(Platform.MP).build();
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(context, "123456789", remediesRequest);
-
-    final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-    assertThat(responseHighRisk.getTitle(), is("Validá tu identidad para realizar el pago"));
-    assertThat(
-        responseHighRisk.getMessage(),
-        is("Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos."));
-    assertThat(
-        responseHighRisk.getDeepLink(),
-        is("mercadopago://kyc/?initiative=px-high-risk&callback=mercadopago://px/one_tap"));
+    assertThat(responseCvv.getTitle(), notNullValue());
+    assertThat(responseCvv.getMessage(), notNullValue());
+    assertThat(responseCvv.getFieldSetting(), notNullValue());
+    assertThat(responseCvv.getFieldSetting().getHintMessage(), notNullValue());
   }
 
   @Test
@@ -231,26 +74,18 @@ public class RemediesServiceTest {
     MockPaymentAPI.getPayment(
         PAYMENT_ID_TEST,
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
+        IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_highRisk.json")));
 
     MockRiskApi.getRisk(
         123L,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
 
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        CALLER_ID_TEST,
-        Site.MLA.name());
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final Context context =
         Context.builder().requestId("").locale("es-AR").platform(Platform.ML).build();
@@ -264,172 +99,52 @@ public class RemediesServiceTest {
   }
 
   @Test
-  public void getRemedy_statusDetailHighRiskWithOutKycTag_remedyHighRisk()
-      throws IOException, ApiException {
+  public void applyRemedy_statusDetailMaxAttempsWithoutEsc_remedySuggestedPmAndCvv()
+      throws ApiException, IOException {
 
     MockPaymentAPI.getPayment(
         PAYMENT_ID_TEST,
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
+        IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_other_reason.json")));
 
-    MockRiskApi.getRisk(
-        123L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/risk/withoutKyc.json")));
+    final BigDecimal totalAmount = new BigDecimal(200);
 
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        CALLER_ID_TEST,
-        Site.MLA.name());
-    when(remediesRequest.getRiskExcecutionId()).thenReturn(123L);
-    when(remediesRequest.getUserId()).thenReturn(CALLER_ID_TEST);
-    when(remediesRequest.getSiteId()).thenReturn(Site.MLA.name());
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
-
-    final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-    assertThat(responseHighRisk, nullValue());
-  }
-
-  @Test
-  public void getRemedy_statusDetailHighRiskInvalidSiteKyc_withoutRemedy()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
-
-    MockRiskApi.getRisk(
-        123L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        CALLER_ID_TEST,
-        Site.MLM.name());
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
-
-    final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-    assertThat(responseHighRisk, nullValue());
-  }
-
-  @Test
-  public void getRemedy_statusDetailHighRiskWithoutAccessToken_withoutRemedy()
-      throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
-
-    MockRiskApi.getRisk(
-        123L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        null,
-        null);
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
-
-    final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-    assertThat(responseHighRisk, nullValue());
-  }
-
-  @Test
-  public void getRemedy_riskIdError_withoutRemedy() throws IOException, ApiException {
-
-    MockPaymentAPI.getPayment(
-        PAYMENT_ID_TEST,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/11111_highRisk.json")));
-
-    MockRiskApi.getRisk(
-        123L,
-        HttpStatus.SC_NOT_FOUND,
-        IOUtils.toString(getClass().getResourceAsStream("/risk/risk_404.json")));
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    mocks(
-        remediesRequest,
-        null,
-        "2222",
-        "Patagonia",
-        null,
-        USER_AGENT_TEST,
-        null,
-        0,
-        123L,
-        CALLER_ID_TEST,
-        Site.MLA.name());
-
-    final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
-
-    final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
-    assertThat(responseHighRisk, nullValue());
-  }
-
-  private void mocks(
-      final RemediesRequest remediesRequest,
-      final String paymentMethodId,
-      final String lastFourDigit,
-      final String issuerName,
-      final BigDecimal totalAmount,
-      final UserAgent userAgent,
-      final String securityCodeLocation,
-      final int securityCodeLength,
-      final Long riskId,
-      final String callerId,
-      final String site) {
-
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
-        Mockito.mock(PayerPaymentMethodRejected.class);
-    when(payerPaymentMethodRejected.getPaymentMethodId()).thenReturn(paymentMethodId);
-    when(payerPaymentMethodRejected.getLastFourDigit()).thenReturn(lastFourDigit);
-    when(payerPaymentMethodRejected.getIssuerName()).thenReturn(issuerName);
-    when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(totalAmount);
-    when(payerPaymentMethodRejected.getSecurityCodeLocation()).thenReturn(securityCodeLocation);
-    when(payerPaymentMethodRejected.getSecurityCodeLength()).thenReturn(securityCodeLength);
+        mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
-    when(remediesRequest.getUserAgent()).thenReturn(userAgent);
-    when(remediesRequest.getRiskExcecutionId()).thenReturn(riskId);
-    when(remediesRequest.getUserId()).thenReturn(callerId);
-    when(remediesRequest.getSiteId()).thenReturn(site);
+    when(remediesRequest.isOneTap()).thenReturn(true);
+    when(remediesRequest.getPayerPaymentMethodRejected().getInstallments()).thenReturn(3);
+
+    final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
+        Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(CREDIT_CARD.name());
+    when(alternativePayerPaymentMethod.getPaymentMethodId()).thenReturn("visa");
+    when(alternativePayerPaymentMethod.getEscStatus()).thenReturn("rejected");
+    when(alternativePayerPaymentMethod.getIssuerName()).thenReturn("Patagonia");
+
+    final Installment installment = Mockito.mock(Installment.class);
+    when(installment.getInstallments()).thenReturn(3);
+    when(installment.getTotalAmount()).thenReturn(totalAmount);
+    when(alternativePayerPaymentMethod.getInstallmentsList())
+        .thenReturn(Arrays.asList(installment));
+
+    when(remediesRequest.getAlternativePayerPaymentMethods())
+        .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
+
+    final RemediesResponse remediesResponse =
+        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
+
+    assertThat(remediesResponse.getSuggestedPaymentMethod().getTitle(), notNullValue());
+    assertThat(remediesResponse.getSuggestedPaymentMethod().getMessage(), notNullValue());
+    assertThat(
+        remediesResponse
+            .getSuggestedPaymentMethod()
+            .getAlternativePaymentMethod()
+            .getPaymentTypeId(),
+        is(CREDIT_CARD.name()));
+    assertThat(remediesResponse.getCvv().getTitle(), notNullValue());
+    assertThat(remediesResponse.getCvv().getMessage(), notNullValue());
   }
 }

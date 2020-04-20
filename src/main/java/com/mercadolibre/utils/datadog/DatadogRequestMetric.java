@@ -24,7 +24,7 @@ public final class DatadogRequestMetric {
 
     String path = request.pathInfo();
 
-    if (request.pathInfo().contains("/esc_cap/") || request.pathInfo().contains("/remedy/")) {
+    if (request.pathInfo().contains("/esc_cap/") || request.pathInfo().contains("/remedies/")) {
       path = path.substring(0, path.lastIndexOf("/"));
     }
 
