@@ -9,5 +9,5 @@ public class SuggestionPaymentMethodResponse {
 
   private String title;
   private String message;
-  private AlternativePayerPaymentMethod alternativePayerPaymentMethod;
+  private AlternativePayerPaymentMethod alternativePaymentMethod;
 }

@@ -19,6 +19,8 @@ public enum HeadersUtils {
 
   private static final String X_CALLER_SCOPE_PAYMENTS = "payments";
 
+  public static final String ONE_TAP = "one_tap";
+
   /**
    * Store a Spark request headers in MeLi representation of {@link Headers}.
    *

@@ -22,11 +22,17 @@ public final class DatadogMetricsNames {
       "px.checkout_mobile_payments.congrats_cross_selling";
   public static final String CONGRATS_ERROR_BUILD_CONGRATS =
       "px.RemediesRequest.congrats_error_build_congrats";
-  public static final String REMEDIES_COUNTER = "px.checkout_mobile_payments.remedy.counter";
-  public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD =
-      "px.checkout_mobile_payments.remedy.alternative_payment_method";
-  public static final String REMEDIES_ALTERNATIVE_PAYMENT_METHOD_ESC =
-      "px.checkout_mobile_payments.remedy.alternative_payment_method.esc";
-  public static final String REMEDIES_KYC_FAIL_COUNTER =
-      "px.checkout_mobile_payments.remedy.counter";
+  // Remedies
+  public static final String REMEDY_SILVER_BULLET_COUNTER =
+      "px.checkout_mobile_payments.remedy_silver_bullet";
+  public static final String REMEDY_HIGH_RISK_COUNTER =
+      "px.checkout_mobile_payments.remedy_high_risk";
+  public static final String REMEDY_CVV_COUNTER = "px.checkout_mobile_payments.remedy_cvv";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE_COUNTER =
+      "px.checkout_mobile_payments.remedy_call_for_authorize";
+  public static final String WITHOUT_REMEDY_COUNTER = "px.checkout_mobile_payments.without_remedy";
+  public static final String REMEDY_FRICTION_ESC_COUNTER =
+      "px.checkout_mobile_payments.remedy.friction.esc";
+  public static final String REMEDY_KYC_FAIL_COUNTER =
+      "px.checkout_mobile_payments.remedy.kyc_fail";
 }

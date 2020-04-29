@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.0]
+
+### Added
+
+- Se agrega remedy Silver Bullet y Call for Authorize.
+
 ## [1.3.4]
 
 ### Added

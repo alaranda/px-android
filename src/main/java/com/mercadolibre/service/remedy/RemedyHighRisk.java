@@ -1,7 +1,7 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDIES_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDIES_KYC_FAIL_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_HIGH_RISK_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_KYC_FAIL_COUNTER;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_BUTTON_LOUD;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_TITLE;
@@ -16,7 +16,6 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.utils.RemediesTexts;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +32,7 @@ public class RemedyHighRisk implements RemedyInterface {
       "%s://kyc/?initiative=px-high-risk&callback=%s://px/one_tap";
   private static final String PLATFORM_KYC_MELI = "meli";
 
-  public RemedyHighRisk(final RemediesTexts remediesTexts, final RiskApi riskApi) {
+  public RemedyHighRisk(final RiskApi riskApi) {
     this.riskApi = riskApi;
   }
 
@@ -88,14 +87,15 @@ public class RemedyHighRisk implements RemedyInterface {
 
         remediesResponse.setHighRisk(responseHighRisk);
 
-        DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
+        DatadogRemediesMetrics.trackRemediesInfo(
+            REMEDY_HIGH_RISK_COUNTER, context, remediesRequest);
       }
 
       return remediesResponse;
 
     } catch (ApiException e) {
       LOGGER.info("Invalid risk for Kyc Remedy");
-      DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_KYC_FAIL_COUNTER, context, remediesRequest);
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_KYC_FAIL_COUNTER, context, remediesRequest);
     }
 
     return null;

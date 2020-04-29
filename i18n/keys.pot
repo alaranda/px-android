@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-13 13:44-0300\n"
+"POT-Creation-Date: 2020-04-29 11:42-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,78 +17,135 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:49
+#: src/main/java/com/mercadolibre/utils/Translations.java:74
 msgid "Descuentos por tu nivel"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:51
+#: src/main/java/com/mercadolibre/utils/Translations.java:76
 msgid "descuentos por tu nivel"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:53
+#: src/main/java/com/mercadolibre/utils/Translations.java:78
 msgid "Exclusivo con la app de Mercado Pago"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:55
+#: src/main/java/com/mercadolibre/utils/Translations.java:80
 msgid "Exclusivo con la app de Mercado Libre"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:57
+#: src/main/java/com/mercadolibre/utils/Translations.java:82
 msgid "Descargar"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:59
+#: src/main/java/com/mercadolibre/utils/Translations.java:84
 msgid "Ver todos los descuentos"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:61
+#: src/main/java/com/mercadolibre/utils/Translations.java:86
 msgid "No pudimos procesar tu pago, discúlpanos."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:63
+#: src/main/java/com/mercadolibre/utils/Translations.java:88
 msgid "No puedes pagar con este link de pago."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:66
+#: src/main/java/com/mercadolibre/utils/Translations.java:91
 msgid "No puedes pagar con este link, solo puedes usarlo para cobrar."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:68
+#: src/main/java/com/mercadolibre/utils/Translations.java:93
 msgid "El código de seguridad es inválido"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:70
+#: src/main/java/com/mercadolibre/utils/Translations.java:95
 msgid "Vuelve a ingresarlo para confirmar el pago."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:72
+#: src/main/java/com/mercadolibre/utils/Translations.java:98
+msgid "Te sugerimos ingresar el código de seguridad de tu %s **** %s para reintentar con este medio:"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:101
 msgid "Código de seguridad"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:74
+#: src/main/java/com/mercadolibre/utils/Translations.java:103
 msgid "Los 3 números están al dorso de tu tarjeta"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:76
+#: src/main/java/com/mercadolibre/utils/Translations.java:105
 msgid "Los 4 números están al frente de tu tarjeta"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:78
+#: src/main/java/com/mercadolibre/utils/Translations.java:107
 msgid "Valida tu identidad para realizar el pago"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:81
+#: src/main/java/com/mercadolibre/utils/Translations.java:110
 msgid "Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos."
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:83
+#: src/main/java/com/mercadolibre/utils/Translations.java:112
 msgid "Validar identidad"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:85
+#: src/main/java/com/mercadolibre/utils/Translations.java:114
 msgid "Ver comprobante de pago"
 msgstr ""
 
-#: src/main/java/com/mercadolibre/utils/Translations.java:88
+#: src/main/java/com/mercadolibre/utils/Translations.java:117
 msgid "A partir de ahora, tu cuenta estará bajo la modalidad Mercado Libre IFPE. Usaremos el método de seguridad de tu teléfono para ingresar y pagar con la aplicación."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:121
+msgid "Tus fondos son insuficientes o superaste el límite de compra"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:123
+#: src/main/java/com/mercadolibre/utils/Translations.java:127
+#: src/main/java/com/mercadolibre/utils/Translations.java:131
+#: src/main/java/com/mercadolibre/utils/Translations.java:141
+#: src/main/java/com/mercadolibre/utils/Translations.java:145
+#: src/main/java/com/mercadolibre/utils/Translations.java:149
+msgid "Te sugerimos reintentar con este medio:"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:125
+msgid "Tu %s *** %s rechazó el pago"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:129
+msgid "Llegaste al límite de intentos de pago posibles."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:133
+msgid "Tu tarjeta está bloqueada."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:136
+msgid "Comunicate con tu banco para solucionarlo. Mientras tanto, te sugerimos reintentar con este medio:"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:139
+msgid "Tu tarjeta no acepta esta cantidad de cuotas."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:143
+msgid "El número de tu %s es inválido"
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:147
+msgid "Algún dato de tu tarjeta es inválido."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:151
+msgid "Tu %s *** %s no autorizó el pago."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:154
+msgid "Llama a %s para autorizar %s a Mercado Pago o reintenta con otro medio de pago."
+msgstr ""
+
+#: src/main/java/com/mercadolibre/utils/Translations.java:157
+msgid "Autorizar el pago."
 msgstr ""
