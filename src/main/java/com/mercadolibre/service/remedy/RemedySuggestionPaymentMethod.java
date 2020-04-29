@@ -21,12 +21,14 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   private RemedyCvv remedyCvv;
   private String remedyTitle;
   private String remedyMessage;
+  private SuggestionPaymentMehodsUtils suggestionPaymentMehodsUtils;
 
   public RemedySuggestionPaymentMethod(
       final RemedyCvv remedyCvv, final String remedyTitle, final String remedyMessage) {
     this.remedyCvv = remedyCvv;
     this.remedyTitle = remedyTitle;
     this.remedyMessage = remedyMessage;
+    this.suggestionPaymentMehodsUtils = new SuggestionPaymentMehodsUtils();
   }
 
   @Override
@@ -43,7 +45,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
         remediesRequest.getPayerPaymentMethodRejected();
 
     final PaymentMethodSelected paymentMethodSelected =
-        SuggestionPaymentMehodsUtils.findPaymentMethodSuggestionsAmount(remediesRequest);
+        suggestionPaymentMehodsUtils.findPaymentMethodSuggestionsAmount(remediesRequest);
 
     if (null != paymentMethodSelected) {
 
