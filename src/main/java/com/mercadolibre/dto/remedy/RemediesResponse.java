@@ -12,7 +12,7 @@ public class RemediesResponse {
   private ResponseBadFilledDate badFilledDate;
   private ResponseRemedyDefault withOutRemedy;
   private ResponseHighRisk highRisk;
-  private SuggestionPaymentMethodResponse suggestionPaymentMethod;
+  private SuggestionPaymentMethodResponse suggestedPaymentMethod;
 
   public String toLog(final RemediesResponse remediesResponse) {
 

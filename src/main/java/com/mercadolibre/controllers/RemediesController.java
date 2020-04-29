@@ -9,6 +9,7 @@ import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
+import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
 
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
@@ -94,6 +95,10 @@ public class RemediesController {
       remediesRequest.setSiteId(request.queryParams(CALLER_SITE_ID));
       remediesRequest.setUserAgent(UserAgent.create(request.userAgent()));
       remediesRequest.setUserId(request.queryParams(CALLER_ID));
+      remediesRequest.setOneTap(
+          StringUtils.isBlank(request.headers(ONE_TAP))
+              ? true
+              : Boolean.parseBoolean(request.headers(ONE_TAP)));
       return remediesRequest;
     } catch (Exception e) {
       throw new ApiException("Bad Request", "Error parsing body", HttpStatus.SC_BAD_REQUEST);

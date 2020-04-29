@@ -16,25 +16,25 @@ public enum Remedy {
   CC_REJECTED_BAD_FILLED_DATE("without_remedy"),
 
   // INSUFFICIENT_AMOUNT
-  CC_REJECTED_INSUFFICIENT_AMOUNT("without_remedy"),
+  CC_REJECTED_INSUFFICIENT_AMOUNT("cc_rejected_insufficient_amount"),
 
   // OTHER REASON
-  CC_REJECTED_OTHER_REASON("without_remedy"),
+  CC_REJECTED_OTHER_REASON("cc_rejected_other_reason"),
 
   // MAX ATTEMPTS
-  CC_REJECTED_MAX_ATTEMPTS("without_remedy"),
+  CC_REJECTED_MAX_ATTEMPTS("cc_rejected_max_attemps"),
 
   // BLACKLIST
-  CC_REJECTED_BLACKLIST("without_remedy"),
+  CC_REJECTED_BLACKLIST("cc_rejected_blacklist"),
 
   // INVALID INSTALLMENTS
-  CC_REJECTED_INVALID_INSTALLMENTS("without_remedy"),
+  CC_REJECTED_INVALID_INSTALLMENTS("cc_rejected_invalid_installments"),
 
   // BAD FILLED CARD NUMBER
-  CC_REJECTED_BAD_FILLED_CARD_NUMBER("without_remedy"),
+  CC_REJECTED_BAD_FILLED_CARD_NUMBER("cc_rejected_bad_filled_card_number"),
 
   // BAD FILLED OTHER
-  CC_REJECTED_BAD_FILLED_OTHER("without_remedy"),
+  CC_REJECTED_BAD_FILLED_OTHER("cc_rejected_bad_filled_other"),
 
   WITHOUT_REMEDY("without_remedy");
 

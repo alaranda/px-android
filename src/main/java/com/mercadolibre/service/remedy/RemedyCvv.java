@@ -1,6 +1,6 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDIES_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CVV_COUNTER;
 import static com.mercadolibre.utils.Translations.*;
 
 import com.mercadolibre.dto.remedy.FieldSetting;
@@ -30,11 +30,34 @@ public class RemedyCvv implements RemedyInterface {
       return remediesResponse;
     }
 
+    final ResponseCvv responseCvv =
+        buildRemedyCvv(
+            context,
+            remediesRequest.getPayerPaymentMethodRejected(),
+            REMEDY_CVV_TITLE,
+            REMEDY_CVV_MESSAGE);
+
+    remediesResponse.setCvv(responseCvv);
+
+    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_CVV_COUNTER, context, remediesRequest);
+
+    return remediesResponse;
+  }
+
+  public ResponseCvv buildRemedyCvv(
+      final Context context,
+      final PayerPaymentMethodRejected payerPaymentMethodRejected,
+      final String remedyTitleKey,
+      final String remedyMessageKey) {
+
     final String title =
-        Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_CVV_TITLE);
+        Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyTitleKey);
 
     final String message =
-        Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_CVV_MESSAGE);
+        String.format(
+            Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyMessageKey),
+            payerPaymentMethodRejected.getIssuerName(),
+            payerPaymentMethodRejected.getLastFourDigit());
 
     final FieldSetting.FieldSettingBuilder fieldSettingBuilder =
         FieldSetting.builder()
@@ -55,17 +78,10 @@ public class RemedyCvv implements RemedyInterface {
               context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK));
     }
 
-    final ResponseCvv responseCvv =
-        ResponseCvv.builder()
-            .title(title)
-            .message(message)
-            .fieldSetting(fieldSettingBuilder.build())
-            .build();
-
-    remediesResponse.setCvv(responseCvv);
-
-    DatadogRemediesMetrics.trackRemediesInfo(REMEDIES_COUNTER, context, remediesRequest);
-
-    return remediesResponse;
+    return ResponseCvv.builder()
+        .title(title)
+        .message(message)
+        .fieldSetting(fieldSettingBuilder.build())
+        .build();
   }
 }
