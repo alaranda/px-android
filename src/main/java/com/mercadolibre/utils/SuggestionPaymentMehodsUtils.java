@@ -13,10 +13,11 @@ import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 
 public final class SuggestionPaymentMehodsUtils {
 
-  public static PaymentMethodSelected findPaymentMethodSuggestionsAmount(
+  public PaymentMethodSelected findPaymentMethodSuggestionsAmount(
       final RemediesRequest remediesRequest) {
 
     final List<AlternativePayerPaymentMethod> alternativePayerPaymentMethodList =
@@ -25,7 +26,8 @@ public final class SuggestionPaymentMehodsUtils {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
 
-    if (alternativePayerPaymentMethodList.isEmpty() || null == payerPaymentMethodRejected) {
+    if (CollectionUtils.isEmpty(alternativePayerPaymentMethodList)
+        || null == payerPaymentMethodRejected) {
       return null;
     }
 
