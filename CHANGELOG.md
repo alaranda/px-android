@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.1]
+
+### Changed
+
+- Agrego chequeo de medios de pagonalternativos para remedy silver bullet en versiones viejas que no lo mandan.
+
 ## [1.4.0]
 
 ### Added
