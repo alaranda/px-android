@@ -2,6 +2,7 @@ package com.mercadolibre.service.remedy;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_FRICTION_ESC_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM_COUNTER;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
 
@@ -99,11 +100,14 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
             REMEDY_FRICTION_ESC_COUNTER, context, remediesRequest);
       }
 
+      DatadogRemediesMetrics.trackRemedySilverBulletInfo(
+          REMEDY_SILVER_BULLET_COUNTER, context, remediesRequest, paymentMethodSelected);
       remediesResponse.setSuggestedPaymentMethod(suggestionPaymentMethodResponse);
+      return remediesResponse;
     }
 
-    DatadogRemediesMetrics.trackRemedySilverBulletInfo(
-        REMEDY_SILVER_BULLET_COUNTER, context, remediesRequest, paymentMethodSelected);
+    DatadogRemediesMetrics.trackRemediesInfo(
+        SILVER_BULLET_WITHOUT_PM_COUNTER, context, remediesRequest);
 
     return remediesResponse;
   }

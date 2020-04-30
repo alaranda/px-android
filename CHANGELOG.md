@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.2]
+
+### Changed
+
+- Modifico metricas y agrego el flow a los logs.
+
 ## [1.4.1]
 
 ### Changed

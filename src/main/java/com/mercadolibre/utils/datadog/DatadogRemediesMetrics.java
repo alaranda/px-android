@@ -30,7 +30,7 @@ public class DatadogRemediesMetrics {
     if (null != paymentMethodSelected
         && null != paymentMethodSelected.getAlternativePayerPaymentMethod()) {
       paymentTypeSuggested =
-          paymentMethodSelected.getAlternativePayerPaymentMethod().getPaymentTypeId();
+          paymentMethodSelected.getAlternativePayerPaymentMethod().getPaymentMethodId();
     }
     addSuggestedPaymentMethod(tags, paymentTypeSuggested);
     METRIC_COLLECTOR.incrementCounter(metricName, getMetricTags(context, remediesRequest));
@@ -42,11 +42,11 @@ public class DatadogRemediesMetrics {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
     tags.add("flow", context.getFlow());
     tags.add("bussines", context.getPlatform());
-    tags.add("plattform", remediesRequest.getUserAgent().getOperatingSystem().getName());
+    tags.add("platform", remediesRequest.getUserAgent().getOperatingSystem().getName());
     tags.add("site", remediesRequest.getSiteId());
     tags.add("status_detail", remediesRequest.getStatusDetail());
     tags.add(
-        "payment_rejected", remediesRequest.getPayerPaymentMethodRejected().getPaymentTypeId());
+        "payment_rejected", remediesRequest.getPayerPaymentMethodRejected().getPaymentMethodId());
 
     return tags;
   }
