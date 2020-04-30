@@ -35,4 +35,6 @@ public final class DatadogMetricsNames {
       "px.checkout_mobile_payments.remedy.friction.esc";
   public static final String REMEDY_KYC_FAIL_COUNTER =
       "px.checkout_mobile_payments.remedy.kyc_fail";
+  public static final String SILVER_BULLET_WITHOUT_PM_COUNTER =
+      "px.checkout_mobile_payments.silver_bullet_without_pm";
 }

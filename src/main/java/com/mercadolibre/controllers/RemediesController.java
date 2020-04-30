@@ -72,7 +72,8 @@ public class RemediesController {
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
             .withSessionId(request.headers(SESSION_ID))
-            .withParams(request.queryParams().toString()));
+            .withParams(request.queryParams().toString())
+            .withFlow(context.getFlow()));
 
     final String paymentId = request.params(PAYMENT_ID);
 
