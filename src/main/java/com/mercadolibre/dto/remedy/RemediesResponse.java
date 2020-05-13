@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.remedy;
 
+import com.mercadolibre.dto.tracking.TrackingData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class RemediesResponse {
   private ResponseRemedyDefault withOutRemedy;
   private ResponseHighRisk highRisk;
   private SuggestionPaymentMethodResponse suggestedPaymentMethod;
+  private TrackingData trackingData;
 
   public String toLog(final RemediesResponse remediesResponse) {
 

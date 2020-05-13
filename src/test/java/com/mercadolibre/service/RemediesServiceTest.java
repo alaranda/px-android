@@ -113,6 +113,7 @@ public class RemediesServiceTest {
         mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
     when(remediesRequest.isOneTap()).thenReturn(true);
     when(remediesRequest.getPayerPaymentMethodRejected().getInstallments()).thenReturn(3);

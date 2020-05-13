@@ -27,12 +27,12 @@ public final class DatadogMetricsNames {
       "px.checkout_mobile_payments.remedy_silver_bullet";
   public static final String REMEDY_HIGH_RISK_COUNTER =
       "px.checkout_mobile_payments.remedy_high_risk";
+  public static final String REMEDY_HIGH_RISK_TAGGED_COUNTER =
+      "px.checkout_mobile_payments.remedy_high_risk_tagged";
   public static final String REMEDY_CVV_COUNTER = "px.checkout_mobile_payments.remedy_cvv";
   public static final String REMEDY_CALL_FOR_AUTHORIZE_COUNTER =
       "px.checkout_mobile_payments.remedy_call_for_authorize";
   public static final String WITHOUT_REMEDY_COUNTER = "px.checkout_mobile_payments.without_remedy";
-  public static final String REMEDY_FRICTION_ESC_COUNTER =
-      "px.checkout_mobile_payments.remedy.friction.esc";
   public static final String REMEDY_KYC_FAIL_COUNTER =
       "px.checkout_mobile_payments.remedy.kyc_fail";
   public static final String SILVER_BULLET_WITHOUT_PM_COUNTER =

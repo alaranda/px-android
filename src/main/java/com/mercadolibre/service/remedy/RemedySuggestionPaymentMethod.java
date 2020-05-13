@@ -1,6 +1,5 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_FRICTION_ESC_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM_COUNTER;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
@@ -12,6 +11,7 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
+import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
 import com.mercadolibre.utils.Translations;
@@ -68,6 +68,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               .alternativePaymentMethod(paymentMethodSelected.getAlternativePayerPaymentMethod())
               .build();
 
+      boolean frictionless = true;
       if (cvvRequired(paymentMethodSelected)) {
 
         final PayerPaymentMethodRejected paymentMethodRejectedSelected =
@@ -96,12 +97,19 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
         remediesResponse.setCvv(responseCvv);
 
-        DatadogRemediesMetrics.trackRemediesInfo(
-            REMEDY_FRICTION_ESC_COUNTER, context, remediesRequest);
+        frictionless = false;
       }
 
+      final TrackingData trackingData =
+          suggestionPaymentMehodsUtils.generateTrackingData(
+              payerPaymentMethodRejected,
+              suggestionPaymentMethodResponse.getAlternativePaymentMethod(),
+              frictionless);
+
       DatadogRemediesMetrics.trackRemedySilverBulletInfo(
-          REMEDY_SILVER_BULLET_COUNTER, context, remediesRequest, paymentMethodSelected);
+          REMEDY_SILVER_BULLET_COUNTER, context, remediesRequest, trackingData);
+
+      remediesResponse.setTrackingData(trackingData);
       remediesResponse.setSuggestedPaymentMethod(suggestionPaymentMethodResponse);
       return remediesResponse;
     }

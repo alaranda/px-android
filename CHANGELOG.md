@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.3]
+
+### Added
+
+- Se agrega a la firma un nuevo nodo con informacion para tracking del front.
+
 ## [1.4.2]
 
 ### Changed

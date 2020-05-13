@@ -1,9 +1,9 @@
 package com.mercadolibre.controllers;
 
 import static com.mercadolibre.constants.Constants.PAYMENT_ID;
-import static com.mercadolibre.constants.QueryParamsConstants.FLOW_NAME;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.FLOW_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATFORM;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
@@ -56,7 +56,7 @@ public class RemediesController {
         Context.builder()
             .requestId(request.attribute(CommonParametersNames.REQUEST_ID))
             .locale(request.headers(LANGUAGE))
-            .flow(request.queryParams(FLOW_NAME));
+            .flow(request.headers(FLOW_ID));
 
     if (StringUtils.isNotBlank(request.headers(PLATFORM))) {
       final Platform platform = Platform.from(request.headers(PLATFORM));
