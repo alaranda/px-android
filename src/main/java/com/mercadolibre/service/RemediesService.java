@@ -46,9 +46,6 @@ public class RemediesService {
 
     final List<RemedyInterface> remediesInterface =
         remedyTypes.getRemedyByType(payment.getStatusDetail());
-    // TODO status detail hardcodeado para pruebas.
-    // final List<RemedyInterface> remediesInterface =
-    // remedyTypes.getRemedyByType(CC_REJECTED_CALL_FOR_AUTHORIZE.getId());
 
     final RemediesResponse remediesResponse = new RemediesResponse();
 

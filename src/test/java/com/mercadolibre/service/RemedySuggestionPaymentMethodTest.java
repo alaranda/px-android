@@ -50,6 +50,7 @@ public class RemedySuggestionPaymentMethodTest {
         mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
     when(remediesRequest.isOneTap()).thenReturn(true);
     when(remediesRequest.getPayerPaymentMethodRejected().getInstallments()).thenReturn(3);
@@ -97,6 +98,7 @@ public class RemedySuggestionPaymentMethodTest {
         mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
     when(remediesRequest.isOneTap()).thenReturn(true);
     when(remediesRequest.getPayerPaymentMethodRejected().getInstallments()).thenReturn(3);
@@ -146,6 +148,7 @@ public class RemedySuggestionPaymentMethodTest {
         mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
     when(remediesRequest.isOneTap()).thenReturn(true);
 
@@ -182,7 +185,8 @@ public class RemedySuggestionPaymentMethodTest {
     when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
     PayerPaymentMethodRejected payerPaymentMethodRejected =
         Mockito.mock(PayerPaymentMethodRejected.class);
-    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("visa");
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
+    when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(new BigDecimal(123));
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
@@ -190,6 +194,11 @@ public class RemedySuggestionPaymentMethodTest {
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(DEBIT_CARD.name());
     when(alternativePayerPaymentMethod.getEscStatus()).thenReturn(STATUS_APPROVED);
     when(alternativePayerPaymentMethod.isEsc()).thenReturn(true);
+    final Installment installment = Mockito.mock(Installment.class);
+    when(installment.getInstallments()).thenReturn(5);
+    when(installment.getTotalAmount()).thenReturn(new BigDecimal(333));
+    when(alternativePayerPaymentMethod.getInstallmentsList())
+        .thenReturn(Arrays.asList(installment));
     when(remediesRequest.getAlternativePayerPaymentMethods())
         .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
 
@@ -222,11 +231,19 @@ public class RemedySuggestionPaymentMethodTest {
     PayerPaymentMethodRejected payerPaymentMethodRejected =
         Mockito.mock(PayerPaymentMethodRejected.class);
     when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("visa");
+    when(payerPaymentMethodRejected.getPaymentMethodId()).thenReturn("credit_card");
+    when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(new BigDecimal(123));
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(DIGITAL_CURRENCY.name());
+    when(alternativePayerPaymentMethod.getPaymentMethodId()).thenReturn(DIGITAL_CURRENCY.name());
+    final Installment installment = Mockito.mock(Installment.class);
+    when(installment.getTotalAmount()).thenReturn(new BigDecimal(111));
+    when(installment.getInstallments()).thenReturn(3);
+    when(alternativePayerPaymentMethod.getInstallmentsList())
+        .thenReturn(Arrays.asList(installment));
     when(remediesRequest.getAlternativePayerPaymentMethods())
         .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
 

@@ -2,8 +2,8 @@ package com.mercadolibre.utils.datadog;
 
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
-import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.metrics.MetricCollector;
 import com.mercadolibre.px.dto.lib.context.Context;
 
@@ -24,15 +24,16 @@ public class DatadogRemediesMetrics {
       final String metricName,
       final Context context,
       final RemediesRequest remediesRequest,
-      final PaymentMethodSelected paymentMethodSelected) {
+      final TrackingData trackingData) {
+
     final MetricCollector.Tags tags = getMetricTags(context, remediesRequest);
-    String paymentTypeSuggested = "none";
-    if (null != paymentMethodSelected
-        && null != paymentMethodSelected.getAlternativePayerPaymentMethod()) {
-      paymentTypeSuggested =
-          paymentMethodSelected.getAlternativePayerPaymentMethod().getPaymentMethodId();
-    }
-    addSuggestedPaymentMethod(tags, paymentTypeSuggested);
+
+    tags.add("suggested_payment_method", trackingData.getPaymentMethodId());
+    tags.add("suggested_payment_type", trackingData.getPaymentTypeId());
+    tags.add("suggested_intallments", trackingData.getInstallments());
+    tags.add("suggested_amount", trackingData.getAmount());
+    tags.add("frictionless", trackingData.getFrictionless());
+
     METRIC_COLLECTOR.incrementCounter(metricName, getMetricTags(context, remediesRequest));
   }
 
@@ -49,10 +50,5 @@ public class DatadogRemediesMetrics {
         "payment_rejected", remediesRequest.getPayerPaymentMethodRejected().getPaymentMethodId());
 
     return tags;
-  }
-
-  private static void addSuggestedPaymentMethod(
-      final MetricCollector.Tags tags, final String suggestedPaymentMethod) {
-    tags.add("suggested_payment_method", suggestedPaymentMethod);
   }
 }

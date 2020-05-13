@@ -1,6 +1,7 @@
 package com.mercadolibre.service.remedy;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_HIGH_RISK_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_HIGH_RISK_TAGGED_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_KYC_FAIL_COUNTER;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_BUTTON_LOUD;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_MESSAGE;
@@ -88,8 +89,10 @@ public class RemedyHighRisk implements RemedyInterface {
         remediesResponse.setHighRisk(responseHighRisk);
 
         DatadogRemediesMetrics.trackRemediesInfo(
-            REMEDY_HIGH_RISK_COUNTER, context, remediesRequest);
+            REMEDY_HIGH_RISK_TAGGED_COUNTER, context, remediesRequest);
       }
+
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_COUNTER, context, remediesRequest);
 
       return remediesResponse;
 
