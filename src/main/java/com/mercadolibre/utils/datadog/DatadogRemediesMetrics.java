@@ -34,7 +34,7 @@ public class DatadogRemediesMetrics {
     tags.add("suggested_amount", trackingData.getAmount());
     tags.add("frictionless", trackingData.getFrictionless());
 
-    METRIC_COLLECTOR.incrementCounter(metricName, getMetricTags(context, remediesRequest));
+    METRIC_COLLECTOR.incrementCounter(metricName, tags);
   }
 
   private static MetricCollector.Tags getMetricTags(
