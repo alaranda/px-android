@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.4]
+
+### Changed
+
+- Cambio en metricas para Sivler Bullet.
+
 ## [1.4.3]
 
 ### Added
