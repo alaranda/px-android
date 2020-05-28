@@ -8,6 +8,7 @@ public class Discounts {
   private int loyaltyDiscounts;
   private int totalDiscounts;
   private List<Item> items;
+  private TouchpointData touchpoint;
 
   public String getLink() {
     return link;
@@ -23,5 +24,9 @@ public class Discounts {
 
   public int getTotalDiscounts() {
     return totalDiscounts;
+  }
+
+  public TouchpointData getTouchpoint() {
+    return touchpoint;
   }
 }
