@@ -6,6 +6,7 @@ import static com.mercadolibre.utils.Translations.DISCOUNTS_DOWNLOAD_MP;
 import static com.mercadolibre.utils.Translations.DOWNLOAD;
 import static com.mercadolibre.utils.Translations.SEE_ALL;
 
+import com.mercadolibre.dto.congrats.merch.TouchpointData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.utils.Translations;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ public class Discounts {
   private String subtitle;
   private Action action;
   private ActionDownload actionDownload;
+  private TouchpointData touchpoint;
   private Set<DiscountItem> items;
 
   public Discounts(final Builder builder) {
@@ -26,6 +28,7 @@ public class Discounts {
     this.action = builder.action;
     this.actionDownload = builder.actionDownload;
     this.items = builder.items;
+    this.touchpoint = builder.touchpoint;
   }
 
   public static class Builder {
@@ -35,6 +38,7 @@ public class Discounts {
     private Action action;
     private ActionDownload actionDownload;
     private Set<DiscountItem> items;
+    private TouchpointData touchpoint;
 
     public Builder(
         final Context context,
@@ -83,6 +87,7 @@ public class Discounts {
           .collect(Collectors.toSet());
 
       this.items = items;
+      this.touchpoint = discounts.getTouchpoint();
     }
 
     public Discounts build() {

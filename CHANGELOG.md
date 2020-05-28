@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.6]
+
+### Changed
+
+- Se actualiza el modelo de Discounts.
+
 ## [1.4.5]
 
 ### Changed
