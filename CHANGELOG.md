@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.4.5]
+
+### Changed
+
+- Actualizo keys de babel.
+
 ## [1.4.4]
 
 ### Changed
