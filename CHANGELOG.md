@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.5.0]
+
+### Added
+
+- Se Agrega un flag en la respuesta de congrats que
+habilita o deshabilita el customOrder para los product ids de instore
+
 ## [1.4.6]
 
 ### Changed

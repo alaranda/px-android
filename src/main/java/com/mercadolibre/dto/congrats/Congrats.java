@@ -10,18 +10,21 @@ public class Congrats {
   private Set<CrossSelling> crossSelling;
   private Action viewReceipt;
   private Text topTextBox;
+  private boolean customOrder = false;
 
   public Congrats(
       final Points points,
       final Discounts discounts,
       final Set<CrossSelling> crossSelling,
       final Action viewReceipt,
-      final Text topTextBox) {
+      final Text topTextBox,
+      final boolean customOrder) {
     this.mpuntos = points;
     this.discounts = discounts;
     this.crossSelling = crossSelling;
     this.viewReceipt = viewReceipt;
     this.topTextBox = topTextBox;
+    this.customOrder = customOrder;
   }
 
   public Congrats() {
@@ -58,6 +61,10 @@ public class Congrats {
 
   public Text getTopTextBox() {
     return topTextBox;
+  }
+
+  public Boolean getCustomOrder() {
+    return customOrder;
   }
 
   public String toString() {
