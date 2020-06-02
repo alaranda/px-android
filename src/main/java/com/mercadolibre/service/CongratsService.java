@@ -25,7 +25,9 @@ import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.IfpeUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -36,17 +38,29 @@ import spark.utils.StringUtils;
 
 public class CongratsService {
 
-  private IfpeUtils ifpeUtils;
+  private static final Logger LOGGER = LogManager.getLogger();
+  private static final List<String> INSTORE_PRODUCT_IDS =
+      Arrays.asList(
+          "bh31umv10flg01nmhg60",
+          "bh31u3v10flg01nmhg5g",
+          "bh321atmiu3001hkebmg",
+          "bh3215f10flg01nmhg6g",
+          "bknneuko5mpg01jd8mfg",
+          "bknnfpko5mpg01jd8mg0",
+          "bknng4ko5mpg01jd8mgg",
+          "bknnga4o5mpg01jd8mh0",
+          "bckm077hau10018ovch0");
+
+  private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
+
+  private final IfpeUtils ifpeUtils;
+
+  public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
+  public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
 
   public CongratsService(final IfpeUtils ifpeUtils) {
     this.ifpeUtils = ifpeUtils;
   }
-
-  private static final Logger LOGGER = LogManager.getLogger();
-
-  public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
-  public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
-  private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
   /**
    * Retorna los puntos sumados en el pago y los acmulados mas los descuentos otorgados.
@@ -135,7 +149,13 @@ public class CongratsService {
               congratsRequest.getPaymentMehotdsIds(),
               context.getLocale());
 
-      return new Congrats(points, discounts, crossSelling, viewReceipt, ifpeCompliance);
+      return new Congrats(
+          points,
+          discounts,
+          crossSelling,
+          viewReceipt,
+          ifpeCompliance,
+          isCustomOrderEnabled(congratsRequest.getProductId()));
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -143,6 +163,10 @@ public class CongratsService {
               context, "Congrats Service", congratsRequest.toString(), e));
       return new Congrats();
     }
+  }
+
+  private boolean isCustomOrderEnabled(final String productId) {
+    return INSTORE_PRODUCT_IDS.stream().anyMatch(p -> p.equalsIgnoreCase(productId));
   }
 
   /**

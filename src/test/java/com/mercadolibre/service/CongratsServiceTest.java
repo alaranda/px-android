@@ -18,8 +18,6 @@ import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.utils.IfpeUtils;
-import io.restassured.http.Header;
-import io.restassured.http.Headers;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
@@ -42,16 +40,11 @@ public class CongratsServiceTest {
   private static final String PLATFORM_TEST_MP = "MP";
   private static final String PLATFORM_OTHER = "OTHER";
   private static final String DENSITY = "xxhdpi";
+  private static final String PRODUCT_ID_INSTORE = "bh3215f10flg01nmhg6g";
   private static final String PRODUCT_ID = "test";
   private static final String CAMPAIGN_ID_TEST = "5656565656";
   private static final String FLOW_NAME = "paymentsBlackLabel";
   private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
-  private static final Headers HEADERS =
-      new Headers(
-          new Header("accept-language", "es_AR"),
-          new Header("user-agent", "PX/iOS/4.5.0"),
-          new Header(DENSITY, DENSITY),
-          new Header(PRODUCT_ID, PRODUCT_ID));
 
   private static final IfpeUtils ifpeUtils = Mockito.mock(IfpeUtils.class);
   private static final CongratsService congratsService = new CongratsService(ifpeUtils);
@@ -81,6 +74,7 @@ public class CongratsServiceTest {
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
     assertThat(congrats.hasPoints(), is(true));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
@@ -106,6 +100,7 @@ public class CongratsServiceTest {
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
     assertThat(congrats.hasPoints(), is(false));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
@@ -129,6 +124,7 @@ public class CongratsServiceTest {
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getMpuntos().getAction().getTarget(), is("meli://hub"));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
@@ -154,10 +150,11 @@ public class CongratsServiceTest {
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
     assertThat(congrats.hasPoints(), is(false));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
-  public void getPointsAndDiscounts_validUserAgentAndroid_crossSellingAndDiscounts()
+  public void getPointsAndDiscounts_validUserAgentAndroid_crossSellingAndDiscountsAndCustomOrder()
       throws IOException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
@@ -170,7 +167,7 @@ public class CongratsServiceTest {
             PLATFORM_TEST_MP,
             invalidUserAgent,
             DENSITY,
-            PRODUCT_ID,
+            PRODUCT_ID_INSTORE,
             CAMPAIGN_ID_TEST,
             FLOW_NAME,
             false,
@@ -191,6 +188,7 @@ public class CongratsServiceTest {
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
     assertThat(congrats.hasPoints(), is(true));
+    assertThat(congrats.getCustomOrder(), is(true));
   }
 
   @Test
@@ -213,6 +211,7 @@ public class CongratsServiceTest {
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getMpuntos().getAction().getTarget(), is(""));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
@@ -231,6 +230,7 @@ public class CongratsServiceTest {
 
     assertThat(congrats.getViewReceipt().getTarget(), notNullValue());
     assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   @Test
@@ -248,6 +248,7 @@ public class CongratsServiceTest {
 
     assertThat(congrats.getViewReceipt(), nullValue());
     assertThat(congrats.getTopTextBox(), nullValue());
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   private CongratsRequest getDefaultCongratsRequestMock() {
