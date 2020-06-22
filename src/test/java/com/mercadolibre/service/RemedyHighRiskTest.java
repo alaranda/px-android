@@ -62,7 +62,7 @@ public class RemedyHighRiskTest {
     assertThat(responseHighRisk.getTitle(), is("Validá tu identidad para realizar el pago"));
     assertThat(
         responseHighRisk.getMessage(),
-        is("Te pediremos algunos datos. Ten a mano tu DNI. Solo te llevará unos minutos."));
+        is("Te pediremos algunos datos. Tené a mano tu DNI. Solo te llevará unos minutos."));
     assertThat(
         responseHighRisk.getDeepLink(),
         is("mercadopago://kyc/?initiative=px-high-risk&callback=mercadopago://px/one_tap"));

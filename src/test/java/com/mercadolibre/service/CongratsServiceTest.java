@@ -14,6 +14,7 @@ import com.mercadolibre.api.MockMerchAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
@@ -37,7 +38,6 @@ public class CongratsServiceTest {
   private static final String USER_ID_TEST = "11111111";
   private static final String CLIENT_ID_TEST = "0000000";
   private static final String PAYMENT_IDS_TEST = "333,222";
-  private static final String PLATFORM_TEST_MP = "MP";
   private static final String PLATFORM_OTHER = "OTHER";
   private static final String DENSITY = "xxhdpi";
   private static final String PRODUCT_ID_INSTORE = "bh3215f10flg01nmhg6g";
@@ -154,8 +154,9 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_validUserAgentAndroid_crossSellingAndDiscountsAndCustomOrder()
-      throws IOException {
+  public void
+      getPointsAndDiscounts_validUserAgentAndroidOnMercadopago_crossSellingAndDiscountsCustomOrderAndExpenseSplit()
+          throws IOException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
@@ -164,7 +165,7 @@ public class CongratsServiceTest {
             CLIENT_ID_TEST,
             Site.MLA.name(),
             PAYMENT_IDS_TEST,
-            PLATFORM_TEST_MP,
+            Platform.MP.getId(),
             invalidUserAgent,
             DENSITY,
             PRODUCT_ID_INSTORE,
@@ -189,6 +190,81 @@ public class CongratsServiceTest {
     assertThat(congrats.hasDiscounts(), is(true));
     assertThat(congrats.hasPoints(), is(true));
     assertThat(congrats.getCustomOrder(), is(true));
+
+    assertThat(
+        congrats.getExpenseSplit().getTitle().getMessage(),
+        is("Podés dividir este gasto con tus contactos"));
+    assertThat(congrats.getExpenseSplit().getTitle().getBackgroundColor(), is("#ffffff"));
+    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#cc000000"));
+    assertThat(congrats.getExpenseSplit().getTitle().getWeight(), is("semi_bold"));
+
+    assertThat(congrats.getExpenseSplit().getAction().getLabel(), is("Dividir gasto"));
+    assertThat(
+        congrats.getExpenseSplit().getAction().getTarget(),
+        is(
+            "mercadopago://mplayer/money_split_external?operation_id=333&source=paymentsBlackLabel"));
+
+    assertThat(
+        congrats.getExpenseSplit().getImageUrl(),
+        is(
+            "https://mobile.mercadolibre.com/remote_resources/image/px_congrats_money_split_mp?density=xxhdpi&locale=es_AR"));
+  }
+
+  @Test
+  public void
+      getPointsAndDiscounts_validUserAgentAndroidOnMercadoLibre_crossSellingAndDiscountsCustomOrderAndExpenseSplit()
+          throws IOException {
+
+    final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            Site.MLA.name(),
+            PAYMENT_IDS_TEST,
+            Platform.ML.getId(),
+            invalidUserAgent,
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null);
+
+    MockLoyaltyApi.getAsyncPoints(
+        congratsRequest,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        congratsRequest,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertThat(congrats.getCrossSelling(), notNullValue());
+    assertThat(congrats.hasDiscounts(), is(true));
+    assertThat(congrats.hasPoints(), is(true));
+    assertThat(congrats.getCustomOrder(), is(true));
+
+    assertThat(
+        congrats.getExpenseSplit().getTitle().getMessage(),
+        is("Podés dividir este gasto con tus contactos"));
+    assertThat(congrats.getExpenseSplit().getTitle().getBackgroundColor(), is("#ffffff"));
+    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#cc000000"));
+    assertThat(congrats.getExpenseSplit().getTitle().getWeight(), is("semi_bold"));
+
+    assertThat(congrats.getExpenseSplit().getAction().getLabel(), is("Dividir gasto"));
+    assertThat(
+        congrats.getExpenseSplit().getAction().getTarget(),
+        is(
+            "mercadolibre://mplayer/money_split_external?operation_id=333&source=paymentsBlackLabel"));
+
+    assertThat(
+        congrats.getExpenseSplit().getImageUrl(),
+        is(
+            "https://mobile.mercadolibre.com/remote_resources/image/px_congrats_money_split_ml?density=xxhdpi&locale=es_AR"));
   }
 
   @Test
@@ -258,7 +334,7 @@ public class CongratsServiceTest {
     when(congratsRequest.getClientId()).thenReturn(CLIENT_ID_TEST);
     when(congratsRequest.getSiteId()).thenReturn(Site.MLA.name());
     when(congratsRequest.getPaymentIds()).thenReturn(PAYMENT_IDS_TEST);
-    when(congratsRequest.getPlatform()).thenReturn(PLATFORM_TEST_MP);
+    when(congratsRequest.getPlatform()).thenReturn(Platform.MP.getId());
     when(congratsRequest.getUserAgent()).thenReturn(USER_AGENT_IOS);
     when(congratsRequest.getDensity()).thenReturn(DENSITY);
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
