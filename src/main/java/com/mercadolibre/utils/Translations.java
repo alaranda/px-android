@@ -57,6 +57,9 @@ public enum Translations {
   public static final String REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD =
       "remedy.call_for_authorize.button.loud";
 
+  public static final String EXPENSE_SPLIT_TITLE = "expense.split.title";
+  public static final String EXPENSE_SPLIT_BUTTON_TITLE = "expense.split.button.title";
+
   private I18nService i18nService = new I18nService();
 
   /**
@@ -155,6 +158,10 @@ public enum Translations {
             locale);
       case REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD:
         return i18nService.tr("Autorizar el pago.", locale);
+      case EXPENSE_SPLIT_TITLE:
+        return i18nService.tr("Puedes dividir este gasto con tus contactos", locale);
+      case EXPENSE_SPLIT_BUTTON_TITLE:
+        return i18nService.tr("Dividir gasto", locale);
       default:
         return "";
     }

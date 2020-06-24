@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.6.0]
+
+### Added
+
+- Se agrega la funcionalidad de división de gastos con amigos
+
 ## [1.5.0]
 
 ### Added
