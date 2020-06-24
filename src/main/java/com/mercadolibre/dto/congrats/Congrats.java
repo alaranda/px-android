@@ -11,6 +11,7 @@ public class Congrats {
   private Action viewReceipt;
   private Text topTextBox;
   private boolean customOrder = false;
+  private ExpenseSplit expenseSplit = null;
 
   public Congrats(
       final Points points,
@@ -18,13 +19,15 @@ public class Congrats {
       final Set<CrossSelling> crossSelling,
       final Action viewReceipt,
       final Text topTextBox,
-      final boolean customOrder) {
+      final boolean customOrder,
+      final ExpenseSplit expenseSplit) {
     this.mpuntos = points;
     this.discounts = discounts;
     this.crossSelling = crossSelling;
     this.viewReceipt = viewReceipt;
     this.topTextBox = topTextBox;
     this.customOrder = customOrder;
+    this.expenseSplit = expenseSplit;
   }
 
   public Congrats() {
@@ -65,6 +68,10 @@ public class Congrats {
 
   public Boolean getCustomOrder() {
     return customOrder;
+  }
+
+  public ExpenseSplit getExpenseSplit() {
+    return expenseSplit;
   }
 
   public String toString() {

@@ -12,14 +12,17 @@ import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.CrossSelling;
 import com.mercadolibre.dto.congrats.Discounts;
+import com.mercadolibre.dto.congrats.ExpenseSplit;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.Version;
 import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.services.OnDemandResourcesService;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.IfpeUtils;
@@ -27,11 +30,13 @@ import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.utils.StringUtils;
@@ -53,10 +58,23 @@ public class CongratsService {
 
   private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
+  private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
+
+  private static final String EXPENSE_SPLIT_ML_DEEPLINK =
+      "mercadolibre://mplayer/money_split_external?operation_id=%s&source=%s";
+  private static final String EXPENSE_SPLIT_MP_DEEPLINK =
+      "mercadopago://mplayer/money_split_external?operation_id=%s&source=%s";
+  private static final String EXPENSE_SPLIT_TEXT_COLOUR = "#cc000000";
+  private static final String EXPENSE_SPLIT_WEIGHT = "semi_bold";
+  private static final String EXPENSE_SPLIT_MP_ODR_ICON_KEY = "px_congrats_money_split_mp";
+  private static final String EXPENSE_SPLIT_ML_ODR_ICON_KEY = "px_congrats_money_split_ml";
+
   private final IfpeUtils ifpeUtils;
 
   public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
   public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
+
+  private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
 
   public CongratsService(final IfpeUtils ifpeUtils) {
     this.ifpeUtils = ifpeUtils;
@@ -113,11 +131,17 @@ public class CongratsService {
         final MerchResponse merchResponse = optionalMerchResponse.get();
         if (null != merchResponse.getCrossSelling()) {
           crossSelling = new HashSet<>();
-          final String iconUrl =
-              OnDemandResources.createOnDemandResoucesUrlByContent(
-                  congratsRequest,
-                  merchResponse.getCrossSelling().getContent(),
-                  context.getLocale());
+
+          String iconUrl = null;
+
+          if (merchResponse.getCrossSelling().getContent() != null) {
+            iconUrl =
+                OnDemandResourcesService.createOnDemandResourcesUrl(
+                    merchResponse.getCrossSelling().getContent().getIcon(),
+                    congratsRequest.getDensity(),
+                    context.getLocale().toString());
+          }
+
           crossSelling.add(
               new CrossSelling.Builder(merchResponse.getCrossSelling().getContent(), iconUrl)
                   .build());
@@ -155,7 +179,8 @@ public class CongratsService {
           crossSelling,
           viewReceipt,
           ifpeCompliance,
-          isCustomOrderEnabled(congratsRequest.getProductId()));
+          isCustomOrderEnabled(congratsRequest.getProductId()),
+          generateExpenseSplitNode(context.getLocale(), congratsRequest));
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -163,6 +188,55 @@ public class CongratsService {
               context, "Congrats Service", congratsRequest.toString(), e));
       return new Congrats();
     }
+  }
+
+  private ExpenseSplit generateExpenseSplitNode(
+      final Locale locale, final CongratsRequest congratsRequest) {
+
+    if (!INSTORE_PRODUCT_IDS.stream()
+            .anyMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
+        || StringUtils.isEmpty(congratsRequest.getPaymentIds())) {
+      return null;
+    }
+
+    Text title =
+        new Text(
+            Translations.INSTANCE.getTranslationByLocale(locale, Translations.EXPENSE_SPLIT_TITLE),
+            EXPENSE_SPLIT_BACKGROUND_COLOUR,
+            EXPENSE_SPLIT_TEXT_COLOUR,
+            EXPENSE_SPLIT_WEIGHT);
+
+    String deeplink = EXPENSE_SPLIT_MP_DEEPLINK;
+    String odrKey = EXPENSE_SPLIT_MP_ODR_ICON_KEY;
+
+    // TODO: Remove platform from the congratsRequest and use the one in Context
+    if (Platform.ML.getId().equalsIgnoreCase(congratsRequest.getPlatform())) {
+      deeplink = EXPENSE_SPLIT_ML_DEEPLINK;
+      odrKey = EXPENSE_SPLIT_ML_ODR_ICON_KEY;
+    }
+
+    Iterator<String> paymentIdsIt =
+        Arrays.asList(SPLIT_BY_COMMA_PATTERN.split(congratsRequest.getPaymentIds())).iterator();
+
+    if (!paymentIdsIt.hasNext()) {
+      return null;
+    }
+
+    String paymentId = paymentIdsIt.next();
+
+    deeplink = String.format(deeplink, paymentId, congratsRequest.getFlowName());
+
+    Action action =
+        new Action(
+            Translations.INSTANCE.getTranslationByLocale(
+                locale, Translations.EXPENSE_SPLIT_BUTTON_TITLE),
+            deeplink);
+
+    String icon =
+        OnDemandResourcesService.createOnDemandResourcesUrl(
+            odrKey, congratsRequest.getDensity(), locale.toString());
+
+    return new ExpenseSplit(title, action, icon);
   }
 
   private boolean isCustomOrderEnabled(final String productId) {
