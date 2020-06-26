@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.6.1]
+
+### Changed
+
+- Se modifica la url de división de gastos con amigos, se usa la misma
+tanto para ML como MP
+
 ## [1.6.0]
 
 ### Added
