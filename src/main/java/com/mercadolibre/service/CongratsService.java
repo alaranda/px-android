@@ -66,8 +66,7 @@ public class CongratsService {
       "mercadopago://mplayer/money_split_external?operation_id=%s&source=%s";
   private static final String EXPENSE_SPLIT_TEXT_COLOUR = "#cc000000";
   private static final String EXPENSE_SPLIT_WEIGHT = "semi_bold";
-  private static final String EXPENSE_SPLIT_MP_ODR_ICON_KEY = "px_congrats_money_split_mp";
-  private static final String EXPENSE_SPLIT_ML_ODR_ICON_KEY = "px_congrats_money_split_ml";
+  private static final String EXPENSE_SPLIT_ODR_ICON_KEY = "px_congrats_money_split_mp";
 
   private final IfpeUtils ifpeUtils;
 
@@ -207,12 +206,10 @@ public class CongratsService {
             EXPENSE_SPLIT_WEIGHT);
 
     String deeplink = EXPENSE_SPLIT_MP_DEEPLINK;
-    String odrKey = EXPENSE_SPLIT_MP_ODR_ICON_KEY;
 
     // TODO: Remove platform from the congratsRequest and use the one in Context
     if (Platform.ML.getId().equalsIgnoreCase(congratsRequest.getPlatform())) {
       deeplink = EXPENSE_SPLIT_ML_DEEPLINK;
-      odrKey = EXPENSE_SPLIT_ML_ODR_ICON_KEY;
     }
 
     Iterator<String> paymentIdsIt =
@@ -234,7 +231,7 @@ public class CongratsService {
 
     String icon =
         OnDemandResourcesService.createOnDemandResourcesUrl(
-            odrKey, congratsRequest.getDensity(), locale.toString());
+            EXPENSE_SPLIT_ODR_ICON_KEY, congratsRequest.getDensity(), locale.toString());
 
     return new ExpenseSplit(title, action, icon);
   }
