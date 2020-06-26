@@ -264,7 +264,7 @@ public class CongratsServiceTest {
     assertThat(
         congrats.getExpenseSplit().getImageUrl(),
         is(
-            "https://mobile.mercadolibre.com/remote_resources/image/px_congrats_money_split_ml?density=xxhdpi&locale=es_AR"));
+            "https://mobile.mercadolibre.com/remote_resources/image/px_congrats_money_split_mp?density=xxhdpi&locale=es_AR"));
   }
 
   @Test
