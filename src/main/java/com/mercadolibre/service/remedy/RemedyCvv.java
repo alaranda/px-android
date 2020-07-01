@@ -9,6 +9,9 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.toolkit.dto.Version;
+import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
+import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 
@@ -16,6 +19,10 @@ public class RemedyCvv implements RemedyInterface {
 
   private final String FIELD_SETTING_NAME = "security_code";
   private static final String SECURITY_CODE_LOCATION_FRONT = "front";
+  /** Hack Android Invalid version since */
+  private static final Version INVALID_VERSION_ANDROID_SINCE = new Version("4.48.0");
+  /** Hack Android Invalid version to */
+  private static final Version INVALID_VERSION_ANDROID_TO = new Version("4.49.0");
 
   @Override
   public RemediesResponse applyRemedy(
@@ -26,7 +33,8 @@ public class RemedyCvv implements RemedyInterface {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
 
-    if (payerPaymentMethodRejected == null) {
+    if (payerPaymentMethodRejected == null
+        || validateVersionAndroid(remediesRequest.getUserAgent())) {
       return remediesResponse;
     }
 
@@ -83,5 +91,15 @@ public class RemedyCvv implements RemedyInterface {
         .message(message)
         .fieldSetting(fieldSettingBuilder.build())
         .build();
+  }
+
+  private boolean validateVersionAndroid(final UserAgent userAgent) {
+
+    if (userAgent.getOperatingSystem().equals(OperatingSystem.ANDROID)
+        && userAgent.getVersion().compareTo(INVALID_VERSION_ANDROID_SINCE) >= 0
+        && userAgent.getVersion().compareTo(INVALID_VERSION_ANDROID_TO) < 0) {
+      return true;
+    }
+    return false;
   }
 }

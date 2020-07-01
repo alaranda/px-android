@@ -23,7 +23,7 @@ public class MockTestHelper {
   public static RemediesRequest mockRemediesRequest(
       final Long riskId, final String callerId, final String site) {
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/IOS/0.0.0"));
+    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.40.0"));
     when(remediesRequest.getRiskExcecutionId()).thenReturn(riskId);
     when(remediesRequest.getUserId()).thenReturn(callerId);
     when(remediesRequest.getSiteId()).thenReturn(site);
