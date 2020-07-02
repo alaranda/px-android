@@ -72,6 +72,7 @@ public class RemedyCvvTest {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("8888", "Icbc", new BigDecimal(321), "front", 4);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/IOS/4.48.0"));
 
     final RemediesResponse remediesResponse =
         remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
@@ -95,5 +96,21 @@ public class RemedyCvvTest {
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv, is(nullValue()));
+  }
+
+  @Test
+  public void applyRemedyTest_statusDetailCvvInvalidAndroidVersion_emptyRemedy() {
+
+    final RemediesRequest remediesRequest = mockRemediesRequest(123l, "123", Site.MLA.name());
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethod("8888", "Icbc", new BigDecimal(321), "front", 4);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.48.0"));
+
+    final RemediesResponse remediesResponse =
+        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+
+    final ResponseCvv responseCvv = remediesResponse.getCvv();
+    assertThat(responseCvv, nullValue());
   }
 }

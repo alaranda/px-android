@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.7.0]
+
+### Added
+
+- Agrego validacion para no devolver remedy de CVV para versiones de Android 4.48.X.
+
 ## [1.6.1]
 
 ### Changed
