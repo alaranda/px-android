@@ -143,6 +143,7 @@ public enum PaymentsController {
             .locale(request.headers(LANGUAGE))
             .build();
     final PaymentRequest paymentRequest = getPaymentRequest(request, context);
+
     LOGGER.info(
         new LogBuilder(context.getRequestId(), REQUEST_IN)
             .withSource(CONTROLLER_NAME)

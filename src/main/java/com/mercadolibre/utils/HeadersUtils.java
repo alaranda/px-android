@@ -21,6 +21,11 @@ public enum HeadersUtils {
 
   public static final String ONE_TAP = "one_tap";
 
+  // For payments request
+  public static final String X_TRACKING_ID_SECURITY = "X-Tracking-Id";
+  public static final String AUTHENTICATION_FACTOR_2FA = "security:2fa";
+  public static final String AUTHENTICATION_FACTOR_NONE = "security:none";
+
   /**
    * Store a Spark request headers in MeLi representation of {@link Headers}.
    *
@@ -80,7 +85,18 @@ public enum HeadersUtils {
     }
     filteredHeaders.add(X_REQUEST_ID, requestId);
     filteredHeaders.add(getPaymentsCallerScopes());
+    if (null != headers.getHeader(X_SECURITY)) {
+      filteredHeaders.add(calculateSecurityHeader(headers));
+    }
     return filteredHeaders;
+  }
+
+  public static Header calculateSecurityHeader(Headers headers) {
+    Header securityHeader = headers.getHeader(X_SECURITY);
+    if (securityHeader.getValue().equalsIgnoreCase(AUTHENTICATION_FACTOR_2FA)) {
+      return new Header(X_TRACKING_ID_SECURITY, AUTHENTICATION_FACTOR_2FA);
+    }
+    return new Header(X_TRACKING_ID_SECURITY, AUTHENTICATION_FACTOR_NONE);
   }
 
   private static String generateKey(final String token, final String requestId) {
