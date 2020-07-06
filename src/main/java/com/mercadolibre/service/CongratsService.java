@@ -64,7 +64,7 @@ public class CongratsService {
       "mercadolibre://mplayer/money_split_external?operation_id=%s&source=%s";
   private static final String EXPENSE_SPLIT_MP_DEEPLINK =
       "mercadopago://mplayer/money_split_external?operation_id=%s&source=%s";
-  private static final String EXPENSE_SPLIT_TEXT_COLOUR = "#cc000000";
+  private static final String EXPENSE_SPLIT_TEXT_COLOR = "#333333";
   private static final String EXPENSE_SPLIT_WEIGHT = "semi_bold";
   private static final String EXPENSE_SPLIT_ODR_ICON_KEY = "px_congrats_money_split_mp";
 
@@ -202,7 +202,7 @@ public class CongratsService {
         new Text(
             Translations.INSTANCE.getTranslationByLocale(locale, Translations.EXPENSE_SPLIT_TITLE),
             EXPENSE_SPLIT_BACKGROUND_COLOUR,
-            EXPENSE_SPLIT_TEXT_COLOUR,
+            EXPENSE_SPLIT_TEXT_COLOR,
             EXPENSE_SPLIT_WEIGHT);
 
     String deeplink = EXPENSE_SPLIT_MP_DEEPLINK;
