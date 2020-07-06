@@ -2,12 +2,17 @@
 
 # Change Log
 
+## [1.8.1]
+
+### Changed
+
+- Se cambia el color del texto para expense split
+
 ## [1.8.0]
 
 ### Added
 
 - Se agrega header de security indicando el uso de 2fa o no, en request a payments
-
 
 ## [1.7.0]
 
