@@ -195,7 +195,7 @@ public class CongratsServiceTest {
         congrats.getExpenseSplit().getTitle().getMessage(),
         is("Podés dividir este gasto con tus contactos"));
     assertThat(congrats.getExpenseSplit().getTitle().getBackgroundColor(), is("#ffffff"));
-    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#cc000000"));
+    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#333333"));
     assertThat(congrats.getExpenseSplit().getTitle().getWeight(), is("semi_bold"));
 
     assertThat(congrats.getExpenseSplit().getAction().getLabel(), is("Dividir gasto"));
@@ -252,7 +252,7 @@ public class CongratsServiceTest {
         congrats.getExpenseSplit().getTitle().getMessage(),
         is("Podés dividir este gasto con tus contactos"));
     assertThat(congrats.getExpenseSplit().getTitle().getBackgroundColor(), is("#ffffff"));
-    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#cc000000"));
+    assertThat(congrats.getExpenseSplit().getTitle().getTextColor(), is("#333333"));
     assertThat(congrats.getExpenseSplit().getTitle().getWeight(), is("semi_bold"));
 
     assertThat(congrats.getExpenseSplit().getAction().getLabel(), is("Dividir gasto"));
