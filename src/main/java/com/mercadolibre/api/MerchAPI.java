@@ -9,6 +9,7 @@ import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.dto.congrats.CongratsRequest;
@@ -68,6 +69,10 @@ public enum MerchAPI {
       final Context context, final CongratsRequest congratsRequest) {
 
     final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
+
+    Optional.ofNullable(context.getUserAgent())
+        .map(userAgent -> headers.add(USER_AGENT, userAgent.toString()));
+
     final URIBuilder url = buildUrl(congratsRequest);
 
     try {
