@@ -2,6 +2,7 @@ package com.mercadolibre.utils;
 
 import static org.mockito.Mockito.when;
 
+import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.Preference;
@@ -17,6 +18,7 @@ import org.mockito.Mockito;
 public class DatadogPreferencesMetricTest {
 
   final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
+  final Context context = Mockito.mock(Context.class);
 
   @Before
   public void before() {
@@ -24,19 +26,22 @@ public class DatadogPreferencesMetricTest {
   }
 
   @Test
-  public void testDatadogPreferencesMetricTagsIOS() {
-    Preference preference = Mockito.mock(Preference.class);
-    when(preference.getOperationType()).thenReturn("op_type");
-    when(preference.getMarketplace()).thenReturn("ML");
+  public void addPreferenceDataTest_validPreference_allInfo() {
+    PreferenceResponse preferenceResponse = Mockito.mock(PreferenceResponse.class);
+    when(preferenceResponse.getFlowId()).thenReturn("/multiplayer");
+    when(preferenceResponse.getProductId()).thenReturn("123");
 
     PublicKey publicKey = Mockito.mock(PublicKey.class);
     when(publicKey.getSiteId()).thenReturn("MLA");
 
-    DatadogPreferencesMetric.addPreferenceData(preference, publicKey, USER_AGENT_IOS.toString());
+    when(context.getSite()).thenReturn(Site.MLA);
+    when(context.getPlatform()).thenReturn(Platform.MP);
+
+    DatadogPreferencesMetric.addPreferenceData(context, preferenceResponse);
   }
 
   @Test
-  public void testDatadogPreferencesMetricTags() {
+  public void addPreferenceDataTest_invalidPreference_allInfo() {
     Preference preference = Mockito.mock(Preference.class);
     when(preference.getOperationType()).thenReturn("op_type");
     when(preference.getMarketplace()).thenReturn("ML");
@@ -46,7 +51,7 @@ public class DatadogPreferencesMetricTest {
     when(context.getFlow()).thenReturn("px_flow");
     when(context.getPlatform()).thenReturn(Platform.MP);
 
-    DatadogPreferencesMetric.addInvalidPreferenceData(preference, context);
+    DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
   }
 
   @Test
@@ -60,6 +65,6 @@ public class DatadogPreferencesMetricTest {
     when(context.getFlow()).thenReturn("px_flow");
     when(context.getPlatform()).thenReturn(null);
 
-    DatadogPreferencesMetric.addInvalidPreferenceData(preference, context);
+    DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
   }
 }

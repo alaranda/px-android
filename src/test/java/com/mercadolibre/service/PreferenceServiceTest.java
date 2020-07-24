@@ -1,6 +1,5 @@
 package com.mercadolibre.service;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -9,10 +8,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
+import com.mercadolibre.api.MockKycVaultDao;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPreferenceTidyAPI;
-import com.mercadolibre.api.MockUserAPI;
-import com.mercadolibre.constants.Constants;
+import com.mercadolibre.api.MockPublicKeyAPI;
+import com.mercadolibre.dto.preference.InitPreferenceRequest;
+import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.Preference;
@@ -26,7 +27,6 @@ import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import spark.Request;
 import spark.utils.IOUtils;
 
 public class PreferenceServiceTest {
@@ -37,8 +37,8 @@ public class PreferenceServiceTest {
   }
 
   private static final String PREF_MELICOLLECTOR = "127330977-0f03b540-a8c2-4879-af10-66f619786c0c";
-  private static final Long USER_ID_1 = 243962506L;
-  private static final Long USER_ID_2 = 453962577L;
+  private static final String USER_ID_1 = "243962506";
+  private static final String USER_ID_2 = "453962577";
   public static final String REQUEST_ID = UUID.randomUUID().toString();
   public static final Context CONTEXT_ES =
       Context.builder().requestId(REQUEST_ID).locale("es-AR").platform(Platform.MP).build();
@@ -54,8 +54,10 @@ public class PreferenceServiceTest {
             getClass()
                 .getResourceAsStream(
                     "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
-    MockUserAPI.getById(
-        USER_ID_2, 200, IOUtils.toString(getClass().getResourceAsStream("/user/453962577.json")));
+
+    MockKycVaultDao.getSensitiveUserData(
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/kyc/userSensitiveData.json")));
 
     try {
       final Preference preference =
@@ -77,9 +79,6 @@ public class PreferenceServiceTest {
             getClass()
                 .getResourceAsStream(
                     "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
-    MockUserAPI.getById(
-        USER_ID_1, 200, IOUtils.toString(getClass().getResourceAsStream("/user/243962506.json")));
-    ;
 
     final Preference preference =
         PreferenceService.INSTANCE.getPreference(CONTEXT_ES, PREF_MELICOLLECTOR, USER_ID_1);
@@ -88,58 +87,54 @@ public class PreferenceServiceTest {
   }
 
   @Test
-  public void getClientId_setClientIdAT_clientIdAT() {
-
-    final Long clientID = PreferenceService.INSTANCE.getClientId(963L, 10101010L);
-    assertThat(clientID, is(10101010L));
-  }
-
-  @Test
-  public void getClientId_setClientIdPref_clientIdPref() {
-
-    final Long clientID = PreferenceService.INSTANCE.getClientId(456789L, 10101010L);
-    assertThat(clientID, is(456789L));
-  }
-
-  @Test
-  public void extractParamPrefId_ifShortIdIsNullThenReturnsPrefIdFromParam_success()
-      throws ApiException {
-    Request request = Mockito.mock(Request.class);
-    when(request.queryParams(Constants.SHORT_ID)).thenReturn("");
-    when(request.queryParams(Constants.PREF_ID)).thenReturn(":pref_id");
-    String prefId = PreferenceService.INSTANCE.extractParamPrefId(CONTEXT_ES, request);
-    assertEquals(prefId, ":pref_id");
-  }
-
-  @Test
   public void extractParamPrefId_ifShortIdIsNotNullThenUsesShortId_success()
-      throws IOException, ApiException {
+      throws IOException, ApiException, ExecutionException, InterruptedException {
     MockPreferenceTidyAPI.getPreferenceByKey(
-        "23BYCZ",
+        "45AASS",
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/preferenceTidy/23BYCZ.json")));
+        IOUtils.toString(getClass().getResourceAsStream("/preferenceTidy/45AASS.json")));
 
-    Request request = Mockito.mock(Request.class);
-    when(request.queryParams(Constants.SHORT_ID)).thenReturn("23BYCZ");
-    when(request.queryParams(Constants.PREF_ID)).thenReturn(null);
-    String response = PreferenceService.INSTANCE.extractParamPrefId(CONTEXT_ES, request);
-    assertTrue(!isBlank(response));
-    assertEquals(response, "395662610-297aa2ed-4556-4085-859f-726ab9bab51f");
+    MockPreferenceAPI.getById(
+        PREF_MELICOLLECTOR,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
+
+    MockPublicKeyAPI.getBycallerIdAndClientId(
+        "220115205",
+        "48638295529722",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn("45AASS");
+    when(initPreferenceRequest.getPrefId()).thenReturn(null);
+    when(initPreferenceRequest.getCallerId()).thenReturn("12345");
+    PreferenceResponse preferenceResponse =
+        PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
+    assertTrue(preferenceResponse != null);
+    assertEquals(preferenceResponse.getPrefId(), "127330977-0f03b540-a8c2-4879-af10-66f619786c0c");
+    assertEquals(preferenceResponse.getPublicKey(), "APP_USR-b96cf47b-cbb2-4c8c-83cb-a8cb01167b4e");
   }
 
   @Test
-  public void extractParamPrefId_ifShortIdIsNotNullThenUsesShortId_fails() throws IOException {
+  public void extractParamPrefId_ifShortIdIsNotNullThenUsesShortId_fails()
+      throws IOException, ExecutionException, InterruptedException {
     MockPreferenceTidyAPI.getPreferenceByKey(
         "23BYCZ",
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass().getResourceAsStream("/preferenceTidy/200InvalidPreference.json")));
 
-    Request request = Mockito.mock(Request.class);
-    when(request.queryParams(Constants.SHORT_ID)).thenReturn("23BYCZ");
-    when(request.queryParams(Constants.PREF_ID)).thenReturn(null);
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn("23BYCZ");
+    when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      String response = PreferenceService.INSTANCE.extractParamPrefId(CONTEXT_ES, request);
+      PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");
@@ -147,12 +142,13 @@ public class PreferenceServiceTest {
   }
 
   @Test
-  public void extractParamPrefId_ifShortIdIsNullAndPrefIdIsNull_fails() {
-    Request request = Mockito.mock(Request.class);
-    when(request.queryParams(Constants.SHORT_ID)).thenReturn(null);
-    when(request.queryParams(Constants.PREF_ID)).thenReturn(null);
+  public void extractParamPrefId_ifShortIdIsNullAndPrefIdIsNull_fails()
+      throws ExecutionException, InterruptedException {
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn(null);
+    when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      PreferenceService.INSTANCE.extractParamPrefId(CONTEXT_ES, request);
+      PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");
