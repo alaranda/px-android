@@ -212,6 +212,47 @@ public class CongratsServiceTest {
 
   @Test
   public void
+      getPointsAndDiscounts_validUserAgentAndroidOnMercadopagoAndMLU_crossSellingAndDiscountsCustomOrderAndNoExpenseSplit()
+          throws IOException {
+
+    final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            Site.MLU.name(),
+            PAYMENT_IDS_TEST,
+            Platform.MP.getId(),
+            invalidUserAgent,
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null);
+
+    MockLoyaltyApi.getAsyncPoints(
+        congratsRequest,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        congratsRequest,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertThat(congrats.getCrossSelling(), notNullValue());
+    assertThat(congrats.hasDiscounts(), is(true));
+    assertThat(congrats.hasPoints(), is(true));
+    assertThat(congrats.getCustomOrder(), is(true));
+
+    assertThat(congrats.getExpenseSplit(), is(nullValue()));
+  }
+
+  @Test
+  public void
       getPointsAndDiscounts_validUserAgentAndroidOnMercadoLibre_crossSellingAndDiscountsCustomOrderAndExpenseSplit()
           throws IOException {
 
@@ -291,7 +332,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() throws IOException {
+  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() {
 
     final Context context = Mockito.mock(Context.class);
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
@@ -310,7 +351,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() throws IOException {
+  public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() {
 
     final Context context = Mockito.mock(Context.class);
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));

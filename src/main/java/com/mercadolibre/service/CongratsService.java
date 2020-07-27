@@ -17,6 +17,7 @@ import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
+import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.Version;
@@ -195,6 +196,10 @@ public class CongratsService {
     if (!INSTORE_PRODUCT_IDS.stream()
             .anyMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
         || StringUtils.isEmpty(congratsRequest.getPaymentIds())) {
+      return null;
+    }
+
+    if (Site.MLU.getSiteId().equalsIgnoreCase(congratsRequest.getSiteId())) {
       return null;
     }
 
