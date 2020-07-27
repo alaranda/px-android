@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.9.0]
+
+### Added
+
+- Se comienza a enviar el User-Agent de las apps en la pegada a Merch Engine.
+
 ## [1.8.1]
 
 ### Changed
