@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.9.0]
+
+### Added
+
+- Se comienza a enviar el User-Agent de las apps en la pegada a Merch Engine.
+- Se excluye MLU del flujo de división de gastos con amigos.
+
 ## [1.8.1]
 
 ### Changed

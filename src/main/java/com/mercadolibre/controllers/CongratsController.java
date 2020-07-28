@@ -10,6 +10,8 @@ import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
+import static com.mercadolibre.utils.HeadersUtils.userAgentFromHeader;
+import static org.apache.http.protocol.HTTP.USER_AGENT;
 
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
@@ -56,6 +58,7 @@ public class CongratsController {
         Context.builder()
             .requestId(request.attribute(REQUEST_ID))
             .locale(language, request.queryParams(CALLER_SITE_ID))
+            .userAgent(userAgentFromHeader(request.headers(USER_AGENT)))
             .build();
 
     final CongratsRequest congratsRequest = getCongratsRequest(request);
