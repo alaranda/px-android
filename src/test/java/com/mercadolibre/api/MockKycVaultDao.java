@@ -1,17 +1,15 @@
 package com.mercadolibre.api;
 
-import static com.mercadolibre.api.UserAPI.buildUrl;
-
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;
 
-public class MockUserAPI {
+public class MockKycVaultDao {
 
-  public static void getById(final Long userId, final int statusCode, final String body) {
+  public static void getSensitiveUserData(final int statusCode, final String body) {
     MockResponse.builder()
-        .withURL(buildUrl(userId).toString())
-        .withMethod(HttpMethod.GET)
+        .withURL("http://api.internal.ml.com/kyc/graphql")
+        .withMethod(HttpMethod.POST)
         .withStatusCode(statusCode)
         .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
         .withResponseHeader("Cache-Control", "max-age=0")

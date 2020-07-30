@@ -31,6 +31,8 @@ public class PaymentBody {
   private Order order;
   private String marketplace;
   private String operationType;
+  private Object internalMetadata;
+  private String notificationUrl;
 
   public String getToken() {
     return token;
@@ -105,6 +107,8 @@ public class PaymentBody {
     this.order = builder.order;
     this.marketplace = builder.marketplace;
     this.operationType = builder.operationType;
+    this.internalMetadata = builder.internalMetadata;
+    this.notificationUrl = builder.notificationUrl;
   }
 
   public static final class Builder {
@@ -125,6 +129,8 @@ public class PaymentBody {
     private Order order;
     private String marketplace;
     private String operationType;
+    private Object internalMetadata;
+    private String notificationUrl;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData, final Preference preference) {
@@ -192,6 +198,8 @@ public class PaymentBody {
         this.differentialPricingId = preference.getDifferentialPricing().getId();
       }
       this.operationType = preference.getOperationType();
+      this.internalMetadata = preference.getInternalMetadta();
+      this.notificationUrl = preference.getNotificationUrl();
     }
 
     // Validacion para soportar las distintas firmas del front.

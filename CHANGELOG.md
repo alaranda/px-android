@@ -2,6 +2,21 @@
 
 # Change Log
 
+## [1.10.0]
+
+### Added
+
+- Se agrega a la respuesta el flowId y el productId.
+- Se agrega en el request a payments internal metadata y external reference.
+
+### Changed
+
+- Refactor en Init Preference
+- Se invierten el hint message y el title en el remedy de cvv.
+- Saco api de users y la reemplazo por kyc para el flujo de pago de facturas de meli.
+- Actualizacion de la lib de api 0.3.0.
+- Actualizacion de la lib de dto 0.9.0.
+
 ## [1.9.0]
 
 ### Added

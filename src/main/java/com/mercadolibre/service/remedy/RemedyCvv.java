@@ -70,20 +70,20 @@ public class RemedyCvv implements RemedyInterface {
     final FieldSetting.FieldSettingBuilder fieldSettingBuilder =
         FieldSetting.builder()
             .name(FIELD_SETTING_NAME)
-            .title(
+            .hintMessage(
                 Translations.INSTANCE.getTranslationByLocale(
-                    context.getLocale(), REMEDY_FIELD_SETTING_CVV_TITLE))
+                    context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE))
             .length(payerPaymentMethodRejected.getSecurityCodeLength());
 
     if (SECURITY_CODE_LOCATION_FRONT.equalsIgnoreCase(
         payerPaymentMethodRejected.getSecurityCodeLocation())) {
-      fieldSettingBuilder.hintMessage(
+      fieldSettingBuilder.title(
           Translations.INSTANCE.getTranslationByLocale(
-              context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT));
+              context.getLocale(), REMEDY_FIELD_SETTING_CVV_TITLE_FRONT));
     } else {
-      fieldSettingBuilder.hintMessage(
+      fieldSettingBuilder.title(
           Translations.INSTANCE.getTranslationByLocale(
-              context.getLocale(), REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK));
+              context.getLocale(), REMEDY_FIELD_SETTING_CVV_TITLE_BACK));
     }
 
     return ResponseCvv.builder()
