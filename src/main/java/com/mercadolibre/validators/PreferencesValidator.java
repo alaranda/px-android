@@ -19,11 +19,11 @@ public class PreferencesValidator {
    * @param callerId id del payer
    * @throws ValidationException falla la validacion
    */
-  public void validate(final Context context, final Preference preference, final Long callerId)
+  public void validate(final Context context, final Preference preference, final String callerId)
       throws ValidationException {
 
-    if (String.valueOf(callerId).equals(preference.getCollectorId())) {
-      DatadogPreferencesMetric.addInvalidPreferenceData(preference, context);
+    if (callerId.equals(preference.getCollectorId())) {
+      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
       ValidatorResult.fail(
               Translations.INSTANCE.getTranslationByLocale(
                   context.getLocale(), CANNOT_PAY_JUST_FOR_COLLECT))

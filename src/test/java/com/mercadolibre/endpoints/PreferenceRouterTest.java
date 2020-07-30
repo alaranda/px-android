@@ -73,7 +73,7 @@ public class PreferenceRouterTest {
 
     MockPublicKeyAPI.getBycallerIdAndClientId(
         "395662610",
-        4190463107814393L,
+        "4190463107814393",
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass()
@@ -125,7 +125,7 @@ public class PreferenceRouterTest {
 
     MockPublicKeyAPI.getBycallerIdAndClientId(
         "395662610",
-        4190463107814393L,
+        "4190463107814393",
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass()

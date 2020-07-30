@@ -127,17 +127,18 @@ public enum PublicKeyAPI {
    * the response then null is returned.
    *
    * @param context context object
-   * @param callerId caller id
-   * @param clientId client id
+   * @param preferenceCollectorId preferenceCollectorId
+   * @param clientId clientId
    * @return CompletableFutureEitherPublicKeyInfoApiError
    * @throws ApiException (optional) if the api call fail
    */
   @Trace(dispatcher = true, nameTransaction = true)
   public Either<PublicKey, ApiError> getBycallerIdAndClientId(
-      final Context context, final String callerId, final Long clientId) throws ApiException {
+      final Context context, final String preferenceCollectorId, final String clientId)
+      throws ApiException {
 
     final Headers headers = getHeaders(context.getRequestId());
-    final URIBuilder url = getPathWithParams(callerId, clientId);
+    final URIBuilder url = getPathWithParams(preferenceCollectorId, clientId);
 
     try {
       final Response response = RestUtils.newRestRequestBuilder(POOL_NAME).get(url.toString());
@@ -172,12 +173,12 @@ public enum PublicKeyAPI {
   }
 
   @VisibleForTesting
-  static URIBuilder getPathWithParams(final String callerId, final Long clientId) {
+  static URIBuilder getPathWithParams(final String callerId, final String clientId) {
     return new URIBuilder()
         .setScheme(Config.getString(Constants.PUBLIC_KEY_URL_SCHEME))
         .setHost(Config.getString(Constants.PUBLIC_KEY_URL_HOST))
         .setPath(URL)
         .addParameter("caller.id", callerId)
-        .addParameter("client.id", String.valueOf(clientId));
+        .addParameter("client.id", clientId);
   }
 }

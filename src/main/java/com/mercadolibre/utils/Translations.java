@@ -22,11 +22,12 @@ public enum Translations {
   public static final String REMEDY_CVV_TITLE = "remedy.cvv.title";
   public static final String REMEDY_CVV_MESSAGE = "remedy.cvv.message";
   public static final String REMEDY_CVV_SUGGESTION_PM_MESSAGE = "remedy.cvv_suggestion_pm.message";
-  public static final String REMEDY_FIELD_SETTING_CVV_TITLE = "remedy.fieldsetting.cvv.title";
-  public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK =
-      "remedy.fieldsetting.cvv.hintmessage.back";
-  public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT =
-      "remedy.fieldsetting.cvv.hintmessage.front";
+  public static final String REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE =
+      "remedy.fieldsetting.hintmessage.title";
+  public static final String REMEDY_FIELD_SETTING_CVV_TITLE_BACK =
+      "remedy.fieldsetting.cvv.title.back";
+  public static final String REMEDY_FIELD_SETTING_CVV_TITLE_FRONT =
+      "remedy.fieldsetting.cvv.title.front";
   public static final String REMEDY_HIGH_RISK_TITLE = "remedy.highrisk.title";
   public static final String REMEDY_HIGH_RISK_MESSAGE = "remedy.highrisk.message";
   public static final String REMEDY_HIGH_RISK_BUTTON_LOUD = "remedy.highrisk.button.loud";
@@ -100,11 +101,11 @@ public enum Translations {
         return i18nService.tr(
             "Te sugerimos ingresar el código de seguridad de tu %s **** %s para reintentar con este medio:",
             locale);
-      case REMEDY_FIELD_SETTING_CVV_TITLE:
+      case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE:
         return i18nService.tr("Código de seguridad", locale);
-      case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_BACK:
+      case REMEDY_FIELD_SETTING_CVV_TITLE_BACK:
         return i18nService.tr("Los 3 números están al dorso de tu tarjeta", locale);
-      case REMEDY_FIELD_SETTING_CVV_HINT_MESSAGE_FRONT:
+      case REMEDY_FIELD_SETTING_CVV_TITLE_FRONT:
         return i18nService.tr("Los 4 números están al frente de tu tarjeta", locale);
       case REMEDY_HIGH_RISK_TITLE:
         return i18nService.tr("Valida tu identidad para realizar el pago", locale);

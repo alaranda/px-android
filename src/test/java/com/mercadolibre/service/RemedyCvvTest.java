@@ -44,10 +44,9 @@ public class RemedyCvvTest {
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv.getTitle(), is("El código de seguridad es inválido"));
     assertThat(responseCvv.getMessage(), is("Volvé a ingresarlo para confirmar el pago."));
-    assertThat(responseCvv.getFieldSetting().getTitle(), is("Código de seguridad"));
     assertThat(
-        responseCvv.getFieldSetting().getHintMessage(),
-        is("Los 3 números están al dorso de tu tarjeta"));
+        responseCvv.getFieldSetting().getTitle(), is("Los 3 números están al dorso de tu tarjeta"));
+    assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Código de seguridad"));
   }
 
   @Test
@@ -78,9 +77,7 @@ public class RemedyCvvTest {
         remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
-    assertThat(
-        responseCvv.getFieldSetting().getHintMessage(),
-        is("Los 4 números están al frente de tu tarjeta"));
+    assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Código de seguridad"));
   }
 
   @Test

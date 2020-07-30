@@ -3,35 +3,76 @@ package com.mercadolibre.service;
 import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_FAILED;
 import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
 import static com.mercadolibre.constants.Constants.GETTING_PARAMETERS;
-import static com.mercadolibre.constants.Constants.INVALID_PARAMS;
 import static com.mercadolibre.constants.Constants.INVALID_PREFERENCE;
 import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 
+import com.mercadolibre.api.DaoProvider;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyAPI;
-import com.mercadolibre.api.UserAPI;
-import com.mercadolibre.constants.Constants;
-import com.mercadolibre.dto.User;
+import com.mercadolibre.dto.preference.AdditionalInfo;
+import com.mercadolibre.dto.preference.InitPreferenceRequest;
+import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.kyc.SensitiveUserResponse;
 import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.validators.PreferencesValidator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
-import spark.Request;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import spark.utils.StringUtils;
 
 public enum PreferenceService {
   INSTANCE;
 
-  private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
+  private static final String SERVICE_NAME = "PreferenceService";
+  private static final Logger LOGGER = LogManager.getLogger();
 
-  private Long DEFAULT_CLIENT_ID = 963L;
+  private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
+  private static Long DEFAULT_CLIENT_ID = 963L;
+  private static final String DEFAULT_FLOW_ID = "/pay_preference";
+  private static final String DEFAULT_PRODUCT_ID = "BK9TMI410T3G01IB4220";
+  private final DaoProvider daoProvider = new DaoProvider();
+
+  public PreferenceResponse getPreferenceResponce(
+      final Context context, final InitPreferenceRequest initPreferenceRequest)
+      throws InterruptedException, ApiException, ExecutionException {
+
+    String preferenceId = initPreferenceRequest.getPrefId();
+    if (StringUtils.isBlank(preferenceId)) {
+      preferenceId = getPreferenceByShortId(context, initPreferenceRequest.getShortId());
+    }
+
+    final Preference preference =
+        PreferenceService.INSTANCE.getPreference(
+            context, preferenceId, initPreferenceRequest.getCallerId());
+
+    final PublicKey publicKey =
+        AuthService.INSTANCE.getPublicKey(
+            context,
+            preference.getCollectorId(),
+            chooseClientId(preference.getClientId(), initPreferenceRequest.getClientId()));
+
+    final String flowId = extractFlowId(preference);
+    final String productId =
+        (null != preference.getProductId()) ? preference.getProductId() : DEFAULT_PRODUCT_ID;
+
+    final PreferenceResponse preferenceResponse =
+        new PreferenceResponse(
+            preferenceId, publicKey.getPublicKey(), flowId, productId, true, true);
+
+    logInitPref(context, preferenceResponse, preference);
+
+    return preferenceResponse;
+  }
 
   /**
    * Devuelve informacion de la preferencia.
@@ -44,7 +85,7 @@ public enum PreferenceService {
    * @throws InterruptedException interrupted exception
    * @return Preference
    */
-  public Preference getPreference(final Context context, final String prefId, final Long callerId)
+  public Preference getPreference(final Context context, final String prefId, final String callerId)
       throws ApiException, ExecutionException, InterruptedException {
 
     final CompletableFuture<Either<Preference, ApiError>> futurePreference =
@@ -61,37 +102,27 @@ public enum PreferenceService {
     return preference;
   }
 
-  private void validatePref(final Context context, final Preference preference, final Long callerId)
-      throws ValidationException, ApiException {
+  private void validatePref(
+      final Context context, final Preference preference, final String callerId)
+      throws ApiException {
     PREFERENCES_VALIDATOR.validate(context, preference, callerId);
 
     if (COLLECTORS_MELI.contains(Long.valueOf(preference.getCollectorId()))) {
-      final User user = UserAPI.INSTANCE.getById(context, callerId);
-      PREFERENCES_VALIDATOR.isDifferent(context, user.getEmail(), preference.getPayer().getEmail());
+      final Either<SensitiveUserResponse, ApiError> sensitiveUserData =
+          daoProvider.getKycVaultDao().getSensitiveUserData(context, callerId);
+      if (sensitiveUserData.isValuePresent()
+          && null != sensitiveUserData.getValue().getData()
+          && null != sensitiveUserData.getValue().getData().getUser()) {
+        PREFERENCES_VALIDATOR.isDifferent(
+            context,
+            sensitiveUserData.getValue().getData().getUser().getEmail(),
+            preference.getPayer().getEmail());
+      }
     }
   }
 
-  /**
-   * Extrae del request un prefId o una shortKey, si es una shortKey hace un apiCall a tidy y
-   * devuelve un prefId.
-   *
-   * @param context context
-   * @param request request de spark
-   * @return String preferenceId
-   * @throws ApiException si falla el api call (status code is not 2xx)
-   */
-  public String extractParamPrefId(final Context context, final Request request)
+  private String getPreferenceByShortId(final Context context, final String shortKey)
       throws ApiException {
-
-    if (!StringUtils.isBlank(request.queryParams(Constants.SHORT_ID))) {
-      return isShortKey(context, request.queryParams(Constants.SHORT_ID));
-    } else if (request.queryParams(Constants.PREF_ID) != null) {
-      return request.queryParams(Constants.PREF_ID);
-    }
-    throw new ApiException(INVALID_PARAMS, GETTING_PARAMETERS, HttpStatus.SC_BAD_REQUEST);
-  }
-
-  private String isShortKey(final Context context, final String shortKey) throws ApiException {
 
     try {
       final PreferenceTidy preferenceTidy =
@@ -109,15 +140,40 @@ public enum PreferenceService {
     }
   }
 
-  /**
-   * Intenta obtener el clientId de la pref, si viene el default setea uno nuestro con el site del
-   * AT.
-   *
-   * @param clientIdPreference client id de la pref
-   * @param clientIdAccessToken client id del access token
-   * @return Long clientId
-   */
-  public Long getClientId(final Long clientIdPreference, final Long clientIdAccessToken) {
-    return DEFAULT_CLIENT_ID.equals(clientIdPreference) ? clientIdAccessToken : clientIdPreference;
+  private String chooseClientId(final Long clientIdPreference, final String clientIdAccessToken) {
+
+    if (!DEFAULT_CLIENT_ID.equals(clientIdPreference)) {
+      return clientIdPreference.toString();
+    }
+
+    return clientIdAccessToken;
+  }
+
+  private String extractFlowId(final Preference preference) {
+
+    final AdditionalInfo additionalInfo =
+        GsonWrapper.fromJson(preference.getAdditionalInfo(), AdditionalInfo.class);
+
+    if (null != additionalInfo
+        && null != additionalInfo.getPxConfiguration()
+        && null != additionalInfo.getPxConfiguration().getFlowId()) {
+
+      return additionalInfo.getPxConfiguration().getFlowId();
+    }
+
+    return DEFAULT_FLOW_ID;
+  }
+
+  private void logInitPref(
+      final Context context,
+      final PreferenceResponse preferenceResponse,
+      final Preference preference) {
+    LOGGER.info(
+        requestInLogBuilder(context.getRequestId())
+            .withSource(SERVICE_NAME)
+            .withStatus(HttpStatus.SC_OK)
+            .withClientId(String.valueOf(preference.getClientId()))
+            .withMessage(preferenceResponse.toLog(preferenceResponse))
+            .build());
   }
 }

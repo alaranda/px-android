@@ -29,15 +29,15 @@ public enum AuthService {
    * asociada a ese id.
    *
    * @param context context object
-   * @param callerId caller id
-   * @param clientId client id
+   * @param preferenceCollectorId preferenceCollectorId
    * @return el objeto public key info
    * @throws ApiException si falla el api call (status code is not 2xx)
    */
-  public PublicKey getPublicKey(final Context context, final String callerId, final Long clientId)
+  public PublicKey getPublicKey(
+      final Context context, final String preferenceCollectorId, final String clientId)
       throws ApiException {
     final Either<PublicKey, ApiError> pk =
-        PublicKeyAPI.INSTANCE.getBycallerIdAndClientId(context, callerId, clientId);
+        PublicKeyAPI.INSTANCE.getBycallerIdAndClientId(context, preferenceCollectorId, clientId);
     if (!pk.isValuePresent()) {
       throw new ApiException(pk.getAlternative());
     }
