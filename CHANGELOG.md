@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.10.1]
+
+### Changed
+
+- Vuelvo lo implementation a compile en el build.gradle.
+
 ## [1.10.0]
 
 ### Added
