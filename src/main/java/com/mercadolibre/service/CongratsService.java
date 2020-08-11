@@ -1,6 +1,7 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.constants.Constants.IFPE_MESSAGE_COLOR;
+import static com.mercadolibre.constants.Constants.PX_PM_ODR;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
@@ -30,10 +31,12 @@ import com.mercadolibre.utils.IfpeUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -165,12 +168,12 @@ public class CongratsService {
           viewReceipt(
               context.getLocale(),
               congratsRequest.getSiteId(),
-              congratsRequest.getPaymentMehotdsIds());
+              congratsRequest.getPaymentMethodsIds());
 
       final Text ifpeCompliance =
           textIfpeCompliance(
               congratsRequest.isIfpe(),
-              congratsRequest.getPaymentMehotdsIds(),
+              congratsRequest.getPaymentMethodsIds(),
               context.getLocale());
 
       return new Congrats(
@@ -180,7 +183,8 @@ public class CongratsService {
           viewReceipt,
           ifpeCompliance,
           isCustomOrderEnabled(congratsRequest.getProductId()),
-          generateExpenseSplitNode(context.getLocale(), congratsRequest));
+          generateExpenseSplitNode(context.getLocale(), congratsRequest),
+          buildPaymentMethodsImages(context, congratsRequest));
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -304,5 +308,29 @@ public class CongratsService {
       return true;
     }
     return false;
+  }
+
+  private Map<String, String> buildPaymentMethodsImages(
+      final Context context, final CongratsRequest congratsRequest) {
+
+    if (StringUtils.isBlank(congratsRequest.getPaymentMethodsIds())) {
+      return null;
+    }
+
+    final List<String> paymentMethodsIdList =
+        Arrays.asList(SPLIT_BY_COMMA_PATTERN.split(congratsRequest.getPaymentMethodsIds()));
+
+    Map<String, String> paymentMethodImages = new HashMap<>();
+    paymentMethodsIdList.forEach(
+        paymentMethodId -> {
+          paymentMethodImages.put(
+              paymentMethodId,
+              OnDemandResourcesService.createOnDemandResourcesUrl(
+                  String.format(PX_PM_ODR, paymentMethodId),
+                  congratsRequest.getDensity(),
+                  context.getLocale().toString()));
+        });
+
+    return paymentMethodImages;
   }
 }

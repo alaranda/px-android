@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.dto.lib.text.Text;
+import java.util.Map;
 import java.util.Set;
 
 public class Congrats {
@@ -12,6 +13,7 @@ public class Congrats {
   private Text topTextBox;
   private boolean customOrder = false;
   private ExpenseSplit expenseSplit = null;
+  private Map<String, String> paymentMethodsImages;
 
   public Congrats(
       final Points points,
@@ -20,7 +22,8 @@ public class Congrats {
       final Action viewReceipt,
       final Text topTextBox,
       final boolean customOrder,
-      final ExpenseSplit expenseSplit) {
+      final ExpenseSplit expenseSplit,
+      final Map<String, String> paymentMethodsImages) {
     this.mpuntos = points;
     this.discounts = discounts;
     this.crossSelling = crossSelling;
@@ -28,6 +31,7 @@ public class Congrats {
     this.topTextBox = topTextBox;
     this.customOrder = customOrder;
     this.expenseSplit = expenseSplit;
+    this.paymentMethodsImages = paymentMethodsImages;
   }
 
   public Congrats() {
@@ -72,6 +76,10 @@ public class Congrats {
 
   public ExpenseSplit getExpenseSplit() {
     return expenseSplit;
+  }
+
+  public Map<String, String> getPaymentMethodsImages() {
+    return paymentMethodsImages;
   }
 
   public String toString() {

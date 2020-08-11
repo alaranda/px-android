@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.11.0]
+
+### Added
+
+- Se agrega a la respuesta de congrats un mapa con imagenes de odr para los medios de pago.
+
 ## [1.10.1]
 
 ### Changed
