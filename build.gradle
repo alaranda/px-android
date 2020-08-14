@@ -1,15 +1,11 @@
 buildscript {
 	repositories {
-		maven { url "http://maven.melicloud.com/nexus/content/repositories/fury" }
-		maven { url "http://git.ml.com:8081/nexus/content/groups/Arquitectura" }
-		maven { url "http://git.ml.com:8081/nexus/content/repositories/releases" }
-		maven { url "http://central.maven.org/maven2" }
-		maven { url "http://controller.maven.apache.org/maven2" }
+		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
+		mavenLocal()
 	}
 
 	dependencies {
 		classpath group: 'com.mercadolibre', name: 'i18n', version: "$i18nVersion"
-
 	}
 }
 
@@ -51,9 +47,11 @@ sourceSets {
 }
 
 repositories {
+	maven {
+		url "http://maven.artifacts.furycloud.io/repository/all"
+	}
 	mavenLocal()
 	jcenter()
-	maven { url "http://git.ml.com/nexus/content/groups/Arquitectura" }
 }
 
 dependencies {
