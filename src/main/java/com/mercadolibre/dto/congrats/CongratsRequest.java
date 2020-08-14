@@ -17,7 +17,7 @@ public class CongratsRequest {
   private String campaignId;
   private String flowName;
   private boolean ifpe;
-  private String paymentMehotdsIds;
+  private String paymentMethodsIds;
 
   public CongratsRequest(
       final String userId,
@@ -31,7 +31,7 @@ public class CongratsRequest {
       final String campaignId,
       final String flowName,
       final boolean ifpe,
-      final String paymentMehotdsIds) {
+      final String paymentMethodsIds) {
     this.userId = userId;
     this.clientId = clientId;
     this.siteId = siteId;
@@ -43,7 +43,7 @@ public class CongratsRequest {
     this.campaignId = campaignId;
     this.flowName = flowName;
     this.ifpe = ifpe;
-    this.paymentMehotdsIds = paymentMehotdsIds;
+    this.paymentMethodsIds = paymentMethodsIds;
   }
 
   public String getUserId() {
@@ -90,7 +90,7 @@ public class CongratsRequest {
     return ifpe;
   }
 
-  public String getPaymentMehotdsIds() {
-    return paymentMehotdsIds;
+  public String getPaymentMethodsIds() {
+    return paymentMethodsIds;
   }
 }

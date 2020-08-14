@@ -329,6 +329,7 @@ public class CongratsServiceTest {
 
     assertThat(congrats.getMpuntos().getAction().getTarget(), is(""));
     assertThat(congrats.getCustomOrder(), is(false));
+    assertThat(congrats.getPaymentMethodsImages(), nullValue());
   }
 
   @Test
@@ -340,7 +341,7 @@ public class CongratsServiceTest {
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
-    when(congratsRequest.getPaymentMehotdsIds()).thenReturn(ACCOUNT_MONEY);
+    when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
     when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(true);
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
@@ -348,6 +349,7 @@ public class CongratsServiceTest {
     assertThat(congrats.getViewReceipt().getTarget(), notNullValue());
     assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
     assertThat(congrats.getCustomOrder(), is(false));
+    assertThat(congrats.getPaymentMethodsImages().size(), is(1));
   }
 
   @Test
@@ -359,13 +361,14 @@ public class CongratsServiceTest {
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
-    when(congratsRequest.getPaymentMehotdsIds()).thenReturn(MERCADOPAGO_CC);
+    when(congratsRequest.getPaymentMethodsIds()).thenReturn(MERCADOPAGO_CC);
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
 
     assertThat(congrats.getViewReceipt(), nullValue());
     assertThat(congrats.getTopTextBox(), nullValue());
     assertThat(congrats.getCustomOrder(), is(false));
+    assertThat(congrats.getPaymentMethodsImages().size(), is(1));
   }
 
   private CongratsRequest getDefaultCongratsRequestMock() {
@@ -380,7 +383,7 @@ public class CongratsServiceTest {
     when(congratsRequest.getDensity()).thenReturn(DENSITY);
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
-    when(congratsRequest.getPaymentMehotdsIds()).thenReturn(null);
+    when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
     when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(false);
     return congratsRequest;
   }
