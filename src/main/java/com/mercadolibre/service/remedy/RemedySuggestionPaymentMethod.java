@@ -1,7 +1,8 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_INTENT;
+import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
 
@@ -37,6 +38,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       final Context context,
       final RemediesRequest remediesRequest,
       final RemediesResponse remediesResponse) {
+
+    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_SILVER_BULLET_INTENT, context, remediesRequest);
 
     if (!remediesRequest.isOneTap()) {
       return remediesResponse;
@@ -107,15 +110,14 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               frictionless);
 
       DatadogRemediesMetrics.trackRemedySilverBulletInfo(
-          REMEDY_SILVER_BULLET_COUNTER, context, remediesRequest, trackingData);
+          REMEDY_SILVER_BULLET, context, remediesRequest, trackingData);
 
       remediesResponse.setTrackingData(trackingData);
       remediesResponse.setSuggestedPaymentMethod(suggestionPaymentMethodResponse);
       return remediesResponse;
     }
 
-    DatadogRemediesMetrics.trackRemediesInfo(
-        SILVER_BULLET_WITHOUT_PM_COUNTER, context, remediesRequest);
+    DatadogRemediesMetrics.trackRemediesInfo(SILVER_BULLET_WITHOUT_PM, context, remediesRequest);
 
     return remediesResponse;
   }

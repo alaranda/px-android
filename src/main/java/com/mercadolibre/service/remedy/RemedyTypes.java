@@ -16,9 +16,25 @@ public class RemedyTypes {
   private static final Map<Remedy, List<RemedyInterface>> mapRemediesInterface =
       new HashMap<Remedy, List<RemedyInterface>>() {
         {
-          put(Remedy.CC_REJECTED_HIGH_RISK, Arrays.asList(new RemedyHighRisk(RISK_API)));
+          put(
+              Remedy.CC_REJECTED_HIGH_RISK,
+              Arrays.asList(
+                  new RemedyHighRisk(
+                      RISK_API,
+                      new RemedySuggestionPaymentMethod(
+                          new RemedyCvv(),
+                          REMEDY_OTHER_REASON_TITLE,
+                          REMEDY_OTHER_REASON_MESSAGE))));
 
-          put(Remedy.REJECTED_HIGH_RISK, Arrays.asList(new RemedyHighRisk(RISK_API)));
+          put(
+              Remedy.REJECTED_HIGH_RISK,
+              Arrays.asList(
+                  new RemedyHighRisk(
+                      RISK_API,
+                      new RemedySuggestionPaymentMethod(
+                          new RemedyCvv(),
+                          REMEDY_OTHER_REASON_TITLE,
+                          REMEDY_OTHER_REASON_MESSAGE))));
 
           put(Remedy.CC_REJECTED_BAD_FILLED_SECURITY_CODE, Arrays.asList(new RemedyCvv()));
 
@@ -72,9 +88,37 @@ public class RemedyTypes {
                       REMEDY_BAD_FILLED_OTHER_TITLE,
                       REMEDY_BAD_FILLED_OTHER_MESSAGE)));
 
-          put(Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE, Arrays.asList(new RemedyCallForAuthorize()));
+          put(
+              Remedy.CC_REJECTED_BAD_FILLED_DATE,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
 
-          put(Remedy.CC_REJECTED_BAD_FILLED_DATE, Arrays.asList(new WithoutRemedy()));
+          put(
+              Remedy.REJECTED_BY_REGULATIONS,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
+
+          put(
+              Remedy.REJECTED_BY_BANK,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
+
+          put(
+              Remedy.REJECTED_BANK_ERROR,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
+
+          put(
+              Remedy.REJECTED_CARD_DISABLED,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
+
+          put(Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE, Arrays.asList(new RemedyCallForAuthorize()));
 
           put(Remedy.WITHOUT_REMEDY, Arrays.asList(new WithoutRemedy()));
         }

@@ -27,6 +27,11 @@ public class MockTestHelper {
     when(remediesRequest.getRiskExcecutionId()).thenReturn(riskId);
     when(remediesRequest.getUserId()).thenReturn(callerId);
     when(remediesRequest.getSiteId()).thenReturn(site);
+    PayerPaymentMethodRejected payerPaymentMethodRejected =
+        Mockito.mock(PayerPaymentMethodRejected.class);
+    when(payerPaymentMethodRejected.getPaymentMethodId()).thenReturn("visa");
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
     return remediesRequest;
   }
 

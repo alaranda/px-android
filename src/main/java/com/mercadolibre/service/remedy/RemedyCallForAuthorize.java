@@ -1,6 +1,7 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CALL_FOR_AUTHORIZE_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CALL_FOR_AUTHORIZE;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CALL_FOR_AUTHORIZE_INTENT;
 import static com.mercadolibre.utils.Translations.REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD;
 
 import com.mercadolibre.dto.congrats.Action;
@@ -23,6 +24,9 @@ public class RemedyCallForAuthorize implements RemedyInterface {
       final Context context,
       final RemediesRequest remediesRequest,
       final RemediesResponse remediesResponse) {
+
+    DatadogRemediesMetrics.trackRemediesInfo(
+        REMEDY_CALL_FOR_AUTHORIZE_INTENT, context, remediesRequest);
 
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
@@ -58,8 +62,7 @@ public class RemedyCallForAuthorize implements RemedyInterface {
 
     remediesResponse.setCallForAuth(responseCallForAuth);
 
-    DatadogRemediesMetrics.trackRemediesInfo(
-        REMEDY_CALL_FOR_AUTHORIZE_COUNTER, context, remediesRequest);
+    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_CALL_FOR_AUTHORIZE, context, remediesRequest);
 
     return remediesResponse;
   }

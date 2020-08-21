@@ -3,6 +3,8 @@ package com.mercadolibre.service;
 import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
 import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static com.mercadolibre.service.PreferenceServiceTest.CONTEXT_ES;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_TITLE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -20,7 +22,9 @@ import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
+import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedyHighRisk;
+import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
 import java.io.IOException;
 import java.math.BigDecimal;
 import org.apache.http.HttpStatus;
@@ -30,7 +34,11 @@ import spark.utils.IOUtils;
 
 public class RemedyHighRiskTest {
 
-  RemedyHighRisk remedyHighRisk = new RemedyHighRisk(new RiskApi());
+  RemedyHighRisk remedyHighRisk =
+      new RemedyHighRisk(
+          new RiskApi(),
+          new RemedySuggestionPaymentMethod(
+              new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE));
 
   private static final String CALLER_ID_TEST = "11111";
   private static final UserAgent USER_AGENT_TEST = UserAgent.create("PX/Android/0.0.0");
@@ -116,8 +124,7 @@ public class RemedyHighRiskTest {
   }
 
   @Test
-  public void applyRemedy_statusDetailHighRiskInvalidSiteKyc_withoutRemedy()
-      throws IOException, ApiException {
+  public void applyRemedy_statusDetailHighRiskInvalidSiteKyc_withoutRemedy() throws IOException {
 
     MockRiskApi.getRisk(
         123L,
@@ -126,6 +133,7 @@ public class RemedyHighRiskTest {
 
     final RemediesRequest remediesRequest =
         mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLM.name());
+    when(remediesRequest.isOneTap()).thenReturn(true);
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
@@ -133,7 +141,8 @@ public class RemedyHighRiskTest {
     final RemediesResponse remediesResponse =
         remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
 
-    assertThat(remediesResponse, nullValue());
+    assertThat(remediesResponse.getHighRisk(), nullValue());
+    assertThat(remediesResponse.getSuggestedPaymentMethod(), nullValue());
   }
 
   @Test
@@ -153,7 +162,8 @@ public class RemedyHighRiskTest {
     final RemediesResponse remediesResponse =
         remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
 
-    assertThat(remediesResponse, nullValue());
+    assertThat(remediesResponse.getHighRisk(), nullValue());
+    assertThat(remediesResponse.getSuggestedPaymentMethod(), nullValue());
   }
 
   @Test
@@ -173,6 +183,6 @@ public class RemedyHighRiskTest {
     final RemediesResponse remediesResponse =
         remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
 
-    assertThat(remediesResponse, nullValue());
+    assertThat(remediesResponse.getHighRisk(), nullValue());
   }
 }

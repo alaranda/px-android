@@ -2,6 +2,21 @@
 
 # Change Log
 
+## [1.13.0]
+
+### Added
+
+- Se agrega silver bullet para cc_rejected_bad_filled_date.
+- Se agrega silver bullet para rejected_by_regulations.
+- Se agrega silver bullet para rejected_by_bank.
+- Se agrega silver bullet para rejected_bank_error.
+- Se agrega silver bullet para cc_rejected_card_disabled.
+
+### Changed
+
+- Se usa silver bullet como default para cualquier apicall con error o validacion.
+- Se modifican todas las metricas de remedies.
+
 ## [1.12.0]
 
 ### Added

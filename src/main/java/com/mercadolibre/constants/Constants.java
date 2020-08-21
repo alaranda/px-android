@@ -56,7 +56,7 @@ public final class Constants {
   public static final String ANDROID = "android";
   public static final String IOS = "ios";
 
-  public static final String PX_PM_ODR = "px_%s";
+  public static final String PX_PM_ODR = "px_pm_%s";
 
   /** Collectors de pago de factura de meli. */
   public static final List<Long> COLLECTORS_MELI =
