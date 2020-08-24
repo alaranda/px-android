@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.12.0]
+
+### Added
+
+- Agrego header "x-forwarded-for" en la llamada a payments.
+
 ## [1.11.0]
 
 ### Added

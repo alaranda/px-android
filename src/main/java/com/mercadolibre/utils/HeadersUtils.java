@@ -17,9 +17,12 @@ import spark.Request;
 public enum HeadersUtils {
   ;
 
+  public static final String X_FORWARDED_FOR = "x-forwarded-for";
+
   private static final Set<String> PAYMENT_HEADERS =
       Collections.unmodifiableSet(
-          new HashSet<>(Arrays.asList(MELI_SESSION, TRACKING, IDEMPOTENCY, PRODUCT_ID)));
+          new HashSet<>(
+              Arrays.asList(MELI_SESSION, TRACKING, IDEMPOTENCY, PRODUCT_ID, X_FORWARDED_FOR)));
 
   private static final String X_CALLER_SCOPE_PAYMENTS = "payments";
 
