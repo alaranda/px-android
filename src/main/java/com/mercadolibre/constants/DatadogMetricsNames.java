@@ -23,18 +23,26 @@ public final class DatadogMetricsNames {
   public static final String CONGRATS_ERROR_BUILD_CONGRATS =
       "px.RemediesRequest.congrats_error_build_congrats";
   // Remedies
-  public static final String REMEDY_SILVER_BULLET_COUNTER =
+  public static final String REMEDY_SILVER_BULLET_INTENT =
+      "px.checkout_mobile_payments.remedy_silver_bullet_intent";
+  public static final String REMEDY_HIGH_RISK_INTENT =
+      "px.checkout_mobile_payments.remedy_high_risk_intent";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE_INTENT =
+      "px.checkout_mobile_payments.remedy_call_for_authorize_intent";
+  public static final String REMEDY_CVV_INTENT = "px.checkout_mobile_payments.remedy_cvv_intent";
+  public static final String REMEDY_SILVER_BULLET =
       "px.checkout_mobile_payments.remedy_silver_bullet";
-  public static final String REMEDY_HIGH_RISK_COUNTER =
-      "px.checkout_mobile_payments.remedy_high_risk";
-  public static final String REMEDY_HIGH_RISK_TAGGED_COUNTER =
-      "px.checkout_mobile_payments.remedy_high_risk_tagged";
-  public static final String REMEDY_CVV_COUNTER = "px.checkout_mobile_payments.remedy_cvv";
-  public static final String REMEDY_CALL_FOR_AUTHORIZE_COUNTER =
-      "px.checkout_mobile_payments.remedy_call_for_authorize";
-  public static final String WITHOUT_REMEDY_COUNTER = "px.checkout_mobile_payments.without_remedy";
-  public static final String REMEDY_KYC_FAIL_COUNTER =
-      "px.checkout_mobile_payments.remedy.kyc_fail";
-  public static final String SILVER_BULLET_WITHOUT_PM_COUNTER =
+  public static final String SILVER_BULLET_WITHOUT_PM =
       "px.checkout_mobile_payments.silver_bullet_without_pm";
+  public static final String REMEDY_HIGH_RISK_TAGGED =
+      "px.checkout_mobile_payments.remedy_high_risk_tagged";
+  public static final String REMEDY_HIGH_RISK_SB =
+      "px.checkout_mobile_payments.remedy_high_risk_sb";
+  public static final String REMEDY_KYC_FAIL = "px.checkout_mobile_payments.remedy.kyc_fail";
+  public static final String REMEDY_CVV = "px.checkout_mobile_payments.remedy_cvv";
+  public static final String REMEDY_CALL_FOR_AUTHORIZE =
+      "px.checkout_mobile_payments.remedy_call_for_authorize";
+  public static final String WITHOUT_REMEDY = "px.checkout_mobile_payments.without_remedy";
+  public static final String REMEDY_INVALID_PAYMENT_ID =
+      "px.checkout_mobile_payments.remedy_invalid_payment_id";
 }

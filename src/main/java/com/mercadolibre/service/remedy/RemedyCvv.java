@@ -1,6 +1,7 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CVV_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CVV;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_CVV_INTENT;
 import static com.mercadolibre.utils.Translations.*;
 
 import com.mercadolibre.dto.remedy.FieldSetting;
@@ -30,6 +31,8 @@ public class RemedyCvv implements RemedyInterface {
       final RemediesRequest remediesRequest,
       final RemediesResponse remediesResponse) {
 
+    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_CVV_INTENT, context, remediesRequest);
+
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
 
@@ -47,7 +50,7 @@ public class RemedyCvv implements RemedyInterface {
 
     remediesResponse.setCvv(responseCvv);
 
-    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_CVV_COUNTER, context, remediesRequest);
+    DatadogRemediesMetrics.trackRemediesInfo(REMEDY_CVV, context, remediesRequest);
 
     return remediesResponse;
   }

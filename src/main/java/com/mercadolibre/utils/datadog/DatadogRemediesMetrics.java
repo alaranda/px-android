@@ -46,9 +46,10 @@ public class DatadogRemediesMetrics {
     tags.add("platform", remediesRequest.getUserAgent().getOperatingSystem().getName());
     tags.add("site", remediesRequest.getSiteId());
     tags.add("status_detail", remediesRequest.getStatusDetail());
-    tags.add(
-        "payment_rejected", remediesRequest.getPayerPaymentMethodRejected().getPaymentMethodId());
-
+    if (remediesRequest.getPayerPaymentMethodRejected() != null) {
+      tags.add(
+          "payment_rejected", remediesRequest.getPayerPaymentMethodRejected().getPaymentMethodId());
+    }
     return tags;
   }
 }
