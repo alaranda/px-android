@@ -15,13 +15,14 @@ plugins {
 	id 'jacoco'
 	id 'idea'
 	id 'distribution'
-	id "us.kirchmeier.capsule" version "1.0.2"
+	id "it.gianluz.capsule" version "1.0.3"
 	id 'com.monits.staticCodeAnalysis' version '2.6.4'
 }
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 javadoc.options.encoding = "UTF-8"
+jar.enabled = false
 
 mainClassName = 'com.mercadolibre.Main'
 
@@ -42,6 +43,11 @@ sourceSets {
 	main {
 		resources {
 			srcDir "src/main/resources/${envType}"
+		}
+	}
+	test {
+		resources {
+			srcDir "src/main/resources/local"
 		}
 	}
 }
@@ -124,14 +130,13 @@ test {
 
 check.dependsOn jacocoTestReport
 
-task app(type: FatCapsule) {
-	applicationClass 'com.mercadolibre.Main'
-	archiveName 'application.jar'
-
-	capsuleManifest {
-		minJavaVersion = '1.8.0'
-		jvmArgs = ['-Xms2g', '-Xmx2g']
+task app(type: Jar) {
+	archiveName = 'application.jar'
+	manifest {
+		attributes 'Main-Class': 'com.mercadolibre.Main'
 	}
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
 }
 
 task checkCodeFormat(type: Exec) {

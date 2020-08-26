@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.14.0]
+
+### Changed
+
+- Se actualiza las librerias de docker a java-mini
+
 ## [1.13.2]
 
 ### Changed
