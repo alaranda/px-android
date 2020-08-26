@@ -269,8 +269,8 @@ public class RemedySuggestionPaymentMethodTest {
   @Test
   public void applyRemedy_statusBadFilledOtherOneTapFalse_remedyEmpty() {
 
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
     when(remediesRequest.isOneTap()).thenReturn(false);
 
     final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =

@@ -1,8 +1,6 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_HIGH_RISK_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_HIGH_RISK_TAGGED_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_KYC_FAIL_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.*;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_BUTTON_LOUD;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_HIGH_RISK_TITLE;
@@ -27,14 +25,17 @@ public class RemedyHighRisk implements RemedyInterface {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private RiskApi riskApi;
+  private RemedySuggestionPaymentMethod remedySuggestionPaymentMethod;
 
   private static final String KYC_REMEDY = "available_for_remedy";
   private static final String KYC_DEEPLINK =
       "%s://kyc/?initiative=px-high-risk&callback=%s://px/one_tap";
   private static final String PLATFORM_KYC_MELI = "meli";
 
-  public RemedyHighRisk(final RiskApi riskApi) {
+  public RemedyHighRisk(
+      final RiskApi riskApi, final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod) {
     this.riskApi = riskApi;
+    this.remedySuggestionPaymentMethod = remedySuggestionPaymentMethod;
   }
 
   @Override
@@ -44,15 +45,21 @@ public class RemedyHighRisk implements RemedyInterface {
       final RemediesResponse remediesResponse) {
     try {
 
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_INTENT, context, remediesRequest);
+
       if (StringUtils.isBlank(remediesRequest.getUserId())) {
         LOGGER.info("Invalid userId for Kyc Remedy");
-        return null;
+        DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_SB, context, remediesRequest);
+        remedySuggestionPaymentMethod.applyRemedy(context, remediesRequest, remediesResponse);
+        return remediesResponse;
       }
 
       if (!remediesRequest.getSiteId().equalsIgnoreCase(Site.MLA.name())
           && !remediesRequest.getSiteId().equalsIgnoreCase(Site.MLB.name())) {
         LOGGER.info("Invalid site for Kyc Remedy");
-        return null;
+        DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_SB, context, remediesRequest);
+        remedySuggestionPaymentMethod.applyRemedy(context, remediesRequest, remediesResponse);
+        return remediesResponse;
       }
 
       final RiskResponse riskResponse =
@@ -88,20 +95,21 @@ public class RemedyHighRisk implements RemedyInterface {
 
         remediesResponse.setHighRisk(responseHighRisk);
 
-        DatadogRemediesMetrics.trackRemediesInfo(
-            REMEDY_HIGH_RISK_TAGGED_COUNTER, context, remediesRequest);
+        DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_TAGGED, context, remediesRequest);
+        return remediesResponse;
       }
 
-      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_COUNTER, context, remediesRequest);
-
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_SB, context, remediesRequest);
+      remedySuggestionPaymentMethod.applyRemedy(context, remediesRequest, remediesResponse);
       return remediesResponse;
 
     } catch (ApiException e) {
       LOGGER.info("Invalid risk for Kyc Remedy");
-      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_KYC_FAIL_COUNTER, context, remediesRequest);
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_KYC_FAIL, context, remediesRequest);
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_HIGH_RISK_SB, context, remediesRequest);
+      remedySuggestionPaymentMethod.applyRemedy(context, remediesRequest, remediesResponse);
+      return remediesResponse;
     }
-
-    return null;
   }
 
   private boolean remedyKyc(final Context context, final RiskResponse riskResponse) {

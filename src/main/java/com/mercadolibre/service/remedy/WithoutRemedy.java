@@ -1,6 +1,6 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.WITHOUT_REMEDY_COUNTER;
+import static com.mercadolibre.constants.DatadogMetricsNames.WITHOUT_REMEDY;
 
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
@@ -15,7 +15,7 @@ public class WithoutRemedy implements RemedyInterface {
       final RemediesRequest remediesRequest,
       final RemediesResponse remediesResponse) {
 
-    DatadogRemediesMetrics.trackRemediesInfo(WITHOUT_REMEDY_COUNTER, context, remediesRequest);
+    DatadogRemediesMetrics.trackRemediesInfo(WITHOUT_REMEDY, context, remediesRequest);
 
     return remediesResponse;
   }

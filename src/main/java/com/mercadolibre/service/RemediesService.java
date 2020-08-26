@@ -1,5 +1,9 @@
 package com.mercadolibre.service;
 
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_INVALID_PAYMENT_ID;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_TITLE;
+
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.remedy.RemediesRequest;
@@ -8,16 +12,24 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedyInterface;
+import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
 import com.mercadolibre.service.remedy.RemedyTypes;
+import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 import java.util.List;
 
 public class RemediesService {
 
   private final RemedyTypes remedyTypes;
+  private final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod;
 
   public RemediesService() {
+
     this.remedyTypes = new RemedyTypes();
+    this.remedySuggestionPaymentMethod =
+        new RemedySuggestionPaymentMethod(
+            new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
   }
 
   /**
@@ -37,7 +49,9 @@ public class RemediesService {
         PaymentAPI.INSTANCE.getPayment(context, paymentId);
 
     if (!paymentEither.isValuePresent()) {
-      throw new ApiException(paymentEither.getAlternative());
+      DatadogRemediesMetrics.trackRemediesInfo(REMEDY_INVALID_PAYMENT_ID, context, remediesRequest);
+      return remedySuggestionPaymentMethod.applyRemedy(
+          context, remediesRequest, new RemediesResponse());
     }
 
     final Payment payment = paymentEither.getValue();
