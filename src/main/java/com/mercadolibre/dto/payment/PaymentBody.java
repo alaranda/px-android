@@ -144,7 +144,7 @@ public class PaymentBody {
       builder.couponAmount =
           paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
       builder.campaignId =
-          paymentData.hasCampaignId() ? Long.valueOf(paymentData.getCampaign().getId()) : null;
+          paymentData.hasDiscountToken() ? Long.valueOf(paymentData.getDiscount().getId()) : null;
       builder.payer =
           new PayerBody(
               paymentData.getPayer().getName(),
@@ -167,7 +167,7 @@ public class PaymentBody {
       builder.couponAmount =
           paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
       builder.campaignId =
-          paymentData.hasCampaign() ? Long.valueOf(paymentData.getCampaign().getId()) : null;
+          paymentData.hasDiscountToken() ? Long.valueOf(paymentData.getDiscount().getId()) : null;
 
       return buildPayerWhitelabel(paymentData.getPayer(), preference, builder);
     }

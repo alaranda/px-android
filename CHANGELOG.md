@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.13.1]
+
+### Changed
+
+- Se utiliza el discount id como campaign id para realizar pago.
+
 ## [1.13.0]
 
 ### Added
