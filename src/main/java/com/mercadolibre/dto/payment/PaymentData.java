@@ -72,9 +72,9 @@ public class PaymentData {
     return this.campaign != null ? true : false;
   }
 
-  public boolean hasCampaignId() {
-    if (this.hasCampaign()) {
-      return this.campaign.getId() != null ? true : false;
+  public boolean hasDiscountToken() {
+    if (this.hasDiscount()) {
+      return this.discount.getId() != null ? true : false;
     }
     return false;
   }
