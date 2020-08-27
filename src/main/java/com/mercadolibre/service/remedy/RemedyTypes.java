@@ -118,7 +118,11 @@ public class RemedyTypes {
                   new RemedySuggestionPaymentMethod(
                       new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
 
-          put(Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE, Arrays.asList(new RemedyCallForAuthorize()));
+          put(
+              Remedy.CC_REJECTED_CALL_FOR_AUTHORIZE,
+              Arrays.asList(
+                  new RemedySuggestionPaymentMethod(
+                      new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE)));
 
           put(Remedy.WITHOUT_REMEDY, Arrays.asList(new WithoutRemedy()));
         }
