@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.13.2]
+
+### Changed
+
+- Cuando el status detail es cc_rejected_call_for_authorize se ofrece Silver bullet.
+
 ## [1.13.1]
 
 ### Changed
