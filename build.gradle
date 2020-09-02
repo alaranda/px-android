@@ -34,7 +34,7 @@ description = """px-checkout-mobile-payments"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def envType = 'development'
+def envType = 'local'
 if (project.hasProperty('production')) {
 	envType = 'production'
 }
