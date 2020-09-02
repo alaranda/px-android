@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.14.1]
+
+### Changed
+
+- envType local en build.gradle.
+
 ## [1.14.0]
 
 ### Changed
