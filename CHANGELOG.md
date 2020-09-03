@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.15.0]
+
+### Changed
+
+- Se habilitan product ids para division de gastos.
+
 ## [1.14.1]
 
 ### Changed

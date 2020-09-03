@@ -60,6 +60,22 @@ public class CongratsService {
           "bknnga4o5mpg01jd8mh0",
           "bckm077hau10018ovch0");
 
+  private static final List<String> EXPENSE_SPLIT_PRODUCT_IDS =
+      Arrays.asList(
+          "bh31umv10flg01nmhg60",
+          "bh31u3v10flg01nmhg5g",
+          "bh321atmiu3001hkebmg",
+          "bh3215f10flg01nmhg6g",
+          "bknneuko5mpg01jd8mfg",
+          "bknnfpko5mpg01jd8mg0",
+          "bknng4ko5mpg01jd8mgg",
+          "bknnga4o5mpg01jd8mh0",
+          "bckm077hau10018ovch0",
+          "bckjo7qbvkh001fp9vag",
+          "bckjnp7hau10018ovcd0",
+          "bckjocnhau10018ovcg0",
+          "bckjo2vhau10018ovce0");
+
   private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
   private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
@@ -197,7 +213,7 @@ public class CongratsService {
   private ExpenseSplit generateExpenseSplitNode(
       final Locale locale, final CongratsRequest congratsRequest) {
 
-    if (!INSTORE_PRODUCT_IDS.stream()
+    if (!EXPENSE_SPLIT_PRODUCT_IDS.stream()
             .anyMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
         || StringUtils.isEmpty(congratsRequest.getPaymentIds())) {
       return null;
