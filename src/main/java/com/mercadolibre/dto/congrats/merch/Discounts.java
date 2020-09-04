@@ -1,7 +1,9 @@
 package com.mercadolibre.dto.congrats.merch;
 
 import java.util.List;
+import lombok.Getter;
 
+@Getter
 public class Discounts {
 
   private String link;
@@ -9,24 +11,5 @@ public class Discounts {
   private int totalDiscounts;
   private List<Item> items;
   private TouchpointData touchpoint;
-
-  public String getLink() {
-    return link;
-  }
-
-  public List<Item> getItems() {
-    return items;
-  }
-
-  public int getLoyaltyDiscounts() {
-    return loyaltyDiscounts;
-  }
-
-  public int getTotalDiscounts() {
-    return totalDiscounts;
-  }
-
-  public TouchpointData getTouchpoint() {
-    return touchpoint;
-  }
+  private String title;
 }
