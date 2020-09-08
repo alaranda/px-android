@@ -3,9 +3,11 @@ package com.mercadolibre.dto.payment;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
+import java.util.List;
 import spark.utils.StringUtils;
 
 /** Objeto con los parametros que posteamos en el body de payments */
@@ -33,6 +35,8 @@ public class PaymentBody {
   private String operationType;
   private Object internalMetadata;
   private String notificationUrl;
+  private BigDecimal applicationFee;
+  private List<Tax> taxes;
 
   public String getToken() {
     return token;
@@ -109,6 +113,7 @@ public class PaymentBody {
     this.operationType = builder.operationType;
     this.internalMetadata = builder.internalMetadata;
     this.notificationUrl = builder.notificationUrl;
+    this.applicationFee = builder.applicationFee;
   }
 
   public static final class Builder {
@@ -131,6 +136,8 @@ public class PaymentBody {
     private String operationType;
     private Object internalMetadata;
     private String notificationUrl;
+    private BigDecimal applicationFee;
+    private List<Tax> taxes;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData, final Preference preference) {
@@ -200,6 +207,8 @@ public class PaymentBody {
       this.operationType = preference.getOperationType();
       this.internalMetadata = preference.getInternalMetadta();
       this.notificationUrl = preference.getNotificationUrl();
+      this.applicationFee = preference.getMarketplaceFee();
+      this.taxes = preference.getTaxes();
     }
 
     // Validacion para soportar las distintas firmas del front.

@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.16.0]
+
+### Added
+
+- Se agrega el campo applicationFee y taxes en el post a payments.
+
+### Changed
+
+- Se mapea el title que devuelve descuentos y si tiene contenido se usa ese, si esta vacio usamos el anterior.
+
 ## [1.15.0]
 
 ### Changed

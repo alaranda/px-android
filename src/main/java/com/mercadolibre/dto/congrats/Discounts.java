@@ -12,6 +12,7 @@ import com.mercadolibre.utils.Translations;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import spark.utils.StringUtils;
 
 public class Discounts {
 
@@ -48,7 +49,10 @@ public class Discounts {
 
       if (null == discounts) return;
 
-      this.title = Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DISCOUNTS);
+      this.title =
+          StringUtils.isNotBlank(discounts.getTitle())
+              ? discounts.getTitle()
+              : Translations.INSTANCE.getTranslationByLocale(context.getLocale(), DISCOUNTS);
       this.subtitle = "";
 
       this.action =
