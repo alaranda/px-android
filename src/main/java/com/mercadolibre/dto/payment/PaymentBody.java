@@ -207,8 +207,11 @@ public class PaymentBody {
       this.operationType = preference.getOperationType();
       this.internalMetadata = preference.getInternalMetadta();
       this.notificationUrl = preference.getNotificationUrl();
-      this.applicationFee = preference.getMarketplaceFee();
       this.taxes = preference.getTaxes();
+      if (null != preference.getMarketplaceFee()
+          && preference.getMarketplaceFee().compareTo(BigDecimal.ZERO) > 0) {
+        this.applicationFee = preference.getMarketplaceFee();
+      }
     }
 
     // Validacion para soportar las distintas firmas del front.

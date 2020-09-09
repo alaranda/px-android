@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.16.1]
+
+### Added
+
+- Se agrega validacion de marketplaceFee mayor a 0.
+
 ## [1.16.0]
 
 ### Added
