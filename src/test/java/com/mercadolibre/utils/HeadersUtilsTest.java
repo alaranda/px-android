@@ -36,7 +36,7 @@ public class HeadersUtilsTest {
 
   @Test
   public void testCalculateSecurityHeader_returnsTrackingSecurityHeader2FA() {
-    Headers headers = new Headers().add(new Header(X_SECURITY, AUTHENTICATION_FACTOR_2FA));
+    Headers headers = new Headers().add(new Header(X_SECURITY, "2fa"));
     Header result = HeadersUtils.calculateSecurityHeader(headers);
 
     assertThat(result.getName(), is(X_TRACKING_ID_SECURITY));
@@ -45,7 +45,7 @@ public class HeadersUtilsTest {
 
   @Test
   public void testCalculateSecurityHeader_returnsTrackingSecurityHeaderNone() {
-    Headers headers = new Headers().add(new Header(X_SECURITY, AUTHENTICATION_FACTOR_NONE));
+    Headers headers = new Headers().add(new Header(X_SECURITY, "none"));
     Header result = HeadersUtils.calculateSecurityHeader(headers);
 
     assertThat(result.getName(), is(X_TRACKING_ID_SECURITY));
@@ -72,8 +72,8 @@ public class HeadersUtilsTest {
   }
 
   @Test
-  public void testCompletePaymentHeaders_witValidSecurityValue_returnsNoTrackingSecurityHeader() {
-    Headers headers = new Headers().add(new Header(X_SECURITY, AUTHENTICATION_FACTOR_2FA));
+  public void testCompletePaymentHeaders_withValidSecurityValue_returnsTrackingSecurityHeader2fa() {
+    Headers headers = new Headers().add(new Header(X_SECURITY, "2fa"));
     Headers result = HeadersUtils.completePaymentHeaders(headers, "token", "request_id");
 
     assertNotNull(result.getHeader(X_TRACKING_ID_SECURITY));

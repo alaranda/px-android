@@ -9,7 +9,11 @@ import com.mercadolibre.px.dto.lib.exception.UserAgentParseException;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Header;
 import com.mercadolibre.restclient.http.Headers;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import spark.Request;
@@ -100,7 +104,9 @@ public enum HeadersUtils {
 
   public static Header calculateSecurityHeader(Headers headers) {
     Header securityHeader = headers.getHeader(X_SECURITY);
-    if (securityHeader.getValue().equalsIgnoreCase(AUTHENTICATION_FACTOR_2FA)) {
+    if (securityHeader
+        .getValue()
+        .equalsIgnoreCase(StringUtils.substringAfter(AUTHENTICATION_FACTOR_2FA, ":"))) {
       return new Header(X_TRACKING_ID_SECURITY, AUTHENTICATION_FACTOR_2FA);
     }
     return new Header(X_TRACKING_ID_SECURITY, AUTHENTICATION_FACTOR_NONE);
