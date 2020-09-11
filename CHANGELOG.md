@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.16.2]
+
+### Changed
+
+- Fix header de seguridad en payments.
+
 ## [1.16.1]
 
 ### Added
