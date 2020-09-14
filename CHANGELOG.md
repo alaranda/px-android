@@ -2,9 +2,26 @@
 
 # Change Log
 
-## [1.17.0]
+## [1.18.0]
 
-### Changed
+- Se agrega nueva logica de ordenamiento para silver bullet.
+Si rechazamos TD / AM:
+    AM
+    CC en 1 Cuota
+    TC con ESC en 1 cuota
+    TD con ESC en 1 cuota
+    TD sin ESC en 1 cuota
+    TC sin ESC en 1 cuota
+
+Si rechazamos TC / CC:
+    CC en 1 cuota
+    TC con ESC en 1 cuota
+    AM
+    TD con ESC en 1 cuota
+    TC sin ESC en 1 cuota
+    TD sin ESC en 1 cuota
+
+## [1.17.0]
 
 - Se borra la clase ifpe utils y se deja activado ifpe.
 
