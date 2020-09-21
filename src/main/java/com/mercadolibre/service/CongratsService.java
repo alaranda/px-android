@@ -27,7 +27,6 @@ import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.services.OnDemandResourcesService;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
-import com.mercadolibre.utils.IfpeUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import java.util.Arrays;
@@ -88,16 +87,12 @@ public class CongratsService {
   private static final String EXPENSE_SPLIT_WEIGHT = "semi_bold";
   private static final String EXPENSE_SPLIT_ODR_ICON_KEY = "px_congrats_money_split_mp";
 
-  private final IfpeUtils ifpeUtils;
-
   public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
   public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
 
   private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
 
-  public CongratsService(final IfpeUtils ifpeUtils) {
-    this.ifpeUtils = ifpeUtils;
-  }
+  public CongratsService() {}
 
   /**
    * Retorna los puntos sumados en el pago y los acmulados mas los descuentos otorgados.
@@ -309,7 +304,8 @@ public class CongratsService {
   private Action viewReceipt(
       final Locale locale, final String siteId, final String paymentMethodsIds) {
 
-    if (ifpeUtils.isIfpeEnabled(siteId) && validateAccountMoneyId(paymentMethodsIds)) {
+    if (Site.MLM.getSiteId().equalsIgnoreCase(siteId)
+        && validateAccountMoneyId(paymentMethodsIds)) {
       return new Action(
           Translations.INSTANCE.getTranslationByLocale(locale, Translations.VIEW_RECEIPT),
           ACTIVITIES_LINK);

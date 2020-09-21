@@ -21,7 +21,6 @@ import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.service.CongratsService;
-import com.mercadolibre.utils.IfpeUtils;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +36,7 @@ public class CongratsController {
   private final CongratsService congratsService;
 
   public CongratsController() {
-    this.congratsService = new CongratsService(new IfpeUtils());
+    this.congratsService = new CongratsService();
   }
 
   /**
