@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockLoyaltyApi;
@@ -18,7 +17,6 @@ import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
-import com.mercadolibre.utils.IfpeUtils;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
@@ -46,8 +44,7 @@ public class CongratsServiceTest {
   private static final String FLOW_NAME = "paymentsBlackLabel";
   private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
 
-  private static final IfpeUtils ifpeUtils = Mockito.mock(IfpeUtils.class);
-  private static final CongratsService congratsService = new CongratsService(ifpeUtils);
+  private static final CongratsService congratsService = new CongratsService();
 
   public static final String REQUEST_ID = UUID.randomUUID().toString();
   public static final Context CONTEXT_ES =
@@ -342,7 +339,6 @@ public class CongratsServiceTest {
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
-    when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(true);
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
 
@@ -384,7 +380,6 @@ public class CongratsServiceTest {
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
-    when(ifpeUtils.isIfpeEnabled(anyString())).thenReturn(false);
     return congratsRequest;
   }
 }
