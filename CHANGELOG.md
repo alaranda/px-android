@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.17.0]
+
+### Changed
+
+- Se borra la clase ifpe utils y se deja activado ifpe.
+
 ## [1.16.2]
 
 ### Changed
