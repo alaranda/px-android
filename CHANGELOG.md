@@ -2,7 +2,15 @@
 
 # Change Log
 
+## [1.18.1]
+
+### Changed
+
+- Se corrije el payment method rejected type de credits.
+
 ## [1.18.0]
+
+### Added
 
 - Se agrega nueva logica de ordenamiento para silver bullet.
 Si rechazamos TD / AM:
