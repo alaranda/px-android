@@ -85,7 +85,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     if (CollectionUtils.isEmpty(alternativePayerPaymentMethodList)
         || null == payerPaymentMethodRejected) {
-      return null;
+      DatadogRemediesMetrics.trackRemediesInfo(SILVER_BULLET_WITHOUT_PM, context, remediesRequest);
+      return remediesResponse;
     }
 
     final List<AlternativePayerPaymentMethod> accountMoney =

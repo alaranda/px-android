@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.18.2]
+
+### Changed
+
+- Se corrije bug cuando no hay medios alternativos.
+
 ## [1.18.1]
 
 ### Changed
