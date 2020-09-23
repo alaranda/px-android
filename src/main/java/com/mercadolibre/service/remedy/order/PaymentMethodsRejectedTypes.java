@@ -6,7 +6,7 @@ import java.util.Map;
 public class PaymentMethodsRejectedTypes {
 
   public static String ACCOUNT_MONEY = "account_money";
-  public static String CONSUMER_CREDITS = "consumer_credits";
+  public static String CONSUMER_CREDITS = "digital_currency";
   public static String CREDIT_CARD = "credit_card";
   public static String DEBIT_CARD = "debit_card";
 
