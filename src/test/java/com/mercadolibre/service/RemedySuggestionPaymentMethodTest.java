@@ -2,12 +2,14 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
 import static com.mercadolibre.helper.MockTestHelper.CONTEXT_ES;
+import static com.mercadolibre.helper.MockTestHelper.mockAlternativePaymentMethodsList;
 import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
+import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethodRejected;
 import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.CONSUMER_CREDITS;
 import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.CREDIT_CARD;
 import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.DEBIT_CARD;
-import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.DIGITAL_CURRENCY;
 import static com.mercadolibre.utils.Translations.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -25,8 +27,10 @@ import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
+import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -222,51 +226,6 @@ public class RemedySuggestionPaymentMethodTest {
   }
 
   @Test
-  public void applyRemedy_statusDetailBadFilledCardNumber_remedySuggestedPmConsumerCredits() {
-
-    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-
-    when(remediesRequest.isOneTap()).thenReturn(true);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
-    PayerPaymentMethodRejected payerPaymentMethodRejected =
-        Mockito.mock(PayerPaymentMethodRejected.class);
-    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("visa");
-    when(payerPaymentMethodRejected.getPaymentMethodId()).thenReturn("credit_card");
-    when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(new BigDecimal(123));
-    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
-
-    final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
-        Mockito.mock(AlternativePayerPaymentMethod.class);
-    when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(DIGITAL_CURRENCY.name());
-    when(alternativePayerPaymentMethod.getPaymentMethodId()).thenReturn(DIGITAL_CURRENCY.name());
-    final Installment installment = Mockito.mock(Installment.class);
-    when(installment.getTotalAmount()).thenReturn(new BigDecimal(111));
-    when(installment.getInstallments()).thenReturn(3);
-    when(alternativePayerPaymentMethod.getInstallmentsList())
-        .thenReturn(Arrays.asList(installment));
-    when(remediesRequest.getAlternativePayerPaymentMethods())
-        .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
-
-    final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
-        new RemedySuggestionPaymentMethod(
-            remedyCvv, REMEDY_BAD_FILLED_CARD_NUMBER_TITLE, REMEDY_BAD_FILLED_CARD_NUMBER_MESSAGE);
-
-    final RemediesResponse remediesResponse =
-        remedySuggestionPaymentMethod.applyRemedy(
-            CONTEXT_ES, remediesRequest, new RemediesResponse());
-
-    assertThat(remediesResponse.getSuggestedPaymentMethod().getTitle(), notNullValue());
-    assertThat(remediesResponse.getSuggestedPaymentMethod().getMessage(), notNullValue());
-    assertThat(
-        remediesResponse
-            .getSuggestedPaymentMethod()
-            .getAlternativePaymentMethod()
-            .getPaymentTypeId(),
-        is(DIGITAL_CURRENCY.name()));
-    assertThat(remediesResponse.getCvv(), nullValue());
-  }
-
-  @Test
   public void applyRemedy_statusBadFilledOtherOneTapFalse_remedyEmpty() {
 
     final RemediesRequest remediesRequest =
@@ -286,31 +245,19 @@ public class RemedySuggestionPaymentMethodTest {
   }
 
   @Test
-  public void applyRemedy_statusDetailOtherReasonInstallmentsDifferent_remedyEmpty() {
-
-    final BigDecimal totalAmount = new BigDecimal(100);
+  public void applyRemedy_rejectedTC_returnCC() {
 
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
     when(remediesRequest.isOneTap()).thenReturn(true);
     when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
-    PayerPaymentMethodRejected payerPaymentMethodRejected =
-        Mockito.mock(PayerPaymentMethodRejected.class);
-    when(payerPaymentMethodRejected.getInstallments()).thenReturn(3);
-    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("visa");
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethodRejected(PaymentMethodsRejectedTypes.CREDIT_CARD);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
-    final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
-        Mockito.mock(AlternativePayerPaymentMethod.class);
-    when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(CREDIT_CARD.name());
-
-    final Installment installment = Mockito.mock(Installment.class);
-    when(installment.getInstallments()).thenReturn(4);
-    when(installment.getTotalAmount()).thenReturn(totalAmount);
-    when(alternativePayerPaymentMethod.getInstallmentsList())
-        .thenReturn(Arrays.asList(installment));
-
+    final List<AlternativePayerPaymentMethod> alternativePayerPaymentMethodList =
+        mockAlternativePaymentMethodsList();
     when(remediesRequest.getAlternativePayerPaymentMethods())
-        .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
+        .thenReturn(alternativePayerPaymentMethodList);
 
     final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
         new RemedySuggestionPaymentMethod(
@@ -320,6 +267,73 @@ public class RemedySuggestionPaymentMethodTest {
         remedySuggestionPaymentMethod.applyRemedy(
             CONTEXT_ES, remediesRequest, new RemediesResponse());
 
-    assertThat(remediesResponse.getSuggestedPaymentMethod(), nullValue());
+    assertThat(
+        remediesResponse
+            .getSuggestedPaymentMethod()
+            .getAlternativePaymentMethod()
+            .getPaymentTypeId(),
+        is(CONSUMER_CREDITS));
+  }
+
+  @Test
+  public void applyRemedy_rejectedAM_returnCC() {
+
+    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
+    when(remediesRequest.isOneTap()).thenReturn(true);
+    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethodRejected(PaymentMethodsRejectedTypes.ACCOUNT_MONEY);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+
+    final List<AlternativePayerPaymentMethod> alternativePayerPaymentMethodList =
+        mockAlternativePaymentMethodsList();
+    when(remediesRequest.getAlternativePayerPaymentMethods())
+        .thenReturn(alternativePayerPaymentMethodList);
+
+    final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
+        new RemedySuggestionPaymentMethod(
+            remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
+
+    final RemediesResponse remediesResponse =
+        remedySuggestionPaymentMethod.applyRemedy(
+            CONTEXT_ES, remediesRequest, new RemediesResponse());
+
+    assertThat(
+        remediesResponse
+            .getSuggestedPaymentMethod()
+            .getAlternativePaymentMethod()
+            .getPaymentTypeId(),
+        is(PaymentMethodsRejectedTypes.CONSUMER_CREDITS));
+  }
+
+  @Test
+  public void applyRemedy_rejectedTD_returnAM() {
+
+    final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
+    when(remediesRequest.isOneTap()).thenReturn(true);
+    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethodRejected(PaymentMethodsRejectedTypes.DEBIT_CARD);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+
+    final List<AlternativePayerPaymentMethod> alternativePayerPaymentMethodList =
+        mockAlternativePaymentMethodsList();
+    when(remediesRequest.getAlternativePayerPaymentMethods())
+        .thenReturn(alternativePayerPaymentMethodList);
+
+    final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
+        new RemedySuggestionPaymentMethod(
+            remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
+
+    final RemediesResponse remediesResponse =
+        remedySuggestionPaymentMethod.applyRemedy(
+            CONTEXT_ES, remediesRequest, new RemediesResponse());
+
+    assertThat(
+        remediesResponse
+            .getSuggestedPaymentMethod()
+            .getAlternativePaymentMethod()
+            .getPaymentTypeId(),
+        is(PaymentMethodsRejectedTypes.ACCOUNT_MONEY));
   }
 }
