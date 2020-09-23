@@ -1,21 +1,20 @@
 package com.mercadolibre.utils;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
-import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
-import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.CREDIT_CARD;
-import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.DEBIT_CARD;
-import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.DIGITAL_CURRENCY;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.Installment;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.PaymentMethodSelected;
-import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.tracking.TrackingData;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
 
 public final class SuggestionPaymentMehodsUtils {
 
@@ -23,97 +22,57 @@ public final class SuggestionPaymentMehodsUtils {
   private static final String LESS = "less";
   private static final String MORE = "more";
 
-  public PaymentMethodSelected findPaymentMethodSuggestionsAmount(
-      final RemediesRequest remediesRequest) {
+  public static PaymentMethodSelected getPaymentMethodSelected(
+      final List<AlternativePayerPaymentMethod> paymentMethodsOrdered) {
+    Iterator<AlternativePayerPaymentMethod> it = paymentMethodsOrdered.iterator();
 
-    final List<AlternativePayerPaymentMethod> alternativePayerPaymentMethodList =
-        remediesRequest.getAlternativePayerPaymentMethods();
-
-    final PayerPaymentMethodRejected payerPaymentMethodRejected =
-        remediesRequest.getPayerPaymentMethodRejected();
-
-    if (CollectionUtils.isEmpty(alternativePayerPaymentMethodList)
-        || null == payerPaymentMethodRejected) {
+    if (!it.hasNext()) {
       return null;
     }
 
-    for (AlternativePayerPaymentMethod alternativePayerPaymentMethod :
-        remediesRequest.getAlternativePayerPaymentMethods()) {
+    final AlternativePayerPaymentMethod alternativePayerPaymentMethod = it.next();
 
-      final String paymentTypeId = alternativePayerPaymentMethod.getPaymentTypeId();
+    List<Installment> installments = new ArrayList<>();
+    final List<Installment> alternativeInstalmens =
+        alternativePayerPaymentMethod.getInstallmentsList();
+    if (alternativeInstalmens != null && !alternativeInstalmens.isEmpty()) {
+      Iterator<Installment> itInstallments = alternativeInstalmens.iterator();
+      installments = Arrays.asList(itInstallments.next());
+    }
 
-      if (paymentTypeId.equalsIgnoreCase(ACCOUNT_MONEY)
-          || paymentTypeId.equalsIgnoreCase(DIGITAL_CURRENCY.toString())) {
-
-        return PaymentMethodSelected.builder()
-            .alternativePayerPaymentMethod(alternativePayerPaymentMethod)
+    final AlternativePayerPaymentMethod selectPaymentMethod =
+        AlternativePayerPaymentMethod.builder()
+            .customOptionId(alternativePayerPaymentMethod.getCustomOptionId())
+            .paymentMethodId(alternativePayerPaymentMethod.getPaymentMethodId())
+            .paymentTypeId(alternativePayerPaymentMethod.getPaymentTypeId())
+            .escStatus(alternativePayerPaymentMethod.getEscStatus())
+            .issuerName(alternativePayerPaymentMethod.getIssuerName())
+            .lastFourDigit(alternativePayerPaymentMethod.getLastFourDigit())
+            .securityCodeLength(alternativePayerPaymentMethod.getSecurityCodeLength())
+            .securityCodeLocation(alternativePayerPaymentMethod.getSecurityCodeLocation())
+            .installments(alternativePayerPaymentMethod.getInstallments())
+            .installmentsList(installments)
             .build();
-      }
 
-      if (paymentTypeId.equalsIgnoreCase(DEBIT_CARD.toString())) {
+    final PaymentMethodSelected.PaymentMethodSelectedBuilder paymentMethodSelectedBuilder =
+        PaymentMethodSelected.builder().alternativePayerPaymentMethod(selectPaymentMethod);
 
-        final PaymentMethodSelected.PaymentMethodSelectedBuilder paymentMethodSelectedBuilder =
-            PaymentMethodSelected.builder()
-                .alternativePayerPaymentMethod(alternativePayerPaymentMethod);
+    setEscRequired(
+        paymentMethodSelectedBuilder,
+        alternativePayerPaymentMethod.getEscStatus(),
+        alternativePayerPaymentMethod.getPaymentTypeId());
 
-        setEscRequired(
-            paymentMethodSelectedBuilder,
-            alternativePayerPaymentMethod.getEscStatus(),
-            alternativePayerPaymentMethod.isEsc());
-
-        return paymentMethodSelectedBuilder.build();
-      }
-
-      if (paymentTypeId.equalsIgnoreCase(CREDIT_CARD.toString())) {
-
-        final Installment installmentSelected =
-            findInstallmentSelected(alternativePayerPaymentMethod, payerPaymentMethodRejected);
-
-        if (null != installmentSelected) {
-
-          alternativePayerPaymentMethod.setInstallmentsList(Arrays.asList(installmentSelected));
-          alternativePayerPaymentMethod.setInstallments(
-              payerPaymentMethodRejected.getInstallments());
-
-          final PaymentMethodSelected.PaymentMethodSelectedBuilder paymentMethodSelectedBuilder =
-              PaymentMethodSelected.builder()
-                  .alternativePayerPaymentMethod(alternativePayerPaymentMethod);
-
-          setEscRequired(
-              paymentMethodSelectedBuilder,
-              alternativePayerPaymentMethod.getEscStatus(),
-              alternativePayerPaymentMethod.isEsc());
-
-          return paymentMethodSelectedBuilder.build();
-        }
-      }
-    }
-
-    return null;
-  }
-
-  private static Installment findInstallmentSelected(
-      final AlternativePayerPaymentMethod alternativePayerPaymentMethod,
-      final PayerPaymentMethodRejected payerPaymentMethodRejected) {
-
-    for (Installment installment : alternativePayerPaymentMethod.getInstallmentsList()) {
-
-      if (installment.getInstallments() == payerPaymentMethodRejected.getInstallments()
-          && installment.getTotalAmount().compareTo(payerPaymentMethodRejected.getTotalAmount())
-              == 0) {
-        return installment;
-      }
-    }
-
-    return null;
+    return paymentMethodSelectedBuilder.build();
   }
 
   private static void setEscRequired(
       final PaymentMethodSelected.PaymentMethodSelectedBuilder paymentMethodSelectedBuilder,
       final String escStatus,
-      final boolean esc) {
-    if (!escStatus.equalsIgnoreCase(STATUS_APPROVED) || !esc) {
-      paymentMethodSelectedBuilder.remedyCvvRequired(true);
+      final String paymentTypeId) {
+    if (paymentTypeId.equalsIgnoreCase(CREDIT_CARD) || paymentTypeId.equalsIgnoreCase(DEBIT_CARD)) {
+      if (!escStatus.equalsIgnoreCase(STATUS_APPROVED)) {
+        paymentMethodSelectedBuilder.remedyCvvRequired(true);
+      }
     }
   }
 
