@@ -57,6 +57,7 @@ public enum Translations {
       "remedy.call_for_authorize.message";
   public static final String REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD =
       "remedy.call_for_authorize.button.loud";
+  public static final String REMEDY_GENERIC_TITLE = "remedy.generic.title";
 
   public static final String EXPENSE_SPLIT_TITLE = "expense.split.title";
   public static final String EXPENSE_SPLIT_BUTTON_TITLE = "expense.split.button.title";
@@ -163,6 +164,8 @@ public enum Translations {
         return i18nService.tr("Puedes dividir este gasto con tus contactos", locale);
       case EXPENSE_SPLIT_BUTTON_TITLE:
         return i18nService.tr("Dividir gasto", locale);
+      case REMEDY_GENERIC_TITLE:
+        return i18nService.tr("Hemos rechazado tu pago", locale);
       default:
         return "";
     }

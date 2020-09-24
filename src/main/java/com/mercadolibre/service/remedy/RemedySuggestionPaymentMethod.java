@@ -10,6 +10,7 @@ import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_GENERIC_TITLE;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
@@ -136,11 +137,18 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     if (null != paymentMethodSelected) {
 
-      final String title =
+      String title =
           String.format(
               Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyTitle),
               payerPaymentMethodRejected.getIssuerName(),
               payerPaymentMethodRejected.getLastFourDigit());
+
+      if (payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(ACCOUNT_MONEY)
+          || payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(CONSUMER_CREDITS)) {
+
+        title =
+            Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_GENERIC_TITLE);
+      }
 
       final String message =
           String.format(
