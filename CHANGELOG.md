@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.18.3]
+
+### Changed
+
+- Cuando es Rejectado Accoun Money o Consumer Credits se muestra un titulo generico.
+
 ## [1.18.2]
 
 ### Changed
