@@ -72,6 +72,11 @@ dependencies {
 	compile "com.mercadolibre.px:px-dto-lib:$dtoLibVersion"
 	compile "com.mercadolibre.px:px-api-lib:$apiLibVersion"
 
+	//Melidata
+	compile('com.mercadolibre.melidata:melidata-sdk-java:1.4.0') {
+		exclude group: "javax.servlet", module: "servlet-api"
+	}
+
 	// MLAuth for access_token filter info
 	compile 'com.mercadolibre.security:mlauth:0.0.8'
 
@@ -92,6 +97,7 @@ dependencies {
 	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
 	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
 	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
+	testImplementation "org.mockito:mockito-inline:$mockitoCoreVersion"
 
 	// Babel
 	compile ("com.mercadolibre:i18n:$i18nVersion") {
