@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.19.0]
+
+### Changed
+
+- Se agrega configuracion de melidata.
+- Se agrega logica de experimentos en remedies(sin ningun experimento activo).
+
 ## [1.18.3]
 
 ### Changed
