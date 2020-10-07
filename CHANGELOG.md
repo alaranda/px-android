@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.20.0]
+
+### Added
+
+- Se empieza a recibir la merchant order id en el request y se envia a payments, sino viene sigue la logica vieja.
+
+### Changed
+
+- Se cambia a Map el tipo del campo internal_metadata de la pref.
+
 ## [1.19.1]
 
 ### Changed

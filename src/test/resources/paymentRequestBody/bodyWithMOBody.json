@@ -1,0 +1,52 @@
+{
+  "pref_id":"105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb",
+  "merchant_order_id": 123456789,
+  "payment_data":[
+    {
+      "campaign":{
+        "code_type":null,
+        "end_date":"2019-10-12T11:38:14.000-0300",
+        "id":null,
+        "legal_terms":"https://api.mercadolibre.com/campaigns/1000952/terms_and_conditions/html",
+        "max_coupon_amount":10000,
+        "max_redeem_per_user":1
+      },
+      "coupon_code":null,
+      "discount":null,
+      "issuer":null,
+      "payer":{
+        "email":"test_user_47570744@testuser.com",
+        "name":"Test",
+        "id":null,
+        "identification":{
+          "number":"",
+          "type":""
+        },
+        "surname":"User",
+        "type":null
+      },
+      "payer_cost":null,
+      "payment_method":{
+        "accreditation_time":null,
+        "additional_info_needed":null,
+        "deferred_capture":null,
+        "financial_institutions":null,
+        "id":"account_money",
+        "max_allowed_amount":null,
+        "merchant_account_id":null,
+        "min_allowed_amount":null,
+        "name":"Account Money of Mercado Pago",
+        "payment_type_id":"account_money",
+        "processing_modes":[
+          "aggregator"
+        ],
+        "secure_thumbnail":null,
+        "settings":null,
+        "status":"active"
+      },
+      "raw_amount":500,
+      "token":null,
+      "transaction_amount":500
+    }
+  ]
+}
