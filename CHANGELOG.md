@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.19.1]
+
+### Changed
+
+- Se saca credits del ofrecimiento de remedies.
+
 ## [1.19.0]
 
 ### Changed

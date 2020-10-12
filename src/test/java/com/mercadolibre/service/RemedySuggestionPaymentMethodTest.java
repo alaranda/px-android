@@ -9,7 +9,6 @@ import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.CREDIT_CARD;
 import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.DEBIT_CARD;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
 import static com.mercadolibre.utils.Translations.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -272,7 +271,7 @@ public class RemedySuggestionPaymentMethodTest {
             .getSuggestedPaymentMethod()
             .getAlternativePaymentMethod()
             .getPaymentTypeId(),
-        is(CONSUMER_CREDITS));
+        is(PaymentMethodsRejectedTypes.CREDIT_CARD));
   }
 
   @Test
@@ -303,7 +302,7 @@ public class RemedySuggestionPaymentMethodTest {
             .getSuggestedPaymentMethod()
             .getAlternativePaymentMethod()
             .getPaymentTypeId(),
-        is(CONSUMER_CREDITS));
+        is(PaymentMethodsRejectedTypes.CREDIT_CARD));
   }
 
   @Test

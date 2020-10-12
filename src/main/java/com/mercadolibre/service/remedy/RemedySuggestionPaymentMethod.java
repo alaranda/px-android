@@ -95,10 +95,10 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
             .filter(isAccountMoney)
             .collect(Collectors.toList());
 
-    final List<AlternativePayerPaymentMethod> consumerCredits =
-        alternativePayerPaymentMethodList.stream()
-            .filter(isConsumerCredits)
-            .collect(Collectors.toList());
+    /*final List<AlternativePayerPaymentMethod> consumerCredits =
+    alternativePayerPaymentMethodList.stream()
+        .filter(isConsumerCredits)
+        .collect(Collectors.toList());*/
 
     final List<AlternativePayerPaymentMethod> debitCardEsc =
         alternativePayerPaymentMethodList.stream()
@@ -122,7 +122,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     Map<String, List<AlternativePayerPaymentMethod>> payerPaymentMethodsMap = new HashMap<>();
     payerPaymentMethodsMap.put(ACCOUNT_MONEY, accountMoney);
-    payerPaymentMethodsMap.put(CONSUMER_CREDITS, consumerCredits);
+    /*payerPaymentMethodsMap.put(CONSUMER_CREDITS, consumerCredits);*/
     payerPaymentMethodsMap.put(DEBIT_CARD_ESC, debitCardEsc);
     payerPaymentMethodsMap.put(DEBIT_CARD_WITHOUT_ESC, debitCardWithOutEsc);
     payerPaymentMethodsMap.put(CREDIT_CARD_ESC, creditCardEsc);
