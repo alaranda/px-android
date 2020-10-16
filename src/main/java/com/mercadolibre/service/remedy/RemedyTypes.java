@@ -4,6 +4,8 @@ import static com.mercadolibre.utils.Translations.*;
 
 import com.mercadolibre.api.RiskApi;
 import com.mercadolibre.dto.remedy.Remedy;
+import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
+import com.mercadolibre.px.toolkit.config.Config;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +13,15 @@ import java.util.Map;
 
 public class RemedyTypes {
 
-  private static final RiskApi RISK_API = new RiskApi();
+  private static final RiskApi RISK_API =
+      new RiskApi(
+          new ConfigurationDao(
+              Integer.valueOf(Config.getInt("risk.socket.timeout")),
+              Integer.valueOf(Config.getInt("risk.socket.timeout")),
+              Integer.valueOf(Config.getInt("default.retries")),
+              Integer.valueOf(Config.getInt("default.retry.delay")),
+              Config.getString("risk.url.scheme"),
+              Config.getString("risk.url.host")));
 
   private static final Map<Remedy, List<RemedyInterface>> mapRemediesInterface =
       new HashMap<Remedy, List<RemedyInterface>>() {

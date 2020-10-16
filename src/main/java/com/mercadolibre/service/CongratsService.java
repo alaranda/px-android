@@ -79,6 +79,8 @@ public class CongratsService {
 
   private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
 
+  private static final String ODR_IMAGES_VERSION = "1";
+
   private static final String EXPENSE_SPLIT_ML_DEEPLINK =
       "mercadolibre://mplayer/money_split_external?operation_id=%s&source=%s";
   private static final String EXPENSE_SPLIT_MP_DEEPLINK =
@@ -340,7 +342,8 @@ public class CongratsService {
               OnDemandResourcesService.createOnDemandResourcesUrl(
                   String.format(PX_PM_ODR, paymentMethodId),
                   congratsRequest.getDensity(),
-                  context.getLocale().toString()));
+                  context.getLocale().toString(),
+                  ODR_IMAGES_VERSION));
         });
 
     return paymentMethodImages;

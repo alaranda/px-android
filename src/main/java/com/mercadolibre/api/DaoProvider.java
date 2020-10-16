@@ -8,6 +8,7 @@ import com.mercadolibre.px.toolkit.config.Config;
 public class DaoProvider {
 
   private KycVaultDao kycVaultDao;
+  private RiskApi riskApi;
 
   public DaoProvider() {
 
@@ -26,6 +27,15 @@ public class DaoProvider {
             Config.getString("api.base.url.host"));
 
     kycVaultDao = new KycVaultDao(configurationDao, configurationCircuitBreaker);
+    riskApi =
+        new RiskApi(
+            new ConfigurationDao(
+                Integer.valueOf(Config.getInt("risk.socket.timeout")),
+                Integer.valueOf(Config.getInt("risk.socket.timeout")),
+                Integer.valueOf(Config.getInt("default.retries")),
+                Integer.valueOf(Config.getInt("default.retry.delay")),
+                Config.getString("risk.url.scheme"),
+                Config.getString("risk.url.host")));
   }
 
   public DaoProvider(final KycVaultDao kycVaultDao) {
