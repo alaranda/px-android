@@ -78,12 +78,14 @@ public enum PaymentService {
         getPublicKeyAndPreference(context, publicKeyId, paymentDataBody.getPrefId());
     final PublicKey publicKeyInfo = publicKeyAndPreference.getPublicKey();
     final Preference preference = publicKeyAndPreference.getPreference();
+    final PaymentData paymentData = paymentDataBody.getPaymentData().get(0);
 
     if (StringUtils.isNotBlank(callerId)) {
-      final Order order = setOrder(preference, Long.valueOf(callerId));
+      final Order order =
+          setOrder(preference, Long.valueOf(callerId), paymentDataBody.getMerchantOrderId());
       return createBlackLabelRequest(
           setProductIdPreference(headers, preference),
-          paymentDataBody.getPaymentData().get(0),
+          paymentData,
           preference,
           publicKeyInfo,
           context.getRequestId(),
@@ -149,9 +151,16 @@ public enum PaymentService {
         .build();
   }
 
-  private Order setOrder(final Preference preference, final Long payerId) throws ApiException {
+  private Order setOrder(
+      final Preference preference, final Long payerId, final Long merchantOrderId)
+      throws ApiException {
     if (String.valueOf(payerId).equals(preference.getCollectorId())) {
       throw new ApiException(INTERNAL_ERROR, "Payer equals Collector", HttpStatus.SC_BAD_REQUEST);
+    }
+
+    if (null != merchantOrderId) {
+      DatadogTransactionsMetrics.addOrderTypePayment(MERCHANT_ORDER);
+      return Order.createOrderMP(merchantOrderId);
     }
 
     if (null != preference.getMerchantOrderId()) {

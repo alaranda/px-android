@@ -102,6 +102,6 @@ public class HeadersUtilsTest {
     String userAgentString = "Tomi/NoOS/1.2.3";
     UserAgent userAgent = HeadersUtils.userAgentFromHeader(userAgentString);
 
-    assertEquals("PX/NoOS/0.0", userAgent.toString());
+    assertEquals("Tomi/NoOS/0.0", userAgent.toString());
   }
 }
