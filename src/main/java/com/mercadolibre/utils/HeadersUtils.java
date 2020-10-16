@@ -2,10 +2,7 @@ package com.mercadolibre.utils;
 
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.*;
 
-import com.mercadolibre.px.dto.lib.context.OperatingSystem;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
-import com.mercadolibre.px.dto.lib.context.Version;
-import com.mercadolibre.px.dto.lib.exception.UserAgentParseException;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Header;
 import com.mercadolibre.restclient.http.Headers;
@@ -136,11 +133,7 @@ public enum HeadersUtils {
   }
 
   public static UserAgent userAgentFromHeader(final String userAgent) {
-    try {
-      return UserAgent.create(userAgent);
-    } catch (UserAgentParseException e) {
-      return new UserAgent("PX", OperatingSystem.NO_OS, Version.create("0.0"));
-    }
+    return UserAgent.create(userAgent);
   }
 
   private static boolean isTestToken(final String publicKey) {

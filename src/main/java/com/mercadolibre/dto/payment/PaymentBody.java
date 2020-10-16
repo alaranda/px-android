@@ -1,5 +1,7 @@
 package com.mercadolibre.dto.payment;
 
+import static com.mercadolibre.constants.Constants.PREFERENCE;
+
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.preference.Preference;
@@ -7,7 +9,9 @@ import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import spark.utils.StringUtils;
 
 /** Objeto con los parametros que posteamos en el body de payments */
@@ -33,7 +37,7 @@ public class PaymentBody {
   private Order order;
   private String marketplace;
   private String operationType;
-  private Object internalMetadata;
+  private Map<String, Object> internalMetadata;
   private String notificationUrl;
   private BigDecimal applicationFee;
   private List<Tax> taxes;
@@ -134,7 +138,7 @@ public class PaymentBody {
     private Order order;
     private String marketplace;
     private String operationType;
-    private Object internalMetadata;
+    private Map<String, Object> internalMetadata;
     private String notificationUrl;
     private BigDecimal applicationFee;
     private List<Tax> taxes;
@@ -205,7 +209,7 @@ public class PaymentBody {
         this.differentialPricingId = preference.getDifferentialPricing().getId();
       }
       this.operationType = preference.getOperationType();
-      this.internalMetadata = preference.getInternalMetadta();
+      this.internalMetadata = buildInternalMetadataMap(preference);
       this.notificationUrl = preference.getNotificationUrl();
       this.taxes = preference.getTaxes();
       if (null != preference.getMarketplaceFee()
@@ -294,5 +298,15 @@ public class PaymentBody {
     public String getLastName() {
       return lastName;
     }
+  }
+
+  private static Map<String, Object> buildInternalMetadataMap(final Preference preference) {
+
+    Map<String, Object> internalMetadata = preference.getInternalMetadta();
+    if (null == internalMetadata) {
+      internalMetadata = new HashMap<>();
+    }
+    internalMetadata.put(PREFERENCE, new PaymentPreference(preference.getId(), null));
+    return internalMetadata;
   }
 }
