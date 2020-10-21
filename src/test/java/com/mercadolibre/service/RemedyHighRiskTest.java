@@ -16,9 +16,11 @@ import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseHighRisk;
+import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.toolkit.config.Config;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
@@ -36,7 +38,14 @@ public class RemedyHighRiskTest {
 
   RemedyHighRisk remedyHighRisk =
       new RemedyHighRisk(
-          new RiskApi(),
+          new RiskApi(
+              new ConfigurationDao(
+                  Integer.valueOf(Config.getInt("risk.socket.timeout")),
+                  Integer.valueOf(Config.getInt("risk.socket.timeout")),
+                  Integer.valueOf(Config.getInt("default.retries")),
+                  Integer.valueOf(Config.getInt("default.retry.delay")),
+                  Config.getString("risk.url.scheme"),
+                  Config.getString("risk.url.host"))),
           new RemedySuggestionPaymentMethod(
               new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE));
 
