@@ -253,8 +253,8 @@ public class PaymentBody {
       return builder;
     }
 
-    public Builder withCollector(final Long collectorId) {
-      this.collector = new User(String.valueOf(collectorId));
+    public Builder withCollector(final Long collectorId, final Long operatorIdCollector) {
+      this.collector = new User(String.valueOf(collectorId), operatorIdCollector);
       return this;
     }
 

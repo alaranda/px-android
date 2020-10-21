@@ -145,7 +145,7 @@ public enum PaymentService {
         .withCallerId(Long.valueOf(callerId))
         .withClientId(Long.valueOf(clientId))
         .withPreference(preference)
-        .withCollector(publicKey.getOwnerId())
+        .withCollector(publicKey.getOwnerId(), preference.getOperatorIdCollector())
         .withOrder(order)
         .withHeaderTestToken(pubicKeyId)
         .build();
