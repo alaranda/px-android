@@ -5,11 +5,11 @@ import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
 
-import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.risk.RiskResponse;
+import com.mercadolibre.px.api.lib.AbstractDao;
+import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dao.AbstractDao;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.RestUtils;
 import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
@@ -18,6 +18,7 @@ import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
+import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,10 @@ public class RiskApi extends AbstractDao {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String URL = "/risk_analysis";
   private static final String POOL_NAME = "RiskRead";
+
+  public RiskApi(final ConfigurationDao configurationDao) {
+    super(configurationDao);
+  }
 
   public RiskResponse getRisk(final Context context, final long riskExcecutionId)
       throws ApiException {
@@ -78,12 +83,14 @@ public class RiskApi extends AbstractDao {
   }
 
   @Override
-  protected void warmUpPool() {
+  protected void warmUpPool(final ConfigurationDao configurationDao) {
     RestUtils.registerPool(
         getPoolName(),
         pool ->
-            pool.withConnectionTimeout(
-                    Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
-                .withSocketTimeout(Config.getLong("risk.socket.timeout")));
+            pool.withConnectionTimeout(configurationDao.getConnectionTimeout())
+                .withSocketTimeout(configurationDao.getSocketTimeout())
+                .withRetryStrategy(
+                    new SimpleRetryStrategy(
+                        configurationDao.getRetry(), configurationDao.getRetryDelay())));
   }
 }

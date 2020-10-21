@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.21.0]
+
+### Added
+
+- Se actualiza la version de px-toolkit a 0.41.1
+- Agrego version param para las imagenes de ODR.
+
 ## [1.20.0]
 
 ### Added
