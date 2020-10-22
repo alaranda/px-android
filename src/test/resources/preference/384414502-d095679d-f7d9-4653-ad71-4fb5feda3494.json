@@ -9,6 +9,7 @@
   "binary_mode": false,
   "client_id": "963",
   "collector": {
+    "operator_id": 111,
     "tags": [
       "normal",
       "test_user",
