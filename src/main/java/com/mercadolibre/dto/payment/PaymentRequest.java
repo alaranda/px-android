@@ -103,8 +103,8 @@ public class PaymentRequest {
       return this;
     }
 
-    public Builder withCollector(final Long collectorId) {
-      body.withCollector(collectorId);
+    public Builder withCollector(final Long collectorId, final Long operatorIdCollector) {
+      body.withCollector(collectorId, operatorIdCollector);
       return this;
     }
 
