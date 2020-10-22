@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.22.0]
+
+### Added
+
+- Se agrega el operatorId en la info del collector que va a payments
+
+### Changed
+
+- Se actualiza la lib de dto a la version 0.20.0
+
 ## [1.21.0]
 
 ### Added
@@ -25,15 +35,6 @@
 
 - Se saca credits del ofrecimiento de remedies.
 
-## [1.20.0]
-
-### Added
-
-- Se agrega el operatorId en la info del collector que va a payments
-
-### Changed
-
-- Se actualiza la lib de dto a la version 0.20.0
 
 ## [1.19.0]
 
