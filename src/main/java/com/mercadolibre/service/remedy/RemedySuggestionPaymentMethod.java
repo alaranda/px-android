@@ -21,11 +21,15 @@ import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
 import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.context.OperatingSystem;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
+import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   private String remedyMessage;
   private SuggestionPaymentMehodsUtils suggestionPaymentMehodsUtils;
   private PaymentMethodsRejectedTypes paymentMethodsRejectedTypes;
+
+  /** Hack IOS valid version since */
+  private static final Version CREDITS_VALID_VERSION_IOS_SINCE = new Version("4.36.4");
 
   private final Predicate<AlternativePayerPaymentMethod> isDebitCard =
       e -> e.getPaymentTypeId().equalsIgnoreCase(DEBIT_CARD);
@@ -95,10 +102,14 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
             .filter(isAccountMoney)
             .collect(Collectors.toList());
 
-    /*final List<AlternativePayerPaymentMethod> consumerCredits =
-    alternativePayerPaymentMethodList.stream()
-        .filter(isConsumerCredits)
-        .collect(Collectors.toList());*/
+    List<AlternativePayerPaymentMethod> consumerCredits = new ArrayList<>();
+
+    if (iosVersionIsValidForCredits(context.getUserAgent())) {
+      consumerCredits =
+          alternativePayerPaymentMethodList.stream()
+              .filter(isConsumerCredits)
+              .collect(Collectors.toList());
+    }
 
     final List<AlternativePayerPaymentMethod> debitCardEsc =
         alternativePayerPaymentMethodList.stream()
@@ -122,7 +133,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     Map<String, List<AlternativePayerPaymentMethod>> payerPaymentMethodsMap = new HashMap<>();
     payerPaymentMethodsMap.put(ACCOUNT_MONEY, accountMoney);
-    /*payerPaymentMethodsMap.put(CONSUMER_CREDITS, consumerCredits);*/
+    payerPaymentMethodsMap.put(CONSUMER_CREDITS, consumerCredits);
     payerPaymentMethodsMap.put(DEBIT_CARD_ESC, debitCardEsc);
     payerPaymentMethodsMap.put(DEBIT_CARD_WITHOUT_ESC, debitCardWithOutEsc);
     payerPaymentMethodsMap.put(CREDIT_CARD_ESC, creditCardEsc);
@@ -222,5 +233,13 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
     }
 
     return false;
+  }
+
+  private boolean iosVersionIsValidForCredits(final UserAgent userAgent) {
+    if (userAgent.getOperatingSystem().equals(OperatingSystem.IOS)
+        && userAgent.getVersion().compareTo(CREDITS_VALID_VERSION_IOS_SINCE) < 0) {
+      return false;
+    }
+    return true;
   }
 }

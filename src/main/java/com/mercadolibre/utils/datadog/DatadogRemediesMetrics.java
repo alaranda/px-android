@@ -43,7 +43,7 @@ public class DatadogRemediesMetrics {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
     tags.add("flow", context.getFlow());
     tags.add("bussines", context.getPlatform());
-    tags.add("platform", remediesRequest.getUserAgent().getOperatingSystem().getName());
+    tags.add("platform", context.getUserAgent().getOperatingSystem().getName());
     tags.add("site", remediesRequest.getSiteId());
     tags.add("status_detail", remediesRequest.getStatusDetail());
     if (remediesRequest.getPayerPaymentMethodRejected() != null) {

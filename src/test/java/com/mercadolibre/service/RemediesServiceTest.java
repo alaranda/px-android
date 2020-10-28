@@ -1,6 +1,6 @@
 package com.mercadolibre.service;
 
-import static com.mercadolibre.helper.MockTestHelper.CONTEXT_ES;
+import static com.mercadolibre.helper.MockTestHelper.mockContextLibDto;
 import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
 import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static com.mercadolibre.px.toolkit.constants.PaymentTypeId.CREDIT_CARD;
@@ -58,7 +58,7 @@ public class RemediesServiceTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, PAYMENT_ID_TEST, remediesRequest);
+        remediesService.getRemedy(mockContextLibDto(), PAYMENT_ID_TEST, remediesRequest);
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv.getTitle(), notNullValue());
@@ -87,8 +87,9 @@ public class RemediesServiceTest {
         mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
-    final Context context =
-        Context.builder().requestId("").locale("es-AR").platform(Platform.ML).build();
+    final Context context = mockContextLibDto();
+    when(context.getPlatform()).thenReturn(Platform.ML);
+
     final RemediesResponse remediesResponse =
         remediesService.getRemedy(context, "123456789", remediesRequest);
 
@@ -135,7 +136,7 @@ public class RemediesServiceTest {
         .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
 
     final RemediesResponse remediesResponse =
-        remediesService.getRemedy(CONTEXT_ES, "123456789", remediesRequest);
+        remediesService.getRemedy(mockContextLibDto(), "123456789", remediesRequest);
 
     assertThat(remediesResponse.getSuggestedPaymentMethod().getTitle(), notNullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getMessage(), notNullValue());
