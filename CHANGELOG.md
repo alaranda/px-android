@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.24.0]
+
+### Added
+
+- Se agrega llamada a PreferenceApi en la congrats.
+- Se agrega a la respuesta de congrats el primary button y el auto return.
+
 ## [1.23.0]
 
 ### Added

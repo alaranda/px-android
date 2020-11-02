@@ -1,9 +1,13 @@
 package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 
 @ToString
+@AllArgsConstructor
+@Getter
 public class CongratsRequest {
 
   private String userId;
@@ -18,79 +22,5 @@ public class CongratsRequest {
   private String flowName;
   private boolean ifpe;
   private String paymentMethodsIds;
-
-  public CongratsRequest(
-      final String userId,
-      final String clientId,
-      final String siteId,
-      final String paymentIds,
-      final String platform,
-      final UserAgent userAgent,
-      final String density,
-      final String productId,
-      final String campaignId,
-      final String flowName,
-      final boolean ifpe,
-      final String paymentMethodsIds) {
-    this.userId = userId;
-    this.clientId = clientId;
-    this.siteId = siteId;
-    this.paymentIds = paymentIds;
-    this.platform = platform;
-    this.userAgent = userAgent;
-    this.density = density;
-    this.productId = productId;
-    this.campaignId = campaignId;
-    this.flowName = flowName;
-    this.ifpe = ifpe;
-    this.paymentMethodsIds = paymentMethodsIds;
-  }
-
-  public String getUserId() {
-    return userId;
-  }
-
-  public String getSiteId() {
-    return siteId;
-  }
-
-  public String getPaymentIds() {
-    return paymentIds;
-  }
-
-  public String getPlatform() {
-    return platform;
-  }
-
-  public String getClientId() {
-    return clientId;
-  }
-
-  public UserAgent getUserAgent() {
-    return userAgent;
-  }
-
-  public String getDensity() {
-    return density;
-  }
-
-  public String getProductId() {
-    return productId;
-  }
-
-  public String getCampaignId() {
-    return campaignId;
-  }
-
-  public String getFlowName() {
-    return flowName;
-  }
-
-  public boolean isIfpe() {
-    return ifpe;
-  }
-
-  public String getPaymentMethodsIds() {
-    return paymentMethodsIds;
-  }
+  private String preferenceId;
 }

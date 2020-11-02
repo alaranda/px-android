@@ -62,6 +62,9 @@ public enum Translations {
   public static final String EXPENSE_SPLIT_TITLE = "expense.split.title";
   public static final String EXPENSE_SPLIT_BUTTON_TITLE = "expense.split.button.title";
 
+  public static final String RETURNING_MERCHANT_SITE = "congrats.return.merchant.time";
+  public static final String RETURN_MERCHANT_SITE = "congrats.return.merchant.button";
+
   private I18nService i18nService = new I18nService();
 
   /**
@@ -166,6 +169,10 @@ public enum Translations {
         return i18nService.tr("Dividir gasto", locale);
       case REMEDY_GENERIC_TITLE:
         return i18nService.tr("Hemos rechazado tu pago", locale);
+      case RETURN_MERCHANT_SITE:
+        return i18nService.tr("Volver ahora", locale);
+      case RETURNING_MERCHANT_SITE:
+        return i18nService.tr("Te llevaremos de vuelta al sitio en {0}", locale);
       default:
         return "";
     }

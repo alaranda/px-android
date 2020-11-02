@@ -4,6 +4,7 @@ import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_CALLER_SCOPES;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
@@ -27,7 +28,9 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.mercadolibre.restclient.retry.SimpleRetryStrategy;
 import com.newrelic.api.agent.Trace;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -141,5 +144,29 @@ public enum PreferenceAPI {
         .setScheme(Config.getString("preference.url.scheme"))
         .setHost(Config.getString("preference.url.host"))
         .setPath(String.format("%s/%s", URL, preferenceId));
+  }
+
+  public static Optional<Preference> getPreferenceFromFuture(
+      final Context context, final CompletableFuture<Either<Preference, ApiError>> future) {
+    try {
+      if (null != future && future.get().isValuePresent()) {
+        return Optional.ofNullable(future.get().getValue());
+      } else {
+        return Optional.empty();
+      }
+    } catch (InterruptedException | ExecutionException e) {
+      LOGGER.error(
+          LogUtils.getExceptionLog(
+              context.getRequestId(),
+              HttpMethod.GET.name(),
+              POOL_NAME,
+              URL,
+              new Headers().add(REQUEST_ID, context.getRequestId()),
+              null,
+              HttpStatus.SC_GATEWAY_TIMEOUT,
+              e));
+      METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+      return Optional.empty();
+    }
   }
 }

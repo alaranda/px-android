@@ -78,6 +78,7 @@ public class CongratsRouterTest {
             CAMPAIGN_ID_TEST,
             FLOW_NAME,
             false,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(

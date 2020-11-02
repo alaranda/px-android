@@ -109,6 +109,8 @@ public class CongratsController {
     final boolean ifpe = Boolean.parseBoolean(request.queryParams(IFPE));
     final String paymentMethodsIds = request.queryParams(PAYMENT_METHODS_IDS);
 
+    final String preferenceId = request.queryParams(PREF_ID);
+
     return new CongratsRequest(
         callerId,
         clientId,
@@ -121,6 +123,7 @@ public class CongratsController {
         campaignId,
         flowName,
         ifpe,
-        paymentMethodsIds);
+        paymentMethodsIds,
+        preferenceId);
   }
 }
