@@ -12,27 +12,32 @@ import com.mercadolibre.dto.remedy.Installment;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.platform.Platform;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import org.mockito.Mockito;
 
 public class MockTestHelper {
 
-  public static final Context CONTEXT_ES =
-      Context.builder()
-          .requestId(UUID.randomUUID().toString())
-          .locale("es-AR")
-          .platform(Platform.MP)
-          .build();
+  public static Context mockContextLibDto() {
+
+    Context context = Mockito.mock(Context.class);
+
+    when(context.getRequestId()).thenReturn(UUID.randomUUID().toString());
+    when(context.getLocale()).thenReturn(Locale.forLanguageTag("es-AR"));
+    when(context.getPlatform()).thenReturn(Platform.MP);
+    when(context.getUserAgent()).thenReturn(UserAgent.create("PX/Android/1.0.0"));
+
+    return context;
+  }
 
   public static RemediesRequest mockRemediesRequest(
       final Long riskId, final String callerId, final String site) {
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.40.0"));
     when(remediesRequest.getRiskExcecutionId()).thenReturn(riskId);
     when(remediesRequest.getUserId()).thenReturn(callerId);
     when(remediesRequest.getSiteId()).thenReturn(site);

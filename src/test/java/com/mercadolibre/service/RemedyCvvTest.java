@@ -1,7 +1,6 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.helper.MockTestHelper.*;
-import static com.mercadolibre.service.PreferenceServiceTest.CONTEXT_ES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -12,8 +11,9 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.dto.remedy.ResponseRemedyDefault;
+import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.site.Site;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
 import java.math.BigDecimal;
@@ -39,7 +39,7 @@ public class RemedyCvvTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCvv.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv.getTitle(), is("El código de seguridad es inválido"));
@@ -58,7 +58,7 @@ public class RemedyCvvTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCvv.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseRemedyDefault responseRemedyDefault = remediesResponse.getWithOutRemedy();
     assertThat(responseRemedyDefault, nullValue());
@@ -71,10 +71,9 @@ public class RemedyCvvTest {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("8888", "Icbc", new BigDecimal(321), "front", 4);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/IOS/4.48.0"));
 
     final RemediesResponse remediesResponse =
-        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCvv.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv.getFieldSetting().getHintMessage(), is("Código de seguridad"));
@@ -84,12 +83,11 @@ public class RemedyCvvTest {
   public void applyRemedy_statusDetailCvvwithoutPaymentMethodRejected_remedyEmpty() {
 
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/0.0.0"));
     when(remediesRequest.getRiskExcecutionId()).thenReturn(0l);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(null);
 
     final RemediesResponse remediesResponse =
-        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCvv.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv, is(nullValue()));
@@ -102,10 +100,12 @@ public class RemedyCvvTest {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("8888", "Icbc", new BigDecimal(321), "front", 4);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
-    when(remediesRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.48.0"));
+
+    final Context context = mockContextLibDto();
+    when(context.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.48.5"));
 
     final RemediesResponse remediesResponse =
-        remedyCvv.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCvv.applyRemedy(context, remediesRequest, new RemediesResponse());
 
     final ResponseCvv responseCvv = remediesResponse.getCvv();
     assertThat(responseCvv, nullValue());

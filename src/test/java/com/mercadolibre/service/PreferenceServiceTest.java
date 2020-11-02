@@ -1,5 +1,6 @@
 package com.mercadolibre.service;
 
+import static com.mercadolibre.helper.MockTestHelper.mockContextLibDto;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -14,8 +15,6 @@ import com.mercadolibre.api.MockPreferenceTidyAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
 import com.mercadolibre.dto.preference.InitPreferenceRequest;
 import com.mercadolibre.dto.preference.PreferenceResponse;
-import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.exceptions.ValidationException;
@@ -40,8 +39,6 @@ public class PreferenceServiceTest {
   private static final String USER_ID_1 = "243962506";
   private static final String USER_ID_2 = "453962577";
   public static final String REQUEST_ID = UUID.randomUUID().toString();
-  public static final Context CONTEXT_ES =
-      Context.builder().requestId(REQUEST_ID).locale("es-AR").platform(Platform.MP).build();
 
   @Test
   public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException()
@@ -61,7 +58,8 @@ public class PreferenceServiceTest {
 
     try {
       final Preference preference =
-          PreferenceService.INSTANCE.getPreference(CONTEXT_ES, PREF_MELICOLLECTOR, USER_ID_2);
+          PreferenceService.INSTANCE.getPreference(
+              mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_2);
       fail("ValidationException pref");
     } catch (ValidationException e) {
       assertThat(e.getDescription(), is("No podés pagar con este link de pago."));
@@ -81,7 +79,8 @@ public class PreferenceServiceTest {
                     "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
 
     final Preference preference =
-        PreferenceService.INSTANCE.getPreference(CONTEXT_ES, PREF_MELICOLLECTOR, USER_ID_1);
+        PreferenceService.INSTANCE.getPreference(
+            mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
 
     assertNotNull(preference);
   }
@@ -115,7 +114,8 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     when(initPreferenceRequest.getCallerId()).thenReturn("12345");
     PreferenceResponse preferenceResponse =
-        PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
+        PreferenceService.INSTANCE.getPreferenceResponce(
+            mockContextLibDto(), initPreferenceRequest);
     assertTrue(preferenceResponse != null);
     assertEquals(preferenceResponse.getPrefId(), "127330977-0f03b540-a8c2-4879-af10-66f619786c0c");
     assertEquals(preferenceResponse.getPublicKey(), "APP_USR-b96cf47b-cbb2-4c8c-83cb-a8cb01167b4e");
@@ -134,7 +134,7 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getShortId()).thenReturn("23BYCZ");
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
+      PreferenceService.INSTANCE.getPreferenceResponce(mockContextLibDto(), initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");
@@ -148,7 +148,7 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getShortId()).thenReturn(null);
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      PreferenceService.INSTANCE.getPreferenceResponce(CONTEXT_ES, initPreferenceRequest);
+      PreferenceService.INSTANCE.getPreferenceResponce(mockContextLibDto(), initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");

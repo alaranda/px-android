@@ -14,10 +14,10 @@ import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
 import com.mercadolibre.px.toolkit.constants.HeadersConstants;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
@@ -63,6 +63,9 @@ public class RemediesController {
       contextBuilder.platform(platform);
     }
 
+    final UserAgent userAgent = UserAgent.create(request.userAgent());
+    contextBuilder.userAgent(userAgent);
+
     final Context context = contextBuilder.build();
 
     LOGGER.info(
@@ -94,7 +97,6 @@ public class RemediesController {
       final RemediesRequest remediesRequest =
           GsonWrapper.fromJson(request.body(), RemediesRequest.class);
       remediesRequest.setSiteId(request.queryParams(CALLER_SITE_ID));
-      remediesRequest.setUserAgent(UserAgent.create(request.userAgent()));
       remediesRequest.setUserId(request.queryParams(CALLER_ID));
       remediesRequest.setOneTap(
           StringUtils.isBlank(request.headers(ONE_TAP))

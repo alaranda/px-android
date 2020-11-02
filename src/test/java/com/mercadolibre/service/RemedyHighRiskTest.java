@@ -1,8 +1,8 @@
 package com.mercadolibre.service;
 
+import static com.mercadolibre.helper.MockTestHelper.mockContextLibDto;
 import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
 import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
-import static com.mercadolibre.service.PreferenceServiceTest.CONTEXT_ES;
 import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_TITLE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -21,7 +21,6 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
@@ -50,7 +49,6 @@ public class RemedyHighRiskTest {
               new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE));
 
   private static final String CALLER_ID_TEST = "11111";
-  private static final UserAgent USER_AGENT_TEST = UserAgent.create("PX/Android/0.0.0");
 
   @Before
   public void before() {
@@ -70,10 +68,8 @@ public class RemedyHighRiskTest {
         mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
-    final Context context =
-        Context.builder().requestId("").locale("es-AR").platform(Platform.MP).build();
     final RemediesResponse remediesResponse =
-        remedyHighRisk.applyRemedy(context, remediesRequest, new RemediesResponse());
+        remedyHighRisk.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
     assertThat(responseHighRisk.getTitle(), is("Validá tu identidad para realizar el pago"));
@@ -100,8 +96,9 @@ public class RemedyHighRiskTest {
         mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
-    final Context context =
-        Context.builder().requestId("").locale("es-AR").platform(Platform.ML).build();
+    final Context context = mockContextLibDto();
+    when(context.getPlatform()).thenReturn(Platform.ML);
+
     final RemediesResponse remediesResponse =
         remedyHighRisk.applyRemedy(context, remediesRequest, new RemediesResponse());
 
@@ -126,7 +123,7 @@ public class RemedyHighRiskTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyHighRisk.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
     assertThat(responseHighRisk, nullValue());
@@ -148,7 +145,7 @@ public class RemedyHighRiskTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyHighRisk.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     assertThat(remediesResponse.getHighRisk(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod(), nullValue());
@@ -169,7 +166,7 @@ public class RemedyHighRiskTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyHighRisk.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     assertThat(remediesResponse.getHighRisk(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod(), nullValue());
@@ -190,7 +187,7 @@ public class RemedyHighRiskTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyHighRisk.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyHighRisk.applyRemedy(mockContextLibDto(), remediesRequest, new RemediesResponse());
 
     assertThat(remediesResponse.getHighRisk(), nullValue());
   }
