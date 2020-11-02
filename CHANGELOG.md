@@ -2,6 +2,14 @@
 
 # Change Log
 
+## [1.23.0]
+
+### Added
+
+- Se agrega UserAgent de la lib de dto en el context.
+- Se borra el UserAgent de la toolkit del RemedyRequest.
+- Se deja de devolver Consumer Credits como remedy para versiones de IOS anteriores a 4.36.4.
+
 ## [1.22.0]
 
 ### Added

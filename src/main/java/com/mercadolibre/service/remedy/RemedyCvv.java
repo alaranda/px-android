@@ -10,9 +10,9 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.dto.Version;
-import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.dto.lib.context.OperatingSystem;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
+import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 
@@ -36,8 +36,7 @@ public class RemedyCvv implements RemedyInterface {
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         remediesRequest.getPayerPaymentMethodRejected();
 
-    if (payerPaymentMethodRejected == null
-        || validateVersionAndroid(remediesRequest.getUserAgent())) {
+    if (payerPaymentMethodRejected == null || validateVersionAndroid(context.getUserAgent())) {
       return remediesResponse;
     }
 

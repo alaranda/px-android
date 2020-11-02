@@ -1,6 +1,6 @@
 package com.mercadolibre.service;
 
-import static com.mercadolibre.helper.MockTestHelper.CONTEXT_ES;
+import static com.mercadolibre.helper.MockTestHelper.mockContextLibDto;
 import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
 import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,7 +35,8 @@ public class RemedyCallForAuthorizeTest {
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final RemediesResponse remediesResponse =
-        remedyCallForAuthorize.applyRemedy(CONTEXT_ES, remediesRequest, new RemediesResponse());
+        remedyCallForAuthorize.applyRemedy(
+            mockContextLibDto(), remediesRequest, new RemediesResponse());
     assertThat(remediesResponse.getCallForAuth().getTitle(), notNullValue());
     assertThat(remediesResponse.getCallForAuth().getMessage(), notNullValue());
     assertThat(remediesResponse.getCallForAuth().getActionLoud(), notNullValue());
