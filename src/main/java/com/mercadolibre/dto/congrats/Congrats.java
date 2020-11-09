@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.congrats;
 
+import com.mercadolibre.px.dto.lib.button.Button;
 import com.mercadolibre.px.dto.lib.text.Text;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,11 @@ public class Congrats {
   private boolean customOrder = false;
   private ExpenseSplit expenseSplit = null;
   private Map<String, String> paymentMethodsImages;
+  private Button primaryButton;
+  private Button secondaryButton;
+  private String backUrl;
+  private String redirectUrl;
+  private AutoReturn autoReturn;
 
   public Congrats(
       final Points points,
@@ -23,7 +29,12 @@ public class Congrats {
       final Text topTextBox,
       final boolean customOrder,
       final ExpenseSplit expenseSplit,
-      final Map<String, String> paymentMethodsImages) {
+      final Map<String, String> paymentMethodsImages,
+      final Button primaryButton,
+      final Button secondaryButton,
+      final String backUrl,
+      final String redirectUrl,
+      final AutoReturn autoReturn) {
     this.mpuntos = points;
     this.discounts = discounts;
     this.crossSelling = crossSelling;
@@ -32,6 +43,11 @@ public class Congrats {
     this.customOrder = customOrder;
     this.expenseSplit = expenseSplit;
     this.paymentMethodsImages = paymentMethodsImages;
+    this.primaryButton = primaryButton;
+    this.secondaryButton = secondaryButton;
+    this.backUrl = backUrl;
+    this.redirectUrl = redirectUrl;
+    this.autoReturn = autoReturn;
   }
 
   public Congrats() {
@@ -80,6 +96,22 @@ public class Congrats {
 
   public Map<String, String> getPaymentMethodsImages() {
     return paymentMethodsImages;
+  }
+
+  public Button getPrimaryButton() {
+    return primaryButton;
+  }
+
+  public Button getSecondaryButton() {
+    return secondaryButton;
+  }
+
+  public String getBackUrl() {
+    return backUrl;
+  }
+
+  public AutoReturn getAutoReturn() {
+    return autoReturn;
   }
 
   public String toString() {

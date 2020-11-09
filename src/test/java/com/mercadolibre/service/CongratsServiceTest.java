@@ -2,6 +2,7 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -10,12 +11,14 @@ import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
+import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
 import java.util.Locale;
@@ -52,7 +55,7 @@ public class CongratsServiceTest {
 
   @Test
   public void getPointsAndDiscounts_validParams_crossSellingDiscountsAndPoints()
-      throws IOException {
+      throws IOException, ApiException {
 
     MockLoyaltyApi.getAsyncPoints(
         getDefaultCongratsRequestMock(),
@@ -76,7 +79,7 @@ public class CongratsServiceTest {
 
   @Test
   public void getPointsAndDiscounts_invalidUserAgentIOS_crossSellingAndDiscounts()
-      throws IOException {
+      throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.22");
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
@@ -101,7 +104,8 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_platformOTHER_LoyaltyTargetMP() throws IOException {
+  public void getPointsAndDiscounts_platformOTHER_LoyaltyTargetMP()
+      throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.25");
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
@@ -126,7 +130,7 @@ public class CongratsServiceTest {
 
   @Test
   public void getPointsAndDiscounts_invalidUserAgentAndroid_crossSellingAndDiscounts()
-      throws IOException {
+      throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.0");
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
@@ -153,7 +157,7 @@ public class CongratsServiceTest {
   @Test
   public void
       getPointsAndDiscounts_validUserAgentAndroidOnMercadopago_crossSellingAndDiscountsCustomOrderAndExpenseSplit()
-          throws IOException {
+          throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
@@ -169,6 +173,7 @@ public class CongratsServiceTest {
             CAMPAIGN_ID_TEST,
             FLOW_NAME,
             false,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -210,7 +215,7 @@ public class CongratsServiceTest {
   @Test
   public void
       getPointsAndDiscounts_validUserAgentAndroidOnMercadopagoAndMLU_crossSellingAndDiscountsCustomOrderAndNoExpenseSplit()
-          throws IOException {
+          throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
@@ -226,6 +231,7 @@ public class CongratsServiceTest {
             CAMPAIGN_ID_TEST,
             FLOW_NAME,
             false,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -251,7 +257,7 @@ public class CongratsServiceTest {
   @Test
   public void
       getPointsAndDiscounts_validUserAgentAndroidOnMercadoLibre_crossSellingAndDiscountsCustomOrderAndExpenseSplit()
-          throws IOException {
+          throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
@@ -267,6 +273,7 @@ public class CongratsServiceTest {
             CAMPAIGN_ID_TEST,
             FLOW_NAME,
             false,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -306,7 +313,8 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_MPIOSPxVersion_linkLoyaltyBlank() throws IOException {
+  public void getPointsAndDiscounts_MPIOSPxVersion_linkLoyaltyBlank()
+      throws IOException, ApiException {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/iOS/4.24.2");
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
@@ -330,7 +338,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() {
+  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() throws ApiException {
 
     final Context context = Mockito.mock(Context.class);
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
@@ -349,7 +357,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() {
+  public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() throws ApiException {
 
     final Context context = Mockito.mock(Context.class);
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
@@ -381,5 +389,45 @@ public class CongratsServiceTest {
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
     return congratsRequest;
+  }
+
+  @Test
+  public void getPointsAndDiscounts_preferenceId_returnAutoreturnAndPrimeryButton()
+      throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            Site.MLA.name(),
+            null,
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId);
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertTrue(congrats.getBackUrl().equalsIgnoreCase("http://back-url-success.com"));
+    assertTrue(
+        congrats
+            .getAutoReturn()
+            .getLabel()
+            .equalsIgnoreCase("Te llevaremos de vuelta al sitio en {0}"));
+    assertThat(congrats.getAutoReturn().getSeconds(), is(5));
   }
 }

@@ -4,7 +4,7 @@
   "back_urls": {
     "failure": "",
     "pending": "",
-    "success": ""
+    "success": "http://back-url-success.com"
   },
   "client_id": "963",
   "collector_id": 138275050,

@@ -60,6 +60,9 @@ public final class Constants {
 
   public static final String PX_PM_ODR = "px_pm_%s";
 
+  public static final String BUTTON_CONTINUE = "continue";
+  public static final String BUTTON_LOUD = "loud";
+
   /** Collectors de pago de factura de meli. */
   public static final List<Long> COLLECTORS_MELI =
       new ArrayList<Long>(
