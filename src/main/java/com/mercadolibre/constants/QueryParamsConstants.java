@@ -13,4 +13,5 @@ public final class QueryParamsConstants {
   public static final String FLOW_NAME = "flow_name";
   public static final String IFPE = "ifpe";
   public static final String PAYMENT_METHODS_IDS = "payment_methods_ids";
+  public static final String PREF_ID = "pref_id";
 }

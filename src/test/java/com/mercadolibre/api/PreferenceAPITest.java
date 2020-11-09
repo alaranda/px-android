@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
+import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.toolkit.dto.ApiError;
@@ -14,11 +16,13 @@ import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
+import org.mockito.Mockito;
 import spark.utils.IOUtils;
 
 public class PreferenceAPITest extends RestClientTestBase {
@@ -61,5 +65,18 @@ public class PreferenceAPITest extends RestClientTestBase {
     assertEquals(error.getStatus(), HttpStatus.SC_NOT_FOUND);
     assertEquals(error.getError(), "invalid_id");
     assertEquals(error.getMessage(), "preference_id not found");
+  }
+
+  @Test
+  public void getPreferenceFromFuture_throwInterruptedException_optionalEmpty()
+      throws ExecutionException, InterruptedException {
+
+    final CompletableFuture future = Mockito.mock(CompletableFuture.class);
+    when(future.get()).thenThrow(InterruptedException.class);
+
+    final Optional<Preference> optionalPreference =
+        PreferenceAPI.INSTANCE.getPreferenceFromFuture(MockTestHelper.mockContextLibDto(), future);
+
+    assertFalse(optionalPreference.isPresent());
   }
 }

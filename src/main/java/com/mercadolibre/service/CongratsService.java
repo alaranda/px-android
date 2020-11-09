@@ -1,5 +1,7 @@
 package com.mercadolibre.service;
 
+import static com.mercadolibre.constants.Constants.BUTTON_CONTINUE;
+import static com.mercadolibre.constants.Constants.BUTTON_LOUD;
 import static com.mercadolibre.constants.Constants.IFPE_MESSAGE_COLOR;
 import static com.mercadolibre.constants.Constants.PX_PM_ODR;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
@@ -8,7 +10,9 @@ import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.
 
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
+import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.congrats.Action;
+import com.mercadolibre.dto.congrats.AutoReturn;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.CrossSelling;
@@ -16,14 +20,19 @@ import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.ExpenseSplit;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.px.dto.lib.button.Button;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
+import com.mercadolibre.px.dto.lib.preference.BackUrls;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.preference.RedirectUrls;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.Version;
 import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.services.OnDemandResourcesService;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
@@ -94,6 +103,8 @@ public class CongratsService {
 
   private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
 
+  private static final int RETURNING_TIME_SECONDS = 5;
+
   public CongratsService() {}
 
   /**
@@ -104,7 +115,7 @@ public class CongratsService {
    * @return Congrats congrats object
    */
   public Congrats getPointsAndDiscounts(
-      final Context context, final CongratsRequest congratsRequest) {
+      final Context context, final CongratsRequest congratsRequest) throws ApiException {
 
     CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
     // TODO La comparacion con "null" esta por un bug donde me pasan el parametro en null y se
@@ -117,6 +128,12 @@ public class CongratsService {
 
     final CompletableFuture<Either<MerchResponse, ApiError>> futureMerchResponse =
         MerchAPI.INSTANCE.getAsyncCrossSellingAndDiscount(context, congratsRequest);
+
+    CompletableFuture<Either<Preference, ApiError>> futurePref = null;
+    if (null != congratsRequest.getPreferenceId()) {
+      futurePref =
+          PreferenceAPI.INSTANCE.geAsynctPreference(context, congratsRequest.getPreferenceId());
+    }
 
     Points points = null;
     Set<CrossSelling> crossSelling = null;
@@ -177,6 +194,28 @@ public class CongratsService {
         }
       }
 
+      Optional<Preference> optionalPreferenceResponse =
+          PreferenceAPI.INSTANCE.getPreferenceFromFuture(context, futurePref);
+
+      Button primaryButton = null;
+      String backUrl = null;
+      String redirectUrl = null;
+      AutoReturn autoReturn = null;
+
+      if (optionalPreferenceResponse.isPresent()) {
+        Preference preference = optionalPreferenceResponse.get();
+        if (validateBackUrlSucces(preference.getBackUrls())) {
+          primaryButton = buildPrimaryButton(context.getLocale());
+          backUrl = getBackUrl(preference.getBackUrls());
+          redirectUrl = getRedirectUrl(preference.getRedirectUrls());
+          autoReturn =
+              new AutoReturn(
+                  Translations.INSTANCE.getTranslationByLocale(
+                      context.getLocale(), Translations.RETURNING_MERCHANT_SITE),
+                  RETURNING_TIME_SECONDS);
+        }
+      }
+
       final Action viewReceipt =
           viewReceipt(
               context.getLocale(),
@@ -197,7 +236,12 @@ public class CongratsService {
           ifpeCompliance,
           isCustomOrderEnabled(congratsRequest.getProductId()),
           generateExpenseSplitNode(context.getLocale(), congratsRequest),
-          buildPaymentMethodsImages(context, congratsRequest));
+          buildPaymentMethodsImages(context, congratsRequest),
+          primaryButton,
+          null,
+          backUrl,
+          redirectUrl,
+          autoReturn);
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -347,5 +391,40 @@ public class CongratsService {
         });
 
     return paymentMethodImages;
+  }
+
+  private Button buildPrimaryButton(final Locale locale) {
+
+    return Button.builder()
+        .action(BUTTON_CONTINUE)
+        .label(
+            Translations.INSTANCE.getTranslationByLocale(locale, Translations.RETURN_MERCHANT_SITE))
+        .type(BUTTON_LOUD)
+        .build();
+  }
+
+  private boolean validateBackUrlSucces(final BackUrls backUrls) {
+    if (backUrls != null && StringUtils.isNotBlank(backUrls.getSuccess())) {
+      return true;
+    }
+    return false;
+  }
+
+  private String getBackUrl(final BackUrls backUrls) {
+
+    if (null != backUrls) {
+      return backUrls.getSuccess();
+    }
+
+    return null;
+  }
+
+  private String getRedirectUrl(final RedirectUrls redirectUrl) {
+
+    if (null != redirectUrl) {
+      return redirectUrl.getSuccess();
+    }
+
+    return null;
   }
 }
