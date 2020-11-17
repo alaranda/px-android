@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.25.0]
+
+### Added
+
+- Se agrega al paymentBody los campos conceptId, conceptAmount, sponsorId, statementDescriptor, paymentExpirationDate,
+purpose, description y purposeDescriptor.
+
 ## [1.24.0]
 
 ### Added
