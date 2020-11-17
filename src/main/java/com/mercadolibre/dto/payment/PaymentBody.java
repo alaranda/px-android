@@ -5,10 +5,12 @@ import static com.mercadolibre.constants.Constants.PREFERENCE;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.dto.lib.preference.PurposeDescriptor;
 import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,12 +20,9 @@ import spark.utils.StringUtils;
 public class PaymentBody {
 
   private String token;
-
   private String issuerId;
   private Integer installments;
-
   private String paymentMethodId;
-
   private BigDecimal transactionAmount;
   private String description;
   private PayerBody payer;
@@ -41,6 +40,13 @@ public class PaymentBody {
   private String notificationUrl;
   private BigDecimal applicationFee;
   private List<Tax> taxes;
+  private String conceptId;
+  private BigDecimal conceptAmount;
+  private Long sponsorId;
+  private String statementDescriptor;
+  private Date paymentExpirationDate;
+  private String purpose;
+  private PurposeDescriptor purposeDescriptor;
 
   public String getToken() {
     return token;
@@ -142,6 +148,13 @@ public class PaymentBody {
     private String notificationUrl;
     private BigDecimal applicationFee;
     private List<Tax> taxes;
+    private String conceptId;
+    private BigDecimal conceptAmount;
+    private Long sponsorId;
+    private String statementDescriptor;
+    private Date paymentExpirationDate;
+    private String purpose;
+    private PurposeDescriptor purposeDescriptor;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData, final Preference preference) {
@@ -215,6 +228,16 @@ public class PaymentBody {
       if (null != preference.getMarketplaceFee()
           && preference.getMarketplaceFee().compareTo(BigDecimal.ZERO) > 0) {
         this.applicationFee = preference.getMarketplaceFee();
+      }
+      this.conceptId = preference.getConceptId();
+      this.conceptAmount = preference.getConceptAmount();
+      this.sponsorId = preference.getSponsorId();
+      this.statementDescriptor = preference.getStatementDescriptor();
+      this.paymentExpirationDate = preference.getDateOfExpiration();
+      this.purpose = preference.getPurpose();
+      this.purposeDescriptor = preference.getPurposeDescriptor();
+      if (preference.getItems() != null && !preference.getItems().isEmpty()) {
+        this.description = preference.getItems().get(0).getTitle();
       }
     }
 
