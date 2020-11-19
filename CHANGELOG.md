@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.26.0]
+
+### Added
+
+- Se agrega whitelist de collectors nuevos sniffeados desde COW para setear flowid correspondiente.
+
 ## [1.25.0]
 
 ### Added

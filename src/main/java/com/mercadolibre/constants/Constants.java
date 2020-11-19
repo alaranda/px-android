@@ -77,6 +77,27 @@ public final class Constants {
               237674564L,
               170120736L));
 
+  /** Collectors de links de pagos snifeados desde cow */
+  public static final List<String> COW_SNIFFING_WHITELIST =
+      new ArrayList<String>(
+          Arrays.asList(
+              "420696986",
+              "506902649",
+              "484351849",
+              "57822803",
+              "54795587",
+              "288896851",
+              "203414973",
+              "288896851",
+              "198576413",
+              "315168223",
+              "152162476",
+              "534155552",
+              "8733338",
+              "184618992",
+              "557586896",
+              "180991368"));
+
   private Constants() {
     throw new AssertionError(CAN_NOT_INSTANTIATE_CONSTANTS_CLASS);
   }
