@@ -1,9 +1,6 @@
 package com.mercadolibre.service;
 
-import static com.mercadolibre.constants.Constants.API_CALL_PREFERENCE_FAILED;
-import static com.mercadolibre.constants.Constants.COLLECTORS_MELI;
-import static com.mercadolibre.constants.Constants.GETTING_PARAMETERS;
-import static com.mercadolibre.constants.Constants.INVALID_PREFERENCE;
+import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 
@@ -39,6 +36,7 @@ public enum PreferenceService {
   private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
   private static Long DEFAULT_CLIENT_ID = 963L;
   private static final String DEFAULT_FLOW_ID = "/pay_preference";
+  private static final String COW_FLOW_ID = "/checkout_web";
   private static final String DEFAULT_PRODUCT_ID = "BK9TMI410T3G01IB4220";
   private final DaoProvider daoProvider = new DaoProvider();
 
@@ -153,6 +151,10 @@ public enum PreferenceService {
 
     final AdditionalInfo additionalInfo =
         GsonWrapper.fromJson(preference.getAdditionalInfo(), AdditionalInfo.class);
+
+    if (COW_SNIFFING_WHITELIST.contains(preference.getCollectorId())) {
+      return COW_FLOW_ID;
+    }
 
     if (null != additionalInfo
         && null != additionalInfo.getPxConfiguration()
