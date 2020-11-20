@@ -4,6 +4,7 @@ import static com.mercadolibre.constants.Constants.PREFERENCE;
 
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
+import com.mercadolibre.px.dto.lib.preference.CounterCurrency;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.preference.PurposeDescriptor;
 import com.mercadolibre.px.dto.lib.preference.Tax;
@@ -47,6 +48,8 @@ public class PaymentBody {
   private Date paymentExpirationDate;
   private String purpose;
   private PurposeDescriptor purposeDescriptor;
+  private Map<String, Object> metadata;
+  private CounterCurrency counterCurrency;
 
   public String getToken() {
     return token;
@@ -155,6 +158,8 @@ public class PaymentBody {
     private Date paymentExpirationDate;
     private String purpose;
     private PurposeDescriptor purposeDescriptor;
+    private Map<String, Object> metadata;
+    private CounterCurrency counterCurrency;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData, final Preference preference) {
@@ -239,6 +244,8 @@ public class PaymentBody {
       if (preference.getItems() != null && !preference.getItems().isEmpty()) {
         this.description = preference.getItems().get(0).getTitle();
       }
+      this.metadata = preference.getMetadata();
+      this.counterCurrency = preference.getCounterCurrency();
     }
 
     // Validacion para soportar las distintas firmas del front.
@@ -325,7 +332,7 @@ public class PaymentBody {
 
   private static Map<String, Object> buildInternalMetadataMap(final Preference preference) {
 
-    Map<String, Object> internalMetadata = preference.getInternalMetadta();
+    Map<String, Object> internalMetadata = preference.getInternalMetadata();
     if (null == internalMetadata) {
       internalMetadata = new HashMap<>();
     }
