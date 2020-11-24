@@ -1,5 +1,6 @@
 package com.mercadolibre.controllers;
 
+import static com.mercadolibre.constants.Constants.LOCATION_FALSE;
 import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
@@ -10,6 +11,7 @@ import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
+import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static com.mercadolibre.utils.HeadersUtils.userAgentFromHeader;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 
@@ -111,6 +113,11 @@ public class CongratsController {
 
     final String preferenceId = request.queryParams(PREF_ID);
 
+    final String locationEnabled =
+        request.headers(X_LOCATION_ENABLED) != null
+            ? request.headers(X_LOCATION_ENABLED)
+            : LOCATION_FALSE;
+
     return new CongratsRequest(
         callerId,
         clientId,
@@ -124,6 +131,7 @@ public class CongratsController {
         flowName,
         ifpe,
         paymentMethodsIds,
-        preferenceId);
+        preferenceId,
+        locationEnabled);
   }
 }
