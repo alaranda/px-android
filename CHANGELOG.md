@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.27.0]
+
+### Added
+
+- Se corrije el type metadata.
+- Se agrega campo metadata y counter currency en la llamada a payments.
+
 ## [1.26.0]
 
 ### Added
