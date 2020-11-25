@@ -8,6 +8,7 @@ import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.DENSITY;
 import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PRODUCT_ID;
+import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -79,7 +80,8 @@ public class CongratsRouterTest {
             FLOW_NAME,
             false,
             null,
-            null);
+            null,
+            "false");
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -257,7 +259,16 @@ public class CongratsRouterTest {
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
 
-    final Response response = given().headers(HEADERS).get(uriBuilder.build());
+    final Response response =
+        given()
+            .headers(
+                new Headers(
+                    new Header("accept-language", "es-AR"),
+                    new Header("user-agent", "PX/iOS/4.3.4"),
+                    new Header(DENSITY, DENSITY_XXHDPI),
+                    new Header(PRODUCT_ID, PRODUCT_ID_1),
+                    new Header(X_LOCATION_ENABLED, "true")))
+            .get(uriBuilder.build());
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
   }
 

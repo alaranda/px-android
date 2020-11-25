@@ -1,6 +1,9 @@
 package com.mercadolibre.dto.payment;
 
+import static com.mercadolibre.constants.Constants.PIX_PAYMENT_METHOD_ID;
+import static com.mercadolibre.constants.Constants.PIX_TYPE_PREFERENCE;
 import static com.mercadolibre.constants.Constants.PREFERENCE;
+import static com.mercadolibre.constants.Constants.PREFERENCE_INTERNAL_METADATA;
 
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
@@ -169,7 +172,7 @@ public class PaymentBody {
           paymentData.hasIssuer() ? paymentData.getIssuer().getId().toString() : null;
       builder.installments =
           paymentData.hasPayerCost() ? paymentData.getPayerCost().getInstallments() : null;
-      builder.paymentMethodId = paymentData.getPaymentMethod().getId();
+      builder.paymentMethodId = getPaymentMethodId(paymentData, preference);
       builder.couponAmount =
           paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
       builder.campaignId =
@@ -338,5 +341,22 @@ public class PaymentBody {
     }
     internalMetadata.put(PREFERENCE, new PaymentPreference(preference.getId(), null));
     return internalMetadata;
+  }
+
+  private static String getPaymentMethodId(
+      final PaymentData paymentData, final Preference preference) {
+
+    if (null != preference.getInternalMetadata()
+        && preference.getInternalMetadata().containsKey(PREFERENCE_INTERNAL_METADATA)) {
+
+      final String cowType =
+          preference.getInternalMetadata().get(PREFERENCE_INTERNAL_METADATA).toString();
+
+      if (cowType.equalsIgnoreCase(PIX_TYPE_PREFERENCE)) {
+        return PIX_PAYMENT_METHOD_ID;
+      }
+    }
+
+    return paymentData.getPaymentMethod().getId();
   }
 }

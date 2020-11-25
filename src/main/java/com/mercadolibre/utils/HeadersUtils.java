@@ -34,6 +34,9 @@ public enum HeadersUtils {
   public static final String AUTHENTICATION_FACTOR_2FA = "security:2fa";
   public static final String AUTHENTICATION_FACTOR_NONE = "security:none";
 
+  // Location
+  public static final String X_LOCATION_ENABLED = "X-Location-Enabled";
+
   /**
    * Store a Spark request headers in MeLi representation of {@link Headers}.
    *

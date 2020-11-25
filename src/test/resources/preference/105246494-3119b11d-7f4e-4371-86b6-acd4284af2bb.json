@@ -35,7 +35,9 @@
   },
   "id": "105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb",
   "init_point": "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb",
-  "internal_metadata": {},
+  "internal_metadata": {
+    "type": "pix-checkout-off"
+  },
   "items": [
     {
       "id": "OFF",
