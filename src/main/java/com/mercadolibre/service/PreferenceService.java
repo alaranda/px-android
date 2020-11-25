@@ -149,8 +149,14 @@ public enum PreferenceService {
 
   private String extractFlowId(final Preference preference) {
 
-    final AdditionalInfo additionalInfo =
-        GsonWrapper.fromJson(preference.getAdditionalInfo(), AdditionalInfo.class);
+    AdditionalInfo additionalInfo = null;
+
+    try {
+      additionalInfo = GsonWrapper.fromJson(preference.getAdditionalInfo(), AdditionalInfo.class);
+
+    } catch (Exception ex) {
+      // Continua el flujo con el flow deafult.
+    }
 
     if (COW_SNIFFING_WHITELIST.contains(preference.getCollectorId())) {
       return COW_FLOW_ID;
