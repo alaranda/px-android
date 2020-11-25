@@ -63,6 +63,13 @@ public final class Constants {
   public static final String BUTTON_CONTINUE = "continue";
   public static final String BUTTON_LOUD = "loud";
 
+  // PIX COW
+  public static final String PREFERENCE_INTERNAL_METADATA = "type";
+  public static final String PIX_TYPE_PREFERENCE = "pix-checkout-off";
+  public static final String PIX_PAYMENT_METHOD_ID = "pix_am";
+
+  public static final String LOCATION_FALSE = "false";
+
   /** Collectors de pago de factura de meli. */
   public static final List<Long> COLLECTORS_MELI =
       new ArrayList<Long>(

@@ -174,7 +174,8 @@ public class CongratsServiceTest {
             FLOW_NAME,
             false,
             null,
-            null);
+            null,
+            "false");
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -232,7 +233,8 @@ public class CongratsServiceTest {
             FLOW_NAME,
             false,
             null,
-            null);
+            null,
+            "true");
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -274,7 +276,8 @@ public class CongratsServiceTest {
             FLOW_NAME,
             false,
             null,
-            null);
+            null,
+            "false");
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -388,6 +391,7 @@ public class CongratsServiceTest {
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
+    when(congratsRequest.getLocationEnabled()).thenReturn("false");
     return congratsRequest;
   }
 
@@ -410,7 +414,8 @@ public class CongratsServiceTest {
             FLOW_NAME,
             false,
             null,
-            prefId);
+            prefId,
+            "false");
 
     MockPreferenceAPI.getById(
         prefId,

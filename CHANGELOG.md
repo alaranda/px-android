@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.28.0]
+
+### Added
+
+- Se agrega logica de pagos para PIX.
+- Se reenvia el location a merch engine en la congrats.
+
 ## [1.27.0]
 
 ### Added
