@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.28.1]
+
+### Added
+
+- Se agrega el try catch para parsear el campo additional info de la pref.
+
 ## [1.28.0]
 
 ### Added
