@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.28.2]
+
+### Added
+
+- Se arregla el builder del paymentBody.
+
 ## [1.28.1]
 
 ### Added

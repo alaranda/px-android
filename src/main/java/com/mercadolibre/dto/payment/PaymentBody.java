@@ -130,6 +130,17 @@ public class PaymentBody {
     this.internalMetadata = builder.internalMetadata;
     this.notificationUrl = builder.notificationUrl;
     this.applicationFee = builder.applicationFee;
+    this.taxes = builder.taxes;
+    this.conceptId = builder.conceptId;
+    this.conceptAmount = builder.conceptAmount;
+    this.sponsorId = builder.sponsorId;
+    this.statementDescriptor = builder.statementDescriptor;
+    this.paymentExpirationDate = builder.paymentExpirationDate;
+    this.purpose = builder.purpose;
+    this.purposeDescriptor = builder.purposeDescriptor;
+    this.metadata = builder.metadata;
+    this.counterCurrency = builder.counterCurrency;
+    this.description = builder.description;
   }
 
   public static final class Builder {
