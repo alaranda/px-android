@@ -2,15 +2,21 @@
 
 # Change Log
 
+## [1.28.4]
+
+### Changed
+
+- Comento campo payment expiration date.
+
 ## [1.28.3]
 
-### Added
+### Changed
 
 - Comento campos del body a payments (purpose y purposeDescriptor).
 
 ## [1.28.2]
 
-### Added
+### Changed
 
 - Se arregla el builder del paymentBody.
 
