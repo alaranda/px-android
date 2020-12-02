@@ -136,8 +136,8 @@ public class PaymentBody {
     this.sponsorId = builder.sponsorId;
     this.statementDescriptor = builder.statementDescriptor;
     this.paymentExpirationDate = builder.paymentExpirationDate;
-    this.purpose = builder.purpose;
-    this.purposeDescriptor = builder.purposeDescriptor;
+    // this.purpose = builder.purpose;
+    // this.purposeDescriptor = builder.purposeDescriptor;
     this.metadata = builder.metadata;
     this.counterCurrency = builder.counterCurrency;
     this.description = builder.description;
