@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.28.3]
+
+### Added
+
+- Comento campos del body a payments (purpose y purposeDescriptor).
+
 ## [1.28.2]
 
 ### Added
