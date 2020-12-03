@@ -206,7 +206,7 @@ public class CongratsService {
         Preference preference = optionalPreferenceResponse.get();
         backUrl = getBackUrl(preference.getBackUrls());
         redirectUrl = getRedirectUrl(preference.getRedirectUrls());
-        if (hasValidAutoreturn(preference.getAutoReturn()) && StringUtils.isNotBlank(backUrl)) {
+        if (backUrl != null && StringUtils.isNotBlank(preference.getAutoReturn())) {
           primaryButton = buildPrimaryButton(context.getLocale());
           autoReturn =
               new AutoReturn(
@@ -420,13 +420,4 @@ public class CongratsService {
 
     return null;
   }
-
-  private boolean hasValidAutoreturn(final String autoreturn) {
-
-    if (autoreturn.equalsIgnoreCase("all") || autoreturn.equalsIgnoreCase("approved")){
-      return true;
-    }
-    return false;
-  }
-
 }

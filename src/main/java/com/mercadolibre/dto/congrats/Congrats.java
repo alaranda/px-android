@@ -114,6 +114,10 @@ public class Congrats {
     return autoReturn;
   }
 
+  public String getRedirectUrl() {
+    return redirectUrl;
+  }
+
   public String toString() {
     return String.format(
         "Congrats{Points=[%s], Discounts=[%s]}", mpuntos.toString(), discounts.toString());

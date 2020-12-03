@@ -396,8 +396,79 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void getPointsAndDiscounts_preferenceId_returnAutoreturnAndPrimeryButton()
+  public void getPointsAndDiscounts_preferenceId_returnRedirectUrl()
       throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            Site.MLA.name(),
+            null,
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId,
+            "false");
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertTrue(congrats.getRedirectUrl().equalsIgnoreCase("http://redirect-url-success.com"));
+  }
+
+  @Test
+  public void getPointsAndDiscounts_preferenceId_returnAutoReturnAndPrimaryButton()
+      throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            Site.MLA.name(),
+            null,
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId,
+            "false");
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/preference/preferenceWithBackUrlAndAutoReturn.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertTrue(congrats.getBackUrl().equalsIgnoreCase("http://back-url-success.com"));
+    assertTrue(
+        congrats
+            .getAutoReturn()
+            .getLabel()
+            .equalsIgnoreCase("Te llevaremos de vuelta al sitio en {0}"));
+    assertThat(congrats.getAutoReturn().getSeconds(), is(5));
+  }
+
+  @Test
+  public void getPointsAndDiscounts_preferenceId_returnBackUrl() throws IOException, ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final CongratsRequest congratsRequest =
@@ -428,11 +499,5 @@ public class CongratsServiceTest {
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
     assertTrue(congrats.getBackUrl().equalsIgnoreCase("http://back-url-success.com"));
-    assertTrue(
-        congrats
-            .getAutoReturn()
-            .getLabel()
-            .equalsIgnoreCase("Te llevaremos de vuelta al sitio en {0}"));
-    assertThat(congrats.getAutoReturn().getSeconds(), is(5));
   }
 }
