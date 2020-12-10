@@ -204,10 +204,10 @@ public class CongratsService {
 
       if (optionalPreferenceResponse.isPresent()) {
         Preference preference = optionalPreferenceResponse.get();
-        if (validateBackUrlSucces(preference.getBackUrls())) {
+        backUrl = getBackUrl(preference.getBackUrls());
+        redirectUrl = getRedirectUrl(preference.getRedirectUrls());
+        if (backUrl != null && StringUtils.isNotBlank(preference.getAutoReturn())) {
           primaryButton = buildPrimaryButton(context.getLocale());
-          backUrl = getBackUrl(preference.getBackUrls());
-          redirectUrl = getRedirectUrl(preference.getRedirectUrls());
           autoReturn =
               new AutoReturn(
                   Translations.INSTANCE.getTranslationByLocale(
@@ -403,16 +403,9 @@ public class CongratsService {
         .build();
   }
 
-  private boolean validateBackUrlSucces(final BackUrls backUrls) {
-    if (backUrls != null && StringUtils.isNotBlank(backUrls.getSuccess())) {
-      return true;
-    }
-    return false;
-  }
-
   private String getBackUrl(final BackUrls backUrls) {
 
-    if (null != backUrls) {
+    if (null != backUrls && StringUtils.isNotBlank(backUrls.getSuccess())) {
       return backUrls.getSuccess();
     }
 
@@ -421,7 +414,7 @@ public class CongratsService {
 
   private String getRedirectUrl(final RedirectUrls redirectUrl) {
 
-    if (null != redirectUrl) {
+    if (null != redirectUrl && StringUtils.isNotBlank(redirectUrl.getSuccess())) {
       return redirectUrl.getSuccess();
     }
 

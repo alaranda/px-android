@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.28.5]
+
+### Changed
+
+- Se cambia logica de redirect
+
 ## [1.28.4]
 
 ### Changed

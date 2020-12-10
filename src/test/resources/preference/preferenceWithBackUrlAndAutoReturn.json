@@ -1,15 +1,10 @@
 {
   "additional_info": "",
-  "auto_return": "",
+  "auto_return": "approved",
   "back_urls": {
     "failure": "",
     "pending": "",
     "success": "http://back-url-success.com"
-  },
-  "redirect_urls": {
-    "failure": "",
-    "pending": "",
-    "success": ""
   },
   "client_id": "963",
   "collector_id": 138275050,
