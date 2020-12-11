@@ -42,7 +42,7 @@ public class PreferenceAPITest extends RestClientTestBase {
                 .getResourceAsStream(
                     "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
     final CompletableFuture<Either<Preference, ApiError>> futurePref =
-        service.geAsynctPreference(context, PREFERENCE_ID);
+        service.geAsyncPreference(context, PREFERENCE_ID);
     final Preference preference = futurePref.get().getValue();
 
     assertThat(preference.getTotalAmount(), is(BigDecimal.valueOf(4823)));
@@ -58,7 +58,7 @@ public class PreferenceAPITest extends RestClientTestBase {
         HttpStatus.SC_NOT_FOUND,
         IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
     final CompletableFuture<Either<Preference, ApiError>> futurePref =
-        service.geAsynctPreference(context, "1");
+        service.geAsyncPreference(context, "1");
     ApiError error = futurePref.get().getAlternative();
     assertFalse(futurePref.get().isValuePresent());
     assertNotNull(error);

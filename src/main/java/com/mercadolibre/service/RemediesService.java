@@ -20,6 +20,8 @@ import com.mercadolibre.service.remedy.RemedyTypes;
 import com.mercadolibre.utils.MelidataVariantHelper;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class RemediesService {
 
@@ -48,16 +50,20 @@ public class RemediesService {
       final Context context, final String paymentId, final RemediesRequest remediesRequest)
       throws ApiException {
 
-    final Either<Payment, ApiError> paymentEither =
-        PaymentAPI.INSTANCE.getPayment(context, paymentId);
+    final PaymentAPI paymentAPI = PaymentAPI.INSTANCE;
 
-    if (!paymentEither.isValuePresent()) {
+    final CompletableFuture<Either<Payment, ApiError>> paymentFuture =
+        paymentAPI.getAsyncPayment(context, paymentId);
+
+    Optional<Payment> paymentOptional = paymentAPI.getPaymentFromFuture(context, paymentFuture);
+
+    if (!paymentOptional.isPresent()) {
       DatadogRemediesMetrics.trackRemediesInfo(REMEDY_INVALID_PAYMENT_ID, context, remediesRequest);
       return remedySuggestionPaymentMethod.applyRemedy(
           context, remediesRequest, new RemediesResponse());
     }
 
-    final Payment payment = paymentEither.getValue();
+    final Payment payment = paymentOptional.get();
     remediesRequest.setRiskExcecutionId(payment.getRiskExecutionId());
     remediesRequest.setStatusDetail(payment.getStatusDetail());
 

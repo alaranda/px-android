@@ -26,6 +26,8 @@ import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
 import com.newrelic.api.agent.Trace;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
@@ -122,27 +124,30 @@ public enum PaymentAPI {
    *
    * @param context context object
    * @param paymentId payment id
-   * @return EitherPaymentApiError
+   * @return CompletableFutureEitherPaymentApiError
    * @throws ApiException (optional) if the api call fail
    */
-  @Trace(dispatcher = true, nameTransaction = true)
-  public Either<Payment, ApiError> getPayment(final Context context, final String paymentId)
-      throws ApiException {
+  @Trace(async = true, dispatcher = true, nameTransaction = true)
+  public CompletableFuture<Either<Payment, ApiError>> getAsyncPayment(
+      final Context context, final String paymentId) throws ApiException {
 
     final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
     final URIBuilder url = buildGetPaymentUrl(paymentId);
 
     try {
-      final Response response =
-          RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers).get();
+      final CompletableFuture<Response> completableFuture =
+          RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
 
-      METRIC_COLLECTOR.incrementCounter(
-          REQUEST_OUT_COUNTER,
-          DatadogUtils.getRequestOutCounterTags(
-              HttpMethod.GET.name(), POOL_NAME_READ, response.getStatus()));
-
-      return buildResponse(context, headers, url, response, HttpMethod.GET.name(), POOL_NAME_READ);
-    } catch (final RestException | InterruptedException | ExecutionException e) {
+      return completableFuture.thenApply(
+          response -> {
+            METRIC_COLLECTOR.incrementCounter(
+                REQUEST_OUT_COUNTER,
+                DatadogUtils.getRequestOutCounterTags(
+                    HttpMethod.GET.name(), POOL_NAME_READ, response.getStatus()));
+            return buildResponse(
+                context, headers, url, response, HttpMethod.GET.name(), POOL_NAME_READ);
+          });
+    } catch (final RestException e) {
       LOGGER.error(
           LogUtils.getExceptionLog(
               context.getRequestId(),
@@ -201,5 +206,29 @@ public enum PaymentAPI {
               response));
     }
     return RestUtils.responseToEither(response, Payment.class);
+  }
+
+  public Optional<Payment> getPaymentFromFuture(
+      final Context context, final CompletableFuture<Either<Payment, ApiError>> future) {
+    try {
+      if (future != null && future.get().isValuePresent()) {
+        return Optional.ofNullable(future.get().getValue());
+      } else {
+        return Optional.empty();
+      }
+    } catch (InterruptedException | ExecutionException e) {
+      LOGGER.error(
+          LogUtils.getExceptionLog(
+              context.getRequestId(),
+              HttpMethod.GET.name(),
+              POOL_NAME,
+              URL,
+              new Headers().add(REQUEST_ID, context.getRequestId()),
+              null,
+              HttpStatus.SC_GATEWAY_TIMEOUT,
+              e));
+      METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+      return Optional.empty();
+    }
   }
 }

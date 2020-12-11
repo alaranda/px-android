@@ -2,7 +2,7 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
+import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
@@ -175,7 +176,9 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false");
+            "false",
+            null,
+            null);
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -234,7 +237,9 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "true");
+            "true",
+            null,
+            null);
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -277,7 +282,9 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false");
+            "false",
+            null,
+            null);
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -400,12 +407,14 @@ public class CongratsServiceTest {
       throws IOException, ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "4141386674";
+    final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
         new CongratsRequest(
             USER_ID_TEST,
             CLIENT_ID_TEST,
-            Site.MLA.name(),
-            null,
+            siteId,
+            paymentId,
             Platform.MP.getId(),
             UserAgent.create("PX/Android/4.40.0"),
             DENSITY,
@@ -415,7 +424,9 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false");
+            "false",
+            null,
+            null);
 
     MockPreferenceAPI.getById(
         prefId,
@@ -423,9 +434,31 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
 
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
+
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
-    assertTrue(congrats.getRedirectUrl().equalsIgnoreCase("http://redirect-url-success.com"));
+    assertEquals(
+        "http://redirect-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type=credit_card"
+            + "&processing_mode=aggregator",
+        congrats.getRedirectUrl());
   }
 
   @Test
@@ -433,12 +466,13 @@ public class CongratsServiceTest {
       throws IOException, ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
         new CongratsRequest(
             USER_ID_TEST,
             CLIENT_ID_TEST,
-            Site.MLA.name(),
-            null,
+            siteId,
+            "null",
             Platform.MP.getId(),
             UserAgent.create("PX/Android/4.40.0"),
             DENSITY,
@@ -448,7 +482,9 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false");
+            "false",
+            null,
+            null);
 
     MockPreferenceAPI.getById(
         prefId,
@@ -458,24 +494,94 @@ public class CongratsServiceTest {
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
-    assertTrue(congrats.getBackUrl().equalsIgnoreCase("http://back-url-success.com"));
-    assertTrue(
-        congrats
-            .getAutoReturn()
-            .getLabel()
-            .equalsIgnoreCase("Te llevaremos de vuelta al sitio en {0}"));
-    assertThat(congrats.getAutoReturn().getSeconds(), is(5));
+    assertEquals(congrats.getAutoReturn().getLabel(), "Te llevaremos de vuelta al sitio en {0}");
+    assertEquals(congrats.getAutoReturn().getSeconds(), 5);
+    assertEquals(
+        congrats.getBackUrl(),
+        "http://back-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id");
   }
 
   @Test
   public void getPointsAndDiscounts_preferenceId_returnBackUrl() throws IOException, ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "4141386674";
+    final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
         new CongratsRequest(
             USER_ID_TEST,
             CLIENT_ID_TEST,
-            Site.MLA.name(),
+            siteId,
+            paymentId + ",23432432",
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId,
+            "false",
+            null,
+            null);
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
+
+    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+
+    assertEquals(
+        "http://back-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type=credit_card"
+            + "&processing_mode=aggregator",
+        congrats.getBackUrl());
+  }
+
+  @Test
+  public void
+      getPointsAndDiscounts_preferenceIdWithMalformedBackUrl_returnBackUrlWithoutAppendingAnyData()
+          throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String siteId = Site.MLA.getSiteId();
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            siteId,
             null,
             Platform.MP.getId(),
             UserAgent.create("PX/Android/4.40.0"),
@@ -486,18 +592,18 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false");
+            "false",
+            null,
+            null);
 
     MockPreferenceAPI.getById(
         prefId,
         HttpStatus.SC_OK,
         IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+            getClass().getResourceAsStream("/preference/preferenceWithMalformedBackUrl.json")));
 
     final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
 
-    assertTrue(congrats.getBackUrl().equalsIgnoreCase("http://back-url-success.com"));
+    assertEquals(congrats.getBackUrl(), "http://back-url-success .com");
   }
 }
