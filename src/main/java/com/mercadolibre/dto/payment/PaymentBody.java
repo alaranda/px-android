@@ -1,5 +1,8 @@
 package com.mercadolibre.dto.payment;
 
+import static com.mercadolibre.constants.Constants.INTERNAL_METADATA_BANK_INFO;
+import static com.mercadolibre.constants.Constants.MERCADO_PAGO_PIX_ACCOUNT_ID;
+import static com.mercadolibre.constants.Constants.MERCADO_PAGO_PIX_ACCOUNT_NAME;
 import static com.mercadolibre.constants.Constants.PIX_PAYMENT_METHOD_ID;
 import static com.mercadolibre.constants.Constants.PIX_TYPE_PREFERENCE;
 import static com.mercadolibre.constants.Constants.PREFERENCE;
@@ -53,6 +56,7 @@ public class PaymentBody {
   private PurposeDescriptor purposeDescriptor;
   private Map<String, Object> metadata;
   private CounterCurrency counterCurrency;
+  private AdditionalInfo additionalInfo;
 
   public String getToken() {
     return token;
@@ -110,6 +114,14 @@ public class PaymentBody {
     return externalReference;
   }
 
+  public Map<String, Object> getInternalMetadata() {
+    return internalMetadata;
+  }
+
+  public AdditionalInfo getAdditionalInfo() {
+    return additionalInfo;
+  }
+
   PaymentBody(final Builder builder) {
     this.externalReference = builder.externalReference;
     this.transactionAmount = builder.transactionAmount;
@@ -141,6 +153,7 @@ public class PaymentBody {
     this.metadata = builder.metadata;
     this.counterCurrency = builder.counterCurrency;
     this.description = builder.description;
+    this.additionalInfo = builder.additionalInfo;
   }
 
   public static final class Builder {
@@ -174,9 +187,12 @@ public class PaymentBody {
     private PurposeDescriptor purposeDescriptor;
     private Map<String, Object> metadata;
     private CounterCurrency counterCurrency;
+    private AdditionalInfo additionalInfo;
 
     public static Builder createBlackLabelBuilder(
-        final PaymentData paymentData, final Preference preference) {
+        final PaymentData paymentData,
+        final Preference preference,
+        final Boolean isSameBankAccountOwner) {
       final Builder builder = new Builder(preference);
       builder.token = paymentData.hasToken() ? paymentData.getToken().getId() : null;
       builder.issuerId =
@@ -184,6 +200,8 @@ public class PaymentBody {
       builder.installments =
           paymentData.hasPayerCost() ? paymentData.getPayerCost().getInstallments() : null;
       builder.paymentMethodId = getPaymentMethodId(paymentData, preference);
+      builder.internalMetadata = buildInternalMetadataMap(preference, builder.paymentMethodId);
+      builder.additionalInfo = buildAdditionalInfo(builder.paymentMethodId, isSameBankAccountOwner);
       builder.couponAmount =
           paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
       builder.campaignId =
@@ -207,6 +225,7 @@ public class PaymentBody {
       builder.installments =
           paymentData.hasPayerCost() ? paymentData.getPayerCost().getInstallments() : null;
       builder.paymentMethodId = paymentData.getPaymentMethod().getId();
+      builder.internalMetadata = buildInternalMetadataMap(preference, builder.paymentMethodId);
       builder.couponAmount =
           paymentData.hasDiscount() ? paymentData.getDiscount().getCouponAmount() : null;
       builder.campaignId =
@@ -224,6 +243,7 @@ public class PaymentBody {
         builder.installments = paymentRequestBody.getInstallments();
       }
       builder.paymentMethodId = paymentRequestBody.getPaymentMethodId();
+      builder.internalMetadata = buildInternalMetadataMap(preference, builder.paymentMethodId);
       builder.binaryMode = paymentRequestBody.isBinaryMode();
       builder.couponAmount = paymentRequestBody.getCouponAmount();
       builder.campaignId = paymentRequestBody.getCampaignId();
@@ -241,7 +261,6 @@ public class PaymentBody {
         this.differentialPricingId = preference.getDifferentialPricing().getId();
       }
       this.operationType = preference.getOperationType();
-      this.internalMetadata = buildInternalMetadataMap(preference);
       this.notificationUrl = preference.getNotificationUrl();
       this.taxes = preference.getTaxes();
       if (null != preference.getMarketplaceFee()
@@ -344,13 +363,51 @@ public class PaymentBody {
     }
   }
 
-  private static Map<String, Object> buildInternalMetadataMap(final Preference preference) {
+  public static final class AdditionalInfo {
+
+    private BankInfo bankInfo;
+
+    public AdditionalInfo() {}
+
+    public AdditionalInfo(Boolean isSameBankAccountOwner) {
+      bankInfo = new BankInfo(isSameBankAccountOwner);
+    }
+
+    public BankInfo getBankInfo() {
+      return bankInfo;
+    }
+
+    public static final class BankInfo {
+
+      private Boolean isSameBankAccountOwner;
+
+      public BankInfo() {}
+
+      public BankInfo(Boolean isSameBankAccountOwner) {
+        this.isSameBankAccountOwner = isSameBankAccountOwner;
+      }
+
+      public Boolean getIsSameBankAccountOwner() {
+        return isSameBankAccountOwner;
+      }
+    }
+  }
+
+  private static Map<String, Object> buildInternalMetadataMap(
+      final Preference preference, final String paymentMethodId) {
 
     Map<String, Object> internalMetadata = preference.getInternalMetadata();
     if (null == internalMetadata) {
       internalMetadata = new HashMap<>();
     }
     internalMetadata.put(PREFERENCE, new PaymentPreference(preference.getId(), null));
+
+    if (PIX_PAYMENT_METHOD_ID.equals(paymentMethodId)) {
+      BankInfo bankInfoBody =
+          new BankInfo(MERCADO_PAGO_PIX_ACCOUNT_ID, MERCADO_PAGO_PIX_ACCOUNT_NAME);
+      internalMetadata.put(INTERNAL_METADATA_BANK_INFO, bankInfoBody);
+    }
+
     return internalMetadata;
   }
 
@@ -369,5 +426,13 @@ public class PaymentBody {
     }
 
     return paymentData.getPaymentMethod().getId();
+  }
+
+  private static AdditionalInfo buildAdditionalInfo(
+      final String paymentMethodId, final Boolean isSameBankAccountOwner) {
+    if (PIX_PAYMENT_METHOD_ID.equals(paymentMethodId)) {
+      return new AdditionalInfo(isSameBankAccountOwner);
+    }
+    return null;
   }
 }

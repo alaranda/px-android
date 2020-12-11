@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.29.0]
+
+### Changed
+
+- Se agrega información regulatoria para PIX necesaria para pagos de COW.
+
 ## [1.28.5]
 
 ### Changed
