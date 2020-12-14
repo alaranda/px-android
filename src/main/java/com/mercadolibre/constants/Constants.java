@@ -49,6 +49,7 @@ public final class Constants {
       "API call to preferenceTidy failed"; // TODO
   public static final String API_CALL_PAYMENTS_FAILED = "API call to payments failed"; // TODO
   public static final String API_CALL_PUBLIC_KEY_FAILED = "API call to public key failed"; // TODO
+  public static final String API_CALL_TED_FAILED = "API call to ted failed"; // TODO
   public static final String INVALID_PARAMS = "invalid Params"; // TODO
   public static final String INVALID_PREFERENCE = "invalid preference"; // TODO
   public static final String GETTING_PARAMETERS = "Error getting parameters"; // TODO
@@ -67,6 +68,9 @@ public final class Constants {
   public static final String PREFERENCE_INTERNAL_METADATA = "type";
   public static final String PIX_TYPE_PREFERENCE = "pix-checkout-off";
   public static final String PIX_PAYMENT_METHOD_ID = "pix_am";
+  public static final Long MERCADO_PAGO_PIX_ACCOUNT_ID = 10573521L;
+  public static final String MERCADO_PAGO_PIX_ACCOUNT_NAME = "Mercado Pago";
+  public static final String INTERNAL_METADATA_BANK_INFO = "bank_info";
 
   public static final String LOCATION_FALSE = "false";
 

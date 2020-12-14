@@ -6,8 +6,10 @@ import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
 
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
+import com.mercadolibre.api.TedAPI;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.PublicKeyAndPreference;
+import com.mercadolibre.dto.Ted;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentData;
 import com.mercadolibre.dto.payment.PaymentDataBody;
@@ -20,6 +22,7 @@ import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
+import com.mercadolibre.utils.PaymentMethodUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -83,6 +86,9 @@ public enum PaymentService {
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =
           setOrder(preference, Long.valueOf(callerId), paymentDataBody.getMerchantOrderId());
+      final Boolean isSameBankAccountOwner =
+          getIsSameBankAccountOwner(
+              context, publicKeyInfo.getOwnerId(), Long.valueOf(callerId), paymentData, preference);
       return createBlackLabelRequest(
           setProductIdPreference(headers, preference),
           paymentData,
@@ -92,7 +98,8 @@ public enum PaymentService {
           callerId,
           clientId,
           order,
-          publicKeyId);
+          publicKeyId,
+          isSameBankAccountOwner);
     }
     return PaymentRequest.Builder.createWhiteLabelPaymentRequest(
             headers, paymentDataBody.getPaymentData().get(0), preference, context.getRequestId())
@@ -129,6 +136,42 @@ public enum PaymentService {
     return new PublicKeyAndPreference(publicKey, preference);
   }
 
+  private Boolean getIsSameBankAccountOwner(
+      final Context context,
+      final Long collectorId,
+      final Long payerId,
+      final PaymentData paymentData,
+      final Preference preference)
+      throws ApiException, ExecutionException, InterruptedException {
+
+    String paymentMethodId = PaymentMethodUtils.getPaymentMethodId(paymentData, preference);
+    if (!PIX_PAYMENT_METHOD_ID.equals(paymentMethodId)) {
+      return Boolean.FALSE;
+    }
+
+    final CompletableFuture<Either<Ted, ApiError>> futureCollectorTed =
+        TedAPI.INSTANCE.getAsyncTed(context, collectorId);
+    final CompletableFuture<Either<Ted, ApiError>> futurePayerTed =
+        TedAPI.INSTANCE.getAsyncTed(context, payerId);
+
+    CompletableFuture.allOf(futureCollectorTed, futurePayerTed);
+
+    if (!futureCollectorTed.get().isValuePresent()) {
+      final ApiError apiError = futureCollectorTed.get().getAlternative();
+      throw new ApiException(EXTERNAL_ERROR, API_CALL_TED_FAILED, apiError.getStatus());
+    }
+    if (!futurePayerTed.get().isValuePresent()) {
+      final ApiError apiError = futurePayerTed.get().getAlternative();
+      throw new ApiException(EXTERNAL_ERROR, API_CALL_TED_FAILED, apiError.getStatus());
+    }
+
+    final Ted collectorTed = futureCollectorTed.get().getValue();
+    final Ted payerTed = futurePayerTed.get().getValue();
+
+    return collectorTed.getIdentificationType().equals(payerTed.getIdentificationType())
+        && collectorTed.getIdentificationNumber().equals(payerTed.getIdentificationNumber());
+  }
+
   private PaymentRequest createBlackLabelRequest(
       final Headers headers,
       final PaymentData paymentData,
@@ -138,10 +181,11 @@ public enum PaymentService {
       final String callerId,
       final String clientId,
       final Order order,
-      final String pubicKeyId) {
+      final String pubicKeyId,
+      final Boolean isSameBankAccountOwner) {
 
     return PaymentRequest.Builder.createBlackLabelPaymentRequest(
-            headers, paymentData, preference, requestId)
+            headers, paymentData, preference, requestId, isSameBankAccountOwner)
         .withCallerId(Long.valueOf(callerId))
         .withClientId(Long.valueOf(clientId))
         .withPreference(preference)
