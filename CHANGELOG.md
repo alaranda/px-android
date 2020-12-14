@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.29.1]
+
+### Changed
+
+- Se corrige llamada a Ted API solo para pix_am.
+
 ## [1.29.0]
 
 ### Changed

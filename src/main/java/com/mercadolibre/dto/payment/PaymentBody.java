@@ -4,9 +4,7 @@ import static com.mercadolibre.constants.Constants.INTERNAL_METADATA_BANK_INFO;
 import static com.mercadolibre.constants.Constants.MERCADO_PAGO_PIX_ACCOUNT_ID;
 import static com.mercadolibre.constants.Constants.MERCADO_PAGO_PIX_ACCOUNT_NAME;
 import static com.mercadolibre.constants.Constants.PIX_PAYMENT_METHOD_ID;
-import static com.mercadolibre.constants.Constants.PIX_TYPE_PREFERENCE;
 import static com.mercadolibre.constants.Constants.PREFERENCE;
-import static com.mercadolibre.constants.Constants.PREFERENCE_INTERNAL_METADATA;
 
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
@@ -16,6 +14,7 @@ import com.mercadolibre.px.dto.lib.preference.PurposeDescriptor;
 import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
+import com.mercadolibre.utils.PaymentMethodUtils;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -199,7 +198,7 @@ public class PaymentBody {
           paymentData.hasIssuer() ? paymentData.getIssuer().getId().toString() : null;
       builder.installments =
           paymentData.hasPayerCost() ? paymentData.getPayerCost().getInstallments() : null;
-      builder.paymentMethodId = getPaymentMethodId(paymentData, preference);
+      builder.paymentMethodId = PaymentMethodUtils.getPaymentMethodId(paymentData, preference);
       builder.internalMetadata = buildInternalMetadataMap(preference, builder.paymentMethodId);
       builder.additionalInfo = buildAdditionalInfo(builder.paymentMethodId, isSameBankAccountOwner);
       builder.couponAmount =
@@ -409,23 +408,6 @@ public class PaymentBody {
     }
 
     return internalMetadata;
-  }
-
-  private static String getPaymentMethodId(
-      final PaymentData paymentData, final Preference preference) {
-
-    if (null != preference.getInternalMetadata()
-        && preference.getInternalMetadata().containsKey(PREFERENCE_INTERNAL_METADATA)) {
-
-      final String cowType =
-          preference.getInternalMetadata().get(PREFERENCE_INTERNAL_METADATA).toString();
-
-      if (cowType.equalsIgnoreCase(PIX_TYPE_PREFERENCE)) {
-        return PIX_PAYMENT_METHOD_ID;
-      }
-    }
-
-    return paymentData.getPaymentMethod().getId();
   }
 
   private static AdditionalInfo buildAdditionalInfo(

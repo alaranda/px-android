@@ -22,6 +22,7 @@ import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
+import com.mercadolibre.utils.PaymentMethodUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -86,7 +87,8 @@ public enum PaymentService {
       final Order order =
           setOrder(preference, Long.valueOf(callerId), paymentDataBody.getMerchantOrderId());
       final Boolean isSameBankAccountOwner =
-          getIsSameBankAccountOwner(context, publicKeyInfo.getOwnerId(), Long.valueOf(callerId));
+          getIsSameBankAccountOwner(
+              context, publicKeyInfo.getOwnerId(), Long.valueOf(callerId), paymentData, preference);
       return createBlackLabelRequest(
           setProductIdPreference(headers, preference),
           paymentData,
@@ -135,8 +137,18 @@ public enum PaymentService {
   }
 
   private Boolean getIsSameBankAccountOwner(
-      final Context context, final Long collectorId, final Long payerId)
+      final Context context,
+      final Long collectorId,
+      final Long payerId,
+      final PaymentData paymentData,
+      final Preference preference)
       throws ApiException, ExecutionException, InterruptedException {
+
+    String paymentMethodId = PaymentMethodUtils.getPaymentMethodId(paymentData, preference);
+    if (!PIX_PAYMENT_METHOD_ID.equals(paymentMethodId)) {
+      return Boolean.FALSE;
+    }
+
     final CompletableFuture<Either<Ted, ApiError>> futureCollectorTed =
         TedAPI.INSTANCE.getAsyncTed(context, collectorId);
     final CompletableFuture<Either<Ted, ApiError>> futurePayerTed =

@@ -9,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -458,6 +459,42 @@ public class PaymentServiceTest {
 
     assertNotNull(paymentRequest.getBody().getInternalMetadata());
     assertTrue(
+        paymentRequest.getBody().getInternalMetadata().containsKey(INTERNAL_METADATA_BANK_INFO));
+  }
+
+  @Test
+  public void getPaymentRequest_withoutBankInfo()
+      throws IOException, InterruptedException, ApiException, ExecutionException {
+    MockPublicKeyAPI.getPublicKey(
+        PUBLIC_KEY_BLACKLABEL_AM,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+    MockPreferenceAPI.getById(
+        PREFERENCE_ORDER,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/384414502-d095679d-f7d9-4653-ad71-4fb5feda3494.json")));
+
+    final PaymentDataBody paymentDataBody =
+        getObjectResponseFromFile(
+            "/paymentRequestBody/blackLabelAccountMoney.json", PaymentDataBody.class);
+
+    final PaymentRequest paymentRequest =
+        PaymentService.INSTANCE.getPaymentRequest(
+            CONTEXT_ES,
+            paymentDataBody,
+            PUBLIC_KEY_BLACKLABEL_AM,
+            CALLER_ID_TEST,
+            CLIENT_ID_TEST,
+            new Headers());
+
+    assertNull(paymentRequest.getBody().getAdditionalInfo());
+    assertNotNull(paymentRequest.getBody().getInternalMetadata());
+    assertFalse(
         paymentRequest.getBody().getInternalMetadata().containsKey(INTERNAL_METADATA_BANK_INFO));
   }
 }
