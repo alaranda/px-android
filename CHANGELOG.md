@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.30.0]
+
+### Changed
+
+- Se le agregan parámetros a la backUrl y redirectUrl.
+
 ## [1.29.1]
 
 ### Changed

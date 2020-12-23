@@ -87,7 +87,7 @@ public enum PreferenceService {
       throws ApiException, ExecutionException, InterruptedException {
 
     final CompletableFuture<Either<Preference, ApiError>> futurePreference =
-        PreferenceAPI.INSTANCE.geAsynctPreference(context, prefId);
+        PreferenceAPI.INSTANCE.geAsyncPreference(context, prefId);
 
     if (!futurePreference.get().isValuePresent()) {
       final ApiError apiError = futurePreference.get().getAlternative();

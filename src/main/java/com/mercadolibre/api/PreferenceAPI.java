@@ -65,7 +65,7 @@ public enum PreferenceAPI {
    * @throws ApiException si falla el api call (status code is not 2xx)
    */
   @Trace(async = true, dispatcher = true, nameTransaction = true)
-  public CompletableFuture<Either<Preference, ApiError>> geAsynctPreference(
+  public CompletableFuture<Either<Preference, ApiError>> geAsyncPreference(
       final Context context, final String preferenceId) throws ApiException {
     final Headers headers =
         new Headers()
@@ -139,14 +139,14 @@ public enum PreferenceAPI {
    * @param preferenceId preference id
    * @return a string with the url
    */
-  public static URIBuilder buildUrl(final String preferenceId) {
+  public URIBuilder buildUrl(final String preferenceId) {
     return new URIBuilder()
         .setScheme(Config.getString("preference.url.scheme"))
         .setHost(Config.getString("preference.url.host"))
         .setPath(String.format("%s/%s", URL, preferenceId));
   }
 
-  public static Optional<Preference> getPreferenceFromFuture(
+  public Optional<Preference> getPreferenceFromFuture(
       final Context context, final CompletableFuture<Either<Preference, ApiError>> future) {
     try {
       if (null != future && future.get().isValuePresent()) {

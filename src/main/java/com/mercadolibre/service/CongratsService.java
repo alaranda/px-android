@@ -10,6 +10,7 @@ import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.
 
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
+import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.congrats.Action;
 import com.mercadolibre.dto.congrats.AutoReturn;
@@ -20,6 +21,7 @@ import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.ExpenseSplit;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.px.dto.lib.button.Button;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
@@ -38,10 +40,10 @@ import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +51,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.utils.StringUtils;
@@ -102,7 +105,7 @@ public class CongratsService {
   public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
 
   private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
-
+  private static final String APPROVED = "approved";
   private static final int RETURNING_TIME_SECONDS = 5;
 
   public CongratsService() {}
@@ -117,13 +120,18 @@ public class CongratsService {
   public Congrats getPointsAndDiscounts(
       final Context context, final CongratsRequest congratsRequest) throws ApiException {
 
+    String primaryPaymentId = null;
     CompletableFuture<Either<Points, ApiError>> futureLoyalPoints = null;
+    CompletableFuture<Either<Payment, ApiError>> futurePayment = null;
     // TODO La comparacion con "null" esta por un bug donde me pasan el parametro en null y se
     // transforma a string. Sacar validacion cuando muera esa version.
     if (StringUtils.isNotBlank(congratsRequest.getPaymentIds())
-        && !congratsRequest.getPaymentIds().equalsIgnoreCase("null")
-        && userAgentIsValid(congratsRequest.getUserAgent())) {
-      futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
+        && !congratsRequest.getPaymentIds().equalsIgnoreCase("null")) {
+      primaryPaymentId = getFirstFromCsv(congratsRequest.getPaymentIds());
+      futurePayment = PaymentAPI.INSTANCE.getAsyncPayment(context, primaryPaymentId);
+      if (userAgentIsValid(congratsRequest.getUserAgent())) {
+        futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
+      }
     }
 
     final CompletableFuture<Either<MerchResponse, ApiError>> futureMerchResponse =
@@ -132,7 +140,7 @@ public class CongratsService {
     CompletableFuture<Either<Preference, ApiError>> futurePref = null;
     if (null != congratsRequest.getPreferenceId()) {
       futurePref =
-          PreferenceAPI.INSTANCE.geAsynctPreference(context, congratsRequest.getPreferenceId());
+          PreferenceAPI.INSTANCE.geAsyncPreference(context, congratsRequest.getPreferenceId());
     }
 
     Points points = null;
@@ -196,6 +204,8 @@ public class CongratsService {
 
       Optional<Preference> optionalPreferenceResponse =
           PreferenceAPI.INSTANCE.getPreferenceFromFuture(context, futurePref);
+      Optional<Payment> optionalPayment =
+          PaymentAPI.INSTANCE.getPaymentFromFuture(context, futurePayment);
 
       Button primaryButton = null;
       String backUrl = null;
@@ -204,8 +214,14 @@ public class CongratsService {
 
       if (optionalPreferenceResponse.isPresent()) {
         Preference preference = optionalPreferenceResponse.get();
-        backUrl = getBackUrl(preference.getBackUrls());
-        redirectUrl = getRedirectUrl(preference.getRedirectUrls());
+        Payment payment = optionalPayment.orElse(null);
+        String url;
+        if ((url = getBackUrl(preference.getBackUrls())) != null) {
+          backUrl = appendDataToUrl(url, congratsRequest, preference, payment);
+        }
+        if ((url = getRedirectUrl(preference.getRedirectUrls())) != null) {
+          redirectUrl = appendDataToUrl(url, congratsRequest, preference, payment);
+        }
         if (backUrl != null && StringUtils.isNotBlank(preference.getAutoReturn())) {
           primaryButton = buildPrimaryButton(context.getLocale());
           autoReturn =
@@ -235,7 +251,7 @@ public class CongratsService {
           viewReceipt,
           ifpeCompliance,
           isCustomOrderEnabled(congratsRequest.getProductId()),
-          generateExpenseSplitNode(context.getLocale(), congratsRequest),
+          generateExpenseSplitNode(context.getLocale(), primaryPaymentId, congratsRequest),
           buildPaymentMethodsImages(context, congratsRequest),
           primaryButton,
           null,
@@ -252,7 +268,7 @@ public class CongratsService {
   }
 
   private ExpenseSplit generateExpenseSplitNode(
-      final Locale locale, final CongratsRequest congratsRequest) {
+      final Locale locale, final String paymentId, final CongratsRequest congratsRequest) {
 
     if (!EXPENSE_SPLIT_PRODUCT_IDS.stream()
             .anyMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
@@ -278,14 +294,9 @@ public class CongratsService {
       deeplink = EXPENSE_SPLIT_ML_DEEPLINK;
     }
 
-    Iterator<String> paymentIdsIt =
-        Arrays.asList(SPLIT_BY_COMMA_PATTERN.split(congratsRequest.getPaymentIds())).iterator();
-
-    if (!paymentIdsIt.hasNext()) {
+    if (paymentId == null) {
       return null;
     }
-
-    String paymentId = paymentIdsIt.next();
 
     deeplink = String.format(deeplink, paymentId, congratsRequest.getFlowName());
 
@@ -361,11 +372,7 @@ public class CongratsService {
   }
 
   private boolean validateAccountMoneyId(final String paymentMethodsIds) {
-
-    if (paymentMethodsIds != null && paymentMethodsIds.contains(ACCOUNT_MONEY)) {
-      return true;
-    }
-    return false;
+    return paymentMethodsIds != null && paymentMethodsIds.contains(ACCOUNT_MONEY);
   }
 
   private Map<String, String> buildPaymentMethodsImages(
@@ -419,5 +426,42 @@ public class CongratsService {
     }
 
     return null;
+  }
+
+  private String getFirstFromCsv(final String csv) {
+    final String[] split;
+    if (csv != null && (split = SPLIT_BY_COMMA_PATTERN.split(csv)).length > 0) {
+      final String first = split[0];
+      return StringUtils.isNotBlank(first) ? first : null;
+    }
+    return null;
+  }
+
+  private String appendDataToUrl(
+      final String url,
+      final CongratsRequest congratsRequest,
+      final Preference preference,
+      final Payment payment) {
+    try {
+      final URIBuilder uriBuilder =
+          new URIBuilder(url)
+              .addParameter("status", APPROVED)
+              .addParameter("collection_status", APPROVED)
+              .addParameter("external_reference", preference.getExternalReference())
+              .addParameter("preference_id", preference.getId())
+              .addParameter("site_id", congratsRequest.getSiteId())
+              .addParameter("merchant_order_id", congratsRequest.getMerchantOrderId())
+              .addParameter("merchant_account_id", congratsRequest.getMerchantAccountId());
+      if (payment != null) {
+        uriBuilder
+            .addParameter("collection_id", payment.getId().toString())
+            .addParameter("payment_id", payment.getId().toString())
+            .addParameter("payment_type", payment.getPaymentTypeId())
+            .addParameter("processing_mode", payment.getProcessingMode());
+      }
+      return uriBuilder.toString();
+    } catch (final URISyntaxException e) {
+      return url;
+    }
   }
 }

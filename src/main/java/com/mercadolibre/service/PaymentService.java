@@ -117,7 +117,7 @@ public enum PaymentService {
     final CompletableFuture<Either<PublicKey, ApiError>> futurePk =
         AuthService.INSTANCE.getAsyncPublicKey(context, publicKeyId);
     final CompletableFuture<Either<Preference, ApiError>> futurePref =
-        PreferenceAPI.INSTANCE.geAsynctPreference(context, prefId);
+        PreferenceAPI.INSTANCE.geAsyncPreference(context, prefId);
 
     CompletableFuture.allOf(futurePk, futurePref);
 
