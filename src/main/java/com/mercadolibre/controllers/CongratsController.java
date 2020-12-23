@@ -110,8 +110,9 @@ public class CongratsController {
     final String flowName = request.queryParams(FLOW_NAME);
     final boolean ifpe = Boolean.parseBoolean(request.queryParams(IFPE));
     final String paymentMethodsIds = request.queryParams(PAYMENT_METHODS_IDS);
-
     final String preferenceId = request.queryParams(PREF_ID);
+    final String merchantOrderId = request.queryParams(MERCHANT_ORDER_ID);
+    final String merchantAccountId = request.queryParams(MERCHANT_ACCOUNT_ID);
 
     final String locationEnabled =
         request.headers(X_LOCATION_ENABLED) != null
@@ -132,6 +133,8 @@ public class CongratsController {
         ifpe,
         paymentMethodsIds,
         preferenceId,
-        locationEnabled);
+        locationEnabled,
+        merchantOrderId,
+        merchantAccountId);
   }
 }

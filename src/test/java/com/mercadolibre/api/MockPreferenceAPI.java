@@ -8,7 +8,7 @@ public class MockPreferenceAPI {
 
   public static void getById(final String id, final int statusCode, final String body) {
     MockResponse.builder()
-        .withURL(PreferenceAPI.buildUrl(id).toString())
+        .withURL(PreferenceAPI.INSTANCE.buildUrl(id).toString())
         .withMethod(HttpMethod.GET)
         .withStatusCode(statusCode)
         .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
