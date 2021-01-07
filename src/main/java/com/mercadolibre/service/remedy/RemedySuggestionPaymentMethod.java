@@ -24,6 +24,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.OperatingSystem;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Version;
+import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
@@ -63,6 +64,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   public static final String DEBIT_CARD_WITHOUT_ESC = "debit_card_without_esc";
   public static final String CREDIT_CARD_ESC = "credit_card_esc";
   public static final String CREDIT_CARD_WITHOUT_ESC = "credit_card_without_esc";
+  private boolean isMLMSite;
 
   public RemedySuggestionPaymentMethod(
       final RemedyCvv remedyCvv, final String remedyTitle, final String remedyMessage) {
@@ -104,7 +106,10 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     List<AlternativePayerPaymentMethod> consumerCredits = new ArrayList<>();
 
-    if (iosVersionIsValidForCredits(context.getUserAgent())) {
+    isMLMSite = Site.MLM.getSiteId().equals(remediesRequest.getSiteId());
+    if (!isMLMSite
+        && (iosVersionIsValidForCredits(context.getUserAgent())
+            || OperatingSystem.isAndroid(context.getUserAgent().getOperatingSystem()))) {
       consumerCredits =
           alternativePayerPaymentMethodList.stream()
               .filter(isConsumerCredits)
@@ -236,10 +241,10 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   }
 
   private boolean iosVersionIsValidForCredits(final UserAgent userAgent) {
-    if (userAgent.getOperatingSystem().equals(OperatingSystem.IOS)
-        && userAgent.getVersion().compareTo(CREDITS_VALID_VERSION_IOS_SINCE) < 0) {
-      return false;
+    if (OperatingSystem.isIOS(userAgent.getOperatingSystem())
+        && userAgent.getVersion().compareTo(CREDITS_VALID_VERSION_IOS_SINCE) >= 0) {
+      return true;
     }
-    return true;
+    return false;
   }
 }

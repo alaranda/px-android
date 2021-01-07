@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.31.0]
+
+### Changed
+
+- Se excluye credits en remedies para MLM.
+
 ## [1.30.0]
 
 ### Changed
