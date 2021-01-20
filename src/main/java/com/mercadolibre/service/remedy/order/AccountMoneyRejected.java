@@ -22,11 +22,11 @@ public class AccountMoneyRejected implements SuggestionCriteriaInterface {
       final Map<String, List<AlternativePayerPaymentMethod>> payerPaymentMethodsMap) {
 
     final List<AlternativePayerPaymentMethod> paymentMethodsOrdered = new ArrayList<>();
-    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
     paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CREDIT_CARD_ESC));
     paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(DEBIT_CARD_ESC));
     paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(DEBIT_CARD_WITHOUT_ESC));
     paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CREDIT_CARD_WITHOUT_ESC));
+    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
 
     return SuggestionPaymentMehodsUtils.getPaymentMethodSelected(paymentMethodsOrdered);
   }
