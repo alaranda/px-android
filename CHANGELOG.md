@@ -2,6 +2,14 @@
 
 # Change Log
 
+## [1.32.0]
+
+### Changed
+
+- Se levanta flowId por query param en init preference.
+- Se agrega whitelist de clients para trackeo de COW.
+- Se desprioriza credits en remedies.
+
 ## [1.31.0]
 
 ### Changed

@@ -240,7 +240,7 @@ public class RemedySuggestionPaymentMethodTest {
   }
 
   @Test
-  public void applyRemedy_rejectedTC_returnCC() {
+  public void applyRemedy_rejectedTC_returnTC() {
 
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
     when(remediesRequest.isOneTap()).thenReturn(true);
@@ -266,11 +266,11 @@ public class RemedySuggestionPaymentMethodTest {
             .getSuggestedPaymentMethod()
             .getAlternativePaymentMethod()
             .getPaymentTypeId(),
-        is(PaymentMethodsRejectedTypes.CONSUMER_CREDITS));
+        is(PaymentMethodsRejectedTypes.CREDIT_CARD));
   }
 
   @Test
-  public void applyRemedy_rejectedAM_returnCC() {
+  public void applyRemedy_rejectedAM_returnTC() {
 
     final RemediesRequest remediesRequest = Mockito.mock(RemediesRequest.class);
     when(remediesRequest.isOneTap()).thenReturn(true);
@@ -298,7 +298,7 @@ public class RemedySuggestionPaymentMethodTest {
             .getSuggestedPaymentMethod()
             .getAlternativePaymentMethod()
             .getPaymentTypeId(),
-        is(PaymentMethodsRejectedTypes.CONSUMER_CREDITS));
+        is(PaymentMethodsRejectedTypes.CREDIT_CARD));
   }
 
   @Test

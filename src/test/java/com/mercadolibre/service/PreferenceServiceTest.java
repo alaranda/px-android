@@ -5,7 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -115,9 +114,9 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     when(initPreferenceRequest.getCallerId()).thenReturn("12345");
     PreferenceResponse preferenceResponse =
-        PreferenceService.INSTANCE.getPreferenceResponce(
+        PreferenceService.INSTANCE.getPreferenceResponse(
             mockContextLibDto(), initPreferenceRequest);
-    assertTrue(preferenceResponse != null);
+    assertNotNull(preferenceResponse);
     assertEquals(preferenceResponse.getPrefId(), "127330977-0f03b540-a8c2-4879-af10-66f619786c0c");
     assertEquals(preferenceResponse.getPublicKey(), "APP_USR-b96cf47b-cbb2-4c8c-83cb-a8cb01167b4e");
   }
@@ -135,7 +134,7 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getShortId()).thenReturn("23BYCZ");
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      PreferenceService.INSTANCE.getPreferenceResponce(mockContextLibDto(), initPreferenceRequest);
+      PreferenceService.INSTANCE.getPreferenceResponse(mockContextLibDto(), initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");
@@ -149,7 +148,7 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getShortId()).thenReturn(null);
     when(initPreferenceRequest.getPrefId()).thenReturn(null);
     try {
-      PreferenceService.INSTANCE.getPreferenceResponce(mockContextLibDto(), initPreferenceRequest);
+      PreferenceService.INSTANCE.getPreferenceResponse(mockContextLibDto(), initPreferenceRequest);
       fail("ApiException expected");
     } catch (ApiException e) {
       assertEquals(e.getDescription(), "Error getting parameters");
@@ -157,7 +156,7 @@ public class PreferenceServiceTest {
   }
 
   @Test
-  public void getPreference_whitelistCOWContainCollector_returnFlowId()
+  public void getPreference_whitelistCOWContainsCollector_returnFlowId()
       throws InterruptedException, ApiException, ExecutionException, IOException {
 
     MockPreferenceAPI.getById(
@@ -182,9 +181,106 @@ public class PreferenceServiceTest {
     when(initPreferenceRequest.getPrefId())
         .thenReturn("856777777-0f03b540-a8c2-4879-af10-66f619786c0c");
     final PreferenceResponse preferenceResponse =
-        PreferenceService.INSTANCE.getPreferenceResponce(
+        PreferenceService.INSTANCE.getPreferenceResponse(
             mockContextLibDto(), initPreferenceRequest);
 
     assertEquals(preferenceResponse.getFlowId(), "/checkout_web");
+  }
+
+  @Test
+  public void getPreference_whitelistCOWContainsClient_returnFlowId()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        "856777777-0f03b540-a8c2-4879-af10-66f619786c0d",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/856777777-0f03b540-a8c2-4879-af10-66f619786c0d.json")));
+
+    MockPublicKeyAPI.getBycallerIdAndClientId(
+        USER_ID_COW,
+        "123",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn(null);
+    when(initPreferenceRequest.getCallerId()).thenReturn(USER_ID_COW);
+    when(initPreferenceRequest.getPrefId())
+        .thenReturn("856777777-0f03b540-a8c2-4879-af10-66f619786c0d");
+    final PreferenceResponse preferenceResponse =
+        PreferenceService.INSTANCE.getPreferenceResponse(
+            mockContextLibDto(), initPreferenceRequest);
+
+    assertEquals(preferenceResponse.getFlowId(), "/checkout_web");
+  }
+
+  @Test
+  public void getPreference_requestContainsFlowId_returnFlowId()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        "856777777-0f03b540-a8c2-4879-af10-66f619786c0e",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/856777777-0f03b540-a8c2-4879-af10-66f619786c0e.json")));
+
+    MockPublicKeyAPI.getBycallerIdAndClientId(
+        USER_ID_COW,
+        "123",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn(null);
+    when(initPreferenceRequest.getCallerId()).thenReturn("123");
+    when(initPreferenceRequest.getPrefId())
+        .thenReturn("856777777-0f03b540-a8c2-4879-af10-66f619786c0e");
+    when(initPreferenceRequest.getFlowId()).thenReturn("/param_flow_id");
+    final PreferenceResponse preferenceResponse =
+        PreferenceService.INSTANCE.getPreferenceResponse(
+            mockContextLibDto(), initPreferenceRequest);
+
+    assertEquals(preferenceResponse.getFlowId(), "/param_flow_id");
+  }
+
+  @Test
+  public void getPreference_additionalInfoContainsFlowId_returnFlowId()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        "856777777-0f03b540-a8c2-4879-af10-66f619786c0e",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/856777777-0f03b540-a8c2-4879-af10-66f619786c0e.json")));
+
+    MockPublicKeyAPI.getBycallerIdAndClientId(
+        USER_ID_COW,
+        "123",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+
+    InitPreferenceRequest initPreferenceRequest = Mockito.mock(InitPreferenceRequest.class);
+    when(initPreferenceRequest.getShortId()).thenReturn(null);
+    when(initPreferenceRequest.getCallerId()).thenReturn("123");
+    when(initPreferenceRequest.getPrefId())
+        .thenReturn("856777777-0f03b540-a8c2-4879-af10-66f619786c0e");
+    final PreferenceResponse preferenceResponse =
+        PreferenceService.INSTANCE.getPreferenceResponse(
+            mockContextLibDto(), initPreferenceRequest);
+
+    assertEquals(preferenceResponse.getFlowId(), "/payment_link");
   }
 }
