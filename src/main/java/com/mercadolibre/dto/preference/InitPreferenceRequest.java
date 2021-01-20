@@ -7,8 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class InitPreferenceRequest {
 
-  private String callerId;
-  private String clientId;
-  private String prefId;
-  private String shortId;
+  private final String callerId;
+  private final String clientId;
+  private final String prefId;
+  private final String shortId;
+  private final String flowId;
 }
