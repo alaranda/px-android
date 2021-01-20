@@ -27,7 +27,7 @@ public enum PreferencesController {
   INSTANCE;
 
   /**
-   * Devuelve una publick key y una pref.
+   * Devuelve una public key y una pref.
    *
    * @param request request
    * @param response response
@@ -49,7 +49,7 @@ public enum PreferencesController {
 
       final InitPreferenceRequest initPreferenceRequest = getInitPreferenceRequest(request);
       final PreferenceResponse preferenceResponse =
-          PreferenceService.INSTANCE.getPreferenceResponce(context, initPreferenceRequest);
+          PreferenceService.INSTANCE.getPreferenceResponse(context, initPreferenceRequest);
 
       DatadogPreferencesMetric.addPreferenceData(context, preferenceResponse);
       return preferenceResponse;
@@ -66,14 +66,15 @@ public enum PreferencesController {
       throws ApiException {
 
     final String callerId = request.queryParams(CALLER_ID);
-    final String clienId = request.queryParams(CLIENT_ID);
+    final String clientId = request.queryParams(CLIENT_ID);
     final String shortId = request.queryParams(Constants.SHORT_ID);
     final String prefId = request.queryParams(Constants.PREF_ID);
+    final String flowId = request.queryParams(Constants.FLOW_ID);
 
     if (null == callerId) {
       throw new ValidationException("caller id required");
     }
-    if (null == clienId) {
+    if (null == clientId) {
       throw new ValidationException("client id required");
     }
 
@@ -81,6 +82,6 @@ public enum PreferencesController {
       throw new ApiException(INVALID_PARAMS, GETTING_PARAMETERS, HttpStatus.SC_BAD_REQUEST);
     }
 
-    return new InitPreferenceRequest(callerId, clienId, prefId, shortId);
+    return new InitPreferenceRequest(callerId, clientId, prefId, shortId, flowId);
   }
 }

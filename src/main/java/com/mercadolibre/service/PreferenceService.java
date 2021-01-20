@@ -34,13 +34,13 @@ public enum PreferenceService {
   private static final Logger LOGGER = LogManager.getLogger();
 
   private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
-  private static Long DEFAULT_CLIENT_ID = 963L;
+  private static final Long DEFAULT_CLIENT_ID = 963L;
   private static final String DEFAULT_FLOW_ID = "/pay_preference";
   private static final String COW_FLOW_ID = "/checkout_web";
   private static final String DEFAULT_PRODUCT_ID = "BK9TMI410T3G01IB4220";
   private final DaoProvider daoProvider = new DaoProvider();
 
-  public PreferenceResponse getPreferenceResponce(
+  public PreferenceResponse getPreferenceResponse(
       final Context context, final InitPreferenceRequest initPreferenceRequest)
       throws InterruptedException, ApiException, ExecutionException {
 
@@ -59,7 +59,7 @@ public enum PreferenceService {
             preference.getCollectorId(),
             chooseClientId(preference.getClientId(), initPreferenceRequest.getClientId()));
 
-    final String flowId = extractFlowId(preference);
+    final String flowId = resolveFlowId(initPreferenceRequest.getFlowId(), preference);
     final String productId =
         (null != preference.getProductId()) ? preference.getProductId() : DEFAULT_PRODUCT_ID;
 
@@ -147,7 +147,16 @@ public enum PreferenceService {
     return clientIdAccessToken;
   }
 
-  private String extractFlowId(final Preference preference) {
+  private String resolveFlowId(final String flowId, final Preference preference) {
+
+    if (StringUtils.isNotBlank(flowId)) {
+      return flowId;
+    }
+
+    if (COW_SNIFFING_COLLECTOR_WHITELIST.contains(preference.getCollectorId())
+        || COW_SNIFFING_CLIENT_WHITELIST.contains(preference.getClientId())) {
+      return COW_FLOW_ID;
+    }
 
     AdditionalInfo additionalInfo = null;
 
@@ -155,11 +164,7 @@ public enum PreferenceService {
       additionalInfo = GsonWrapper.fromJson(preference.getAdditionalInfo(), AdditionalInfo.class);
 
     } catch (Exception ex) {
-      // Continua el flujo con el flow deafult.
-    }
-
-    if (COW_SNIFFING_WHITELIST.contains(preference.getCollectorId())) {
-      return COW_FLOW_ID;
+      // Continua el flujo con el flow default.
     }
 
     if (null != additionalInfo

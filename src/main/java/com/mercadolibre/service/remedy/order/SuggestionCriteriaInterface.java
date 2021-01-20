@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface SuggestionCriteriaInterface {
 
-  public PaymentMethodSelected findBestMedium(
+  PaymentMethodSelected findBestMedium(
       final RemediesRequest remediesRequest,
       final Map<String, List<AlternativePayerPaymentMethod>> payerPaymentMethodsMa);
 }

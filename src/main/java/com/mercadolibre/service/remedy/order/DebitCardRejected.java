@@ -21,7 +21,6 @@ public class DebitCardRejected implements SuggestionCriteriaInterface {
 
     final List<AlternativePayerPaymentMethod> paymentMethodsOrdered = new ArrayList<>();
     paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(ACCOUNT_MONEY));
-    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
     paymentMethodsOrdered.addAll(
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.CREDIT_CARD_ESC));
     paymentMethodsOrdered.addAll(
@@ -30,6 +29,7 @@ public class DebitCardRejected implements SuggestionCriteriaInterface {
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.DEBIT_CARD_WITHOUT_ESC));
     paymentMethodsOrdered.addAll(
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.CREDIT_CARD_WITHOUT_ESC));
+    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
 
     return SuggestionPaymentMehodsUtils.getPaymentMethodSelected(paymentMethodsOrdered);
   }
