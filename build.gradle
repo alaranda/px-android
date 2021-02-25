@@ -1,7 +1,6 @@
 buildscript {
 	repositories {
 		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
-		mavenLocal()
 	}
 
 	dependencies {
@@ -53,12 +52,8 @@ sourceSets {
 }
 
 repositories {
-	maven {
-		url "http://maven.artifacts.furycloud.io/repository/all"
+		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
 	}
-	mavenLocal()
-	jcenter()
-}
 
 dependencies {
 	compile "com.google.guava:guava:$guavaVersion"
