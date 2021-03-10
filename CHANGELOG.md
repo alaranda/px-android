@@ -2,9 +2,13 @@
 
 # Change Log
 
-## [1.32.1]
+## [1.32.2]
 
 - Se descartan los medios alternativos de consumer credits para la propuesta de silver bullet.
+
+## [1.32.1]
+
+- update maven repository
 
 ## [1.32.0]
 
