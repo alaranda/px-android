@@ -2,6 +2,10 @@
 
 # Change Log
 
+## [1.32.1]
+
+- Se descartan los medios alternativos de consumer credits para la propuesta de silver bullet.
+
 ## [1.32.0]
 
 ### Changed

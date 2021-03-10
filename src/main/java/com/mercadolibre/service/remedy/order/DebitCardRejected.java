@@ -1,7 +1,6 @@
 package com.mercadolibre.service.remedy.order;
 
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.PaymentMethodSelected;
@@ -29,7 +28,8 @@ public class DebitCardRejected implements SuggestionCriteriaInterface {
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.DEBIT_CARD_WITHOUT_ESC));
     paymentMethodsOrdered.addAll(
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.CREDIT_CARD_WITHOUT_ESC));
-    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
+    // discarded temporally
+    // paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
 
     return SuggestionPaymentMehodsUtils.getPaymentMethodSelected(paymentMethodsOrdered);
   }
