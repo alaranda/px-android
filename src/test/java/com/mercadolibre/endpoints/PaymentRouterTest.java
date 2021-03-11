@@ -185,6 +185,54 @@ public class PaymentRouterTest {
   }
 
   @Test
+  public void payments_validation_program_empty_200() throws URISyntaxException, IOException {
+    URIBuilder uriBuilder =
+        new URIBuilder("/px_mobile/payments")
+            .addParameter(CALLER_ID, String.valueOf(CALLER_ID_MLA_1))
+            .addParameter(CLIENT_ID, String.valueOf(CLIENT_ID_MLA_1))
+            .addParameter(PUBLIC_KEY, PUBLIC_KEY_BLACKLABEL_AM);
+    MockPublicKeyAPI.getPublicKey(
+        PUBLIC_KEY_BLACKLABEL_AM,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
+    MockPreferenceAPI.getById(
+        PREFERENCE_ID_BLACKLABEL_AM,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/384414502-d095679d-f7d9-4653-ad71-4fb5feda3494.json")));
+    MockPaymentAPI.doPayment(
+        CALLER_ID_MLA_1,
+        CLIENT_ID_MLA_1,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
+    MockMerchantOrderAPI.createMerchantOrder(
+        "395662610",
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
+    MockTedAPI.getTed(
+        204318018L,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
+
+    final Response response =
+        given()
+            .body(
+                IOUtils.toString(
+                    getClass().getResourceAsStream("/paymentRequestBody/validationProgramOK.json")))
+            .with()
+            .contentType("application/json")
+            .post(uriBuilder.build());
+
+    assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+    assertThat(response.getBody().print(), is(not(nullValue())));
+  }
+
+  @Test
   public void payments_validation_program_empty_400() throws URISyntaxException, IOException {
     URIBuilder uriBuilder =
         new URIBuilder("/px_mobile/payments")
