@@ -4,8 +4,10 @@ import com.mercadolibre.dto.Order;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
+import lombok.Getter;
 
 /** Objeto con toda la informacion necesaria para hacer el request a payments */
+@Getter
 public class PaymentRequest {
 
   private Headers headers;
@@ -20,26 +22,6 @@ public class PaymentRequest {
     this.clientId = builder.clientId;
     this.preference = builder.preference;
     this.body = builder.body.build();
-  }
-
-  public Long getCallerId() {
-    return callerId;
-  }
-
-  public Long getClientId() {
-    return clientId;
-  }
-
-  public Headers getHeaders() {
-    return headers;
-  }
-
-  public Preference getPreference() {
-    return preference;
-  }
-
-  public PaymentBody getBody() {
-    return body;
   }
 
   public static final class Builder {
@@ -65,11 +47,14 @@ public class PaymentRequest {
         final Headers headers,
         final PaymentData paymentData,
         final Preference preference,
-        final String requestId) {
+        final String requestId,
+        final String validationProgramId) {
 
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
-      builder.body = PaymentBody.Builder.createWhiteLabelBuilder(paymentData, preference);
+      builder.body =
+          PaymentBody.Builder.createWhiteLabelBuilder(paymentData, preference)
+              .withValidationProgramId(validationProgramId);
       return builder;
     }
 
@@ -78,12 +63,14 @@ public class PaymentRequest {
         final PaymentData paymentData,
         final Preference preference,
         final String requestId,
-        final Boolean isSameBankAccountOwner) {
+        final Boolean isSameBankAccountOwner,
+        final String validationProgramId) {
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
       builder.body =
           PaymentBody.Builder.createBlackLabelBuilder(
-              paymentData, preference, isSameBankAccountOwner);
+                  paymentData, preference, isSameBankAccountOwner)
+              .withValidationProgramId(validationProgramId);
       return builder;
     }
 

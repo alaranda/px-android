@@ -20,9 +20,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import spark.utils.StringUtils;
 
 /** Objeto con los parametros que posteamos en el body de payments */
+@Getter
 public class PaymentBody {
 
   private String token;
@@ -56,70 +58,7 @@ public class PaymentBody {
   private Map<String, Object> metadata;
   private CounterCurrency counterCurrency;
   private AdditionalInfo additionalInfo;
-
-  public String getToken() {
-    return token;
-  }
-
-  public String getIssuerId() {
-    return issuerId;
-  }
-
-  public Integer getInstallments() {
-    return installments;
-  }
-
-  public String getPaymentMethodId() {
-    return paymentMethodId;
-  }
-
-  public BigDecimal getTransactionAmount() {
-    return transactionAmount;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public PayerBody getPayer() {
-    return payer;
-  }
-
-  public Long getDifferentialPricingId() {
-    return differentialPricingId;
-  }
-
-  public BigDecimal getCouponAmount() {
-    return couponAmount;
-  }
-
-  public Long getCampaignId() {
-    return campaignId;
-  }
-
-  public String getCouponCode() {
-    return couponCode;
-  }
-
-  public Order getOrder() {
-    return order;
-  }
-
-  public boolean isBinaryMode() {
-    return binaryMode;
-  }
-
-  public String getExternalReference() {
-    return externalReference;
-  }
-
-  public Map<String, Object> getInternalMetadata() {
-    return internalMetadata;
-  }
-
-  public AdditionalInfo getAdditionalInfo() {
-    return additionalInfo;
-  }
+  private String validationProgramId;
 
   PaymentBody(final Builder builder) {
     this.externalReference = builder.externalReference;
@@ -153,6 +92,7 @@ public class PaymentBody {
     this.counterCurrency = builder.counterCurrency;
     this.description = builder.description;
     this.additionalInfo = builder.additionalInfo;
+    this.validationProgramId = builder.validationProgramId;
   }
 
   public static final class Builder {
@@ -187,6 +127,7 @@ public class PaymentBody {
     private Map<String, Object> metadata;
     private CounterCurrency counterCurrency;
     private AdditionalInfo additionalInfo;
+    private String validationProgramId;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData,
@@ -325,6 +266,11 @@ public class PaymentBody {
       return this;
     }
 
+    public Builder withValidationProgramId(final String validationProgramId) {
+      this.validationProgramId = validationProgramId;
+      return this;
+    }
+
     public PaymentBody build() {
       return new PaymentBody(this);
     }
@@ -335,8 +281,6 @@ public class PaymentBody {
     private String firstName;
     private String lastName;
     private Identification identification;
-
-    public PayerBody() {}
 
     PayerBody(
         final String firstName,

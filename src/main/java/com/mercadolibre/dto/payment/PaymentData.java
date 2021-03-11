@@ -3,7 +3,9 @@ package com.mercadolibre.dto.payment;
 import com.mercadolibre.px.dto.lib.card.Issuer;
 import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
+import lombok.Getter;
 
+@Getter
 public class PaymentData {
 
   private BigDecimal rawAmount;
@@ -16,70 +18,34 @@ public class PaymentData {
   private Discount discount;
   private Campaign campaign;
 
-  public BigDecimal getRawAmount() {
-    return rawAmount;
-  }
-
-  public BigDecimal getTransactionAmount() {
-    return transactionAmount;
-  }
-
-  public PaymentMethod getPaymentMethod() {
-    return paymentMethod;
-  }
-
-  public Payer getPayer() {
-    return payer;
-  }
-
-  public Issuer getIssuer() {
-    return issuer;
-  }
-
-  public PayerCost getPayerCost() {
-    return payerCost;
-  }
-
-  public Token getToken() {
-    return token;
-  }
-
-  public Discount getDiscount() {
-    return discount;
-  }
-
-  public Campaign getCampaign() {
-    return campaign;
-  }
-
   public boolean hasPayerCost() {
-    return this.payerCost != null ? true : false;
+    return this.payerCost != null;
   }
 
   public boolean hasIssuer() {
-    return this.issuer != null ? true : false;
+    return this.issuer != null;
   }
 
   public boolean hasDiscount() {
-    return this.discount != null ? true : false;
+    return this.discount != null;
   }
 
   public boolean hasToken() {
-    return this.token != null ? true : false;
+    return this.token != null;
   }
 
   public boolean hasCampaign() {
-    return this.campaign != null ? true : false;
+    return this.campaign != null;
   }
 
   public boolean hasDiscountToken() {
     if (this.hasDiscount()) {
-      return this.discount.getId() != null ? true : false;
+      return this.discount.getId() != null;
     }
     return false;
   }
 
   public boolean hasPayer() {
-    return this.payer != null ? true : false;
+    return this.payer != null;
   }
 }
