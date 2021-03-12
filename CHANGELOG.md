@@ -2,6 +2,13 @@
 
 # Change Log
 
+
+## [1.33.0]
+
+### Added
+
+- Se crea el wrapper de CHA
+
 ## [1.32.2]
 
 - Se descartan los medios alternativos de consumer credits para la propuesta de silver bullet.

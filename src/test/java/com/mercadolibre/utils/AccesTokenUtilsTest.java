@@ -100,4 +100,12 @@ public class AccesTokenUtilsTest {
     matcher = AccessTokenUtils.ACCESS_TOKEN_QUERY_PARAM_PATTERN.matcher(invalidQueryString);
     assertThat(matcher.find(), is(true));
   }
+
+  @Test
+  public void extractUserIdFromAccessToken_userIdOk() {
+    final String testAccessToken =
+        "APP_USR-6072488016300085-030215-2fe318906520a2dfe598dc112952376a-370219298";
+    final Long userId = AccessTokenUtils.extractUserIdFromAccessToken(testAccessToken);
+    assertThat(userId, is(370219298L));
+  }
 }
