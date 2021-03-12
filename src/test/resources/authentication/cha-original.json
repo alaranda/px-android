@@ -1,0 +1,41 @@
+{
+  "data": {
+    "authTransaction": "01",
+    "card": {
+      "cardholderName": "JohnDoe Anytown",
+      "paymentMethod": "visa"
+    },
+    "deviceRenderOptions": {
+      "sdkInterface": "01",
+      "sdkUiType": [
+        "01",
+        "02",
+        "03"
+      ]
+    },
+    "processingMode": "dataonly",
+    "profileId": "mobile_stp",
+    "purchaseAmount": "12035",
+    "purchaseCurrency": "BRL",
+    "purchaseDate": "20210302161620",
+    "purchaseExponent": 2,
+    "riskRouting": "0",
+    "sdkAppID": "1682a0c6-8667-465f-a608-15d8de5759db",
+    "sdkEncData": "...",
+    "sdkEphemPubKey": {
+      "crv": "P-256",
+      "kty": "EC",
+      "x": "bwdo8Y66jLpDzb_voxHXQah79MGCo3KgEnutmh4y6jU",
+      "y": "rYtgH5O5ASEm_e-zrv-cKmX-jgn8I8JQ3O9sKKeMDoE"
+    },
+    "sdkMaxTimeout": "06",
+    "sdkReferenceNumber": "3DS_LOA_SDK_NUSE_020100_00166",
+    "sdkTransID": "9177fb3b-7fdd-41ee-a91f-efa0a639d28f",
+    "shipIndicator": "07",
+    "siteId": "MLB"
+  },
+  "deviceChannel": "APP",
+  "protocol": "3DS",
+  "userID": 261748045,
+  "version": "2.0"
+}

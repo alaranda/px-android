@@ -13,11 +13,7 @@ import static spark.Spark.afterAfter;
 
 import com.google.common.net.MediaType;
 import com.mercadolibre.constants.Constants;
-import com.mercadolibre.controllers.CapEscController;
-import com.mercadolibre.controllers.CongratsController;
-import com.mercadolibre.controllers.PaymentsController;
-import com.mercadolibre.controllers.PreferencesController;
-import com.mercadolibre.controllers.RemediesController;
+import com.mercadolibre.controllers.*;
 import com.mercadolibre.px.toolkit.config.Config;
 import com.mercadolibre.px.toolkit.dto.ApiError;
 import com.mercadolibre.px.toolkit.dto.NewRelicRequest;
@@ -47,9 +43,12 @@ public class Router implements SparkApplication {
   private static final String REQUEST_START_HEADER = "request-start";
   private static final String CONTENT_ENCODING_GZIP = "gzip";
 
+  private static final String V1_CHA_URL = "/authentication/v1/card_holder";
+
   private final CongratsController congratsController = new CongratsController();
   private final CapEscController capEscController = new CapEscController();
   private final RemediesController remediesController = new RemediesController();
+  private final AuthenticationController authenticationController = new AuthenticationController();
 
   @Override
   public void init() {
@@ -97,6 +96,11 @@ public class Router implements SparkApplication {
           Spark.post(
               "/v1/remedies/:paymentId",
               new MeteredRoute(remediesController::getRemedy, "/v1/remedies/:paymentId"),
+              GsonWrapper::toJson);
+
+          Spark.post(
+              V1_CHA_URL,
+              new MeteredRoute(authenticationController::authenticateCardHolder, V1_CHA_URL),
               GsonWrapper::toJson);
 
           Spark.exception(

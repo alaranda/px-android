@@ -2,11 +2,15 @@
 
 # Change Log
 
-## [1.33.0]
+## [1.34.0]
 
 ### Added
 
 - Se agrega validation_program_id como parte del request a mobile-payment y el api call a payments.
+
+## [1.33.0]
+
+- Se crea el wrapper de CHA
 
 ## [1.32.2]
 
