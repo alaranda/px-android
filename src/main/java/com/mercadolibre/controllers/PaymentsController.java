@@ -207,6 +207,12 @@ public enum PaymentsController {
         throw new ApiException(INTERNAL_ERROR, "unsupported payment", HttpStatus.SC_BAD_REQUEST);
       }
 
+      if (paymentDataBody.getValidationProgramId() != null
+          && StringUtils.isBlank(paymentDataBody.getValidationProgramId())) {
+        throw new ApiException(
+            INTERNAL_ERROR, "validation_program_id can't not be empty", HttpStatus.SC_BAD_REQUEST);
+      }
+
       final PaymentDataValidator validator = new PaymentDataValidator();
 
       for (PaymentData paymentData : paymentDataBody.getPaymentData()) {
