@@ -82,6 +82,7 @@ public enum PaymentService {
     final PublicKey publicKeyInfo = publicKeyAndPreference.getPublicKey();
     final Preference preference = publicKeyAndPreference.getPreference();
     final PaymentData paymentData = paymentDataBody.getPaymentData().get(0);
+    final String validationProgramId = paymentDataBody.getValidationProgramId();
 
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =
@@ -99,10 +100,11 @@ public enum PaymentService {
           clientId,
           order,
           publicKeyId,
-          isSameBankAccountOwner);
+          isSameBankAccountOwner,
+          validationProgramId);
     }
     return PaymentRequest.Builder.createWhiteLabelPaymentRequest(
-            headers, paymentDataBody.getPaymentData().get(0), preference, context.getRequestId())
+            headers, paymentData, preference, context.getRequestId(), validationProgramId)
         .withCallerId(publicKeyInfo.getOwnerId())
         .withClientId(publicKeyInfo.getClientId())
         .withPreference(preference)
@@ -182,10 +184,16 @@ public enum PaymentService {
       final String clientId,
       final Order order,
       final String pubicKeyId,
-      final Boolean isSameBankAccountOwner) {
+      final Boolean isSameBankAccountOwner,
+      final String validationProgramId) {
 
     return PaymentRequest.Builder.createBlackLabelPaymentRequest(
-            headers, paymentData, preference, requestId, isSameBankAccountOwner)
+            headers,
+            paymentData,
+            preference,
+            requestId,
+            isSameBankAccountOwner,
+            validationProgramId)
         .withCallerId(Long.valueOf(callerId))
         .withClientId(Long.valueOf(clientId))
         .withPreference(preference)

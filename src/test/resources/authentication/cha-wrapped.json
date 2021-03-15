@@ -1,0 +1,25 @@
+{
+  "card": {
+    "cardholder_name": "JohnDoe Anytown",
+    "payment_method": "visa"
+  },
+  "purchase_amount": "20,35",
+  "currency": {
+    "id": "BRL",
+    "decimal_places": 2,
+    "decimal_separator": ",",
+    "thousands_separator": "."
+  },
+  "sdk_app_id": "1682a0c6-8667-465f-a608-15d8de5759db",
+  "sdk_enc_data": "...",
+  "sdk_ephem_pub_key": {
+    "crv": "P-256",
+    "kty": "EC",
+    "x": "bwdo8Y66jLpDzb_voxHXQah79MGCo3KgEnutmh4y6jU",
+    "y": "rYtgH5O5ASEm_e-zrv-cKmX-jgn8I8JQ3O9sKKeMDoE"
+  },
+  "sdk_max_timeout": "06",
+  "sdk_reference_number": "3DS_LOA_SDK_NUSE_020100_00166",
+  "sdk_trans_id": "9177fb3b-7fdd-41ee-a91f-efa0a639d28f",
+  "site_id": "MLB"
+}

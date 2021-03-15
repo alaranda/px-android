@@ -1,10 +1,6 @@
 package com.mercadolibre;
 
-import com.mercadolibre.endpoints.CapEscControllerTest;
-import com.mercadolibre.endpoints.CongratsRouterTest;
-import com.mercadolibre.endpoints.PaymentRouterTest;
-import com.mercadolibre.endpoints.PreferenceRouterTest;
-import com.mercadolibre.endpoints.RemediesControllerTest;
+import com.mercadolibre.endpoints.*;
 import com.mercadolibre.router.Router;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,7 +15,8 @@ import spark.Spark;
   PreferenceRouterTest.class,
   CongratsRouterTest.class,
   CapEscControllerTest.class,
-  RemediesControllerTest.class
+  RemediesControllerTest.class,
+  AuthenticationRouterTest.class
 })
 public class ApiTest {
 
