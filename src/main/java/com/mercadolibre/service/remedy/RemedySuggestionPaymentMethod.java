@@ -238,7 +238,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       message = String.format("%s %s", message, suffix);
     }
 
-    if (StringUtils.isNotBlank(customStringConfiguration.getTotalDescriptionText())) {
+    if (customStringConfiguration != null
+        && StringUtils.isNotBlank(customStringConfiguration.getTotalDescriptionText())) {
       message = StringUtils.trim(customStringConfiguration.getTotalDescriptionText());
       if (StringUtils.isNotBlank(suffix)) {
         message = String.format("%s %s", message, suffix);
