@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class SuggestionPaymentMethodResponse {
-
-  private String title;
-  private String message;
-  private AlternativePayerPaymentMethod alternativePaymentMethod;
+  private final String title;
+  private final String message;
+  private final AlternativePayerPaymentMethod alternativePaymentMethod;
+  private final Text bottomMessage;
 }

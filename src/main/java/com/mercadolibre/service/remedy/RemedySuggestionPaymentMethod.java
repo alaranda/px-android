@@ -1,24 +1,11 @@
 package com.mercadolibre.service.remedy;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_INTENT;
-import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
-import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
-import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
-import static com.mercadolibre.utils.Translations.REMEDY_GENERIC_TITLE;
+import static com.mercadolibre.constants.DatadogMetricsNames.*;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.*;
+import static com.mercadolibre.utils.Translations.*;
 
-import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
-import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
-import com.mercadolibre.dto.remedy.PaymentMethodSelected;
-import com.mercadolibre.dto.remedy.RemediesRequest;
-import com.mercadolibre.dto.remedy.RemediesResponse;
-import com.mercadolibre.dto.remedy.ResponseCvv;
-import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
+import com.mercadolibre.dto.remedy.*;
 import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.OperatingSystem;
@@ -30,21 +17,19 @@ import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
-  private RemedyCvv remedyCvv;
-  private String remedyTitle;
-  private String remedyMessage;
-  private SuggestionPaymentMehodsUtils suggestionPaymentMehodsUtils;
-  private PaymentMethodsRejectedTypes paymentMethodsRejectedTypes;
+  private final RemedyCvv remedyCvv;
+  private final String remedyTitle;
+  private final String remedyMessage;
+  private final SuggestionPaymentMehodsUtils suggestionPaymentMehodsUtils;
+  private final PaymentMethodsRejectedTypes paymentMethodsRejectedTypes;
 
   /** Hack IOS valid version since */
   private static final Version CREDITS_VALID_VERSION_IOS_SINCE = new Version("4.36.4");
@@ -64,7 +49,6 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   public static final String DEBIT_CARD_WITHOUT_ESC = "debit_card_without_esc";
   public static final String CREDIT_CARD_ESC = "credit_card_esc";
   public static final String CREDIT_CARD_WITHOUT_ESC = "credit_card_without_esc";
-  private boolean isMLMSite;
 
   public RemedySuggestionPaymentMethod(
       final RemedyCvv remedyCvv, final String remedyTitle, final String remedyMessage) {
@@ -106,7 +90,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     List<AlternativePayerPaymentMethod> consumerCredits = new ArrayList<>();
 
-    isMLMSite = Site.MLM.getSiteId().equals(remediesRequest.getSiteId());
+    boolean isMLMSite = Site.MLM.getSiteId().equals(remediesRequest.getSiteId());
     if (!isMLMSite
         && (iosVersionIsValidForCredits(context.getUserAgent())
             || OperatingSystem.isAndroid(context.getUserAgent().getOperatingSystem()))) {
@@ -171,11 +155,21 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyMessage),
               payerPaymentMethodRejected.getIssuerName());
 
+      AlternativePayerPaymentMethod alternativePayerPaymentMethod =
+          paymentMethodSelected.getAlternativePayerPaymentMethod();
+
+      Text text =
+          buildText(
+              context.getLocale(),
+              alternativePayerPaymentMethod.getPaymentMethodId(),
+              remediesRequest.getCustomStringConfiguration());
+
       final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse =
           SuggestionPaymentMethodResponse.builder()
               .title(title)
               .message(message)
-              .alternativePaymentMethod(paymentMethodSelected.getAlternativePayerPaymentMethod())
+              .alternativePaymentMethod(alternativePayerPaymentMethod)
+              .bottomMessage(text)
               .build();
 
       boolean frictionless = true;
@@ -229,22 +223,44 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
     return remediesResponse;
   }
 
-  private static boolean cvvRequired(final PaymentMethodSelected paymentMethodSelected) {
+  private Text buildText(
+      Locale locale, String paymentMethodId, CustomStringConfiguration customStringConfiguration) {
 
-    if (null != paymentMethodSelected.getAlternativePayerPaymentMethod()
-        && paymentMethodSelected.isRemedyCvvRequired()) {
+    String message = Translations.INSTANCE.getTranslationByLocale(locale, TOTAL_PAY_GENERIC_LABEL);
 
-      return true;
+    String suffix = "";
+
+    if ("debit_card".equalsIgnoreCase(paymentMethodId)) {
+      suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
+      message = String.format("%s %s", message, suffix);
+    } else if ("credit_card".equalsIgnoreCase(paymentMethodId)) {
+      suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_CREDIT_GENERIC_LABEL);
+      message = String.format("%s %s", message, suffix);
     }
 
-    return false;
+    if (StringUtils.isNotBlank(customStringConfiguration.getTotalDescriptionText())) {
+      message = StringUtils.trim(customStringConfiguration.getTotalDescriptionText());
+      if (StringUtils.isNotBlank(suffix)) {
+        message = String.format("%s %s", message, suffix);
+      }
+    }
+
+    Text text = new Text();
+    text.setMessage(message);
+    text.setTextColor("#000000");
+    text.setWeight("bold");
+    text.setBackgroundColor("#FFFFFF");
+
+    return text;
+  }
+
+  private static boolean cvvRequired(final PaymentMethodSelected paymentMethodSelected) {
+    return null != paymentMethodSelected.getAlternativePayerPaymentMethod()
+        && paymentMethodSelected.isRemedyCvvRequired();
   }
 
   private boolean iosVersionIsValidForCredits(final UserAgent userAgent) {
-    if (OperatingSystem.isIOS(userAgent.getOperatingSystem())
-        && userAgent.getVersion().compareTo(CREDITS_VALID_VERSION_IOS_SINCE) >= 0) {
-      return true;
-    }
-    return false;
+    return OperatingSystem.isIOS(userAgent.getOperatingSystem())
+        && userAgent.getVersion().compareTo(CREDITS_VALID_VERSION_IOS_SINCE) >= 0;
   }
 }
