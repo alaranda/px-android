@@ -68,9 +68,9 @@ public enum Translations {
   private I18nService i18nService = new I18nService();
 
   /**
-   * @param locale
-   * @param key
-   * @return
+   * @param locale Locale
+   * @param key String
+   * @return String
    */
   public String getTranslationByLocale(Locale locale, final String key) {
     if (!isAvailableLocale(locale)) {

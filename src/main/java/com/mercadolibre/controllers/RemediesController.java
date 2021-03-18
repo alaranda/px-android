@@ -48,6 +48,7 @@ public class RemediesController {
    * @param request request
    * @param response response
    * @return void
+   * @throws ApiException API Exception
    */
   public RemediesResponse getRemedy(final Request request, final Response response)
       throws ApiException {

@@ -2,6 +2,14 @@
 
 # Change Log
 
+## [1.35.0]
+
+### Changed
+
+- Se agrega px-monitoring-lib
+- Se elimina AccessTokenUtils por duplicidad en px-monitoring-lib
+- Update javadoc
+
 ## [1.34.0]
 
 ### Added

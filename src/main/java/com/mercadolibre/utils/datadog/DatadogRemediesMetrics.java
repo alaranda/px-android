@@ -12,6 +12,7 @@ public class DatadogRemediesMetrics {
   /**
    * Trackea en datadog los datos de los remedy
    *
+   * @param metricName String
    * @param context Context
    * @param remediesRequest Remedies Request
    */
