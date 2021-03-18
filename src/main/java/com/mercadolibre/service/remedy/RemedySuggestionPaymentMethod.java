@@ -161,7 +161,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       Text text =
           buildText(
               context.getLocale(),
-              alternativePayerPaymentMethod.getPaymentMethodId(),
+              alternativePayerPaymentMethod.getPaymentTypeId(),
               remediesRequest.getCustomStringConfiguration());
 
       final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse =
@@ -223,17 +223,17 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
     return remediesResponse;
   }
 
-  private Text buildText(
+  public Text buildText(
       Locale locale, String paymentMethodId, CustomStringConfiguration customStringConfiguration) {
 
     String message = Translations.INSTANCE.getTranslationByLocale(locale, TOTAL_PAY_GENERIC_LABEL);
 
     String suffix = "";
 
-    if ("debit_card".equalsIgnoreCase(paymentMethodId)) {
+    if (PaymentMethodsRejectedTypes.DEBIT_CARD.equalsIgnoreCase(paymentMethodId)) {
       suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
       message = String.format("%s %s", message, suffix);
-    } else if ("credit_card".equalsIgnoreCase(paymentMethodId)) {
+    } else if (PaymentMethodsRejectedTypes.CREDIT_CARD.equalsIgnoreCase(paymentMethodId)) {
       suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_CREDIT_GENERIC_LABEL);
       message = String.format("%s %s", message, suffix);
     }
