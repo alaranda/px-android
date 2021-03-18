@@ -7,6 +7,8 @@ import lombok.Getter;
 @Builder
 public class PaymentMethodSelected {
 
+  public static class PaymentMethodSelectedBuilder {}
+
   private AlternativePayerPaymentMethod alternativePayerPaymentMethod;
   private boolean remedyCvvRequired;
 }

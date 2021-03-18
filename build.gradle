@@ -1,6 +1,8 @@
 buildscript {
 	repositories {
-		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
+		maven {
+			url "http://maven.artifacts.furycloud.io/repository/all"
+		}
 	}
 
 	dependencies {
@@ -14,7 +16,7 @@ plugins {
 	id 'jacoco'
 	id 'idea'
 	id 'distribution'
-	id "it.gianluz.capsule" version "1.0.3"
+	id 'it.gianluz.capsule' version '1.0.3'
 	id 'com.monits.staticCodeAnalysis' version '2.6.4'
 }
 
@@ -63,9 +65,10 @@ dependencies {
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
 	compile "commons-configuration:commons-configuration:$commonsConfigurationVersion"
 	compile "com.mercadolibre.json:json-core:$jsonCoreVersion"
-	compile "com.mercadolibre.px:px-toolkit:$toolkitVersion"
-	compile "com.mercadolibre.px:px-dto-lib:$dtoLibVersion"
-	compile "com.mercadolibre.px:px-api-lib:$apiLibVersion"
+	compile "com.mercadolibre.px:px-toolkit:$pxToolkitVersion"
+	compile "com.mercadolibre.px:px-dto-lib:$pxDtoLibVersion"
+	compile "com.mercadolibre.px:px-api-lib:$pxApiLibVersion"
+	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
 
 	//Melidata
 	compile('com.mercadolibre.melidata:melidata-sdk-java:1.4.0') {
@@ -114,7 +117,7 @@ jacocoTestReport {
 			fileTree(dir: it, exclude: [
 					'com/mercadolibre/constants',
 					'com/mercadolibre/Main.class',
-					'com/mercadolibre/dto',
+					'com/mercadolibre/dto'
 			])
 		})
 	}
@@ -193,7 +196,7 @@ task deleteJavadocBuildFolder(type: Delete) {
 	delete buildJavadocFolder
 }
 
-createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder);
+createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder)
 test.finalizedBy(checkCodeFormat)
 
 i18n {

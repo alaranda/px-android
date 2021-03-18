@@ -47,6 +47,7 @@ public class CongratsController {
    * @param request request
    * @param response response
    * @return congrats
+   * @throws ApiException API Exception
    */
   public Congrats getCongrats(final Request request, final Response response) throws ApiException {
 
