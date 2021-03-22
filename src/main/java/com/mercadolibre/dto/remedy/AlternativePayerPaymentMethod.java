@@ -13,11 +13,12 @@ public class AlternativePayerPaymentMethod {
   private final String paymentMethodId;
   private final String paymentTypeId;
   private final String escStatus;
-  private boolean esc;
+  private final boolean esc;
   private final String issuerName;
   private final String lastFourDigit;
-  private int securityCodeLength;
+  private final int securityCodeLength;
   private final String securityCodeLocation;
   @Setter private Integer installments;
   @Setter private List<Installment> installmentsList;
+  private final String bin;
 }

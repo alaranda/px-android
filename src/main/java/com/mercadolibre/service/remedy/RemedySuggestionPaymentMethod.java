@@ -12,6 +12,7 @@ import com.mercadolibre.px.dto.lib.context.OperatingSystem;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
@@ -49,6 +50,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   public static final String DEBIT_CARD_WITHOUT_ESC = "debit_card_without_esc";
   public static final String CREDIT_CARD_ESC = "credit_card_esc";
   public static final String CREDIT_CARD_WITHOUT_ESC = "credit_card_without_esc";
+
+  private static final List<String> hybridCardBins =
+      Arrays.asList(StringUtils.split(Config.getString("hybrid.cards.bins"), "|"));
 
   public RemedySuggestionPaymentMethod(
       final RemedyCvv remedyCvv, final String remedyTitle, final String remedyMessage) {
@@ -161,8 +165,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       Text text =
           buildText(
               context.getLocale(),
-              alternativePayerPaymentMethod.getPaymentTypeId(),
-              remediesRequest.getCustomStringConfiguration());
+              remediesRequest.getCustomStringConfiguration(),
+              remediesRequest,
+              alternativePayerPaymentMethod);
 
       final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse =
           SuggestionPaymentMethodResponse.builder()
@@ -224,18 +229,66 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   }
 
   public Text buildText(
-      Locale locale, String paymentMethodId, CustomStringConfiguration customStringConfiguration) {
+      Locale locale,
+      CustomStringConfiguration customStringConfiguration,
+      RemediesRequest remediesRequest,
+      AlternativePayerPaymentMethod alternativePayerPaymentMethod) {
 
     String message = Translations.INSTANCE.getTranslationByLocale(locale, TOTAL_PAY_GENERIC_LABEL);
 
+    String changeableTypeId = alternativePayerPaymentMethod.getPaymentTypeId().toLowerCase();
+
     String suffix = "";
 
-    if (PaymentMethodsRejectedTypes.DEBIT_CARD.equalsIgnoreCase(paymentMethodId)) {
-      suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
-      message = String.format("%s %s", message, suffix);
-    } else if (PaymentMethodsRejectedTypes.CREDIT_CARD.equalsIgnoreCase(paymentMethodId)) {
-      suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_CREDIT_GENERIC_LABEL);
-      message = String.format("%s %s", message, suffix);
+    boolean isAMPresent =
+        remediesRequest.getAlternativePayerPaymentMethods().stream()
+                .anyMatch(pm -> ACCOUNT_MONEY.equalsIgnoreCase(pm.getPaymentTypeId()))
+            || remediesRequest
+                .getPayerPaymentMethodRejected()
+                .getPaymentTypeId()
+                .equalsIgnoreCase(ACCOUNT_MONEY);
+
+    if (isAMPresent && hybridCardBins.contains(alternativePayerPaymentMethod.getBin())) {
+      changeableTypeId = CREDIT_CARD;
+    }
+
+    boolean isCardHybridInRejected =
+        (remediesRequest
+                    .getPayerPaymentMethodRejected()
+                    .getPaymentTypeId()
+                    .equalsIgnoreCase(CREDIT_CARD)
+                || remediesRequest
+                    .getPayerPaymentMethodRejected()
+                    .getPaymentTypeId()
+                    .equalsIgnoreCase(DEBIT_CARD))
+            && hybridCardBins.contains(remediesRequest.getPayerPaymentMethodRejected().getBin());
+
+    boolean isCardHybridBinPresent =
+        remediesRequest.getAlternativePayerPaymentMethods().stream()
+            .anyMatch(
+                pm ->
+                    (CREDIT_CARD.equalsIgnoreCase(pm.getPaymentTypeId())
+                            || DEBIT_CARD.equalsIgnoreCase(pm.getPaymentTypeId()))
+                        && hybridCardBins.contains(pm.getBin()));
+
+    if ((isCardHybridInRejected || isCardHybridBinPresent) && isAMPresent) {
+      changeableTypeId = ACCOUNT_MONEY;
+    }
+
+    switch (changeableTypeId) {
+      case DEBIT_CARD:
+        suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
+        message = String.format("%s %s", message, suffix);
+        break;
+      case ACCOUNT_MONEY:
+        suffix =
+            Translations.INSTANCE.getTranslationByLocale(locale, WITH_ACCOUNT_MONEY_GENERIC_LABEL);
+        message = String.format("%s %s", message, suffix);
+        break;
+      case CREDIT_CARD:
+        suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_CREDIT_GENERIC_LABEL);
+        message = String.format("%s %s", message, suffix);
+        break;
     }
 
     if (customStringConfiguration != null
