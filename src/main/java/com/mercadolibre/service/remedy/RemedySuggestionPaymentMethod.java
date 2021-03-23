@@ -1,17 +1,28 @@
 package com.mercadolibre.service.remedy;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
-import static com.mercadolibre.constants.DatadogMetricsNames.*;
+
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_INTENT;
+import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM;
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.*;
 import static com.mercadolibre.utils.Translations.*;
 
-import com.mercadolibre.dto.remedy.*;
+import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
+import com.mercadolibre.dto.remedy.PaymentMethodSelected;
+import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.ResponseCvv;
+import com.mercadolibre.dto.remedy.CustomStringConfiguration;
 import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.OperatingSystem;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px_config.Config;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
@@ -299,13 +310,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       }
     }
 
-    Text text = new Text();
-    text.setMessage(message);
-    text.setTextColor("#000000");
-    text.setWeight("bold");
-    text.setBackgroundColor("#FFFFFF");
-
-    return text;
+    return new Text(message, "#FFFFFF", "#000000", "bold");
   }
 
   private static boolean cvvRequired(final PaymentMethodSelected paymentMethodSelected) {

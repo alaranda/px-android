@@ -12,6 +12,7 @@ import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.tracking.TrackingData;
 import java.math.BigDecimal;
 import java.util.*;
+import spark.utils.CollectionUtils;
 
 public final class SuggestionPaymentMehodsUtils {
 
@@ -32,7 +33,7 @@ public final class SuggestionPaymentMehodsUtils {
     List<Installment> installments = new ArrayList<>();
     final List<Installment> alternativeInstallments =
         alternativePayerPaymentMethod.getInstallmentsList();
-    if (alternativeInstallments != null && !alternativeInstallments.isEmpty()) {
+    if (!CollectionUtils.isEmpty(alternativeInstallments)) {
       Iterator<Installment> itInstallments = alternativeInstallments.iterator();
       installments = Collections.singletonList(itInstallments.next());
     }

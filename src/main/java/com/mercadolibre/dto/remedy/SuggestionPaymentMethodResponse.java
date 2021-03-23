@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.remedy;
 
+import com.mercadolibre.px.dto.lib.text.Text;
 import lombok.Builder;
 import lombok.Getter;
 
