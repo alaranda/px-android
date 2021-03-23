@@ -9,6 +9,10 @@
 - Se levanta CustomStringConfiguration del request de remedy.
 - Se agrega a la respuesta de remedy silver bullet el nodo "bottom_message" que contiene información para el label "Total a pagar" en congrats teniendo en cuenta el payment_method obtenido
 
+### Changed
+
+- Deprecado del dominio .ml.com
+
 ## [1.35.0]
 
 ### Changed
