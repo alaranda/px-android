@@ -1,21 +1,29 @@
 package com.mercadolibre.service.remedy;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
-
+import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET;
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_INTENT;
 import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM;
-import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.*;
-import static com.mercadolibre.utils.Translations.*;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
+import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_GENERIC_TITLE;
+import static com.mercadolibre.utils.Translations.TOTAL_PAY_GENERIC_LABEL;
+import static com.mercadolibre.utils.Translations.WITH_ACCOUNT_MONEY_GENERIC_LABEL;
+import static com.mercadolibre.utils.Translations.WITH_CREDIT_GENERIC_LABEL;
+import static com.mercadolibre.utils.Translations.WITH_DEBIT_GENERIC_LABEL;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.CustomStringConfiguration;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
-import com.mercadolibre.dto.remedy.PaymentMethodSelected;
-import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
-import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.ResponseCvv;
-import com.mercadolibre.dto.remedy.CustomStringConfiguration;
+import com.mercadolibre.dto.remedy.SuggestionPaymentMethodResponse;
 import com.mercadolibre.dto.tracking.TrackingData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.OperatingSystem;
