@@ -16,6 +16,7 @@ import static com.mercadolibre.utils.Translations.WITH_ACCOUNT_MONEY_GENERIC_LAB
 import static com.mercadolibre.utils.Translations.WITH_CREDIT_GENERIC_LABEL;
 import static com.mercadolibre.utils.Translations.WITH_DEBIT_GENERIC_LABEL;
 
+import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.CustomStringConfiguration;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
@@ -317,7 +318,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       }
     }
 
-    return new Text(message, "#FFFFFF", "#000000", "bold");
+    return new Text(
+        message, Constants.WHITE_COLOR, Constants.BLACK_COLOR, Constants.WEIGHT_SEMI_BOLD);
   }
 
   private static boolean cvvRequired(final PaymentMethodSelected paymentMethodSelected) {
