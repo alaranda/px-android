@@ -113,8 +113,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     List<AlternativePayerPaymentMethod> consumerCredits = new ArrayList<>();
 
-    boolean isMLMSite = Site.MLM.getSiteId().equals(remediesRequest.getSiteId());
-    if (!isMLMSite
+    if (!Site.MLM.getSiteId().equals(remediesRequest.getSiteId())
         && (iosVersionIsValidForCredits(context.getUserAgent())
             || OperatingSystem.isAndroid(context.getUserAgent().getOperatingSystem()))) {
       consumerCredits =
@@ -178,10 +177,10 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyMessage),
               payerPaymentMethodRejected.getIssuerName());
 
-      AlternativePayerPaymentMethod alternativePayerPaymentMethod =
+      final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
           paymentMethodSelected.getAlternativePayerPaymentMethod();
 
-      Text text =
+      final Text text =
           buildText(
               context.getLocale(),
               remediesRequest.getCustomStringConfiguration(),
@@ -259,7 +258,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     String suffix = "";
 
-    boolean isAMPresent =
+    final boolean isAMPresent =
         remediesRequest.getAlternativePayerPaymentMethods().stream()
                 .anyMatch(pm -> ACCOUNT_MONEY.equalsIgnoreCase(pm.getPaymentTypeId()))
             || remediesRequest
