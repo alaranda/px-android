@@ -16,14 +16,13 @@ import com.mercadolibre.dto.remedy.*;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -570,7 +569,7 @@ public class RemedySuggestionPaymentMethodTest {
         .escStatus("approved")
         .issuerName("BBVA")
         .esc(true)
-        .bin("417843");
+        .bin("407843");
 
     final Installment installment = Mockito.mock(Installment.class);
     when(installment.getInstallments()).thenReturn(3);
@@ -602,5 +601,67 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
         is("Some text con dinero en Mercado Pago"));
+  }
+
+  @Test
+  public void testBuildText() {
+
+    Context context =
+        Context.builder().requestId(UUID.randomUUID().toString()).locale("es-AR").build();
+
+    CustomStringConfiguration customStringConfiguration = new CustomStringConfiguration();
+    customStringConfiguration.setTotalDescriptionText("Some text       ");
+
+    final BigDecimal totalAmount = new BigDecimal(100);
+
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123L, CALLER_ID_TEST, Site.MLA.name());
+    when(remediesRequest.getCustomStringConfiguration()).thenReturn(customStringConfiguration);
+
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
+    when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn(ACCOUNT_MONEY);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+    when(remediesRequest.isOneTap()).thenReturn(true);
+    when(remediesRequest.getPayerPaymentMethodRejected().getInstallments()).thenReturn(3);
+    when(remediesRequest.getPayerPaymentMethodRejected().getBin()).thenReturn("678906");
+
+    AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
+        alternativePayerPaymentMethodBuilder = AlternativePayerPaymentMethod.builder();
+    alternativePayerPaymentMethodBuilder
+        .paymentTypeId(DEBIT_CARD.name())
+        .escStatus("approved")
+        .issuerName("BBVA")
+        .esc(true)
+        .bin("678905");
+
+    AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
+        alternativePayerPaymentMethodBuilder2 = AlternativePayerPaymentMethod.builder();
+    alternativePayerPaymentMethodBuilder2
+        .paymentTypeId(DEBIT_CARD.name())
+        .escStatus("approved")
+        .issuerName("BBVA")
+        .esc(true)
+        .bin("417401");
+
+    List<AlternativePayerPaymentMethod> alternativePayerPaymentMethods = new ArrayList<>();
+    alternativePayerPaymentMethods.add(alternativePayerPaymentMethodBuilder.build());
+    alternativePayerPaymentMethods.add(alternativePayerPaymentMethodBuilder2.build());
+
+    when(remediesRequest.getAlternativePayerPaymentMethods())
+        .thenReturn(alternativePayerPaymentMethods);
+
+    final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
+        new RemedySuggestionPaymentMethod(
+            remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
+
+    Text text =
+        remedySuggestionPaymentMethod.buildText(
+            context.getLocale(),
+            customStringConfiguration,
+            remediesRequest,
+            alternativePayerPaymentMethodBuilder2.build());
+
+    assertThat(text.getMessage(), is("Some text con crédito"));
   }
 }

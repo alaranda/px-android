@@ -259,7 +259,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     String suffix = "";
 
-    final boolean isAMPresent =
+    final boolean isAMPresentInRequest =
         remediesRequest.getAlternativePayerPaymentMethods().stream()
                 .anyMatch(pm -> ACCOUNT_MONEY.equalsIgnoreCase(pm.getPaymentTypeId()))
             || remediesRequest
@@ -267,7 +267,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
                 .getPaymentTypeId()
                 .equalsIgnoreCase(ACCOUNT_MONEY);
 
-    if (isAMPresent && hybridCardBins.contains(alternativePayerPaymentMethod.getBin())) {
+    if (isAMPresentInRequest && hybridCardBins.contains(alternativePayerPaymentMethod.getBin())) {
       changeableTypeId = CREDIT_CARD;
     }
 
@@ -290,7 +290,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
                             || DEBIT_CARD.equalsIgnoreCase(pm.getPaymentTypeId()))
                         && hybridCardBins.contains(pm.getBin()));
 
-    if ((isCardHybridInRejected || isCardHybridBinPresent) && isAMPresent) {
+    if ((isCardHybridInRejected || isCardHybridBinPresent)
+        && ACCOUNT_MONEY.equalsIgnoreCase(alternativePayerPaymentMethod.getPaymentTypeId())) {
       changeableTypeId = ACCOUNT_MONEY;
     }
 
