@@ -295,6 +295,10 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
       changeableTypeId = ACCOUNT_MONEY;
     }
 
+    if (isOfferingComboCard(remediesRequest, alternativePayerPaymentMethod)) {
+      changeableTypeId = alternativePayerPaymentMethod.getPaymentTypeId();
+    }
+
     switch (changeableTypeId) {
       case DEBIT_CARD:
         suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
@@ -321,6 +325,31 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     return new Text(
         message, Constants.WHITE_COLOR, Constants.BLACK_COLOR, Constants.WEIGHT_SEMI_BOLD);
+  }
+
+  private static boolean isOfferingComboCard(
+      RemediesRequest remediesRequest,
+      AlternativePayerPaymentMethod alternativePayerPaymentMethod) {
+
+    if (remediesRequest
+        .getPayerPaymentMethodRejected()
+        .getCustomOptionId()
+        .equals(alternativePayerPaymentMethod.getCustomOptionId())) {
+      return Boolean.TRUE;
+    }
+
+    List<String> idCards =
+        remediesRequest.getAlternativePayerPaymentMethods().stream()
+            .map(AlternativePayerPaymentMethod::getCustomOptionId)
+            .filter(
+                customOptionId ->
+                    remediesRequest.getAlternativePayerPaymentMethods().stream()
+                            .filter(_apm -> _apm.getCustomOptionId().equals(customOptionId))
+                            .count()
+                        > 1)
+            .collect(Collectors.toList());
+
+    return idCards.contains(alternativePayerPaymentMethod.getCustomOptionId());
   }
 
   private static boolean cvvRequired(final PaymentMethodSelected paymentMethodSelected) {

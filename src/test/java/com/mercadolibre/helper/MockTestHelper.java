@@ -58,6 +58,7 @@ public class MockTestHelper {
 
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         Mockito.mock(PayerPaymentMethodRejected.class);
+    when(payerPaymentMethodRejected.getCustomOptionId()).thenReturn("1234567890");
     when(payerPaymentMethodRejected.getPaymentMethodId()).thenReturn("visa");
     when(payerPaymentMethodRejected.getLastFourDigit()).thenReturn(lastFourDigit);
     when(payerPaymentMethodRejected.getIssuerName()).thenReturn(issuerName);
@@ -70,30 +71,36 @@ public class MockTestHelper {
   public static List<AlternativePayerPaymentMethod> mockAlternativePaymentMethodsList() {
 
     AlternativePayerPaymentMethod tcEsc = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(tcEsc.getCustomOptionId()).thenReturn("1234567890");
     when(tcEsc.getPaymentTypeId()).thenReturn(CREDIT_CARD);
     when(tcEsc.getEscStatus()).thenReturn(STATUS_APPROVED);
     when(tcEsc.getBin()).thenReturn("1234554321");
 
     AlternativePayerPaymentMethod tcNotEsc = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(tcNotEsc.getCustomOptionId()).thenReturn("12345678901");
     when(tcNotEsc.getPaymentTypeId()).thenReturn(CREDIT_CARD);
     when(tcNotEsc.getEscStatus()).thenReturn("rejected");
     when(tcNotEsc.getBin()).thenReturn("1234554321");
 
     AlternativePayerPaymentMethod tdEsc = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(tdEsc.getCustomOptionId()).thenReturn("12345678902");
     when(tdEsc.getPaymentTypeId()).thenReturn(DEBIT_CARD);
     when(tdEsc.getEscStatus()).thenReturn(STATUS_APPROVED);
     when(tdEsc.getBin()).thenReturn("1234554321");
 
     AlternativePayerPaymentMethod tdNotEsc = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(tdNotEsc.getCustomOptionId()).thenReturn("12345678903");
     when(tdNotEsc.getPaymentTypeId()).thenReturn(DEBIT_CARD);
     when(tdNotEsc.getEscStatus()).thenReturn("rejected");
     when(tdNotEsc.getBin()).thenReturn("1234554321");
 
     AlternativePayerPaymentMethod am = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(am.getCustomOptionId()).thenReturn("12345678904");
     when(am.getPaymentTypeId()).thenReturn(ACCOUNT_MONEY);
     when(am.getBin()).thenReturn("1234554321");
 
     AlternativePayerPaymentMethod cc = Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(cc.getCustomOptionId()).thenReturn("12345678905");
     when(cc.getPaymentTypeId()).thenReturn(CONSUMER_CREDITS);
     when(cc.getBin()).thenReturn("1234554321");
 
@@ -134,6 +141,7 @@ public class MockTestHelper {
 
     PayerPaymentMethodRejected payerPaymentMethodRejected =
         Mockito.mock(PayerPaymentMethodRejected.class);
+    when(payerPaymentMethodRejected.getCustomOptionId()).thenReturn("1234567890");
     when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn(paymentTypeId);
     when(payerPaymentMethodRejected.getInstallments()).thenReturn(3);
     when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(new BigDecimal(123));

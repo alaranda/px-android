@@ -54,6 +54,7 @@ public class RemedySuggestionPaymentMethodTest {
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getCustomOptionId()).thenReturn("1234567890");
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(CREDIT_CARD.name());
     when(alternativePayerPaymentMethod.getEscStatus()).thenReturn("approved");
     when(alternativePayerPaymentMethod.getIssuerName()).thenReturn("BBVA");
@@ -89,7 +90,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Total a pagar con crédito"));
+        is("Total a pagar"));
   }
 
   @Test
@@ -107,6 +108,7 @@ public class RemedySuggestionPaymentMethodTest {
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getCustomOptionId()).thenReturn("1234567890");
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(CREDIT_CARD.name());
     when(alternativePayerPaymentMethod.getPaymentMethodId()).thenReturn("visa");
     when(alternativePayerPaymentMethod.getEscStatus()).thenReturn("rejected");
@@ -143,7 +145,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Total a pagar con crédito"));
+        is("Total a pagar"));
   }
 
   @Test
@@ -161,6 +163,7 @@ public class RemedySuggestionPaymentMethodTest {
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getCustomOptionId()).thenReturn("1234567890");
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(ACCOUNT_MONEY);
     when(alternativePayerPaymentMethod.getBin()).thenReturn("1234554321");
     when(remediesRequest.getAlternativePayerPaymentMethods())
@@ -196,12 +199,14 @@ public class RemedySuggestionPaymentMethodTest {
     when(remediesRequest.isOneTap()).thenReturn(true);
     PayerPaymentMethodRejected payerPaymentMethodRejected =
         Mockito.mock(PayerPaymentMethodRejected.class);
+    when(payerPaymentMethodRejected.getCustomOptionId()).thenReturn("12345678901");
     when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
     when(payerPaymentMethodRejected.getTotalAmount()).thenReturn(new BigDecimal(123));
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getCustomOptionId()).thenReturn("1234567890");
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(DEBIT_CARD.name());
     when(alternativePayerPaymentMethod.getEscStatus()).thenReturn(STATUS_APPROVED);
     when(alternativePayerPaymentMethod.isEsc()).thenReturn(true);
@@ -504,6 +509,7 @@ public class RemedySuggestionPaymentMethodTest {
     AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
         alternativePayerPaymentMethodBuilder = AlternativePayerPaymentMethod.builder();
     alternativePayerPaymentMethodBuilder
+        .customOptionId("1234567890")
         .paymentTypeId(ACCOUNT_MONEY)
         .escStatus("approved")
         .issuerName("BBVA")
@@ -539,7 +545,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Some text con crédito"));
+        is("Some text con dinero en Mercado Pago"));
   }
 
   @Test
@@ -565,6 +571,7 @@ public class RemedySuggestionPaymentMethodTest {
     AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
         alternativePayerPaymentMethodBuilder = AlternativePayerPaymentMethod.builder();
     alternativePayerPaymentMethodBuilder
+        .customOptionId("1234567890")
         .paymentTypeId(ACCOUNT_MONEY)
         .escStatus("approved")
         .issuerName("BBVA")
@@ -629,6 +636,7 @@ public class RemedySuggestionPaymentMethodTest {
     AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
         alternativePayerPaymentMethodBuilder = AlternativePayerPaymentMethod.builder();
     alternativePayerPaymentMethodBuilder
+        .customOptionId("1234567890")
         .paymentTypeId(DEBIT_CARD.name())
         .escStatus("approved")
         .issuerName("BBVA")
@@ -638,6 +646,7 @@ public class RemedySuggestionPaymentMethodTest {
     AlternativePayerPaymentMethod.AlternativePayerPaymentMethodBuilder
         alternativePayerPaymentMethodBuilder2 = AlternativePayerPaymentMethod.builder();
     alternativePayerPaymentMethodBuilder2
+        .customOptionId("12345678901")
         .paymentTypeId(DEBIT_CARD.name())
         .escStatus("approved")
         .issuerName("BBVA")
