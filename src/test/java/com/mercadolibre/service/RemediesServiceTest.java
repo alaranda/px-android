@@ -25,7 +25,7 @@ import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Collections;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -121,6 +121,7 @@ public class RemediesServiceTest {
 
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
         Mockito.mock(AlternativePayerPaymentMethod.class);
+    when(alternativePayerPaymentMethod.getCustomOptionId()).thenReturn("12345678901");
     when(alternativePayerPaymentMethod.getPaymentTypeId()).thenReturn(CREDIT_CARD.name());
     when(alternativePayerPaymentMethod.getPaymentMethodId()).thenReturn("visa");
     when(alternativePayerPaymentMethod.getEscStatus()).thenReturn("rejected");
@@ -130,10 +131,10 @@ public class RemediesServiceTest {
     when(installment.getInstallments()).thenReturn(3);
     when(installment.getTotalAmount()).thenReturn(totalAmount);
     when(alternativePayerPaymentMethod.getInstallmentsList())
-        .thenReturn(Arrays.asList(installment));
+        .thenReturn(Collections.singletonList(installment));
 
     when(remediesRequest.getAlternativePayerPaymentMethods())
-        .thenReturn(Arrays.asList(alternativePayerPaymentMethod));
+        .thenReturn(Collections.singletonList(alternativePayerPaymentMethod));
 
     final RemediesResponse remediesResponse =
         remediesService.getRemedy(mockContextLibDto(), "123456789", remediesRequest);
