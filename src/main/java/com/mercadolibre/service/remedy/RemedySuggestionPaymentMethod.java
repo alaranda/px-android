@@ -255,7 +255,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     String message = Translations.INSTANCE.getTranslationByLocale(locale, TOTAL_PAY_GENERIC_LABEL);
 
-    String changeableTypeId = alternativePayerPaymentMethod.getPaymentTypeId().toLowerCase();
+    String changeableTypeId = "";
 
     String suffix = "";
 
@@ -296,7 +296,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
     }
 
     if (isOfferingComboCard(remediesRequest, alternativePayerPaymentMethod)) {
-      changeableTypeId = alternativePayerPaymentMethod.getPaymentTypeId();
+      changeableTypeId = alternativePayerPaymentMethod.getPaymentTypeId().toLowerCase();
     }
 
     switch (changeableTypeId) {
