@@ -11,7 +11,10 @@ import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.tracking.TrackingData;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import spark.utils.CollectionUtils;
 
 public final class SuggestionPaymentMehodsUtils {
