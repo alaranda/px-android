@@ -50,7 +50,7 @@ public class RemediesController {
     final Context context = ContextAssembler.toContext(request);
 
     LOGGER.info(
-        new LogBuilder(request.attribute(HeadersConstants.REQUEST_ID), LogBuilder.REQUEST_IN)
+        new LogBuilder(request.attribute(HeadersConstants.X_REQUEST_ID), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())

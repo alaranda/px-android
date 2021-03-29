@@ -160,7 +160,7 @@ public enum PreferenceAPI {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              new Headers().add(REQUEST_ID, context.getRequestId()),
+              new Headers().add(X_REQUEST_ID, context.getRequestId()),
               null,
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));

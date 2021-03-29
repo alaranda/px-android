@@ -3,7 +3,7 @@ package com.mercadolibre.api;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
-import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.google.gson.FieldNamingPolicy;
@@ -76,7 +76,7 @@ public class CardHolderAuthenticationAPI {
 
   public Object authenticateCard(
       final Context context, final String cardToken, final CardHolder request) throws ApiException {
-    final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
+    final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final URIBuilder url = getPath(cardToken);
     final String body = getBody(request);
 

@@ -4,7 +4,7 @@ import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
-import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
@@ -132,7 +132,7 @@ public enum PaymentAPI {
   public CompletableFuture<Either<Payment, ApiError>> getAsyncPayment(
       final Context context, final String paymentId) throws ApiException {
 
-    final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
+    final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final URIBuilder url = buildGetPaymentUrl(paymentId);
 
     try {
@@ -225,7 +225,7 @@ public enum PaymentAPI {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              new Headers().add(REQUEST_ID, context.getRequestId()),
+              new Headers().add(X_REQUEST_ID, context.getRequestId()),
               null,
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));

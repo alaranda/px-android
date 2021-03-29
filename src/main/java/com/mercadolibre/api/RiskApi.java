@@ -2,7 +2,7 @@ package com.mercadolibre.api;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.mercadolibre.dto.risk.RiskResponse;
@@ -37,7 +37,7 @@ public class RiskApi extends AbstractDao {
   public RiskResponse getRisk(final Context context, final long riskExcecutionId)
       throws ApiException {
 
-    final Headers headers = new Headers().add(REQUEST_ID, context.getRequestId());
+    final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final URIBuilder url = getPath(riskExcecutionId);
 
     try {

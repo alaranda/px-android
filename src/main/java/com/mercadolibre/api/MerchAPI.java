@@ -5,7 +5,7 @@ import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
 import static com.mercadolibre.px.constants.CommonParametersNames.*;
-import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
@@ -69,7 +69,7 @@ public enum MerchAPI {
 
     final Headers headers =
         new Headers()
-            .add(REQUEST_ID, context.getRequestId())
+            .add(X_REQUEST_ID, context.getRequestId())
             .add(X_LOCATION_ENABLED, congratsRequest.getLocationEnabled());
 
     Optional.ofNullable(context.getUserAgent())
@@ -178,7 +178,7 @@ public enum MerchAPI {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              new Headers().add(REQUEST_ID, context.getRequestId()),
+              new Headers().add(X_REQUEST_ID, context.getRequestId()),
               null,
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));

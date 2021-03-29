@@ -85,7 +85,7 @@ public class RemediesControllerTest {
     when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);
     when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
     when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
-    when(request.attribute(REQUEST_ID)).thenReturn(REQUEST_ID_TEST);
+    when(request.attribute(X_REQUEST_ID)).thenReturn(REQUEST_ID_TEST);
     when(request.headers("User-Agent")).thenReturn(USER_AGENT_HEADER);
     when(request.url()).thenReturn("url-test");
     when(request.headers(PLATFORM)).thenReturn("MP");

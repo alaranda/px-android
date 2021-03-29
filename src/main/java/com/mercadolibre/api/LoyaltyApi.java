@@ -115,7 +115,7 @@ public enum LoyaltyApi {
 
   private static Headers addHeaders(final Context context, final UserAgent userAgent) {
     return new Headers()
-        .add(REQUEST_ID, context.getRequestId())
+        .add(X_REQUEST_ID, context.getRequestId())
         .add("X-Client-Name", userAgent.getOperatingSystem().getName().toLowerCase())
         .add("X-Client-Version", "0.2");
   }
@@ -153,7 +153,7 @@ public enum LoyaltyApi {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              new Headers().add(REQUEST_ID, context.getRequestId()),
+              new Headers().add(X_REQUEST_ID, context.getRequestId()),
               null,
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));

@@ -128,13 +128,15 @@ public class Router implements SparkApplication {
               Exception.class,
               (exception, request, response) -> {
                 LOGGER.error(
-                    requestInLogBuilder(request.attribute(REQUEST_ID))
+                    requestInLogBuilder(request.attribute(X_REQUEST_ID))
                         .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)
                         .withMessage("Exception thrown")
                         .build(),
                     exception);
                 NewRelicRequest NRRequest =
-                    NewRelicRequest.builder().withRequestId(request.attribute(REQUEST_ID)).build();
+                    NewRelicRequest.builder()
+                        .withRequestId(request.attribute(X_REQUEST_ID))
+                        .build();
                 NewRelicUtils.noticeError(exception, NRRequest);
 
                 final String apiErrorJson =
@@ -150,7 +152,7 @@ public class Router implements SparkApplication {
               ValidationException.class,
               (exception, request, response) -> {
                 LOGGER.error(
-                    requestInLogBuilder(request.attribute(REQUEST_ID))
+                    requestInLogBuilder(request.attribute(X_REQUEST_ID))
                         .withStatus(HttpStatus.SC_BAD_REQUEST)
                         .withMessage(
                             String.format(
@@ -158,7 +160,9 @@ public class Router implements SparkApplication {
                                 exception.getDescription()))
                         .build());
                 NewRelicRequest NRRequest =
-                    NewRelicRequest.builder().withRequestId(request.attribute(REQUEST_ID)).build();
+                    NewRelicRequest.builder()
+                        .withRequestId(request.attribute(X_REQUEST_ID))
+                        .build();
                 NewRelicUtils.noticeError(exception, NRRequest);
 
                 ApiError apiError =
@@ -180,7 +184,7 @@ public class Router implements SparkApplication {
   private static void setRequestIdAndLogRequest(final Request request) {
     request.attribute(Constants.API_CONTEXT, ApiContext.getApiContextFromScope(Config.getSCOPE()));
 
-    String requestId = request.headers(REQUEST_ID);
+    String requestId = request.headers(X_REQUEST_ID);
     if (isBlank(requestId)) {
       requestId = UUID.randomUUID().toString();
       LOGGER.debug(
@@ -202,7 +206,7 @@ public class Router implements SparkApplication {
 
     LOGGER.info(logBuilder.build());
 
-    request.attribute(REQUEST_ID, requestId);
+    request.attribute(X_REQUEST_ID, requestId);
   }
 
   private void setupFilters() {

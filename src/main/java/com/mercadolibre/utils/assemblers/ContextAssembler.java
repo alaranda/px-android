@@ -23,7 +23,7 @@ public class ContextAssembler {
     Context.ContextBuilder builder =
         Context.builder()
             .meliContext(MeliContextBuilder.build(request.raw()))
-            .requestId(request.attribute(HeadersConstants.REQUEST_ID))
+            .requestId(request.attribute(HeadersConstants.X_REQUEST_ID))
             .metrics(metrics);
 
     final String userAgentHeader = request.headers(USER_AGENT);

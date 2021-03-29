@@ -5,7 +5,7 @@ import static com.mercadolibre.px.constants.CommonParametersNames.ACCESS_TOKEN;
 import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.constants.ErrorCodes.BAD_REQUEST;
 import static com.mercadolibre.px.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.restclient.util.Constants.X_FORWARDED_HEADER_NAMES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -52,7 +52,7 @@ public class AuthenticationRouterTest {
 
     when(request.requestMethod()).thenReturn(HttpMethod.POST.name());
     when(request.headers(LANGUAGE)).thenReturn("es-AR");
-    when(request.attribute(REQUEST_ID)).thenReturn(requestId);
+    when(request.attribute(X_REQUEST_ID)).thenReturn(requestId);
     when(request.url()).thenReturn(CHA_URL);
 
     return request;
