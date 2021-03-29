@@ -1,6 +1,6 @@
 package com.mercadolibre.api;
 
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
+import static com.mercadolibre.px.constants.HeadersConstants.NO_CACHE_PARAMS;
 
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;

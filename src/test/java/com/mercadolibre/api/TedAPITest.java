@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import com.mercadolibre.dto.Ted;
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
@@ -20,7 +20,7 @@ import spark.utils.IOUtils;
 
 public class TedAPITest extends RestClientTestBase {
 
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
   private final TedAPI tedAPI = TedAPI.INSTANCE;
 
   @Test

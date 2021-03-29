@@ -3,23 +3,23 @@ package com.mercadolibre.api;
 import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.px.toolkit.utils.RestUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
@@ -43,7 +43,7 @@ public enum PaymentAPI {
   private static final String POOL_NAME_READ = "PaymentsRead";
 
   static {
-    RestUtils.registerPool(
+    MeliRestUtils.registerPool(
         POOL_NAME,
         pool ->
             pool.withConnectionTimeout(
@@ -74,11 +74,12 @@ public enum PaymentAPI {
 
     try {
       final Response response =
-          RestUtils.newRestRequestBuilder(POOL_NAME)
+          MeliRestUtils.newRestRequestBuilder(POOL_NAME)
               .asyncPost(
                   url.toString(),
                   headers,
-                  GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8))
+                  GsonWrapper.toJson(body).getBytes(StandardCharsets.UTF_8),
+                  context.getMeliContext())
               .get();
 
       METRIC_COLLECTOR.incrementCounter(
@@ -136,7 +137,8 @@ public enum PaymentAPI {
 
     try {
       final CompletableFuture<Response> completableFuture =
-          RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+          MeliRestUtils.newRestRequestBuilder(POOL_NAME)
+              .asyncGet(url.toString(), headers, context.getMeliContext());
 
       return completableFuture.thenApply(
           response -> {
@@ -205,7 +207,7 @@ public enum PaymentAPI {
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
     }
-    return RestUtils.responseToEither(response, Payment.class);
+    return MeliRestUtils.responseToEither(response, Payment.class);
   }
 
   public Optional<Payment> getPaymentFromFuture(

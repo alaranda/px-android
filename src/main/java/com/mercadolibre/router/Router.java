@@ -1,29 +1,25 @@
 package com.mercadolibre.router;
 
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.NO_CACHE_PARAMS;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestOutLogBuilder;
+import static com.mercadolibre.px.constants.ErrorCodes.INTERNAL_ERROR;
+import static com.mercadolibre.px.constants.HeadersConstants.*;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestOutLogBuilder;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static spark.Spark.afterAfter;
 
 import com.google.common.net.MediaType;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.controllers.*;
-import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.dto.NewRelicRequest;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.dto.ApiError;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.new_relic.NewRelicUtils;
+import com.mercadolibre.px.monitoring.lib.new_relic.dto.NewRelicRequest;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.new_relic.NewRelicUtils;
-import com.mercadolibre.px.toolkit.utils.ApiContext;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px_config.ApiContext;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.utils.datadog.DatadogRequestMetric;
 import com.newrelic.api.agent.NewRelic;
 import java.util.UUID;
@@ -107,12 +103,14 @@ public class Router implements SparkApplication {
               ApiException.class,
               (exception, request, response) -> {
                 LOGGER.error(
-                    requestOutLogBuilder(request.attribute(REQUEST_ID))
+                    requestOutLogBuilder(request.attribute(X_REQUEST_ID))
                         .withStatus(exception.getStatusCode())
                         .withException(exception.getCode(), exception.getDescription())
                         .build());
                 NewRelicRequest NRRequest =
-                    NewRelicRequest.builder().withRequestId(request.attribute(REQUEST_ID)).build();
+                    NewRelicRequest.builder()
+                        .withRequestId(request.attribute(X_REQUEST_ID))
+                        .build();
                 NewRelicUtils.noticeError(exception, NRRequest);
 
                 ApiError apiError =
@@ -190,7 +188,7 @@ public class Router implements SparkApplication {
     }
 
     LogBuilder logBuilder =
-        new LogBuilder(requestId, REQUEST_IN)
+        new LogBuilder(requestId, LogBuilder.REQUEST_IN)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())

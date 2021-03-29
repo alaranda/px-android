@@ -14,11 +14,10 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.platform.Platform;
+import com.mercadolibre.restclient.http.Headers;
+import com.mercadolibre.restclient.util.MeliContext;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import org.mockito.Mockito;
 
 public class MockTestHelper {
@@ -26,7 +25,11 @@ public class MockTestHelper {
   public static Context mockContextLibDto() {
 
     Context context = Mockito.mock(Context.class);
+    MeliContext mc = Mockito.mock(MeliContext.class);
+    when(mc.getRequestId()).thenReturn(UUID.randomUUID().toString());
+    when(mc.getHeaders()).thenReturn(new Headers());
 
+    when(context.getMeliContext()).thenReturn(mc);
     when(context.getRequestId()).thenReturn(UUID.randomUUID().toString());
     when(context.getLocale()).thenReturn(Locale.forLanguageTag("es-AR"));
     when(context.getPlatform()).thenReturn(Platform.MP);

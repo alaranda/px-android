@@ -1,10 +1,10 @@
 package com.mercadolibre.service;
 
 import com.mercadolibre.api.PublicKeyAPI;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import java.util.concurrent.CompletableFuture;
 

@@ -61,7 +61,6 @@ dependencies {
 	compile "com.google.guava:guava:$guavaVersion"
 	compile "com.google.code.gson:gson:$gsonVersion"
 	compile "com.sparkjava:spark-core:$sparkVersion"
-	compile "com.mercadolibre.restclient:restclient-default:$restClientVersion"
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
 	compile "commons-configuration:commons-configuration:$commonsConfigurationVersion"
 	compile "com.mercadolibre.json:json-core:$jsonCoreVersion"
@@ -92,7 +91,7 @@ dependencies {
 
 	// Test tools
 	testCompile 'junit:junit:4.12'
-	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
+	testCompile "com.mercadolibre.restclient:meli-restclient-core:$restClientVersion:tests"
 	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
 	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
 	testImplementation "org.mockito:mockito-inline:$mockitoCoreVersion"

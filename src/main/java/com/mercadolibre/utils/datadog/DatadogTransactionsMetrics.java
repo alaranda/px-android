@@ -3,7 +3,7 @@ package com.mercadolibre.utils.datadog;
 import static com.mercadolibre.constants.DatadogMetricsNames.COUPONS_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PAYMENTS_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PAYMENT_ORDER_TYPE;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.*;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;

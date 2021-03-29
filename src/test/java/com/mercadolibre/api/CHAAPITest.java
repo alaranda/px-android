@@ -1,6 +1,6 @@
 package com.mercadolibre.api;
 
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -8,7 +8,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import com.mercadolibre.dto.cha.CardHolder;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
@@ -34,6 +36,8 @@ public class CHAAPITest extends RestClientTestBase {
 
   @Test
   public void authenticateCard_ok() throws ApiException, IOException {
+    Context context = MockTestHelper.mockContextLibDto();
+
     MockCHAAPI.authenticateCard(
         CARD_TOKEN_TEST,
         IOUtils.toString(getClass().getResourceAsStream("/authentication/cha-wrapped.json")),
@@ -41,7 +45,7 @@ public class CHAAPITest extends RestClientTestBase {
 
     final Object fos =
         cardHolderAuthenticationAPI.authenticateCard(
-            REQUEST_ID,
+            context,
             CARD_TOKEN_TEST,
             GsonWrapper.fromJson(
                 IOUtils.toString(
@@ -53,6 +57,8 @@ public class CHAAPITest extends RestClientTestBase {
 
   @Test
   public void authenticateCard_fail() throws IOException {
+    Context context = MockTestHelper.mockContextLibDto();
+
     try {
       MockCHAAPI.authenticateCard(
           CARD_TOKEN_TEST,
@@ -60,7 +66,7 @@ public class CHAAPITest extends RestClientTestBase {
           HttpStatus.SC_BAD_REQUEST);
 
       cardHolderAuthenticationAPI.authenticateCard(
-          REQUEST_ID,
+          context,
           CARD_TOKEN_TEST,
           GsonWrapper.fromJson(
               IOUtils.toString(getClass().getResourceAsStream("/authentication/cha-original.json")),
@@ -76,6 +82,8 @@ public class CHAAPITest extends RestClientTestBase {
 
   @Test
   public void authenticateCard_fail500() throws IOException {
+    Context context = MockTestHelper.mockContextLibDto();
+
     try {
       MockCHAAPI.authenticateCard(
           CARD_TOKEN_TEST,
@@ -83,7 +91,7 @@ public class CHAAPITest extends RestClientTestBase {
           HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
       cardHolderAuthenticationAPI.authenticateCard(
-          REQUEST_ID,
+          context,
           CARD_TOKEN_TEST,
           GsonWrapper.fromJson(
               IOUtils.toString(getClass().getResourceAsStream("/authentication/cha-original.json")),
@@ -99,9 +107,11 @@ public class CHAAPITest extends RestClientTestBase {
 
   @Test
   public void authenticateCard_throwException() throws IOException {
+    Context context = MockTestHelper.mockContextLibDto();
+
     try {
       cardHolderAuthenticationAPI.authenticateCard(
-          REQUEST_ID,
+          context,
           CARD_TOKEN_TEST,
           GsonWrapper.fromJson(
               IOUtils.toString(getClass().getResourceAsStream("/authentication/cha-original.json")),

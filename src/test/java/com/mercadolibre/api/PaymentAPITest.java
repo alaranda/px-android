@@ -10,15 +10,15 @@ import static org.junit.Assert.fail;
 
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.payment.PaymentBody;
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.http.Headers;
 import java.io.IOException;
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import spark.utils.IOUtils;
@@ -27,7 +27,7 @@ public class PaymentAPITest extends RestClientTestBase {
 
   private final Long CALLER_ID_MLA = 243962506L;
   private final Long CLIENT_ID_MLA = 889238428771302L;
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
   private final PaymentAPI paymentAPI = PaymentAPI.INSTANCE;
 
   @Test

@@ -4,10 +4,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.preference.Preference;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import java.io.IOException;
 import java.util.UUID;
@@ -23,8 +24,7 @@ public class PreferencesValidatorTest {
   private static final String CALLER_ID_INVALID = "138275050";
 
   public static final String REQUEST_ID = UUID.randomUUID().toString();
-  public static final Context CONTEXT_ES =
-      Context.builder().requestId(REQUEST_ID).locale("es-AR").build();
+  public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 
   @Before
   public void setUp() {

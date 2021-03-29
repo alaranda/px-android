@@ -1,6 +1,6 @@
 package com.mercadolibre.validators;
 
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import javax.annotation.Nonnull;
 
 public class ValidatorResult {

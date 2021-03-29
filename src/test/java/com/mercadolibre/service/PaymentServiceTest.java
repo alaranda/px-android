@@ -18,8 +18,9 @@ import com.mercadolibre.api.MockPublicKeyAPI;
 import com.mercadolibre.api.MockTedAPI;
 import com.mercadolibre.dto.payment.PaymentDataBody;
 import com.mercadolibre.dto.payment.PaymentRequest;
+import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
@@ -43,8 +44,7 @@ public class PaymentServiceTest {
   private static final String CALLER_ID_TEST = "1111111";
   public static final String REQUEST_ID = UUID.randomUUID().toString();
 
-  public static final Context CONTEXT_ES =
-      Context.builder().requestId(REQUEST_ID).locale("es_AR").build();
+  public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 
   @Before
   public void before() {

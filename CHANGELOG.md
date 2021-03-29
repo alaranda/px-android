@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.36.0]
+
+### Changed
+
+- Se actualizan librerias dto-lib, px-toolkit, api-lib.
+- Se cambia restclient por meli-restclient para lograr compliance con trazabilidad.
+
 ## [1.35.0]
 
 ### Added

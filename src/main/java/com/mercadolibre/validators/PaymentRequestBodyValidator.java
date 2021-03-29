@@ -6,7 +6,7 @@ import static java.lang.String.format;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import spark.utils.StringUtils;
 
 public class PaymentRequestBodyValidator {

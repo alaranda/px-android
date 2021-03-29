@@ -1,7 +1,7 @@
 package com.mercadolibre.endpoints;
 
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
+import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_ID;
+import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
 import static io.restassured.RestAssured.get;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

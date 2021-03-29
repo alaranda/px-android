@@ -8,16 +8,15 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.preference.Preference;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
@@ -29,7 +28,7 @@ public class PreferenceAPITest extends RestClientTestBase {
 
   final PreferenceAPI service = PreferenceAPI.INSTANCE;
   private static final String PREFERENCE_ID = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
 
   @Test
   public void getPreference_validPreferenceId_isOk()

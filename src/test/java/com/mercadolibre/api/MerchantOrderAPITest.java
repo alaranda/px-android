@@ -6,13 +6,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.mercadolibre.dto.merchant_orders.MerchantOrder;
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import java.io.IOException;
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import spark.utils.IOUtils;
@@ -21,7 +21,7 @@ public class MerchantOrderAPITest extends RestClientTestBase {
 
   private final MerchantOrderAPI merchantOrderAPI = MerchantOrderAPI.INSTANCE;
   private static final String COLLECTOR_ID = "395662610";
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
 
   @Test
   public void createMerchantOrder_isOk() throws IOException, ApiException {

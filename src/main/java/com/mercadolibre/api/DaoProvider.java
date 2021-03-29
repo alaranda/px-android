@@ -3,7 +3,7 @@ package com.mercadolibre.api;
 import com.mercadolibre.px.api.lib.dto.ConfigurationCircuitBreaker;
 import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
 import com.mercadolibre.px.api.lib.kyc.KycVaultDao;
-import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px_config.Config;
 
 public class DaoProvider {
 

@@ -8,7 +8,7 @@ import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PayerCost;
 import com.mercadolibre.dto.payment.PaymentData;
 import com.mercadolibre.px.dto.lib.card.Issuer;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import spark.utils.StringUtils;
 
 public class PaymentDataValidator {

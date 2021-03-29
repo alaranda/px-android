@@ -5,7 +5,7 @@ import static com.mercadolibre.utils.Translations.CANNOT_PAY_WITH_LINK;
 
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.preference.Preference;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 

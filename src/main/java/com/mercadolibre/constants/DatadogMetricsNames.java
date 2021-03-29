@@ -1,6 +1,6 @@
 package com.mercadolibre.constants;
 
-import com.mercadolibre.px.toolkit.exceptions.CanNotInstantiateError;
+import com.mercadolibre.px.exceptions.CanNotInstantiateError;
 
 public final class DatadogMetricsNames {
   private DatadogMetricsNames() {

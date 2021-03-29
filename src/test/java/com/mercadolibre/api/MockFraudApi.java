@@ -1,7 +1,7 @@
 package com.mercadolibre.api;
 
 import static com.mercadolibre.api.FraudApi.getPath;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.CLIENT_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.CLIENT_ID;
 
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;

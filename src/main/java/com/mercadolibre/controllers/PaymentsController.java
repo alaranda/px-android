@@ -1,14 +1,11 @@
 package com.mercadolibre.controllers;
 
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.PUBLIC_KEY;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
+import static com.mercadolibre.px.constants.CommonParametersNames.*;
+import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
+import static com.mercadolibre.px.constants.ErrorCodes.*;
+import static com.mercadolibre.px.constants.HeadersConstants.*;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.REQUEST_IN;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;
@@ -17,13 +14,14 @@ import com.mercadolibre.dto.payment.PaymentDataBody;
 import com.mercadolibre.dto.payment.PaymentRequest;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
 import com.mercadolibre.utils.HeadersUtils;
+import com.mercadolibre.utils.assemblers.ContextAssembler;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
@@ -56,11 +54,8 @@ public enum PaymentsController {
   public Payment doLegacyPayment(final Request request, final Response response)
       throws ApiException, ExecutionException, InterruptedException {
 
-    final Context context =
-        Context.builder()
-            .requestId(request.attribute(REQUEST_ID))
-            .locale(request.headers(LANGUAGE))
-            .build();
+    final Context context = ContextAssembler.toContext(request);
+
     LOGGER.info(
         new LogBuilder(context.getRequestId(), REQUEST_IN)
             .withSource(CONTROLLER_NAME)
@@ -137,11 +132,7 @@ public enum PaymentsController {
   public Payment doPayment(final Request request, final Response response)
       throws ApiException, ExecutionException, InterruptedException {
 
-    final Context context =
-        Context.builder()
-            .requestId(request.attribute(REQUEST_ID))
-            .locale(request.headers(LANGUAGE))
-            .build();
+    final Context context = ContextAssembler.toContext(request);
     final PaymentRequest paymentRequest = getPaymentRequest(request, context);
 
     LOGGER.info(

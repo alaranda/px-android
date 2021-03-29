@@ -21,7 +21,7 @@ import com.mercadolibre.dto.remedy.ResponseHighRisk;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
 import java.math.BigDecimal;

@@ -4,24 +4,22 @@ import static com.mercadolibre.constants.Constants.FLOW_NAME;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.constants.CommonParametersNames.*;
+import static com.mercadolibre.px.constants.HeadersConstants.REQUEST_ID;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.px.toolkit.utils.RestUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
@@ -50,7 +48,7 @@ public enum MerchAPI {
   private static final String DISCOUNTS_LIMIT = "6";
 
   static {
-    RestUtils.registerPool(
+    MeliRestUtils.registerPool(
         POOL_NAME,
         pool ->
             pool.withConnectionTimeout(Config.getLong("merch.connection.timeout"))
@@ -81,7 +79,8 @@ public enum MerchAPI {
 
     try {
       final CompletableFuture<Response> completableFutureResponse =
-          RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+          MeliRestUtils.newRestRequestBuilder(POOL_NAME)
+              .asyncGet(url.toString(), headers, context.getMeliContext());
 
       return completableFutureResponse.thenApply(
           response -> {
@@ -130,7 +129,7 @@ public enum MerchAPI {
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
     }
-    return RestUtils.responseToEither(response, MerchResponse.class);
+    return MeliRestUtils.responseToEither(response, MerchResponse.class);
   }
 
   /**

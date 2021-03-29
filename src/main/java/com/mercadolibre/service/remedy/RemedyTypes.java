@@ -5,7 +5,7 @@ import static com.mercadolibre.utils.Translations.*;
 import com.mercadolibre.api.RiskApi;
 import com.mercadolibre.dto.remedy.Remedy;
 import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
-import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px_config.Config;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.constants.Constants.*;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.INTERNAL_ERROR;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.constants.ErrorCodes.INTERNAL_ERROR;
 
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
@@ -15,11 +15,11 @@ import com.mercadolibre.dto.payment.PaymentData;
 import com.mercadolibre.dto.payment.PaymentDataBody;
 import com.mercadolibre.dto.payment.PaymentRequest;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.PaymentMethodUtils;
