@@ -12,9 +12,10 @@ import com.mercadolibre.dto.remedy.PaymentMethodSelected;
 import com.mercadolibre.dto.tracking.TrackingData;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import spark.utils.CollectionUtils;
 
 public final class SuggestionPaymentMehodsUtils {
 
@@ -33,11 +34,11 @@ public final class SuggestionPaymentMehodsUtils {
     final AlternativePayerPaymentMethod alternativePayerPaymentMethod = it.next();
 
     List<Installment> installments = new ArrayList<>();
-    final List<Installment> alternativeInstalmens =
+    final List<Installment> alternativeInstallments =
         alternativePayerPaymentMethod.getInstallmentsList();
-    if (alternativeInstalmens != null && !alternativeInstalmens.isEmpty()) {
-      Iterator<Installment> itInstallments = alternativeInstalmens.iterator();
-      installments = Arrays.asList(itInstallments.next());
+    if (!CollectionUtils.isEmpty(alternativeInstallments)) {
+      Iterator<Installment> itInstallments = alternativeInstallments.iterator();
+      installments = Collections.singletonList(itInstallments.next());
     }
 
     final AlternativePayerPaymentMethod selectPaymentMethod =
@@ -52,6 +53,7 @@ public final class SuggestionPaymentMehodsUtils {
             .securityCodeLocation(alternativePayerPaymentMethod.getSecurityCodeLocation())
             .installments(alternativePayerPaymentMethod.getInstallments())
             .installmentsList(installments)
+            .bin(alternativePayerPaymentMethod.getBin())
             .build();
 
     final PaymentMethodSelected.PaymentMethodSelectedBuilder paymentMethodSelectedBuilder =

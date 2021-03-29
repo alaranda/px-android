@@ -57,9 +57,7 @@ public class PreferenceServiceTest {
         IOUtils.toString(getClass().getResourceAsStream("/kyc/userSensitiveData.json")));
 
     try {
-      final Preference preference =
-          PreferenceService.INSTANCE.getPreference(
-              mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_2);
+      PreferenceService.INSTANCE.getPreference(mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_2);
       fail("ValidationException pref");
     } catch (ValidationException e) {
       assertThat(e.getDescription(), is("No podés pagar con este link de pago."));

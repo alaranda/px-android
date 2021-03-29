@@ -30,6 +30,7 @@ public enum AuthService {
    *
    * @param context context object
    * @param preferenceCollectorId preferenceCollectorId
+   * @param clientId String
    * @return el objeto public key info
    * @throws ApiException si falla el api call (status code is not 2xx)
    */

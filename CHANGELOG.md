@@ -2,6 +2,20 @@
 
 # Change Log
 
+## [1.35.0]
+
+### Added
+
+- Se levanta CustomStringConfiguration del request de remedy.
+- Se agrega a la respuesta de remedy silver bullet el nodo "bottom_message" que contiene información para el label "Total a pagar" en congrats teniendo en cuenta el payment_method obtenido
+
+### Changed
+
+- Deprecado del dominio .ml.com
+- Se agrega px-monitoring-lib
+- Se elimina AccessTokenUtils por duplicidad en px-monitoring-lib
+- Update javadoc
+
 ## [1.34.0]
 
 ### Added

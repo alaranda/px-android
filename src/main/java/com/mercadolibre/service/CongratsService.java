@@ -116,6 +116,7 @@ public class CongratsService {
    * @param context context
    * @param congratsRequest congrats request
    * @return Congrats congrats object
+   * @throws ApiException API Exception
    */
   public Congrats getPointsAndDiscounts(
       final Context context, final CongratsRequest congratsRequest) throws ApiException {

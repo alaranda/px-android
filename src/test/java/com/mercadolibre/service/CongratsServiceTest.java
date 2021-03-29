@@ -2,11 +2,11 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
-import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockLoyaltyApi;

@@ -58,6 +58,11 @@ public final class Constants {
 
   public static final String IFPE_MESSAGE_COLOR = "#cc000000";
 
+  // Label total to pay
+  public static final String WHITE_COLOR = "#FFFFFF";
+  public static final String BLACK_COLOR = "#000000";
+  public static final String WEIGHT_SEMI_BOLD = "semi_bold";
+
   public static final String ANDROID = "android";
   public static final String IOS = "ios";
 
