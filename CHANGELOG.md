@@ -2,7 +2,7 @@
 
 # Change Log
 
-## [1.36.0]
+## [1.35.0]
 
 ### Added
 
@@ -12,11 +12,6 @@
 ### Changed
 
 - Deprecado del dominio .ml.com
-
-## [1.35.0]
-
-### Changed
-
 - Se agrega px-monitoring-lib
 - Se elimina AccessTokenUtils por duplicidad en px-monitoring-lib
 - Update javadoc
