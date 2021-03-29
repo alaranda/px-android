@@ -6,7 +6,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 
 public interface RemedyInterface {
 
-  public RemediesResponse applyRemedy(
+  RemediesResponse applyRemedy(
       final Context context,
       final RemediesRequest remediesRequest,
       final RemediesResponse remediesResponse);

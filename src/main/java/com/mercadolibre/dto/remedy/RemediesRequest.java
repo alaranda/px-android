@@ -9,6 +9,7 @@ public class RemediesRequest {
 
   private PayerPaymentMethodRejected payerPaymentMethodRejected;
   private List<AlternativePayerPaymentMethod> alternativePayerPaymentMethods;
+  private CustomStringConfiguration customStringConfiguration;
 
   @Setter private long riskExcecutionId;
   @Setter private String statusDetail;

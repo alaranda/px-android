@@ -3,10 +3,7 @@ package com.mercadolibre.controllers;
 import static com.mercadolibre.constants.Constants.PAYMENT_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.FLOW_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.PLATFORM;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.toolkit.constants.HeadersConstants.*;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
 import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
@@ -94,19 +91,22 @@ public class RemediesController {
   }
 
   private RemediesRequest getRemedyRequest(final Request request) throws ApiException {
+
+    final RemediesRequest remediesRequest;
+
     try {
-      final RemediesRequest remediesRequest =
-          GsonWrapper.fromJson(request.body(), RemediesRequest.class);
+      remediesRequest = GsonWrapper.fromJson(request.body(), RemediesRequest.class);
       remediesRequest.setSiteId(request.queryParams(CALLER_SITE_ID));
       remediesRequest.setUserId(request.queryParams(CALLER_ID));
       remediesRequest.setOneTap(
           StringUtils.isBlank(request.headers(ONE_TAP))
-              ? true
-              : Boolean.parseBoolean(request.headers(ONE_TAP)));
-      return remediesRequest;
+              || Boolean.parseBoolean(request.headers(ONE_TAP)));
+
     } catch (Exception e) {
       throw new ApiException("Bad Request", "Error parsing body", HttpStatus.SC_BAD_REQUEST);
     }
+
+    return remediesRequest;
   }
 
   private void validateParams(final String paymentId) throws ValidationException {

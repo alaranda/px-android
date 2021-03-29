@@ -8,15 +8,16 @@ import lombok.Getter;
 @Builder
 public class PayerPaymentMethodRejected {
 
-  private String customOptionId;
-  private String paymentMethodId;
-  private String paymentTypeId;
-  private String escStatus;
-  private boolean esc;
-  private String issuerName;
-  private String lastFourDigit;
-  private String securityCodeLocation;
-  private int securityCodeLength;
-  private int installments;
-  private BigDecimal totalAmount;
+  private final String customOptionId;
+  private final String paymentMethodId;
+  private final String paymentTypeId;
+  private final String escStatus;
+  private final boolean esc;
+  private final String issuerName;
+  private final String lastFourDigit;
+  private final String securityCodeLocation;
+  private final int securityCodeLength;
+  private final int installments;
+  private final BigDecimal totalAmount;
+  private final String bin;
 }

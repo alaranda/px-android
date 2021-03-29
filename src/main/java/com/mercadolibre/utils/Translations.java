@@ -65,7 +65,13 @@ public enum Translations {
   public static final String RETURNING_MERCHANT_SITE = "congrats.return.merchant.time";
   public static final String RETURN_MERCHANT_SITE = "congrats.return.merchant.button";
 
-  private I18nService i18nService = new I18nService();
+  public static final String WITH_DEBIT_GENERIC_LABEL = "payment_method.with.debit.label";
+  public static final String WITH_CREDIT_GENERIC_LABEL = "payment_method.with.credit.label";
+  public static final String TOTAL_PAY_GENERIC_LABEL = "payment_method.total_pay.label";
+  public static final String WITH_ACCOUNT_MONEY_GENERIC_LABEL =
+      "payment_method.with.account_money.label";
+
+  private final I18nService i18nService = new I18nService();
 
   /**
    * @param locale Locale
@@ -173,6 +179,14 @@ public enum Translations {
         return i18nService.tr("Volver ahora", locale);
       case RETURNING_MERCHANT_SITE:
         return i18nService.tr("Te llevaremos de vuelta al sitio en {0}", locale);
+      case WITH_CREDIT_GENERIC_LABEL:
+        return i18nService.tr("con crédito", locale);
+      case WITH_DEBIT_GENERIC_LABEL:
+        return i18nService.tr("con débito", locale);
+      case TOTAL_PAY_GENERIC_LABEL:
+        return i18nService.tr("Total a pagar", locale);
+      case WITH_ACCOUNT_MONEY_GENERIC_LABEL:
+        return i18nService.tr("con dinero en Mercado Pago", locale);
       default:
         return "";
     }
