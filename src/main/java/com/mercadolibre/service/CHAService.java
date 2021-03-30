@@ -6,7 +6,8 @@ import com.mercadolibre.api.CardHolderAuthenticationAPI;
 import com.mercadolibre.dto.cha.CardHolder;
 import com.mercadolibre.dto.cha.CardHolderAuthenticationRequest;
 import com.mercadolibre.dto.cha.CardHolderData;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.utils.CardHolderAuthenticationUtils;
 import java.util.Calendar;
 import org.apache.http.HttpStatus;
@@ -21,7 +22,7 @@ public class CHAService {
   }
 
   public Object authenticate(
-      final String requestId,
+      final Context context,
       final CardHolderAuthenticationRequest request,
       final String callerId,
       final String cardToken)
@@ -57,7 +58,7 @@ public class CHAService {
       final CardHolder cardHolder = new CardHolder(cardHolderData, userId);
 
       // TODO: modelado del response
-      return cardHolderAuthenticationAPI.authenticateCard(requestId, cardToken, cardHolder);
+      return cardHolderAuthenticationAPI.authenticateCard(context, cardToken, cardHolder);
     } catch (final Exception e) {
       throw new ApiException(
           e.getMessage(), GETTING_PARAMETERS, HttpStatus.SC_INTERNAL_SERVER_ERROR);

@@ -1,10 +1,10 @@
 package com.mercadolibre.utils.datadog;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_IN_COUNTER;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.mercadolibre.metrics.MetricCollector;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import spark.Request;
 import spark.Response;
 

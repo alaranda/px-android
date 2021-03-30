@@ -1,21 +1,20 @@
 package com.mercadolibre.api;
 
-import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.constants.DatadogMetricsNames.*;
+import static com.mercadolibre.px.constants.HeadersConstants.*;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.Points;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.dto.ApiError;
+import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.px.toolkit.utils.RestUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
@@ -37,7 +36,7 @@ public enum LoyaltyApi {
   private static final String POOL_NAME = "LoyalRead";
 
   static {
-    RestUtils.registerPool(
+    MeliRestUtils.registerPool(
         POOL_NAME,
         pool ->
             pool.withConnectionTimeout(Config.getLong("loyal.connection.timeout"))
@@ -61,7 +60,8 @@ public enum LoyaltyApi {
     final URIBuilder url = buildUrl(congratsRequest);
     try {
       final CompletableFuture<Response> completableFutureResponse =
-          RestUtils.newRestRequestBuilder(POOL_NAME).asyncGet(url.toString(), headers);
+          MeliRestUtils.newRestRequestBuilder(POOL_NAME)
+              .asyncGet(url.toString(), headers, context.getMeliContext());
 
       return completableFutureResponse.thenApply(
           response -> {
@@ -110,12 +110,12 @@ public enum LoyaltyApi {
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
     }
-    return RestUtils.responseToEither(response, Points.class);
+    return MeliRestUtils.responseToEither(response, Points.class);
   }
 
   private static Headers addHeaders(final Context context, final UserAgent userAgent) {
     return new Headers()
-        .add(REQUEST_ID, context.getRequestId())
+        .add(X_REQUEST_ID, context.getRequestId())
         .add("X-Client-Name", userAgent.getOperatingSystem().getName().toLowerCase())
         .add("X-Client-Version", "0.2");
   }
@@ -153,7 +153,7 @@ public enum LoyaltyApi {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              new Headers().add(REQUEST_ID, context.getRequestId()),
+              new Headers().add(X_REQUEST_ID, context.getRequestId()),
               null,
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));

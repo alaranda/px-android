@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 import com.google.gson.reflect.TypeToken;
 import com.mercadolibre.constants.PaymentsRequestBodyParams;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import java.io.IOException;
 import java.lang.reflect.Type;

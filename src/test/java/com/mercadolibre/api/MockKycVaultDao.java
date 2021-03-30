@@ -1,6 +1,6 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.px.toolkit.config.Config;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.MockResponse;
 import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.HttpMethod;

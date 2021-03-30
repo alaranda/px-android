@@ -4,15 +4,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
@@ -24,7 +24,7 @@ public class PublicKeyAPITest extends RestClientTestBase {
 
   private final String PUBLIC_KEY_FAIL = "public-key-id";
   private final String PUBLIC_KEY_OK = "APP_USR-ba2e6b8c-8b6d-4fc3-8a47-0ab241d0dba4";
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
   private final PublicKeyAPI publicKeyAPI = PublicKeyAPI.INSTANCE;
 
   @Before

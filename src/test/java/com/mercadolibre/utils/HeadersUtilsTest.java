@@ -1,9 +1,9 @@
 package com.mercadolibre.utils;
 
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.TEST_TOKEN;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_CALLER_SCOPES;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.X_SECURITY;
+import static com.mercadolibre.px.constants.HeadersConstants.TEST_TOKEN;
+import static com.mercadolibre.px.constants.HeadersConstants.X_CALLER_SCOPES;
+import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_SECURITY;
 import static com.mercadolibre.utils.HeadersUtils.AUTHENTICATION_FACTOR_2FA;
 import static com.mercadolibre.utils.HeadersUtils.AUTHENTICATION_FACTOR_NONE;
 import static com.mercadolibre.utils.HeadersUtils.X_TRACKING_ID_SECURITY;

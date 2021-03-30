@@ -3,22 +3,22 @@ package com.mercadolibre.api;
 import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.*;
 import static com.mercadolibre.utils.HeadersUtils.getHeaders;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.merchant_orders.MerchantOrder;
+import com.mercadolibre.px.constants.ErrorCodes;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.config.Config;
-import com.mercadolibre.px.toolkit.constants.ErrorCodes;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.px.toolkit.utils.RestUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogUtils;
+import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
+import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
@@ -38,7 +38,7 @@ public enum MerchantOrderAPI {
   private static final String URL = "/merchant_orders";
 
   static {
-    RestUtils.registerPool(
+    MeliRestUtils.registerPool(
         POOL_NAME,
         pool ->
             pool.withConnectionTimeout(
@@ -65,8 +65,12 @@ public enum MerchantOrderAPI {
 
     try {
       final Response response =
-          RestUtils.newRestRequestBuilder(POOL_NAME)
-              .post(url.toString(), headers, body.getBytes(StandardCharsets.UTF_8));
+          MeliRestUtils.newRestRequestBuilder(POOL_NAME)
+              .post(
+                  url.toString(),
+                  headers,
+                  body.getBytes(StandardCharsets.UTF_8),
+                  context.getMeliContext());
 
       METRIC_COLLECTOR.incrementCounter(
           REQUEST_OUT_COUNTER,
@@ -132,6 +136,6 @@ public enum MerchantOrderAPI {
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
     }
-    return RestUtils.responseToEither(response, MerchantOrder.class);
+    return MeliRestUtils.responseToEither(response, MerchantOrder.class);
   }
 }

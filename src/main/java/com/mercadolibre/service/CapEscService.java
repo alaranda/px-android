@@ -3,7 +3,7 @@ package com.mercadolibre.service;
 import com.mercadolibre.api.FraudApi;
 import com.mercadolibre.dto.fraud.ResetStatus;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 
 public class CapEscService {
 

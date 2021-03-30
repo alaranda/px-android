@@ -2,7 +2,7 @@ package com.mercadolibre.utils.datadog;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_INVALID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.metrics.MetricCollector;

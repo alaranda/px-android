@@ -1,8 +1,8 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.constants.Constants.*;
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 
 import com.mercadolibre.api.DaoProvider;
 import com.mercadolibre.api.PreferenceAPI;
@@ -11,12 +11,12 @@ import com.mercadolibre.dto.preference.AdditionalInfo;
 import com.mercadolibre.dto.preference.InitPreferenceRequest;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.dto.preference.PreferenceTidy;
+import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.kyc.SensitiveUserResponse;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
-import com.mercadolibre.px.toolkit.dto.ApiError;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.validators.PreferencesValidator;

@@ -1,15 +1,15 @@
 package com.mercadolibre.api;
 
-import static com.mercadolibre.px.toolkit.constants.ErrorCodes.EXTERNAL_ERROR;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import com.mercadolibre.dto.fraud.ResetStatus;
+import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class FraudAPITest extends RestClientTestBase {
 
   private final String CARD_ID = "TEST-card_id";
   private final String CLIENT_ID = "TEST-client_id4";
-  private final Context context = Context.builder().requestId(UUID.randomUUID().toString()).build();
+  private final Context context = MockTestHelper.mockContextLibDto();
   private final FraudApi fraudApi = new FraudApi();
 
   @Before

@@ -1,6 +1,6 @@
 package com.mercadolibre.utils;
 
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.*;
+import static com.mercadolibre.px.constants.HeadersConstants.*;
 
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.restclient.http.ContentType;
@@ -124,7 +124,7 @@ public enum HeadersUtils {
   public static Headers getHeaders(final String requestId) {
     return new Headers()
         .add(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-        .add(REQUEST_ID, requestId);
+        .add(X_REQUEST_ID, requestId);
   }
 
   public static String getUserAgent(final Headers headers) {

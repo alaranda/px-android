@@ -1,17 +1,15 @@
 package com.mercadolibre.controllers;
 
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.SESSION_ID;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
+import static com.mercadolibre.px.constants.HeadersConstants.*;
 
 import com.mercadolibre.dto.fraud.ResetStatus;
+import com.mercadolibre.px.constants.CommonParametersNames;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
 import com.mercadolibre.service.CapEscService;
+import com.mercadolibre.utils.assemblers.ContextAssembler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.Request;
@@ -32,14 +30,10 @@ public class CapEscController {
   public ResetStatus resetCapEsc(final Request request, final Response response)
       throws ApiException {
 
-    final Context context =
-        Context.builder()
-            .requestId(request.attribute(REQUEST_ID))
-            .locale(request.headers(LANGUAGE))
-            .build();
+    final Context context = ContextAssembler.toContext(request);
 
     LOGGER.info(
-        new LogBuilder(context.getRequestId(), REQUEST_IN)
+        new LogBuilder(context.getRequestId(), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())

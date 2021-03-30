@@ -1,6 +1,6 @@
 package com.mercadolibre.utils.datadog;
 
-import static com.mercadolibre.px.toolkit.utils.monitoring.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.tracking.TrackingData;

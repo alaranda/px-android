@@ -15,15 +15,15 @@ import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +50,7 @@ public class CongratsServiceTest {
 
   private static final CongratsService congratsService = new CongratsService();
 
-  public static final String REQUEST_ID = UUID.randomUUID().toString();
-  public static final Context CONTEXT_ES =
-      Context.builder().requestId(REQUEST_ID).locale("es-AR").build();
+  public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 
   @Test
   public void getPointsAndDiscounts_validParams_crossSellingDiscountsAndPoints()
@@ -350,9 +348,9 @@ public class CongratsServiceTest {
   @Test
   public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() throws ApiException {
 
-    final Context context = Mockito.mock(Context.class);
+    final Context context = MockTestHelper.mockContextLibDto();
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
-    when(context.getRequestId()).thenReturn(REQUEST_ID);
+
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
@@ -369,9 +367,8 @@ public class CongratsServiceTest {
   @Test
   public void getPointsAndDiscounts_withOutAccountMoney_viewReceiptNull() throws ApiException {
 
-    final Context context = Mockito.mock(Context.class);
+    final Context context = MockTestHelper.mockContextLibDto();
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
-    when(context.getRequestId()).thenReturn(REQUEST_ID);
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");

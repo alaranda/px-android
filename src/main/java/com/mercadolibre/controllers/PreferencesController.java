@@ -1,21 +1,18 @@
 package com.mercadolibre.controllers;
 
-import static com.mercadolibre.constants.Constants.GETTING_PARAMETERS;
-import static com.mercadolibre.constants.Constants.INVALID_PARAMS;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CLIENT_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.REQUEST_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.LANGUAGE;
+import static com.mercadolibre.constants.Constants.*;
+import static com.mercadolibre.px.constants.CommonParametersNames.*;
 import static com.mercadolibre.utils.Translations.PAYMENT_NOT_PROCESSED;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.preference.InitPreferenceRequest;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.service.PreferenceService;
 import com.mercadolibre.utils.Translations;
+import com.mercadolibre.utils.assemblers.ContextAssembler;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
@@ -39,11 +36,7 @@ public enum PreferencesController {
   public PreferenceResponse initCheckoutByPref(final Request request, final Response response)
       throws ApiException, ExecutionException, InterruptedException {
 
-    final Context context =
-        Context.builder()
-            .requestId(request.attribute(REQUEST_ID))
-            .locale(request.headers(LANGUAGE))
-            .build();
+    final Context context = ContextAssembler.toContext(request);
 
     try {
 

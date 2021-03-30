@@ -1,25 +1,22 @@
 package com.mercadolibre.controllers;
 
 import static com.mercadolibre.constants.Constants.PAYMENT_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_ID;
-import static com.mercadolibre.px.toolkit.constants.CommonParametersNames.CALLER_SITE_ID;
-import static com.mercadolibre.px.toolkit.constants.HeadersConstants.*;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.REQUEST_IN;
-import static com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder.requestInLogBuilder;
+import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_ID;
+import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.SESSION_ID;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
 
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
+import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.dto.lib.context.UserAgent;
-import com.mercadolibre.px.dto.lib.platform.Platform;
-import com.mercadolibre.px.toolkit.constants.CommonParametersNames;
-import com.mercadolibre.px.toolkit.constants.HeadersConstants;
-import com.mercadolibre.px.toolkit.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.exceptions.ValidationException;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
-import com.mercadolibre.px.toolkit.utils.monitoring.log.LogBuilder;
 import com.mercadolibre.service.RemediesService;
+import com.mercadolibre.utils.assemblers.ContextAssembler;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,24 +47,10 @@ public class RemediesController {
   public RemediesResponse getRemedy(final Request request, final Response response)
       throws ApiException {
 
-    final Context.ContextBuilder contextBuilder =
-        Context.builder()
-            .requestId(request.attribute(CommonParametersNames.REQUEST_ID))
-            .locale(request.headers(LANGUAGE))
-            .flow(request.headers(FLOW_ID));
-
-    if (StringUtils.isNotBlank(request.headers(PLATFORM))) {
-      final Platform platform = Platform.from(request.headers(PLATFORM));
-      contextBuilder.platform(platform);
-    }
-
-    final UserAgent userAgent = UserAgent.create(request.userAgent());
-    contextBuilder.userAgent(userAgent);
-
-    final Context context = contextBuilder.build();
+    final Context context = ContextAssembler.toContext(request);
 
     LOGGER.info(
-        new LogBuilder(request.attribute(HeadersConstants.REQUEST_ID), REQUEST_IN)
+        new LogBuilder(request.attribute(HeadersConstants.X_REQUEST_ID), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())

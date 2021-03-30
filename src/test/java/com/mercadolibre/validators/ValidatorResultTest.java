@@ -3,7 +3,7 @@ package com.mercadolibre.validators;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import org.junit.Test;
 
 public class ValidatorResultTest {

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import com.mercadolibre.px.dto.lib.preference.Preference;
-import com.mercadolibre.px.toolkit.exceptions.ValidationException;
+import com.mercadolibre.px.exceptions.ValidationException;
 import java.math.BigDecimal;
 import org.junit.Test;
 import org.mockito.Mockito;
