@@ -144,11 +144,7 @@ public enum PaymentService {
       final String validationProgramId) {
 
     return PaymentRequest.Builder.createBlackLabelPaymentRequest(
-            headers,
-            paymentData,
-            preference,
-            requestId,
-            validationProgramId)
+            headers, paymentData, preference, requestId, validationProgramId)
         .withCallerId(Long.valueOf(callerId))
         .withClientId(Long.valueOf(clientId))
         .withPreference(preference)

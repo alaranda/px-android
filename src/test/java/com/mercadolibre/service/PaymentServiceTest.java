@@ -185,5 +185,4 @@ public class PaymentServiceTest {
     assertThat(paymentRequest.getBody().getOrder().getId(), is(123456789L));
     assertThat(paymentRequest.getBody().getOrder().getType(), is(MERCHANT_ORDER_TYPE_MP));
   }
-
 }

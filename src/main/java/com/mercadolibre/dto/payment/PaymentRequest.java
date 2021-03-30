@@ -67,8 +67,7 @@ public class PaymentRequest {
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
       builder.body =
-          PaymentBody.Builder.createBlackLabelBuilder(
-                  paymentData, preference)
+          PaymentBody.Builder.createBlackLabelBuilder(paymentData, preference)
               .withValidationProgramId(validationProgramId);
       return builder;
     }
