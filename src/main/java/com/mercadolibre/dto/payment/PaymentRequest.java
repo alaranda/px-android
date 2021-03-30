@@ -63,13 +63,12 @@ public class PaymentRequest {
         final PaymentData paymentData,
         final Preference preference,
         final String requestId,
-        final Boolean isSameBankAccountOwner,
         final String validationProgramId) {
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
       builder.body =
           PaymentBody.Builder.createBlackLabelBuilder(
-                  paymentData, preference, isSameBankAccountOwner)
+                  paymentData, preference)
               .withValidationProgramId(validationProgramId);
       return builder;
     }

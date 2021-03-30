@@ -174,7 +174,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false",
             null,
             null);
 
@@ -235,7 +234,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "true",
             null,
             null);
 
@@ -280,7 +278,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false",
             null,
             null);
 
@@ -395,7 +392,6 @@ public class CongratsServiceTest {
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
-    when(congratsRequest.getLocationEnabled()).thenReturn("false");
     return congratsRequest;
   }
 
@@ -421,7 +417,6 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false",
             null,
             null);
 
