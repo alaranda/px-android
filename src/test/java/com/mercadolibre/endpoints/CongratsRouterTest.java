@@ -8,7 +8,6 @@ import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_SITE_ID
 import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.constants.HeadersConstants.DENSITY;
 import static com.mercadolibre.px.constants.HeadersConstants.PRODUCT_ID;
-import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -81,7 +80,6 @@ public class CongratsRouterTest {
             false,
             null,
             null,
-            "false",
             null,
             null);
 
@@ -268,8 +266,7 @@ public class CongratsRouterTest {
                     new Header("accept-language", "es-AR"),
                     new Header("user-agent", "PX/iOS/4.3.4"),
                     new Header(DENSITY, DENSITY_XXHDPI),
-                    new Header(PRODUCT_ID, PRODUCT_ID_1),
-                    new Header(X_LOCATION_ENABLED, "true")))
+                    new Header(PRODUCT_ID, PRODUCT_ID_1)))
             .get(uriBuilder.build());
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
   }

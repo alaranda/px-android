@@ -23,7 +23,6 @@ public class CongratsRequest {
   private boolean ifpe;
   private String paymentMethodsIds;
   private String preferenceId;
-  private String locationEnabled;
   private String merchantOrderId;
   private String merchantAccountId;
 }

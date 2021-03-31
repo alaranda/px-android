@@ -174,7 +174,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false",
             null,
             null);
 
@@ -235,7 +234,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "true",
             null,
             null);
 
@@ -280,7 +278,6 @@ public class CongratsServiceTest {
             false,
             null,
             null,
-            "false",
             null,
             null);
 
@@ -395,7 +392,6 @@ public class CongratsServiceTest {
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
     when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(null);
-    when(congratsRequest.getLocationEnabled()).thenReturn("false");
     return congratsRequest;
   }
 
@@ -421,7 +417,6 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false",
             null,
             null);
 
@@ -479,7 +474,6 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false",
             null,
             null);
 
@@ -509,7 +503,6 @@ public class CongratsServiceTest {
 
   @Test
   public void getPointsAndDiscounts_preferenceId_returnBackUrl() throws IOException, ApiException {
-
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final String paymentId = "4141386674";
     final String siteId = Site.MLA.getSiteId();
@@ -528,7 +521,6 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false",
             null,
             null);
 
@@ -589,7 +581,6 @@ public class CongratsServiceTest {
             false,
             null,
             prefId,
-            "false",
             null,
             null);
 
