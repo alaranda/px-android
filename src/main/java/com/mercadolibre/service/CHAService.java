@@ -5,6 +5,7 @@ import static com.mercadolibre.constants.Constants.GETTING_PARAMETERS;
 import com.mercadolibre.api.CardHolderAuthenticationAPI;
 import com.mercadolibre.dto.cha.CardHolder;
 import com.mercadolibre.dto.cha.CardHolderAuthenticationRequest;
+import com.mercadolibre.dto.cha.CardHolderAuthenticationResponse;
 import com.mercadolibre.dto.cha.CardHolderData;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
@@ -21,7 +22,7 @@ public class CHAService {
     this.cardHolderAuthenticationAPI = new CardHolderAuthenticationAPI();
   }
 
-  public Object authenticate(
+  public CardHolderAuthenticationResponse authenticate(
       final Context context,
       final CardHolderAuthenticationRequest request,
       final String callerId,
@@ -57,7 +58,6 @@ public class CHAService {
 
       final CardHolder cardHolder = new CardHolder(cardHolderData, userId);
 
-      // TODO: modelado del response
       return cardHolderAuthenticationAPI.authenticateCard(context, cardToken, cardHolder);
     } catch (final Exception e) {
       throw new ApiException(
