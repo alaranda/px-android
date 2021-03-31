@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.37.0]
+
+### Changed
+
+- Se elimina el código del MVP que se hizo para PIX en Q4, ya que al salir con la solución de máxima de Payments en Q1, esta solución queda obsoleta.
+
 ## [1.36.1]
 
 ### Changed
