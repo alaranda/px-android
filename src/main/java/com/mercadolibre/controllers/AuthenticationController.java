@@ -6,6 +6,7 @@ import static com.mercadolibre.px.constants.HeadersConstants.*;
 import static com.mercadolibre.security.authentication.protocol.PrivateAuthenticationParameters.CALLER_ID;
 
 import com.mercadolibre.dto.cha.CardHolderAuthenticationRequest;
+import com.mercadolibre.dto.cha.CardHolderAuthenticationResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
@@ -32,8 +33,8 @@ public class AuthenticationController {
     this.CHAService = new CHAService();
   }
 
-  public Object authenticateCardHolder(final Request request, final Response response)
-      throws ApiException {
+  public CardHolderAuthenticationResponse authenticateCardHolder(
+      final Request request, final Response response) throws ApiException {
 
     final Context context = ContextAssembler.toContext(request);
 
@@ -74,7 +75,6 @@ public class AuthenticationController {
             .withParams(request.queryString())
             .build());
 
-    // TODO: modelado del response
     return CHAService.authenticate(context, chaRequest, callerId, cardToken);
   }
 

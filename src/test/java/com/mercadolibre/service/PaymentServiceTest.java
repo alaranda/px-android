@@ -17,7 +17,6 @@ import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -35,7 +34,6 @@ public class PaymentServiceTest {
       "105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb";
   private static final String CLIENT_ID_TEST = "000000";
   private static final String CALLER_ID_TEST = "1111111";
-  public static final String REQUEST_ID = UUID.randomUUID().toString();
 
   public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 

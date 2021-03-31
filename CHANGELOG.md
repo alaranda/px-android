@@ -2,12 +2,22 @@
 
 # Change Log
 
+## [1.36.1]
+
+### Changed
+
+- Se actualiza endpoint a prod de la API de CHA.
+
 ## [1.36.0]
 
 ### Changed
 
 - Se actualizan librerias dto-lib, px-toolkit, api-lib.
 - Se cambia restclient por meli-restclient para lograr compliance con trazabilidad.
+
+### Added
+
+- Se modela response de api CHA.
 
 ## [1.35.0]
 

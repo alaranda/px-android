@@ -11,7 +11,6 @@ import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import java.io.IOException;
-import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import spark.utils.IOUtils;
@@ -23,7 +22,6 @@ public class PreferencesValidatorTest {
   private static final String CALLER_ID_VALID = "11111";
   private static final String CALLER_ID_INVALID = "138275050";
 
-  public static final String REQUEST_ID = UUID.randomUUID().toString();
   public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 
   @Before
