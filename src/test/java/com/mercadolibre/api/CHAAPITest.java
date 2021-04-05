@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import com.mercadolibre.dto.cha.CardHolder;
+import com.mercadolibre.dto.cha.CardHolderAuthenticationResponse;
 import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
@@ -15,7 +16,6 @@ import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,6 @@ import spark.utils.IOUtils;
 public class CHAAPITest extends RestClientTestBase {
 
   private final String CARD_TOKEN_TEST = "7cfa4190465bf6104dcb78050d1d6dfa";
-  private final String REQUEST_ID = UUID.randomUUID().toString();
   private final CardHolderAuthenticationAPI cardHolderAuthenticationAPI =
       new CardHolderAuthenticationAPI();
 
@@ -43,7 +42,7 @@ public class CHAAPITest extends RestClientTestBase {
         IOUtils.toString(getClass().getResourceAsStream("/authentication/cha-wrapped.json")),
         HttpStatus.SC_OK);
 
-    final Object fos =
+    final CardHolderAuthenticationResponse fos =
         cardHolderAuthenticationAPI.authenticateCard(
             context,
             CARD_TOKEN_TEST,

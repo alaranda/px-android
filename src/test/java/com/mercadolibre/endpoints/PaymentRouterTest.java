@@ -12,7 +12,6 @@ import com.mercadolibre.api.MockMerchantOrderAPI;
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
-import com.mercadolibre.api.MockTedAPI;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
 import java.io.IOException;
@@ -163,10 +162,6 @@ public class PaymentRouterTest {
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final Response response =
         given()
@@ -212,10 +207,6 @@ public class PaymentRouterTest {
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final Response response =
         given()
@@ -260,10 +251,6 @@ public class PaymentRouterTest {
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass().getResourceAsStream("/merchantOrders/merchantOrderResponse.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final Response response =
         given()

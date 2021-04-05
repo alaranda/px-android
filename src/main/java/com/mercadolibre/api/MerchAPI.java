@@ -7,7 +7,6 @@ import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM_VERSION;
 import static com.mercadolibre.px.constants.CommonParametersNames.*;
 import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
-import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
@@ -67,10 +66,7 @@ public enum MerchAPI {
   public CompletableFuture<Either<MerchResponse, ApiError>> getAsyncCrossSellingAndDiscount(
       final Context context, final CongratsRequest congratsRequest) {
 
-    final Headers headers =
-        new Headers()
-            .add(X_REQUEST_ID, context.getRequestId())
-            .add(X_LOCATION_ENABLED, congratsRequest.getLocationEnabled());
+    final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
 
     Optional.ofNullable(context.getUserAgent())
         .map(userAgent -> headers.add(USER_AGENT, userAgent.toString()));

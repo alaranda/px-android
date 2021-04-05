@@ -1,21 +1,14 @@
 package com.mercadolibre.service;
 
-import static com.mercadolibre.constants.Constants.INTERNAL_METADATA_BANK_INFO;
 import static com.mercadolibre.constants.Constants.MERCHANT_ORDER_TYPE_ML;
 import static com.mercadolibre.constants.Constants.MERCHANT_ORDER_TYPE_MP;
-import static com.mercadolibre.constants.Constants.PIX_PAYMENT_METHOD_ID;
 import static com.mercadolibre.px.toolkit.utils.FileParserUtils.getObjectResponseFromFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
-import com.mercadolibre.api.MockTedAPI;
 import com.mercadolibre.dto.payment.PaymentDataBody;
 import com.mercadolibre.dto.payment.PaymentRequest;
 import com.mercadolibre.helper.MockTestHelper;
@@ -24,7 +17,6 @@ import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -42,7 +34,6 @@ public class PaymentServiceTest {
       "105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb";
   private static final String CLIENT_ID_TEST = "000000";
   private static final String CALLER_ID_TEST = "1111111";
-  public static final String REQUEST_ID = UUID.randomUUID().toString();
 
   public static final Context CONTEXT_ES = MockTestHelper.mockContextLibDto();
 
@@ -68,14 +59,6 @@ public class PaymentServiceTest {
             getClass()
                 .getResourceAsStream(
                     "/preference/384414502-d095679d-f7d9-4653-ad71-4fb5feda3494.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final PaymentDataBody paymentDataBody =
         getObjectResponseFromFile(
@@ -149,14 +132,6 @@ public class PaymentServiceTest {
             getClass()
                 .getResourceAsStream(
                     "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final PaymentDataBody paymentDataBody =
         getObjectResponseFromFile(
@@ -192,14 +167,6 @@ public class PaymentServiceTest {
             getClass()
                 .getResourceAsStream(
                     "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
 
     final PaymentDataBody paymentDataBody =
         getObjectResponseFromFile("/paymentRequestBody/bodyWithMOBody.json", PaymentDataBody.class);
@@ -215,286 +182,5 @@ public class PaymentServiceTest {
 
     assertThat(paymentRequest.getBody().getOrder().getId(), is(123456789L));
     assertThat(paymentRequest.getBody().getOrder().getType(), is(MERCHANT_ORDER_TYPE_MP));
-  }
-
-  @Test
-  public void getPaymentRequest_setPmWithPrefInternalMetadata_pixAm()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyAMwithPrefMerchantOrder.json", PaymentDataBody.class);
-
-    final PaymentRequest paymentRequest =
-        PaymentService.INSTANCE.getPaymentRequest(
-            CONTEXT_ES,
-            paymentDataBody,
-            PUBLIC_KEY_BLACKLABEL_AM,
-            CALLER_ID_TEST,
-            CLIENT_ID_TEST,
-            new Headers());
-
-    assertThat(paymentRequest.getBody().getPaymentMethodId(), is(PIX_PAYMENT_METHOD_ID));
-  }
-
-  @Test
-  public void getPaymentRequest_sameBankAccountOwner()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyPixAMWithPreference.json", PaymentDataBody.class);
-
-    final PaymentRequest paymentRequest =
-        PaymentService.INSTANCE.getPaymentRequest(
-            CONTEXT_ES,
-            paymentDataBody,
-            PUBLIC_KEY_BLACKLABEL_AM,
-            CALLER_ID_TEST,
-            CLIENT_ID_TEST,
-            new Headers());
-
-    assertNotNull(paymentRequest.getBody().getAdditionalInfo());
-    assertNotNull(paymentRequest.getBody().getAdditionalInfo().getBankInfo());
-    assertTrue(
-        paymentRequest.getBody().getAdditionalInfo().getBankInfo().getIsSameBankAccountOwner());
-  }
-
-  @Test
-  public void getPaymentRequest_differentBankAccountOwner()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponsePayer.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyPixAMWithPreference.json", PaymentDataBody.class);
-
-    final PaymentRequest paymentRequest =
-        PaymentService.INSTANCE.getPaymentRequest(
-            CONTEXT_ES,
-            paymentDataBody,
-            PUBLIC_KEY_BLACKLABEL_AM,
-            CALLER_ID_TEST,
-            CLIENT_ID_TEST,
-            new Headers());
-
-    assertNotNull(paymentRequest.getBody().getAdditionalInfo());
-    assertNotNull(paymentRequest.getBody().getAdditionalInfo().getBankInfo());
-    assertFalse(
-        paymentRequest.getBody().getAdditionalInfo().getBankInfo().getIsSameBankAccountOwner());
-  }
-
-  @Test(expected = ApiException.class)
-  public void getPaymentRequest_tedErrorForCollector()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_NOT_FOUND,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/invalidTedResponse.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyPixAMWithPreference.json", PaymentDataBody.class);
-
-    PaymentService.INSTANCE.getPaymentRequest(
-        CONTEXT_ES,
-        paymentDataBody,
-        PUBLIC_KEY_BLACKLABEL_AM,
-        CALLER_ID_TEST,
-        CLIENT_ID_TEST,
-        new Headers());
-  }
-
-  @Test(expected = ApiException.class)
-  public void getPaymentRequest_tedErrorForPayer()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_NOT_FOUND,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/invalidTedResponse.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyPixAMWithPreference.json", PaymentDataBody.class);
-
-    PaymentService.INSTANCE.getPaymentRequest(
-        CONTEXT_ES,
-        paymentDataBody,
-        PUBLIC_KEY_BLACKLABEL_AM,
-        CALLER_ID_TEST,
-        CLIENT_ID_TEST,
-        new Headers());
-  }
-
-  @Test
-  public void getPaymentRequest_internalMetadataBankInfo()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_MERCHANT_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/105246494-3119b11d-7f4e-4371-86b6-acd4284af2bb.json")));
-    MockTedAPI.getTed(
-        204318018L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-    MockTedAPI.getTed(
-        1111111L,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/ted/validTedResponse.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/bodyPixAMWithPreference.json", PaymentDataBody.class);
-
-    final PaymentRequest paymentRequest =
-        PaymentService.INSTANCE.getPaymentRequest(
-            CONTEXT_ES,
-            paymentDataBody,
-            PUBLIC_KEY_BLACKLABEL_AM,
-            CALLER_ID_TEST,
-            CLIENT_ID_TEST,
-            new Headers());
-
-    assertNotNull(paymentRequest.getBody().getInternalMetadata());
-    assertTrue(
-        paymentRequest.getBody().getInternalMetadata().containsKey(INTERNAL_METADATA_BANK_INFO));
-  }
-
-  @Test
-  public void getPaymentRequest_withoutBankInfo()
-      throws IOException, InterruptedException, ApiException, ExecutionException {
-    MockPublicKeyAPI.getPublicKey(
-        PUBLIC_KEY_BLACKLABEL_AM,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream("/publicKey/TEST-d783da36-74a2-4378-85d1-76f498ca92c4.json")));
-    MockPreferenceAPI.getById(
-        PREFERENCE_ORDER,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass()
-                .getResourceAsStream(
-                    "/preference/384414502-d095679d-f7d9-4653-ad71-4fb5feda3494.json")));
-
-    final PaymentDataBody paymentDataBody =
-        getObjectResponseFromFile(
-            "/paymentRequestBody/blackLabelAccountMoney.json", PaymentDataBody.class);
-
-    final PaymentRequest paymentRequest =
-        PaymentService.INSTANCE.getPaymentRequest(
-            CONTEXT_ES,
-            paymentDataBody,
-            PUBLIC_KEY_BLACKLABEL_AM,
-            CALLER_ID_TEST,
-            CLIENT_ID_TEST,
-            new Headers());
-
-    assertNull(paymentRequest.getBody().getAdditionalInfo());
-    assertNotNull(paymentRequest.getBody().getInternalMetadata());
-    assertFalse(
-        paymentRequest.getBody().getInternalMetadata().containsKey(INTERNAL_METADATA_BANK_INFO));
   }
 }

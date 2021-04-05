@@ -19,7 +19,6 @@ import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
@@ -38,7 +37,6 @@ public class PreferenceServiceTest {
   private static final String USER_ID_1 = "243962506";
   private static final String USER_ID_2 = "453962577";
   private static final String USER_ID_COW = "220115205";
-  public static final String REQUEST_ID = UUID.randomUUID().toString();
 
   @Test
   public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException()

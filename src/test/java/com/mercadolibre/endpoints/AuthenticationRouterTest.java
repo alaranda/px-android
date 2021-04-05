@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockCHAAPI;
 import com.mercadolibre.controllers.AuthenticationController;
+import com.mercadolibre.dto.cha.CardHolderAuthenticationResponse;
 import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.http.HttpMethod;
@@ -80,10 +81,10 @@ public class AuthenticationRouterTest {
     when(request.queryParams(ACCESS_TOKEN)).thenReturn(ACCESS_TOKEN_TEST);
     when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
 
-    final Object fos = authenticationController.authenticateCardHolder(request, response);
+    final CardHolderAuthenticationResponse chaResponse =
+        authenticationController.authenticateCardHolder(request, response);
 
-    // TODO check value
-    assertThat(fos, is(notNullValue()));
+    assertThat(chaResponse, is(notNullValue()));
   }
 
   @Test

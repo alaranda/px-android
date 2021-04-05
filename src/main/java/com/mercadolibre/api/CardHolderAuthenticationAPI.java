@@ -10,6 +10,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.cha.CardHolder;
+import com.mercadolibre.dto.cha.CardHolderAuthenticationResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.payment.ProcessingMode;
 import com.mercadolibre.px.dto.lib.site.Site;
@@ -74,7 +75,7 @@ public class CardHolderAuthenticationAPI {
         .toJson(request);
   }
 
-  public Object authenticateCard(
+  public CardHolderAuthenticationResponse authenticateCard(
       final Context context, final String cardToken, final CardHolder request) throws ApiException {
     final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final URIBuilder url = getPath(cardToken);
@@ -94,8 +95,7 @@ public class CardHolderAuthenticationAPI {
               HttpMethod.POST.name(), POOL_NAME, response.getStatus()));
 
       if (MeliRestUtils.isResponseSuccessful(response)) {
-        // TODO: modelado del response
-        return MeliRestUtils.responseToObject(response, Object.class);
+        return MeliRestUtils.responseToObject(response, CardHolderAuthenticationResponse.class);
       }
 
       LOGGER.error(

@@ -1,12 +1,10 @@
 package com.mercadolibre.controllers;
 
-import static com.mercadolibre.constants.Constants.LOCATION_FALSE;
 import static com.mercadolibre.constants.QueryParamsConstants.*;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
 import static com.mercadolibre.px.constants.CommonParametersNames.*;
 import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.constants.HeadersConstants.*;
-import static com.mercadolibre.utils.HeadersUtils.X_LOCATION_ENABLED;
 
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
@@ -104,11 +102,6 @@ public class CongratsController {
     final String merchantOrderId = request.queryParams(MERCHANT_ORDER_ID);
     final String merchantAccountId = request.queryParams(MERCHANT_ACCOUNT_ID);
 
-    final String locationEnabled =
-        request.headers(X_LOCATION_ENABLED) != null
-            ? request.headers(X_LOCATION_ENABLED)
-            : LOCATION_FALSE;
-
     return new CongratsRequest(
         callerId,
         clientId,
@@ -123,7 +116,6 @@ public class CongratsController {
         ifpe,
         paymentMethodsIds,
         preferenceId,
-        locationEnabled,
         merchantOrderId,
         merchantAccountId);
   }
