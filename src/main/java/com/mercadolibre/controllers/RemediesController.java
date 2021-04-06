@@ -31,6 +31,8 @@ public class RemediesController {
   private final RemediesService remediesService;
   private static final String CONTROLLER_NAME = "RemediesController";
 
+  private static final String NULL_VALUE = "null";
+
   public RemediesController() {
     this.remediesService = new RemediesService();
   }
@@ -94,7 +96,7 @@ public class RemediesController {
 
   private void validateParams(final String paymentId) throws ValidationException {
 
-    if (StringUtils.isBlank(paymentId)) {
+    if (StringUtils.isBlank(paymentId) || NULL_VALUE.equalsIgnoreCase(paymentId)) {
       final ValidationException validationException =
           new ValidationException("payment id required");
       LOGGER.error(validationException);
