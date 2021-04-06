@@ -16,7 +16,6 @@ import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.service.RemediesService;
 import com.mercadolibre.utils.assemblers.ContextAssembler;
@@ -53,8 +52,8 @@ public class RemediesController {
     final Context context = ContextAssembler.toContext(request);
     String platformHeader = request.headers(PLATFORM);
     if (StringUtils.isNotBlank(platformHeader)) {
-        Platform.from(platformHeader);
-        // Dummy parsing to raise exception in case parameter is misinformed
+      Platform.from(platformHeader);
+      // Dummy parsing to raise exception in case parameter is misinformed
     }
 
     LOGGER.info(
