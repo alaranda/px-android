@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.37.1]
+
+### Changed
+
+- Se omite excepción al intentar parsear header PLATFORM que puede contener gibberish 
+
 ## [1.37.0]
 
 ### Changed
