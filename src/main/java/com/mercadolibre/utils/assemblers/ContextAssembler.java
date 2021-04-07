@@ -43,7 +43,7 @@ public class ContextAssembler {
       try {
         final Platform platform = Platform.from(platformHeader);
         builder.platform(platform);
-      } catch (IllegalArgumentException e) {
+      } catch (IllegalStateException e) {
         // do nothing. this header may have gibberish
       }
     }
