@@ -31,8 +31,6 @@ public class RemediesController {
   private final RemediesService remediesService;
   private static final String CONTROLLER_NAME = "RemediesController";
 
-  private static final String NULL_VALUE = "null";
-
   public RemediesController() {
     this.remediesService = new RemediesService();
   }
