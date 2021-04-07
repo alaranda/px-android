@@ -1,52 +1,81 @@
 package com.mercadolibre.api;
 
-import com.mercadolibre.dto.ApiError;
-import com.mercadolibre.dto.preference.Preference;
-import com.mercadolibre.exceptions.ApiException;
-import com.mercadolibre.px.toolkit.dto.Context;
-import com.mercadolibre.utils.Either;
-import org.apache.http.HttpStatus;
-import org.junit.Test;
-import spark.utils.IOUtils;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
+import com.mercadolibre.helper.MockTestHelper;
+import com.mercadolibre.px.dto.ApiError;
+import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.preference.Preference;
+import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.restclient.RestClientTestBase;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import org.apache.http.HttpStatus;
+import org.junit.Test;
+import org.mockito.Mockito;
+import spark.utils.IOUtils;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+public class PreferenceAPITest extends RestClientTestBase {
 
-public class PreferenceAPITest {
+  final PreferenceAPI service = PreferenceAPI.INSTANCE;
+  private static final String PREFERENCE_ID = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+  private final Context context = MockTestHelper.mockContextLibDto();
 
-    final PreferenceAPI service = PreferenceAPI.INSTANCE;
-    private static final String PREFERENCE_ID = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
-    private final Context context = new Context.Builder(UUID.randomUUID().toString()).build();
+  @Test
+  public void getPreference_validPreferenceId_isOk()
+      throws ApiException, IOException, ExecutionException, InterruptedException {
+    MockPreferenceAPI.getById(
+        PREFERENCE_ID,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+    final CompletableFuture<Either<Preference, ApiError>> futurePref =
+        service.geAsyncPreference(context, PREFERENCE_ID);
+    final Preference preference = futurePref.get().getValue();
 
-    @Test
-    public void getPreference_validPreferenceId_isOk() throws ApiException, IOException, ExecutionException, InterruptedException {
-        MockPreferenceAPI.getById(PREFERENCE_ID, HttpStatus.SC_OK,
-                IOUtils.toString(getClass().getResourceAsStream("/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
-        final CompletableFuture<Either<Preference, ApiError>> futurePref = service.geAsynctPreference(context, PREFERENCE_ID);
-        final Preference preference = futurePref.get().getValue();
+    assertThat(preference.getTotalAmount(), is(BigDecimal.valueOf(4823)));
+    assertThat(preference.getExternalReference(), is(""));
+    assertThat(preference.getCollectorId(), is("138275050"));
+  }
 
-        assertThat(preference.getTotalAmount(), is(BigDecimal.valueOf(4823)));
-        assertThat(preference.getExternalReference(), is(""));
-        assertThat(preference.getCollectorId(), is(138275050L));
-    }
+  @Test
+  public void getPreference_invalidPreferenceId_notFound()
+      throws ApiException, IOException, ExecutionException, InterruptedException {
+    MockPreferenceAPI.getById(
+        "1",
+        HttpStatus.SC_NOT_FOUND,
+        IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
+    final CompletableFuture<Either<Preference, ApiError>> futurePref =
+        service.geAsyncPreference(context, "1");
+    ApiError error = futurePref.get().getAlternative();
+    assertFalse(futurePref.get().isValuePresent());
+    assertNotNull(error);
+    assertEquals(error.getStatus(), HttpStatus.SC_NOT_FOUND);
+    assertEquals(error.getError(), "invalid_id");
+    assertEquals(error.getMessage(), "preference_id not found");
+  }
 
-    @Test
-    public void getPreference_invalidPreferenceId_notFound() throws IOException {
-        try {
-            MockPreferenceAPI.getById("1", HttpStatus.SC_NOT_FOUND,
-                    IOUtils.toString(getClass().getResourceAsStream("/preference/preferenceNotFound.json")));
-            service.geAsynctPreference(context, "1");
-        } catch (final ApiException e) {
-            assertThat(e.getCode(), is("invalid_id"));
-            assertThat(e.getStatusCode(), is(HttpStatus.SC_NOT_FOUND));
-            assertThat(e.getDescription(), is("preference_id not found"));
-        }
-    }
+  @Test
+  public void getPreferenceFromFuture_throwInterruptedException_optionalEmpty()
+      throws ExecutionException, InterruptedException {
 
+    final CompletableFuture future = Mockito.mock(CompletableFuture.class);
+    when(future.get()).thenThrow(InterruptedException.class);
+
+    final Optional<Preference> optionalPreference =
+        PreferenceAPI.INSTANCE.getPreferenceFromFuture(MockTestHelper.mockContextLibDto(), future);
+
+    assertFalse(optionalPreference.isPresent());
+  }
 }

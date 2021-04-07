@@ -6,14 +6,15 @@ import com.mercadolibre.restclient.http.HttpMethod;
 
 public class MockMerchantOrderAPI {
 
-    public static void createMerchantOrder(final String collectorId, final int statusCode, final String body) {
-        MockResponse.builder()
-                .withURL(MerchantOrderAPI.buildUrl(collectorId).toString())
-                .withMethod(HttpMethod.POST)
-                .withStatusCode(statusCode)
-                .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
-                .withResponseHeader("Cache-Control", "max-age=0")
-                .withResponseBody(body)
-                .build();
-    }
+  public static void createMerchantOrder(
+      final String collectorId, final int statusCode, final String body) {
+    MockResponse.builder()
+        .withURL(MerchantOrderAPI.buildUrl(collectorId).toString())
+        .withMethod(HttpMethod.POST)
+        .withStatusCode(statusCode)
+        .withResponseHeader(ContentType.HEADER_NAME, ContentType.APPLICATION_JSON.toString())
+        .withResponseHeader("Cache-Control", "max-age=0")
+        .withResponseBody(body)
+        .build();
+  }
 }

@@ -1,9 +1,6 @@
 package com.mercadolibre;
 
-import com.mercadolibre.endpoints.ApiContextTest;
-import com.mercadolibre.endpoints.CongratsRouterTest;
-import com.mercadolibre.endpoints.PaymentRouterTest;
-import com.mercadolibre.endpoints.PreferenceRouterTest;
+import com.mercadolibre.endpoints.*;
 import com.mercadolibre.router.Router;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -14,22 +11,24 @@ import spark.Spark;
 @SuppressWarnings("PMD.UseUtilityClass")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        PaymentRouterTest.class,
-        PreferenceRouterTest.class,
-        CongratsRouterTest.class,
-        ApiContextTest.class
+  PaymentRouterTest.class,
+  PreferenceRouterTest.class,
+  CongratsRouterTest.class,
+  CapEscControllerTest.class,
+  RemediesControllerTest.class,
+  AuthenticationRouterTest.class
 })
 public class ApiTest {
 
-    @BeforeClass
-    public static void beforeSuite() {
-        Spark.port(8080);
-        new Router().init();
-        Spark.awaitInitialization();
-    }
+  @BeforeClass
+  public static void beforeSuite() {
+    Spark.port(8080);
+    new Router().init();
+    Spark.awaitInitialization();
+  }
 
-    @AfterClass
-    public static void afterSuite() {
-        Spark.stop();
-    }
+  @AfterClass
+  public static void afterSuite() {
+    Spark.stop();
+  }
 }

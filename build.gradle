@@ -1,14 +1,12 @@
 buildscript {
 	repositories {
-		maven { url "http://maven.melicloud.com/nexus/content/repositories/fury" }
-		maven { url "http://git.ml.com:8081/nexus/content/groups/Arquitectura" }
-		maven { url "http://git.ml.com:8081/nexus/content/repositories/releases" }
-		maven { url "http://central.maven.org/maven2" }
-		maven { url "http://controller.maven.apache.org/maven2" }
+		maven {
+			url "http://maven.artifacts.furycloud.io/repository/all"
+		}
 	}
 
 	dependencies {
-		classpath group: 'com.mercadolibre', name: 'i18n', version: '1.5'
+		classpath group: 'com.mercadolibre', name: 'i18n', version: "$i18nVersion"
 	}
 }
 
@@ -18,9 +16,14 @@ plugins {
 	id 'jacoco'
 	id 'idea'
 	id 'distribution'
-	id "us.kirchmeier.capsule" version "1.0.2"
+	id 'it.gianluz.capsule' version '1.0.3'
 	id 'com.monits.staticCodeAnalysis' version '2.6.4'
 }
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+javadoc.options.encoding = "UTF-8"
+jar.enabled = false
 
 mainClassName = 'com.mercadolibre.Main'
 
@@ -32,7 +35,7 @@ description = """px-checkout-mobile-payments"""
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def envType = 'development'
+def envType = 'local'
 if (project.hasProperty('production')) {
 	envType = 'production'
 }
@@ -43,22 +46,33 @@ sourceSets {
 			srcDir "src/main/resources/${envType}"
 		}
 	}
+	test {
+		resources {
+			srcDir "src/main/resources/local"
+		}
+	}
 }
 
 repositories {
-	jcenter()
-	maven { url "http://git.ml.com/nexus/content/groups/Arquitectura" }
-}
+		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
+	}
 
 dependencies {
 	compile "com.google.guava:guava:$guavaVersion"
 	compile "com.google.code.gson:gson:$gsonVersion"
 	compile "com.sparkjava:spark-core:$sparkVersion"
-	compile "com.mercadolibre.restclient:restclient-default:$restClientVersion"
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
-	compile 'commons-configuration:commons-configuration:1.10'
-	compile 'com.mercadolibre.json:json-core:0.0.9'
-	compile 'com.mercadolibre.px:px-toolkit:0.18.1'
+	compile "commons-configuration:commons-configuration:$commonsConfigurationVersion"
+	compile "com.mercadolibre.json:json-core:$jsonCoreVersion"
+	compile "com.mercadolibre.px:px-toolkit:$pxToolkitVersion"
+	compile "com.mercadolibre.px:px-dto-lib:$pxDtoLibVersion"
+	compile "com.mercadolibre.px:px-api-lib:$pxApiLibVersion"
+	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
+
+	//Melidata
+	compile('com.mercadolibre.melidata:melidata-sdk-java:1.4.0') {
+		exclude group: "javax.servlet", module: "servlet-api"
+	}
 
 	// MLAuth for access_token filter info
 	compile 'com.mercadolibre.security:mlauth:0.0.8'
@@ -71,11 +85,23 @@ dependencies {
 	compile 'org.apache.logging.log4j:log4j-core:2.11.2'
 	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.11'
 
+	// Lombok
+	compileOnly 'org.projectlombok:lombok:1.18.10'
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
 	// Test tools
 	testCompile 'junit:junit:4.12'
-	testCompile "com.mercadolibre.restclient:restclient-core:$restClientVersion:tests"
-	testCompile 'io.rest-assured:rest-assured:3.0.2'
-	testCompile 'org.mockito:mockito-core:2.28.2'
+	testCompile "com.mercadolibre.restclient:meli-restclient-core:$restClientVersion:tests"
+	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
+	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
+	testImplementation "org.mockito:mockito-inline:$mockitoCoreVersion"
+
+	// Babel
+	compile ("com.mercadolibre:i18n:$i18nVersion") {
+		exclude group: "org.apache.commons", module: "commons-io"
+	}
+
+	runtime files('lib/i18ngettext.jar') // i18n generated jar containing all the strings
 }
 
 defaultTasks 'run'
@@ -89,13 +115,12 @@ jacocoTestReport {
 		classDirectories = files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
 					'com/mercadolibre/constants',
-					'com/mercadolibre/Main.java',
-					'com/mercadolibre/dto',
+					'com/mercadolibre/Main.class',
+					'com/mercadolibre/dto'
 			])
 		})
 	}
 }
-
 
 test {
 	// Endpoint tests run from within the ApiTest Suite, avoid double run
@@ -108,18 +133,21 @@ test {
 
 check.dependsOn jacocoTestReport
 
-task app(type: FatCapsule) {
-	applicationClass 'com.mercadolibre.Main'
-	archiveName 'application.jar'
-
-	capsuleManifest {
-		minJavaVersion = '1.8.0'
-		jvmArgs = ['-Xms2g', '-Xmx2g']
+task app(type: Jar) {
+	archiveName = 'application.jar'
+	manifest {
+		attributes 'Main-Class': 'com.mercadolibre.Main'
 	}
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+task checkCodeFormat(type: Exec) {
+	commandLine './bin/check_code_format.sh'
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '4.7'
+	gradleVersion = '4.10.3'
 }
 
 staticCodeAnalysis {
@@ -139,4 +167,38 @@ distributions {
 			from app
 		}
 	}
+}
+
+apply plugin: 'com.mercadolibre.i18n'
+
+def buildJavadocFolder = "$buildDir/docs/javadoc"
+def javadocFolder = "documentation/javadoc"
+
+task deleteJavadoc(type: Delete) {
+	group "documentation"
+	delete javadocFolder
+}
+
+task createProjectJavadoc(type: Copy) {
+	group "documentation"
+	description 'Executes javadoc task and copies the result in the documentation folder.'
+
+	dependsOn javadoc
+	dependsOn deleteJavadoc
+
+	from buildJavadocFolder
+	into javadocFolder
+}
+
+task deleteJavadocBuildFolder(type: Delete) {
+	group "documentation"
+	delete buildJavadocFolder
+}
+
+createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder)
+test.finalizedBy(checkCodeFormat)
+
+i18n {
+	app = "px-checkout-mobile-payments"
+	project = "mp-apps-px"
 }
