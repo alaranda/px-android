@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.37.2]
+
+### Fix
+
+- Se fixea catcheo de excepción.
+
 ## [1.37.1]
 
 ### Fix
