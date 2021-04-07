@@ -75,7 +75,7 @@ dependencies {
 	}
 
 	// MLAuth for access_token filter info
-	compile 'com.mercadolibre.security:mlauth:0.0.8'
+	compile "com.mercadolibre.security:mlauth:$mlAuthVersion"
 
 	// Apache
 	compile 'org.apache.httpcomponents:httpcore:4.4.9'

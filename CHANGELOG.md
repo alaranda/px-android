@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.38.0]
+
+### Changed
+
+- Se actualiza mlauth.
+
 ## [1.37.2]
 
 ### Fix
