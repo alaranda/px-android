@@ -107,4 +107,42 @@ public class RemediesControllerTest {
     final ResponseHighRisk responseHighRisk = remediesResponse.getHighRisk();
     assertThat(responseHighRisk, is(nullValue()));
   }
+
+  @Test
+  public void getRemedy_invalidPlatform_throwsIllegalStateException()
+      throws ApiException, IOException {
+
+    MockPaymentAPI.getPayment(
+        PAYMENT_ID_TEST,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_highRisk.json")));
+
+    final Request request = Mockito.mock(Request.class);
+    when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);
+    when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
+    when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
+    when(request.attribute(X_REQUEST_ID)).thenReturn(REQUEST_ID_TEST);
+    when(request.headers("User-Agent")).thenReturn(USER_AGENT_HEADER);
+    when(request.url()).thenReturn("url-test");
+    when(request.headers(PLATFORM)).thenReturn("DEFINITELY_NOT_A_VALID_PLATFORM");
+    when(request.queryParams(CALLER_SITE_ID)).thenReturn(Site.MLA.getSiteId());
+    when(request.body())
+        .thenReturn(
+            IOUtils.toString(getClass().getResourceAsStream("/remedies/remedy_request.json")));
+
+    final HttpServletRequest innerRequest = Mockito.mock(HttpServletRequest.class);
+    when(innerRequest.getHeader(HeadersConstants.X_REQUEST_ID))
+        .thenReturn(UUID.randomUUID().toString());
+    when(innerRequest.getHeader(Constants.X_FORWARDED_HEADER_NAMES)).thenReturn("");
+    when(request.raw()).thenReturn(innerRequest);
+
+    final Response response = Mockito.mock(Response.class);
+
+    try {
+      remediesController.getRemedy(request, response);
+      fail("IllegalStateException was expected");
+    } catch (IllegalStateException e) {
+      // everything went well
+    }
+  }
 }
