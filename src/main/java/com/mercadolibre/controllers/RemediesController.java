@@ -96,7 +96,7 @@ public class RemediesController {
 
   private void validateParams(final String paymentId) throws ValidationException {
 
-    if (StringUtils.isBlank(paymentId) || NULL_VALUE.equalsIgnoreCase(paymentId)) {
+    if (StringUtils.isBlank(paymentId)) {
       final ValidationException validationException =
           new ValidationException("payment id required");
       LOGGER.error(validationException);

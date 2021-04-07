@@ -74,32 +74,6 @@ public class RemediesControllerTest {
   }
 
   @Test
-  public void getRemedy_with_PaymentId_in_null_400BadRequest() throws ApiException {
-
-    final Request request = Mockito.mock(Request.class);
-    when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
-    when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
-    when(request.params(PAYMENT_ID)).thenReturn("null");
-    when(request.userAgent()).thenReturn(USER_AGENT_HEADER);
-    when(request.url()).thenReturn("/v1/remedies/null");
-
-    final HttpServletRequest innerRequest = Mockito.mock(HttpServletRequest.class);
-    when(innerRequest.getHeader(HeadersConstants.X_REQUEST_ID))
-        .thenReturn(UUID.randomUUID().toString());
-    when(innerRequest.getHeader(Constants.X_FORWARDED_HEADER_NAMES)).thenReturn("");
-    when(request.raw()).thenReturn(innerRequest);
-
-    final Response response = Mockito.mock(Response.class);
-
-    try {
-      remediesController.getRemedy(request, response);
-      fail("Error payment id");
-    } catch (final ValidationException e) {
-      assertThat(e.getDescription(), is("payment id required"));
-    }
-  }
-
-  @Test
   public void getRemedy_highRiskWithoutPlatform_emptyResponse() throws ApiException, IOException {
 
     MockPaymentAPI.getPayment(
