@@ -8,7 +8,6 @@ import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
-import com.mercadolibre.melidata.MelidataService;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
@@ -17,7 +16,6 @@ import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedyInterface;
 import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
 import com.mercadolibre.service.remedy.RemedyTypes;
-import com.mercadolibre.utils.MelidataVariantHelper;
 import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +34,6 @@ public class RemediesService {
     this.remedySuggestionPaymentMethod =
         new RemedySuggestionPaymentMethod(
             new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
-    MelidataVariantHelper melidataVariantHelper =
-        new MelidataVariantHelper(MelidataService.INSTANCE);
   }
 
   /**
@@ -80,9 +76,7 @@ public class RemediesService {
     final RemediesResponse remediesResponse = new RemediesResponse();
 
     remediesInterface.forEach(
-        remedyInterface -> {
-          remedyInterface.applyRemedy(context, remediesRequest, remediesResponse);
-        });
+        remedyInterface -> remedyInterface.applyRemedy(context, remediesRequest, remediesResponse));
 
     return remediesResponse;
   }
