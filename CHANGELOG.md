@@ -4,7 +4,14 @@
 
 ## [1.37.1]
 
-- Add validation when request remedies send paymentId = null.
+### Fix
+
+- Se omite excepción al intentar parsear header PLATFORM que puede contener gibberish
+- Se generá el archivo en_US.po para las traducciones a ingles.
+
+### Changed
+
+- Se evita llamar a payments cuando el paymentId no es numerico.
 
 ## [1.37.0]
 
