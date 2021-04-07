@@ -22,19 +22,22 @@ import com.mercadolibre.utils.datadog.DatadogRemediesMetrics;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 public class RemediesService {
 
   private final RemedyTypes remedyTypes;
   private final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod;
-  private final MelidataVariantHelper melidataVariantHelper;
+
+  private final Pattern pattern = Pattern.compile("\\d+$");
 
   public RemediesService() {
     this.remedyTypes = new RemedyTypes();
     this.remedySuggestionPaymentMethod =
         new RemedySuggestionPaymentMethod(
             new RemedyCvv(), REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
-    this.melidataVariantHelper = new MelidataVariantHelper(MelidataService.INSTANCE);
+    MelidataVariantHelper melidataVariantHelper =
+        new MelidataVariantHelper(MelidataService.INSTANCE);
   }
 
   /**
@@ -52,10 +55,14 @@ public class RemediesService {
 
     final PaymentAPI paymentAPI = PaymentAPI.INSTANCE;
 
-    final CompletableFuture<Either<Payment, ApiError>> paymentFuture =
-        paymentAPI.getAsyncPayment(context, paymentId);
+    Optional<Payment> paymentOptional = Optional.empty();
 
-    Optional<Payment> paymentOptional = paymentAPI.getPaymentFromFuture(context, paymentFuture);
+    if (pattern.matcher(paymentId).matches()) {
+      final CompletableFuture<Either<Payment, ApiError>> paymentFuture =
+          paymentAPI.getAsyncPayment(context, paymentId);
+
+      paymentOptional = paymentAPI.getPaymentFromFuture(context, paymentFuture);
+    }
 
     if (!paymentOptional.isPresent()) {
       DatadogRemediesMetrics.trackRemediesInfo(REMEDY_INVALID_PAYMENT_ID, context, remediesRequest);

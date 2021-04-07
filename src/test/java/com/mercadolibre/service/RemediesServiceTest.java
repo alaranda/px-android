@@ -36,7 +36,7 @@ public class RemediesServiceTest {
 
   private static final String PAYMENT_ID_TEST = "123456789";
   private static final String CALLER_ID_TEST = "11111";
-  private RemediesService remediesService = new RemediesService();
+  private final RemediesService remediesService = new RemediesService();
 
   @Before
   public void before() {
@@ -52,7 +52,7 @@ public class RemediesServiceTest {
         IOUtils.toString(getClass().getResourceAsStream("/payment/rejected_cvv.json")));
 
     final RemediesRequest remediesRequest =
-        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
+        mockRemediesRequest(123L, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("5555", "Santander", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
@@ -82,7 +82,7 @@ public class RemediesServiceTest {
         IOUtils.toString(getClass().getResourceAsStream("/risk/17498128727.json")));
 
     final RemediesRequest remediesRequest =
-        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
+        mockRemediesRequest(123L, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("2222", "Patagonia", new BigDecimal(123), "back", 3);
     when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
@@ -111,7 +111,7 @@ public class RemediesServiceTest {
     final BigDecimal totalAmount = new BigDecimal(200);
 
     final RemediesRequest remediesRequest =
-        mockRemediesRequest(123l, CALLER_ID_TEST, Site.MLA.name());
+        mockRemediesRequest(123L, CALLER_ID_TEST, Site.MLA.name());
     final PayerPaymentMethodRejected payerPaymentMethodRejected =
         mockPayerPaymentMethod("1234", "Santander", totalAmount, "back", 3);
     when(payerPaymentMethodRejected.getPaymentTypeId()).thenReturn("credit_card");
