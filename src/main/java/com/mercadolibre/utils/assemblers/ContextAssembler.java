@@ -40,8 +40,12 @@ public class ContextAssembler {
 
     final String platformHeader = request.headers(PLATFORM);
     if (StringUtils.isNotBlank(platformHeader)) {
-      final Platform platform = Platform.from(platformHeader);
-      builder.platform(platform);
+      try {
+        final Platform platform = Platform.from(platformHeader);
+        builder.platform(platform);
+      } catch (IllegalArgumentException e) {
+        // do nothing. this header may have gibberish
+      }
     }
 
     return builder.build();

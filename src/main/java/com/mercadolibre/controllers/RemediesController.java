@@ -3,6 +3,7 @@ package com.mercadolibre.controllers;
 import static com.mercadolibre.constants.Constants.PAYMENT_ID;
 import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.PLATFORM;
 import static com.mercadolibre.px.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
@@ -11,6 +12,7 @@ import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
@@ -48,6 +50,11 @@ public class RemediesController {
       throws ApiException {
 
     final Context context = ContextAssembler.toContext(request);
+    String platformHeader = request.headers(PLATFORM);
+    if (StringUtils.isNotBlank(platformHeader)) {
+      Platform.from(platformHeader);
+      // Dummy parsing to raise exception in case parameter is misinformed
+    }
 
     LOGGER.info(
         new LogBuilder(request.attribute(HeadersConstants.X_REQUEST_ID), LogBuilder.REQUEST_IN)
