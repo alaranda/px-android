@@ -1,22 +1,31 @@
 package com.mercadolibre.dto.melidata;
 
-import com.mercadolibre.melidata.experiments.model.Experiment;
+import com.mercadolibre.melidata.experiments.ExperimentConfiguration;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
 public class VariantContainer {
-
-  private final Experiment experiment;
+  private final String experimentId;
+  private final String experimentName;
   private final String variantId;
+  private final String variantName;
+  private final ExperimentConfiguration experimentConfiguration;
 
-  public VariantContainer(final Experiment experiment, final String variantId) {
-    this.experiment = experiment;
-    this.variantId = variantId;
+  public String getConfigAsString(String key, String defaultValue) {
+    return experimentConfiguration.getConfigAsString(key, defaultValue);
   }
 
-  public Experiment getExperiment() {
-    return experiment;
+  public String getConfigAsString(String key) {
+    return experimentConfiguration.getConfigAsString(key);
   }
 
-  public String getVariantId() {
-    return variantId;
+  public Object getConfig(String key, Object defaultValue) {
+    return experimentConfiguration.getConfig(key, defaultValue);
+  }
+
+  public Object getConfig(String key) {
+    return experimentConfiguration.getConfig(key);
   }
 }

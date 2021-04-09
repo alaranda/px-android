@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.38.1]
+
+### Changed
+
+- Se actualiza melidata-sdk.
+
 ## [1.38.0]
 
 ### Changed
