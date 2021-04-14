@@ -70,7 +70,7 @@ dependencies {
 	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
 
 	//Melidata
-	compile('com.mercadolibre.melidata:melidata-sdk-java:1.4.0') {
+	compile("com.mercadolibre.melidata:melidata-sdk-java:$melidataSdkVersion") {
 		exclude group: "javax.servlet", module: "servlet-api"
 	}
 

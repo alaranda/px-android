@@ -3,17 +3,15 @@ package com.mercadolibre.utils;
 import com.mercadolibre.dto.melidata.VariantContainer;
 import com.mercadolibre.melidata.MelidataService;
 import com.mercadolibre.melidata.experiments.ExperimentConfiguration;
-import com.mercadolibre.melidata.experiments.model.Experiment;
-import com.mercadolibre.melidata.experiments.model.Variant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 public class MelidataVariantHelper {
 
-  private static final String MELIDATA_DEFAULT_KEY = "default";
+  public static final String MELIDATA_DEFAULT_KEY = "default";
 
   private MelidataService melidataService;
 
@@ -22,37 +20,34 @@ public class MelidataVariantHelper {
     this.melidataService.getExperimentService().refreshCacheSync();
   }
 
-  public List<VariantContainer> getVariantsByUser(final String payerId) {
+  public Collection<PxExperiments> getExperiments() {
+    return Arrays.asList(PxExperiments.values());
+  }
+
+  public List<VariantContainer> getVariantsBySeed(final String experimentSeed) {
     final List<VariantContainer> variantContainerList = new ArrayList<>();
 
-    if (StringUtils.isBlank(payerId)) {
+    if (StringUtils.isBlank(experimentSeed)) {
       return variantContainerList;
     }
 
-    final Collection<Experiment> activeExperiments =
-        melidataService.getExperimentService().getAllExperiments();
+    for (PxExperiments experiment : getExperiments()) {
+      String experimentName = experiment.getName();
 
-    for (Experiment e : activeExperiments) {
-      Iterator<Variant> it = e.getVariants().iterator();
+      ExperimentConfiguration experimentConfiguration =
+          melidataService.getExperimentService().getConfig(experimentName, experimentSeed);
 
-      if (!it.hasNext()) {
-        continue;
-      }
-
-      for (String variantConfig : it.next().getConfiguration().keySet()) {
-        ExperimentConfiguration experimentConfiguration =
-            melidataService
-                .getExperimentService()
-                .getConfig(e.getName(), MELIDATA_DEFAULT_KEY, variantConfig, payerId);
-
-        if (MELIDATA_DEFAULT_KEY.equalsIgnoreCase(experimentConfiguration.getVariantId())) {
-          continue;
-        }
+      if (experimentConfiguration != null
+          && !MELIDATA_DEFAULT_KEY.equalsIgnoreCase(experimentConfiguration.getVariantId())) {
 
         VariantContainer variantContainer =
-            new VariantContainer(e, experimentConfiguration.getVariantId());
+            new VariantContainer(
+                experiment.getId(),
+                experimentName,
+                experimentConfiguration.getVariantId(),
+                experiment.getVariantById(experimentConfiguration.getVariantId()).get().getName(),
+                experimentConfiguration);
         variantContainerList.add(variantContainer);
-        break;
       }
     }
 
