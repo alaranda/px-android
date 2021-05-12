@@ -1,0 +1,6 @@
+{
+  "message": "access denied, public_key is required",
+  "error": "unauthorized_public_key",
+  "status": 401,
+  "cause": []
+}
