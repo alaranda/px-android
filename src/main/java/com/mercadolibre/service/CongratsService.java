@@ -87,6 +87,9 @@ public class CongratsService {
           "bckjocnhau10018ovcg0",
           "bckjo2vhau10018ovce0");
 
+  private static final List<String> SITES_WITH_EXPENSE_SPLIT_BLOCKED =
+      Arrays.asList(Site.MLU.getSiteId(), Site.MCO.getSiteId());
+
   private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
   private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
@@ -271,13 +274,13 @@ public class CongratsService {
   private ExpenseSplit generateExpenseSplitNode(
       final Locale locale, final String paymentId, final CongratsRequest congratsRequest) {
 
-    if (!EXPENSE_SPLIT_PRODUCT_IDS.stream()
-            .anyMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
+    if (EXPENSE_SPLIT_PRODUCT_IDS.stream()
+            .noneMatch(p -> p.equalsIgnoreCase(congratsRequest.getProductId()))
         || StringUtils.isEmpty(congratsRequest.getPaymentIds())) {
       return null;
     }
 
-    if (Site.MLU.getSiteId().equalsIgnoreCase(congratsRequest.getSiteId())) {
+    if (SITES_WITH_EXPENSE_SPLIT_BLOCKED.contains(congratsRequest.getSiteId())) {
       return null;
     }
 
