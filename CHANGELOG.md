@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.38.2]
+
+### Add
+
+- Se excluye MCO del flujo de división de gastos con amigos.
+
 ## [1.38.1]
 
 ### Changed
