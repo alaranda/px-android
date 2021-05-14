@@ -2,6 +2,7 @@ package com.mercadolibre.api;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
+import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_TYPE;
 import static com.mercadolibre.px.constants.CommonParametersNames.ACCESS_TOKEN;
 import static com.mercadolibre.px.constants.CommonParametersNames.API_VERSION;
 import static com.mercadolibre.px.constants.CommonParametersNames.PUBLIC_KEY;
@@ -27,7 +28,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class InstructionsApi {
+public enum InstructionsApi {
+  INSTANCE;
 
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String POOL_NAME = "InstructionsRead";
@@ -42,22 +44,31 @@ public class InstructionsApi {
   }
 
   static URIBuilder getPath(
-      final String paymentId, final String accessToken, final String version) {
+      final String paymentId,
+      final String accessToken,
+      final String publicKey,
+      final String version,
+      String paymentTypeId) {
 
     return new URIBuilder()
         .setScheme(Config.getString("api.base.url.scheme"))
         .setHost(Config.getString("api.base.mp.url.host"))
         .setPath(String.format(Config.getString("instructions.url"), paymentId))
         .setParameter(ACCESS_TOKEN, accessToken)
-        .setParameter(PUBLIC_KEY, "test")
-        .setParameter(API_VERSION, version);
+        .setParameter(PUBLIC_KEY, publicKey)
+        .setParameter(API_VERSION, version)
+        .setParameter(PAYMENT_TYPE, paymentTypeId);
   }
 
   public Either<InstructionsResponse, ApiError> getInstructions(
-      final Context context, final String paymentId, final String accessToken) {
+      final Context context,
+      final String paymentId,
+      final String accessToken,
+      final String publicKey,
+      String paymentTypeId) {
     final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final String version = context.getUserAgent().getVersion().getVersionName();
-    final URIBuilder url = getPath(paymentId, accessToken, version);
+    final URIBuilder url = getPath(paymentId, accessToken, publicKey, version, paymentTypeId);
 
     try {
       final Response response =
@@ -77,7 +88,7 @@ public class InstructionsApi {
               context.getRequestId(),
               HttpMethod.GET.name(),
               POOL_NAME,
-              getPath(paymentId, accessToken, version).toString(),
+              getPath(paymentId, accessToken, publicKey, version, paymentTypeId).toString(),
               headers,
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
@@ -90,7 +101,7 @@ public class InstructionsApi {
               context.getRequestId(),
               HttpMethod.GET.name(),
               POOL_NAME,
-              getPath(paymentId, accessToken, version).toString(),
+              getPath(paymentId, accessToken, publicKey, version, paymentTypeId).toString(),
               headers,
               LogUtils.convertQueryParam(url.getQueryParams()),
               HttpStatus.SC_GATEWAY_TIMEOUT,
