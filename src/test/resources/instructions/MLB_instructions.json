@@ -1,0 +1,45 @@
+{
+  "amount_info": {
+    "thousands_separator": ".",
+    "decimal_separator": ",",
+    "symbol": "R$",
+    "decimal_places": 2,
+    "amount": 310,
+    "total_paid_amount": 310
+  },
+  "instructions": [
+    {
+      "type": "ticket",
+      "title": "Para concluir, você deve pagar seu boleto de R$ 310,00",
+      "interactions": [
+        {
+          "title": "Você pode fazer isso pelo Internet Banking com o seu código.",
+          "content": "23793.38029 50977.518914 99006.333308 2 86000000031000",
+          "action": {
+            "tag": "copy",
+            "label": "Copiar código",
+            "content": "23793.38029 50977.518914 99006.333308 2 86000000031000",
+            "url": ""
+          },
+          "is_splitable": true
+        },
+        {
+          "title": "Ou imprimir o boleto para pagá-lo em uma agência bancária.",
+          "action": {
+            "tag": "link",
+            "url": "https://www.mercadopago.com/mlb/payments/sandbox/ticket/helper?payment_id=1236056012&payment_method_reference_id=9775189199&caller_id=139274850&hash=6bdd2296-c983-4ccf-ad93-0ba476767515",
+            "label": "Ver boleto",
+            "content": ""
+          },
+          "content": ""
+        }
+      ],
+      "info": [],
+      "accreditation_message": "O valor será creditado em 1 ou 2 dias úteis.",
+      "secondary_info": [
+        "Enviamos o boleto por e-mail para que você o tenha disponível quando precisar."
+      ],
+      "references": []
+    }
+  ]
+}

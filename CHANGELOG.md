@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.39.0]
+
+### Added
+
+- Integración con checkout off backend
+
 ## [1.38.1]
 
 ### Changed
