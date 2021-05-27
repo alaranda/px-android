@@ -15,7 +15,7 @@ public final class PaymentMethodsUtils {
 
   private static final List<String> PM_WITH_POINT_OF_INTERACTION = Lists.newArrayList(PIX);
 
-  public static PointOfInteraction getPaymentMethodSelected(final String paymentMethodId) {
+  public static PointOfInteraction getPointOfInteraction(final String paymentMethodId) {
     return PM_WITH_POINT_OF_INTERACTION.contains(paymentMethodId)
         ? createPointOfInteraction()
         : null;

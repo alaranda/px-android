@@ -3,9 +3,7 @@ package com.mercadolibre.service;
 import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.constants.ErrorCodes.INTERNAL_ERROR;
-import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.PIX;
 
-import com.google.common.collect.Lists;
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.Order;
@@ -25,7 +23,6 @@ import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.PaymentMethodsUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
@@ -33,8 +30,6 @@ import spark.utils.StringUtils;
 
 public enum PaymentService {
   INSTANCE;
-
-  private static final List<String> PM_WITH_POINT_OF_INTERACTION = Lists.newArrayList(PIX);
 
   public Payment doPayment(final Context context, final PaymentRequest paymentRequest)
       throws ApiException {
@@ -89,7 +84,7 @@ public enum PaymentService {
     final String validationProgramId = paymentDataBody.getValidationProgramId();
 
     final PointOfInteraction pointOfInteraction =
-        PaymentMethodsUtils.getPaymentMethodSelected(paymentData.getPaymentMethod().getId());
+        PaymentMethodsUtils.getPointOfInteraction(paymentData.getPaymentMethod().getId());
 
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =
