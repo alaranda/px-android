@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.payment;
 
+import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.Getter;
@@ -43,6 +44,8 @@ public class Payment {
   private String productId;
   private String processingMode;
   private long riskExecutionId;
+  private PointOfInteraction pointOfInteraction;
+  private TransactionData transactionData;
 
   @Getter
   public static final class Collector {

@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.39.0]
+
+### Add
+
+- Se agrega point of interaction para soportar pagos de PIX.
+
 ## [1.38.2]
 
 ### Add
