@@ -11,7 +11,7 @@ public final class PaymentMethodsUtils {
   // POINT OF INTERACTION constants
   private static final String POINT_OF_INTERACTION_TYPE = "CHECKOUT";
   private static final String APPLICATION_DATA_NAME = "px-checkout-mobile-payments";
-  private static final String APPLICATION_DATA_VERSION = "v1?";
+  private static final String APPLICATION_DATA_VERSION = "v1";
 
   private static final List<String> PM_WITH_POINT_OF_INTERACTION = Lists.newArrayList(PIX);
 
