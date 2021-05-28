@@ -8,6 +8,7 @@ import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUIL
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 
+import com.mercadolibre.api.InstructionsApi;
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
 import com.mercadolibre.api.PaymentAPI;
@@ -21,6 +22,8 @@ import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.ExpenseSplit;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
+import com.mercadolibre.dto.instructions.Instruction;
+import com.mercadolibre.dto.instructions.InstructionsResponse;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.button.Button;
@@ -110,18 +113,20 @@ public class CongratsService {
   private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
   private static final String APPROVED = "approved";
   private static final int RETURNING_TIME_SECONDS = 5;
+  private static final String STATUS_PENDING = "pending";
+  private static final String STATUS_DETAIL_PENDING_WAITING_PAYMENT = "pending_waiting_payment";
 
   public CongratsService() {}
 
   /**
-   * Retorna los puntos sumados en el pago y los acmulados mas los descuentos otorgados.
+   * Retorna los puntos sumados en el pago y los acumulados mas los descuentos otorgados.
    *
    * @param context context
    * @param congratsRequest congrats request
    * @return Congrats congrats object
    * @throws ApiException API Exception
    */
-  public Congrats getPointsAndDiscounts(
+  public Congrats getPointsDiscountsAndInstructions(
       final Context context, final CongratsRequest congratsRequest) throws ApiException {
 
     String primaryPaymentId = null;
@@ -216,9 +221,9 @@ public class CongratsService {
       String redirectUrl = null;
       AutoReturn autoReturn = null;
 
+      Payment payment = optionalPayment.orElse(null);
       if (optionalPreferenceResponse.isPresent()) {
         Preference preference = optionalPreferenceResponse.get();
-        Payment payment = optionalPayment.orElse(null);
         String url;
         if ((url = getBackUrl(preference.getBackUrls())) != null) {
           backUrl = appendDataToUrl(url, congratsRequest, preference, payment);
@@ -234,6 +239,21 @@ public class CongratsService {
                       context.getLocale(), Translations.RETURNING_MERCHANT_SITE),
                   RETURNING_TIME_SECONDS);
         }
+      }
+
+      Instruction instruction = null;
+      if (hasCredentials(congratsRequest) && isOfflinePaymentMethod(payment)) {
+        Either<InstructionsResponse, ApiError> instructionResponse =
+            InstructionsApi.INSTANCE.getInstructions(
+                context,
+                primaryPaymentId,
+                congratsRequest.getAccessToken(),
+                congratsRequest.getPublicKey(),
+                payment.getPaymentTypeId());
+        instruction =
+            instructionResponse.isValuePresent()
+                ? instructionResponse.getValue().getInstructions().get(0)
+                : null;
       }
 
       final Action viewReceipt =
@@ -261,7 +281,8 @@ public class CongratsService {
           null,
           backUrl,
           redirectUrl,
-          autoReturn);
+          autoReturn,
+          instruction);
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -269,6 +290,15 @@ public class CongratsService {
               context, "Congrats Service", congratsRequest.toString(), e));
       return new Congrats();
     }
+  }
+
+  private boolean hasCredentials(final CongratsRequest congratsRequest) {
+    return congratsRequest.getAccessToken() != null && congratsRequest.getPublicKey() != null;
+  }
+
+  private boolean isOfflinePaymentMethod(final Payment payment) {
+    return STATUS_PENDING.equals(payment.getStatus())
+        && STATUS_DETAIL_PENDING_WAITING_PAYMENT.equalsIgnoreCase(payment.getStatusDetail());
   }
 
   private ExpenseSplit generateExpenseSplitNode(

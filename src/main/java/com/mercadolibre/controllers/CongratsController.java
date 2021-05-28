@@ -8,6 +8,7 @@ import static com.mercadolibre.px.constants.HeadersConstants.*;
 
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.px.constants.CommonParametersNames;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
@@ -34,7 +35,7 @@ public class CongratsController {
   }
 
   /**
-   * Recibe un accestoken y pamentsId para mostrarle al usaurio puntos y descuentos.
+   * Recibe un accesstoken y paymentsId para mostrarle al usuario puntos y descuentos.
    *
    * @param request request
    * @param response response
@@ -64,7 +65,8 @@ public class CongratsController {
             .withParams(congratsRequest.toString())
             .build());
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
 
     DatadogCongratsMetric.trackCongratsData(congrats, congratsRequest);
     return congrats;
@@ -89,6 +91,9 @@ public class CongratsController {
 
     final String productId = request.headers(PRODUCT_ID);
     if (null == productId) throw new ValidationException("productId required");
+
+    final String accessToken = request.queryParams(CommonParametersNames.ACCESS_TOKEN);
+    final String publicKey = request.queryParams(PUBLIC_KEY);
 
     final String paymentIds = request.queryParams(PAYMENT_IDS);
     final String clientId = request.queryParams(CLIENT_ID);
@@ -117,6 +122,8 @@ public class CongratsController {
         paymentMethodsIds,
         preferenceId,
         merchantOrderId,
-        merchantAccountId);
+        merchantAccountId,
+        accessToken,
+        publicKey);
   }
 }
