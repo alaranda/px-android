@@ -12,7 +12,7 @@
   },
   "payment_method_id": "pix",
   "status": "pending",
-  "status_detail": "pending_waiting_payment",
+  "status_detail": "pending_waiting_transfer",
   "point_of_interaction": {
     "type": "CHECKOUT",
     "sub_type": null,

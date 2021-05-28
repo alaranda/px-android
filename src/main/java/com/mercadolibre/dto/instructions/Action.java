@@ -6,5 +6,4 @@ public class Action {
   private String url;
   private String tag;
   private String content;
-  private boolean showMultilineCode;
 }

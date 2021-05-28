@@ -115,6 +115,7 @@ public class CongratsService {
   private static final int RETURNING_TIME_SECONDS = 5;
   private static final String STATUS_PENDING = "pending";
   private static final String STATUS_DETAIL_PENDING_WAITING_PAYMENT = "pending_waiting_payment";
+  private static final String STATUS_DETAIL_PENDING_WAITING_TRANSFER = "pending_waiting_transfer";
 
   public CongratsService() {}
 
@@ -297,8 +298,10 @@ public class CongratsService {
   }
 
   private boolean isOfflinePaymentMethod(final Payment payment) {
-    return STATUS_PENDING.equals(payment.getStatus())
-        && STATUS_DETAIL_PENDING_WAITING_PAYMENT.equalsIgnoreCase(payment.getStatusDetail());
+    return payment != null
+        && STATUS_PENDING.equals(payment.getStatus())
+        && (STATUS_DETAIL_PENDING_WAITING_PAYMENT.equalsIgnoreCase(payment.getStatusDetail())
+            || STATUS_DETAIL_PENDING_WAITING_TRANSFER.equalsIgnoreCase(payment.getStatusDetail()));
   }
 
   private ExpenseSplit generateExpenseSplitNode(

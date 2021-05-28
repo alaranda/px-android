@@ -33,6 +33,7 @@ public enum InstructionsApi {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String POOL_NAME = "InstructionsRead";
+  private static final String PATH = "/checkout/payments/%s/results";
 
   static {
     MeliRestUtils.registerPool(
@@ -48,12 +49,12 @@ public enum InstructionsApi {
       final String accessToken,
       final String publicKey,
       final String version,
-      String paymentTypeId) {
+      final String paymentTypeId) {
 
     return new URIBuilder()
         .setScheme(Config.getString("api.base.url.scheme"))
         .setHost(Config.getString("api.base.mp.url.host"))
-        .setPath(String.format(Config.getString("instructions.url"), paymentId))
+        .setPath(Config.getString("instructions.scope") + String.format(PATH, paymentId))
         .setParameter(ACCESS_TOKEN, accessToken)
         .setParameter(PUBLIC_KEY, publicKey)
         .setParameter(API_VERSION, version)
@@ -65,7 +66,7 @@ public enum InstructionsApi {
       final String paymentId,
       final String accessToken,
       final String publicKey,
-      String paymentTypeId) {
+      final String paymentTypeId) {
     final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
     final String version = context.getUserAgent().getVersion().getVersionName();
     final URIBuilder url = getPath(paymentId, accessToken, publicKey, version, paymentTypeId);
