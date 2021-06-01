@@ -45,7 +45,6 @@ public class Payment {
   private String processingMode;
   private long riskExecutionId;
   private PointOfInteraction pointOfInteraction;
-  private TransactionData transactionData;
 
   @Getter
   public static final class Collector {
