@@ -81,6 +81,8 @@ public class CongratsRouterTest {
             null,
             null,
             null,
+            null,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
