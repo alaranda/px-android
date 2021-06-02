@@ -4,9 +4,10 @@
 
 ## [1.39.0]
 
-### Add
+### Added
 
 - Se agrega point of interaction para soportar pagos de PIX.
+- Integración con checkout off backend
 
 ## [1.38.2]
 

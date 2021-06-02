@@ -1,10 +1,13 @@
 package com.mercadolibre.dto.congrats;
 
+import com.mercadolibre.dto.instructions.Instruction;
 import com.mercadolibre.px.dto.lib.button.Button;
 import com.mercadolibre.px.dto.lib.text.Text;
 import java.util.Map;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class Congrats {
 
   private Points mpuntos;
@@ -21,34 +24,7 @@ public class Congrats {
   private String redirectUrl;
   private AutoReturn autoReturn;
 
-  public Congrats(
-      final Points points,
-      final Discounts discounts,
-      final Set<CrossSelling> crossSelling,
-      final Action viewReceipt,
-      final Text topTextBox,
-      final boolean customOrder,
-      final ExpenseSplit expenseSplit,
-      final Map<String, String> paymentMethodsImages,
-      final Button primaryButton,
-      final Button secondaryButton,
-      final String backUrl,
-      final String redirectUrl,
-      final AutoReturn autoReturn) {
-    this.mpuntos = points;
-    this.discounts = discounts;
-    this.crossSelling = crossSelling;
-    this.viewReceipt = viewReceipt;
-    this.topTextBox = topTextBox;
-    this.customOrder = customOrder;
-    this.expenseSplit = expenseSplit;
-    this.paymentMethodsImages = paymentMethodsImages;
-    this.primaryButton = primaryButton;
-    this.secondaryButton = secondaryButton;
-    this.backUrl = backUrl;
-    this.redirectUrl = redirectUrl;
-    this.autoReturn = autoReturn;
-  }
+  private Instruction instructions;
 
   public Congrats() {
     this.mpuntos = null;
@@ -116,6 +92,10 @@ public class Congrats {
 
   public String getRedirectUrl() {
     return redirectUrl;
+  }
+
+  public Instruction getInstructions() {
+    return instructions;
   }
 
   public String toString() {
