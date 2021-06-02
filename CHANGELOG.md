@@ -11,7 +11,7 @@
 
 ## [1.38.2]
 
-### Add
+### Added
 
 - Se excluye MCO del flujo de división de gastos con amigos.
 
