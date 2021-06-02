@@ -8,12 +8,13 @@ import static org.junit.Assert.assertNull;
 import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import org.junit.Test;
 
-public class PaymentMethodsUtilsTest {
+public class PointOfInteractionUtilsTest {
 
   @Test
   public void testPointOfInteraction_get() {
 
-    final PointOfInteraction pointOfInteraction = PaymentMethodsUtils.getPointOfInteraction(PIX);
+    final PointOfInteraction pointOfInteraction =
+        PointOfInteractionUtils.getPointOfInteraction(PIX);
 
     assertNotNull(pointOfInteraction);
     assertNotNull(pointOfInteraction.getType());
@@ -23,7 +24,8 @@ public class PaymentMethodsUtilsTest {
   @Test
   public void testPointOfInteraction_null() {
 
-    final PointOfInteraction pointOfInteraction = PaymentMethodsUtils.getPointOfInteraction(VISA);
+    final PointOfInteraction pointOfInteraction =
+        PointOfInteractionUtils.getPointOfInteraction(VISA);
 
     assertNull(pointOfInteraction);
   }

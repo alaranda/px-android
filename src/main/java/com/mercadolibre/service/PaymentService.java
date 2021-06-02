@@ -21,7 +21,7 @@ import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
-import com.mercadolibre.utils.PaymentMethodsUtils;
+import com.mercadolibre.utils.PointOfInteractionUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -84,7 +84,7 @@ public enum PaymentService {
     final String validationProgramId = paymentDataBody.getValidationProgramId();
 
     final PointOfInteraction pointOfInteraction =
-        PaymentMethodsUtils.getPointOfInteraction(paymentData.getPaymentMethod().getId());
+        PointOfInteractionUtils.getPointOfInteraction(paymentData.getPaymentMethod().getId());
 
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =

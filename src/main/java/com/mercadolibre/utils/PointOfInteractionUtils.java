@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import java.util.List;
 
-public final class PaymentMethodsUtils {
+public final class PointOfInteractionUtils {
 
   // POINT OF INTERACTION constants
   private static final String POINT_OF_INTERACTION_TYPE = "CHECKOUT";
