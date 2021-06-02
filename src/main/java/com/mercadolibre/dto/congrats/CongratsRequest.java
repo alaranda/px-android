@@ -25,4 +25,6 @@ public class CongratsRequest {
   private String preferenceId;
   private String merchantOrderId;
   private String merchantAccountId;
+  private String accessToken;
+  private String publicKey;
 }

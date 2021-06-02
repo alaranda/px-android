@@ -1,0 +1,40 @@
+{
+  "id": 1212323224,
+  "operation_type": "regular_payment",
+  "marketplace": "NONE",
+  "transaction_amount": 100,
+  "description": "Pago Bank Transfer Pix",
+  "collector": {
+    "id": 90978436
+  },
+  "payer": {
+    "email": "guest@mail.com"
+  },
+  "payment_method_id": "pix",
+  "status": "pending",
+  "status_detail": "pending_waiting_transfer",
+  "point_of_interaction": {
+    "type": "CHECKOUT",
+    "sub_type": null,
+    "application_data": {
+      "name": "checkout-off",
+      "version": "v1"
+    },
+    "transaction_data": {
+      "bank_info": {
+        "payer": {
+          "account_id": null,
+          "long_name": null
+        },
+        "collector": {
+          "account_id": null,
+          "long_name": null,
+          "account_holder_name": "NAME REGISTRADO EN DICT"
+        }
+      },
+
+      "qr_code_base64": "MDAwMjAxMjY1MzAwMTRici5nb3YuYmNiLnBpeDAxMzF0ZXN0X3VzZXJfODAyMTY3MDVAdGVzdHVzZXIuY29tNTIwNDAwMDA1MzAzOTg2NTQwNTExLjAxNTgwMkJSNTkxM0Z1bGFubyBkZSBUYWw2MDA4U2FvIFBhdWw2MTA5MDEyMjctMjAwNjIwNzA1MDMqKio2MzA0QTBBOQ",
+      "qr_code": "00020126530014br.gov.bcb.pix0131guest@mail.com520400005303986540511.015802BR5913Fulano de Tal6008Sao Paul610901227-20062070503***6304A0A9"
+    }
+  }
+}
