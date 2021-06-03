@@ -6,11 +6,12 @@
 
 ### Added
 
+- Se agrega point of interaction para soportar pagos de PIX.
 - Integración con checkout off backend
 
 ## [1.38.2]
 
-### Add
+### Added
 
 - Se excluye MCO del flujo de división de gastos con amigos.
 

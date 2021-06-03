@@ -5,6 +5,7 @@ import static com.mercadolibre.constants.Constants.PREFERENCE;
 import com.mercadolibre.dto.Order;
 import com.mercadolibre.dto.User;
 import com.mercadolibre.px.dto.lib.preference.CounterCurrency;
+import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.preference.PurposeDescriptor;
 import com.mercadolibre.px.dto.lib.preference.Tax;
@@ -53,6 +54,7 @@ public class PaymentBody {
   private Map<String, Object> metadata;
   private CounterCurrency counterCurrency;
   private String validationProgramId;
+  private PointOfInteraction pointOfInteraction;
 
   PaymentBody(final Builder builder) {
     this.externalReference = builder.externalReference;
@@ -86,6 +88,7 @@ public class PaymentBody {
     this.counterCurrency = builder.counterCurrency;
     this.description = builder.description;
     this.validationProgramId = builder.validationProgramId;
+    this.pointOfInteraction = builder.pointOfInteraction;
   }
 
   public static final class Builder {
@@ -120,6 +123,7 @@ public class PaymentBody {
     private Map<String, Object> metadata;
     private CounterCurrency counterCurrency;
     private String validationProgramId;
+    private PointOfInteraction pointOfInteraction;
 
     public static Builder createBlackLabelBuilder(
         final PaymentData paymentData, final Preference preference) {
@@ -255,6 +259,11 @@ public class PaymentBody {
 
     public Builder withValidationProgramId(final String validationProgramId) {
       this.validationProgramId = validationProgramId;
+      return this;
+    }
+
+    public Builder withPointOfInteraction(final PointOfInteraction pointOfInteraction) {
+      this.pointOfInteraction = pointOfInteraction;
       return this;
     }
 

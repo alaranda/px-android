@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.dto.Order;
+import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.utils.HeadersUtils;
@@ -48,13 +49,15 @@ public class PaymentRequest {
         final PaymentData paymentData,
         final Preference preference,
         final String requestId,
-        final String validationProgramId) {
+        final String validationProgramId,
+        final PointOfInteraction pointOfInteraction) {
 
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
       builder.body =
           PaymentBody.Builder.createWhiteLabelBuilder(paymentData, preference)
-              .withValidationProgramId(validationProgramId);
+              .withValidationProgramId(validationProgramId)
+              .withPointOfInteraction(pointOfInteraction);
       return builder;
     }
 
@@ -63,12 +66,14 @@ public class PaymentRequest {
         final PaymentData paymentData,
         final Preference preference,
         final String requestId,
-        final String validationProgramId) {
+        final String validationProgramId,
+        final PointOfInteraction pointOfInteraction) {
       final String token = paymentData.getToken() != null ? paymentData.getToken().getId() : null;
       final Builder builder = new Builder(headers, token, requestId);
       builder.body =
           PaymentBody.Builder.createBlackLabelBuilder(paymentData, preference)
-              .withValidationProgramId(validationProgramId);
+              .withValidationProgramId(validationProgramId)
+              .withPointOfInteraction(pointOfInteraction);
       return builder;
     }
 

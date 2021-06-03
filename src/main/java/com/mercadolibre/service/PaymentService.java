@@ -15,11 +15,13 @@ import com.mercadolibre.dto.payment.PaymentRequest;
 import com.mercadolibre.dto.payment.PaymentRequestBody;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.http.Headers;
+import com.mercadolibre.utils.PointOfInteractionUtils;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -81,6 +83,9 @@ public enum PaymentService {
     final PaymentData paymentData = paymentDataBody.getPaymentData().get(0);
     final String validationProgramId = paymentDataBody.getValidationProgramId();
 
+    final PointOfInteraction pointOfInteraction =
+        PointOfInteractionUtils.getPointOfInteraction(paymentData.getPaymentMethod().getId());
+
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =
           setOrder(preference, Long.valueOf(callerId), paymentDataBody.getMerchantOrderId());
@@ -94,10 +99,16 @@ public enum PaymentService {
           clientId,
           order,
           publicKeyId,
-          validationProgramId);
+          validationProgramId,
+          pointOfInteraction);
     }
     return PaymentRequest.Builder.createWhiteLabelPaymentRequest(
-            headers, paymentData, preference, context.getRequestId(), validationProgramId)
+            headers,
+            paymentData,
+            preference,
+            context.getRequestId(),
+            validationProgramId,
+            pointOfInteraction)
         .withCallerId(publicKeyInfo.getOwnerId())
         .withClientId(publicKeyInfo.getClientId())
         .withPreference(preference)
@@ -141,10 +152,11 @@ public enum PaymentService {
       final String clientId,
       final Order order,
       final String pubicKeyId,
-      final String validationProgramId) {
+      final String validationProgramId,
+      final PointOfInteraction pointOfInteraction) {
 
     return PaymentRequest.Builder.createBlackLabelPaymentRequest(
-            headers, paymentData, preference, requestId, validationProgramId)
+            headers, paymentData, preference, requestId, validationProgramId, pointOfInteraction)
         .withCallerId(Long.valueOf(callerId))
         .withClientId(Long.valueOf(clientId))
         .withPreference(preference)
