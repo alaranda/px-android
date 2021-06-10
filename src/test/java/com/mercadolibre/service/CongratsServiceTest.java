@@ -7,8 +7,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
+import com.mercadolibre.api.MockInstructionsAPI;
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
 import com.mercadolibre.api.MockPaymentAPI;
@@ -68,7 +71,8 @@ public class CongratsServiceTest {
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
     final Congrats congrats =
-        congratsService.getPointsAndDiscounts(CONTEXT_ES, getDefaultCongratsRequestMock());
+        congratsService.getPointsDiscountsAndInstructions(
+            CONTEXT_ES, getDefaultCongratsRequestMock());
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -94,7 +98,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -121,7 +126,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getMpuntos().getAction().getTarget(), is("meli://hub"));
     assertThat(congrats.getCustomOrder(), is(false));
@@ -145,7 +151,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -175,6 +182,8 @@ public class CongratsServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -187,7 +196,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -235,6 +245,8 @@ public class CongratsServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -247,7 +259,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -279,6 +292,8 @@ public class CongratsServiceTest {
             null,
             null,
             null,
+            null,
+            null,
             null);
 
     MockLoyaltyApi.getAsyncPoints(
@@ -291,7 +306,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getCrossSelling(), notNullValue());
     assertThat(congrats.hasDiscounts(), is(true));
@@ -335,7 +351,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertThat(congrats.getMpuntos().getAction().getTarget(), is(""));
     assertThat(congrats.getCustomOrder(), is(false));
@@ -353,7 +370,8 @@ public class CongratsServiceTest {
     when(congratsRequest.getSiteId()).thenReturn("MLM");
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
 
     assertThat(congrats.getViewReceipt().getTarget(), notNullValue());
     assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
@@ -371,7 +389,8 @@ public class CongratsServiceTest {
     when(congratsRequest.getSiteId()).thenReturn("MLM");
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(MERCADOPAGO_CC);
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(context, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
 
     assertThat(congrats.getViewReceipt(), nullValue());
     assertThat(congrats.getTopTextBox(), nullValue());
@@ -418,6 +437,8 @@ public class CongratsServiceTest {
             null,
             prefId,
             null,
+            null,
+            null,
             null);
 
     MockPreferenceAPI.getById(
@@ -431,7 +452,8 @@ public class CongratsServiceTest {
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertEquals(
         "http://redirect-url-success.com"
@@ -450,6 +472,138 @@ public class CongratsServiceTest {
             + paymentId
             + "&payment_type=credit_card"
             + "&processing_mode=aggregator",
+        congrats.getRedirectUrl());
+  }
+
+  @Test
+  public void
+      getPointsDiscountsAndInstructions_OfflineMethod_WithoutCredentials_returnRedirectUrlAndNullInstructions()
+          throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = Site.MLB.getSiteId();
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            siteId,
+            paymentId,
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId,
+            null,
+            null,
+            null,
+            null);
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/pix_response_payment.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+    assertNull(congrats.getInstructions());
+    assertEquals(
+        "http://redirect-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type"
+            + "&processing_mode",
+        congrats.getRedirectUrl());
+  }
+
+  @Test
+  public void
+      getPointsDiscountsAndInstructions_OfflineMethod_WithCredentials_returnRedirectUrlAndInstructions()
+          throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = Site.MLB.getSiteId();
+    final CongratsRequest congratsRequest =
+        new CongratsRequest(
+            USER_ID_TEST,
+            CLIENT_ID_TEST,
+            siteId,
+            paymentId,
+            Platform.MP.getId(),
+            UserAgent.create("PX/Android/4.40.0"),
+            DENSITY,
+            PRODUCT_ID_INSTORE,
+            CAMPAIGN_ID_TEST,
+            FLOW_NAME,
+            false,
+            null,
+            prefId,
+            null,
+            null,
+            "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
+            "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c");
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/payment/pix_response_payment.json")));
+
+    MockInstructionsAPI.getInstructions(
+        paymentId,
+        "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
+        "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676o",
+        "ticket",
+        IOUtils.toString(getClass().getResourceAsStream("/instructions/MLB_instructions.json")),
+        HttpStatus.SC_OK);
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+    assertNotNull(congrats.getInstructions());
+    assertEquals(
+        "http://redirect-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type"
+            + "&processing_mode",
         congrats.getRedirectUrl());
   }
 
@@ -475,6 +629,8 @@ public class CongratsServiceTest {
             null,
             prefId,
             null,
+            null,
+            null,
             null);
 
     MockPreferenceAPI.getById(
@@ -483,7 +639,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/preference/preferenceWithBackUrlAndAutoReturn.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertEquals(congrats.getAutoReturn().getLabel(), "Te llevaremos de vuelta al sitio en {0}");
     assertEquals(congrats.getAutoReturn().getSeconds(), 5);
@@ -522,6 +679,8 @@ public class CongratsServiceTest {
             null,
             prefId,
             null,
+            null,
+            null,
             null);
 
     MockPreferenceAPI.getById(
@@ -537,7 +696,8 @@ public class CongratsServiceTest {
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/payment/4141386674.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertEquals(
         "http://back-url-success.com"
@@ -582,6 +742,8 @@ public class CongratsServiceTest {
             null,
             prefId,
             null,
+            null,
+            null,
             null);
 
     MockPreferenceAPI.getById(
@@ -590,7 +752,8 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/preference/preferenceWithMalformedBackUrl.json")));
 
-    final Congrats congrats = congratsService.getPointsAndDiscounts(CONTEXT_ES, congratsRequest);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertEquals(congrats.getBackUrl(), "http://back-url-success .com");
   }

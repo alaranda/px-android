@@ -17,4 +17,5 @@ public final class QueryParamsConstants {
   public static final String MERCHANT_ORDER_ID = "merchant_order_id";
   public static final String MERCHANT_ACCOUNT_ID = "merchant_account_id";
   public static final String CARD_TOKEN = "card_token";
+  public static final String PAYMENT_TYPE = "payment_type";
 }
