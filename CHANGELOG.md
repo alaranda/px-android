@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.39.1]
+
+### Fixed
+
+- Corrección de la versión de la API de instrucciones.
+
 ## [1.39.0]
 
 ### Added
