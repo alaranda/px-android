@@ -16,9 +16,7 @@ public class MockInstructionsAPI {
       int httpStatus) {
     MockResponse.builder()
         .withURL(
-            InstructionsApi.getPath(
-                    paymentId, accessToken, publicKey, "PX/Android/2.1.2", paymentTypeId)
-                .toString())
+            InstructionsApi.getPath(paymentId, accessToken, publicKey, paymentTypeId).toString())
         .withMethod(HttpMethod.GET)
         .withRequestHeader(HeadersConstants.X_REQUEST_ID, UUID.randomUUID().toString())
         .withStatusCode(httpStatus)

@@ -35,6 +35,7 @@ public enum InstructionsApi {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String POOL_NAME = "InstructionsRead";
   private static final String PATH = "/checkout/payments/%s/results";
+  private static final String API_VERSION_INSTRUCTIONS = "1.7";
 
   static {
     MeliRestUtils.registerPool(
@@ -51,7 +52,6 @@ public enum InstructionsApi {
       final String paymentId,
       final String accessToken,
       final String publicKey,
-      final String version,
       final String paymentTypeId) {
 
     return new URIBuilder()
@@ -62,7 +62,7 @@ public enum InstructionsApi {
                 + String.format(PATH, paymentId))
         .setParameter(ACCESS_TOKEN, accessToken)
         .setParameter(PUBLIC_KEY, publicKey)
-        .setParameter(API_VERSION, version)
+        .setParameter(API_VERSION, API_VERSION_INSTRUCTIONS)
         .setParameter(PAYMENT_TYPE, paymentTypeId);
   }
 
@@ -73,8 +73,7 @@ public enum InstructionsApi {
       final String publicKey,
       final String paymentTypeId) {
     final Headers headers = new Headers().add(X_REQUEST_ID, context.getRequestId());
-    final String version = context.getUserAgent().getVersion().getVersionName();
-    final URIBuilder url = getPath(paymentId, accessToken, publicKey, version, paymentTypeId);
+    final URIBuilder url = getPath(paymentId, accessToken, publicKey, paymentTypeId);
 
     try {
       final Response response =
@@ -94,7 +93,7 @@ public enum InstructionsApi {
               context.getRequestId(),
               HttpMethod.GET.name(),
               POOL_NAME,
-              getPath(paymentId, accessToken, publicKey, version, paymentTypeId).toString(),
+              getPath(paymentId, accessToken, publicKey, paymentTypeId).toString(),
               headers,
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
@@ -107,7 +106,7 @@ public enum InstructionsApi {
               context.getRequestId(),
               HttpMethod.GET.name(),
               POOL_NAME,
-              getPath(paymentId, accessToken, publicKey, version, paymentTypeId).toString(),
+              getPath(paymentId, accessToken, publicKey, paymentTypeId).toString(),
               headers,
               LogUtils.convertQueryParam(url.getQueryParams()),
               HttpStatus.SC_GATEWAY_TIMEOUT,
