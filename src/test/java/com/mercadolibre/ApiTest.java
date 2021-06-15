@@ -23,6 +23,7 @@ public class ApiTest {
   @BeforeClass
   public static void beforeSuite() {
     Spark.port(8080);
+    setupPropertiesForLocal();
     new Router().init();
     Spark.awaitInitialization();
   }
@@ -30,5 +31,12 @@ public class ApiTest {
   @AfterClass
   public static void afterSuite() {
     Spark.stop();
+  }
+
+  private static void setupPropertiesForLocal() {
+    if (System.getenv("SCOPE") == null) {
+      System.setProperty("configFileName", "src/main/resources/configuration.properties");
+      System.setProperty("checksumEnabled", "false");
+    }
   }
 }

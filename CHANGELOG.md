@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.40.0]
+
+### Added
+
+- Incorporación de Configuration Services
+
 ## [1.39.0]
 
 ### Added

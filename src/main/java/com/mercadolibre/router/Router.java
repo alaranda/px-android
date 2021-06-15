@@ -45,6 +45,7 @@ public class Router implements SparkApplication {
   private final CapEscController capEscController = new CapEscController();
   private final RemediesController remediesController = new RemediesController();
   private final AuthenticationController authenticationController = new AuthenticationController();
+  private final ConfigurationController configurationController = new ConfigurationController();
 
   @Override
   public void init() {
@@ -97,6 +98,16 @@ public class Router implements SparkApplication {
           Spark.post(
               V1_CHA_URL,
               new MeteredRoute(authenticationController::authenticateCardHolder, V1_CHA_URL),
+              GsonWrapper::toJson);
+
+          Spark.post(
+              "/refresh_configs",
+              (req, res) -> configurationController.refreshConfig(),
+              GsonWrapper::toJson);
+
+          Spark.get(
+              "/get_all_configs",
+              (req, res) -> configurationController.getLoadedConfigs(),
               GsonWrapper::toJson);
 
           Spark.exception(
