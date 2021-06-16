@@ -50,10 +50,12 @@ public enum HeadersUtils {
    * Create a new Headers instance with, at most, the headers which appear in the collection of
    * header names.
    *
+   * @deprecated Use filter(...) from HeaderUtils of px-toolkit
    * @param nonFilteredHeaders the headers to be filtered
    * @param headerNamesToFilter the header names which will be kept in the resulting headers
    * @return the filtered headers
    */
+  @Deprecated
   public static Headers filter(
       final Headers nonFilteredHeaders, final Collection<String> headerNamesToFilter) {
     final Headers filteredHeaders = new Headers();

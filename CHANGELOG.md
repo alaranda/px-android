@@ -2,11 +2,24 @@
 
 # Change Log
 
-## [1.40.0]
+## [1.41.0]
 
 ### Added
 
 - Incorporación de Configuration Services
+
+## [1.40.0]
+
+### Added
+
+- Se actualiza `px-monitoring-lib` a versión 0.2.3.
+- Se unifican los logs de las requests del Router y de los Controllers (duplicados).
+- Se eliminan properties en null, tanto para el logging de JSONs como de Objects.
+
+### Fixed
+- Se oculta el AT al loguear un body.
+- RemediesController no estaba logueando por un bug.
+- No se estaban logueando los queryParams.
 
 ## [1.39.1]
 

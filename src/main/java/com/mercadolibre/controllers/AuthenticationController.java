@@ -2,7 +2,7 @@ package com.mercadolibre.controllers;
 
 import static com.mercadolibre.constants.QueryParamsConstants.CARD_TOKEN;
 import static com.mercadolibre.px.constants.ErrorCodes.BAD_REQUEST;
-import static com.mercadolibre.px.constants.HeadersConstants.*;
+import static com.mercadolibre.px.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.security.authentication.protocol.PrivateAuthenticationParameters.CALLER_ID;
 
 import com.mercadolibre.dto.cha.CardHolderAuthenticationRequest;
@@ -11,11 +11,15 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.service.CHAService;
 import com.mercadolibre.utils.CardHolderAuthenticationUtils;
 import com.mercadolibre.utils.assemblers.ContextAssembler;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,16 +68,22 @@ public class AuthenticationController {
           BAD_REQUEST, "Error parsing purchase amount", HttpStatus.SC_BAD_REQUEST);
     }
 
-    LOGGER.info(
+    LogBuilder logBuilder =
         new LogBuilder(context.getRequestId(), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
-            .withSessionId(request.headers(SESSION_ID))
             .withAcceptLanguage(context.getLocale().toString())
-            .withParams(request.queryString())
-            .build());
+            .withParams(request.queryString());
+    Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
+    LogUtils.getJsonProperties(request.body())
+        .ifPresent(
+            s ->
+                logBuilder.withMessage(
+                    String.format(
+                        "Body: %s", LogUtils.removeProperties(s, getNamePropertiesToRemove()))));
+    LOGGER.info(logBuilder.build());
 
     return CHAService.authenticate(context, chaRequest, callerId, cardToken);
   }
@@ -85,5 +95,9 @@ public class AuthenticationController {
     } catch (final Exception e) {
       throw new ApiException(BAD_REQUEST, "Error parsing body", HttpStatus.SC_BAD_REQUEST);
     }
+  }
+
+  private List<String> getNamePropertiesToRemove() {
+    return Collections.singletonList("sdk_enc_data");
   }
 }

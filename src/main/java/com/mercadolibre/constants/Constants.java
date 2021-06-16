@@ -1,7 +1,12 @@
 package com.mercadolibre.constants;
 
 import static com.mercadolibre.constants.ErrorMessagesConstants.CAN_NOT_INSTANTIATE_CONSTANTS_CLASS;
+import static com.mercadolibre.px.constants.HeadersConstants.IDEMPOTENCY;
+import static com.mercadolibre.px.constants.HeadersConstants.X_CALLER_SCOPES;
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.USER_AGENT;
 
+import com.mercadolibre.px.constants.HeadersConstants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,6 +24,11 @@ public final class Constants {
 
   public static final String USERS_URL_SCHEME = "users.url.scheme";
   public static final String USERS_URL_HOST = "users.url.host";
+
+  public static final List<String> ENABLED_HEADERS =
+      Collections.unmodifiableList(
+          Arrays.asList(
+              X_CALLER_SCOPES, USER_AGENT, ACCEPT, IDEMPOTENCY, HeadersConstants.PRODUCT_ID));
 
   public static final String FLOW_NAME = "flow_name";
   public static final String PAYMENT_ID = "paymentId";
