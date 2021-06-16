@@ -8,6 +8,7 @@ import static com.mercadolibre.px.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 import static com.mercadolibre.utils.HeadersUtils.ONE_TAP;
 
+import com.google.common.collect.Maps;
 import com.mercadolibre.dto.remedy.RemediesRequest;
 import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.constants.HeadersConstants;
@@ -16,9 +17,12 @@ import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.service.RemediesService;
 import com.mercadolibre.utils.assemblers.ContextAssembler;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,9 +33,8 @@ import spark.utils.StringUtils;
 public class RemediesController {
 
   private static final Logger LOGGER = LogManager.getLogger();
-
-  private final RemediesService remediesService;
   private static final String CONTROLLER_NAME = "RemediesController";
+  private final RemediesService remediesService;
 
   public RemediesController() {
     this.remediesService = new RemediesService();
@@ -56,15 +59,24 @@ public class RemediesController {
       // Dummy parsing to raise exception in case parameter is misinformed
     }
 
-    LOGGER.info(
+    LogBuilder logBuilder =
         new LogBuilder(request.attribute(HeadersConstants.X_REQUEST_ID), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
             .withSessionId(request.headers(SESSION_ID))
-            .withParams(request.queryParams().toString())
-            .withFlow(context.getFlow()));
+            .withFlow(context.getFlow());
+    LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
+    LogUtils.getJsonProperties(request.body())
+        .ifPresent(
+            s ->
+                logBuilder.withMessage(
+                    String.format(
+                        "Body: %s",
+                        LogUtils.replaceNameProperties(s, getNamePropertiesToReplace()))));
+
+    LOGGER.info(logBuilder.build());
 
     final String paymentId = request.params(PAYMENT_ID);
 
@@ -116,5 +128,15 @@ public class RemediesController {
             .withStatus(HttpStatus.SC_OK)
             .withResponse(remediesResponse.toLog(remediesResponse))
             .build());
+  }
+
+  private Map<String, String> getNamePropertiesToReplace() {
+    return Maps.newHashMap(
+        new HashMap<String, String>() {
+          {
+            put("installments", "ins");
+            put("total_amount", "t_a");
+          }
+        });
   }
 }

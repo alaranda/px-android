@@ -13,10 +13,12 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.service.CongratsService;
 import com.mercadolibre.utils.assemblers.ContextAssembler;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.Request;
@@ -54,16 +56,17 @@ public class CongratsController {
     final CongratsRequest congratsRequest = getCongratsRequest(request);
 
     DatadogCongratsMetric.requestCongratsMetric(congratsRequest);
-    LOGGER.info(
+
+    LogBuilder logBuilder =
         new LogBuilder(context.getRequestId(), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
-            .withSessionId(request.headers(SESSION_ID))
-            .withAcceptLanguage(context.getLocale().toString())
-            .withParams(congratsRequest.toString())
-            .build());
+            .withAcceptLanguage(context.getLocale().toString());
+    Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
+    LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
+    LOGGER.info(logBuilder.build());
 
     final Congrats congrats =
         congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);

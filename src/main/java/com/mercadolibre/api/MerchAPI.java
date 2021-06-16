@@ -1,5 +1,6 @@
 package com.mercadolibre.api;
 
+import static com.mercadolibre.constants.Constants.ENABLED_HEADERS;
 import static com.mercadolibre.constants.Constants.FLOW_NAME;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
@@ -17,6 +18,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.px.toolkit.utils.HeadersUtils;
 import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
 import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
@@ -111,7 +113,7 @@ public enum MerchAPI {
               HttpMethod.GET.name(),
               POOL_NAME,
               URL,
-              headers,
+              HeadersUtils.filter(headers, ENABLED_HEADERS),
               LogUtils.convertQueryParam(url.getQueryParams()),
               response));
     } else {
