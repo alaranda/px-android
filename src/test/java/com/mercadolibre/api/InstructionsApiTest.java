@@ -10,6 +10,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.restclient.RestClientTestBase;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
+import com.mercadolibre.utils.ConfigurationServiceTestUtils;
 import java.io.IOException;
 import java.util.List;
 import org.apache.http.HttpStatus;
@@ -28,6 +29,7 @@ public class InstructionsApiTest extends RestClientTestBase {
 
   @Before
   public void setUp() {
+    ConfigurationServiceTestUtils.setupPropertiesForLocal();
     RequestMockHolder.clear();
   }
 

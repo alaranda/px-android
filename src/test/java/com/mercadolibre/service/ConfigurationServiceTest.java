@@ -1,5 +1,6 @@
 package com.mercadolibre.service;
 
+import com.mercadolibre.utils.ConfigurationServiceTestUtils;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +12,7 @@ public class ConfigurationServiceTest {
 
   @Before
   public void setup() {
+    ConfigurationServiceTestUtils.setupPropertiesForLocal();
     configurationService = ConfigurationService.getInstance();
   }
 
@@ -20,12 +22,10 @@ public class ConfigurationServiceTest {
     Assert.assertEquals(3, config.size());
   }
 
-  /*@Test
+  @Test
   public void testRefreshConfig_shouldCallRefreshMethod() {
-      configurationService.refreshConfig();
-      verify(configurationManager, times(1)).refresh();
-      System.out.println("testRefreshConfig_shouldCallRefreshMethod");
-  }*/
+    configurationService.refreshConfig();
+  }
 
   @Test
   public void testLongByName() {
@@ -35,6 +35,6 @@ public class ConfigurationServiceTest {
 
   @Test
   public void testStringByName() {
-    Assert.assertEquals("v1", configurationService.getLongByName("instructions.scope"));
+    Assert.assertEquals("/v1", configurationService.getStringByName("instructions.scope"));
   }
 }

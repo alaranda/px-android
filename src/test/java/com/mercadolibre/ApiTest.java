@@ -2,6 +2,7 @@ package com.mercadolibre;
 
 import com.mercadolibre.endpoints.*;
 import com.mercadolibre.router.Router;
+import com.mercadolibre.utils.ConfigurationServiceTestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -16,14 +17,15 @@ import spark.Spark;
   CongratsRouterTest.class,
   CapEscControllerTest.class,
   RemediesControllerTest.class,
-  AuthenticationRouterTest.class
+  AuthenticationRouterTest.class,
+  ConfigurationControllerTest.class
 })
 public class ApiTest {
 
   @BeforeClass
   public static void beforeSuite() {
     Spark.port(8080);
-    setupPropertiesForLocal();
+    ConfigurationServiceTestUtils.setupPropertiesForLocal();
     new Router().init();
     Spark.awaitInitialization();
   }
@@ -31,12 +33,5 @@ public class ApiTest {
   @AfterClass
   public static void afterSuite() {
     Spark.stop();
-  }
-
-  private static void setupPropertiesForLocal() {
-    if (System.getenv("SCOPE") == null) {
-      System.setProperty("configFileName", "src/main/resources/configuration.properties");
-      System.setProperty("checksumEnabled", "false");
-    }
   }
 }
