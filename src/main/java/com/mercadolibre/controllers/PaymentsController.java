@@ -17,6 +17,7 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.service.PaymentService;
@@ -25,6 +26,7 @@ import com.mercadolibre.utils.assemblers.ContextAssembler;
 import com.mercadolibre.utils.datadog.DatadogTransactionsMetrics;
 import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
@@ -56,16 +58,18 @@ public enum PaymentsController {
 
     final Context context = ContextAssembler.toContext(request);
 
-    LOGGER.info(
+    LogBuilder logBuilder =
         new LogBuilder(context.getRequestId(), REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
-            .withSessionId(request.headers(SESSION_ID))
             .withAcceptLanguage(context.getLocale().toString())
-            .withParams(request.queryString())
-            .build());
+            .withParams(request.queryString());
+    Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
+    LogUtils.getJsonProperties(request.body())
+        .ifPresent(s -> logBuilder.withMessage(String.format("Body: %s", s)));
+    LOGGER.info(logBuilder.build());
 
     final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
     final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
@@ -135,17 +139,20 @@ public enum PaymentsController {
     final Context context = ContextAssembler.toContext(request);
     final PaymentRequest paymentRequest = getPaymentRequest(request, context);
 
-    LOGGER.info(
-        new LogBuilder(context.getRequestId(), REQUEST_IN)
+    LogBuilder logBuilder =
+        new LogBuilder(context.getRequestId(), LogBuilder.REQUEST_IN)
             .withSource(CONTROLLER_NAME)
             .withMethod(request.requestMethod())
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
-            .withSessionId(request.headers(SESSION_ID))
-            .withParams(request.queryString())
-            .withPreferenceId(paymentRequest.getPreference().getId())
             .withAcceptLanguage(context.getLocale().toString())
-            .build());
+            .withPreferenceId(paymentRequest.getPreference().getId());
+    Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
+    LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
+    LogUtils.getJsonProperties(request.body())
+        .ifPresent(s -> logBuilder.withMessage(String.format("Body: %s", s)));
+
+    LOGGER.info(logBuilder.build());
 
     final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
     final String flow =

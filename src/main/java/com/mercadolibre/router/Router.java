@@ -13,10 +13,8 @@ import com.mercadolibre.controllers.*;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.exceptions.ValidationException;
-import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
 import com.mercadolibre.px.monitoring.lib.new_relic.NewRelicUtils;
 import com.mercadolibre.px.monitoring.lib.new_relic.dto.NewRelicRequest;
-import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px_config.ApiContext;
 import com.mercadolibre.px_config.Config;
@@ -181,7 +179,7 @@ public class Router implements SparkApplication {
     afterAfter(DatadogRequestMetric::incrementRequestCounter);
   }
 
-  private static void setRequestIdAndLogRequest(final Request request) {
+  private static void setRequestId(final Request request) {
     request.attribute(Constants.API_CONTEXT, ApiContext.getApiContextFromScope(Config.getSCOPE()));
 
     String requestId = request.headers(X_REQUEST_ID);
@@ -191,26 +189,11 @@ public class Router implements SparkApplication {
           requestInLogBuilder(requestId).withMessage("Start new request ID: " + requestId).build());
     }
 
-    LogBuilder logBuilder =
-        new LogBuilder(requestId, LogBuilder.REQUEST_IN)
-            .withMethod(request.requestMethod())
-            .withUrl(request.url())
-            .withUserAgent(request.userAgent())
-            .withSessionId(request.headers(SESSION_ID))
-            .withAcceptLanguage(request.headers(LANGUAGE));
-
-    LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
-    if (!isBlank(request.body())) {
-      logBuilder.withMessage(String.format("Body: %s", request.body()));
-    }
-
-    LOGGER.info(logBuilder.build());
-
     request.attribute(X_REQUEST_ID, requestId);
   }
 
   private void setupFilters() {
-    Spark.before("/px_mobile/*", (request, response) -> setRequestIdAndLogRequest(request));
+    Spark.before("/px_mobile/*", (request, response) -> setRequestId(request));
     Spark.before(
         (request, response) -> request.attribute(REQUEST_START_HEADER, System.currentTimeMillis()));
     Spark.after(Router::setHeaders);
