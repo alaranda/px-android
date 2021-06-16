@@ -1,6 +1,5 @@
 package com.mercadolibre.service;
 
-import com.mercadolibre.utils.ConfigurationServiceTestUtils;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +11,6 @@ public class ConfigurationServiceTest {
 
   @Before
   public void setup() {
-    ConfigurationServiceTestUtils.setupPropertiesForLocal();
     configurationService = ConfigurationService.getInstance();
   }
 

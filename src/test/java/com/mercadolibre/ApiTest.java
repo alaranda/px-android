@@ -2,7 +2,6 @@ package com.mercadolibre;
 
 import com.mercadolibre.endpoints.*;
 import com.mercadolibre.router.Router;
-import com.mercadolibre.utils.ConfigurationServiceTestUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -25,7 +24,6 @@ public class ApiTest {
   @BeforeClass
   public static void beforeSuite() {
     Spark.port(8080);
-    ConfigurationServiceTestUtils.setupPropertiesForLocal();
     new Router().init();
     Spark.awaitInitialization();
   }

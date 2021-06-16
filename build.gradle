@@ -130,6 +130,8 @@ test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
+	systemProperty("configFileName", "src/main/resources/configuration.properties")
+	systemProperty("checksumEnabled", false)
 }
 
 check.dependsOn jacocoTestReport
