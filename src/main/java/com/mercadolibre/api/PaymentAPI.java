@@ -51,6 +51,13 @@ public enum PaymentAPI {
             pool.withConnectionTimeout(
                     Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
                 .withSocketTimeout(Config.getLong("payment.socket.timeout")));
+
+    MeliRestUtils.registerPool(
+        POOL_NAME_READ,
+        pool ->
+            pool.withConnectionTimeout(
+                    Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
+                .withSocketTimeout(Config.getLong("payment.socket.timeout")));
   }
 
   /**
