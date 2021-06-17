@@ -2,6 +2,11 @@
 
 # Change Log
 
+## [1.40.1]
+
+### Fixed
+- Se crea la pool `PaymentsRead`, ya que estabamos utilizando `PaymentsWrite` para ambas requests.
+
 ## [1.40.0]
 
 ### Added
