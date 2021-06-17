@@ -68,6 +68,7 @@ dependencies {
 	compile "com.mercadolibre.px:px-dto-lib:$pxDtoLibVersion"
 	compile "com.mercadolibre.px:px-api-lib:$pxApiLibVersion"
 	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
+	implementation "com.mercadolibre:config-utils:${configsVersion}"
 
 	//Melidata
 	compile("com.mercadolibre.melidata:melidata-sdk-java:$melidataSdkVersion") {
@@ -81,8 +82,8 @@ dependencies {
 	compile 'org.apache.httpcomponents:httpcore:4.4.9'
 
 	// Metrics and logs
-	compile 'org.apache.logging.log4j:log4j-api:2.11.2'
-	compile 'org.apache.logging.log4j:log4j-core:2.11.2'
+	compile 'org.apache.logging.log4j:log4j-api:2.14.1'
+	compile 'org.apache.logging.log4j:log4j-core:2.14.1'
 	compile 'com.mercadolibre.metrics:datadog-metric-wrapper:0.0.11'
 
 	// Lombok
@@ -129,6 +130,8 @@ test {
 	testLogging {
 		exceptionFormat = 'full'
 	}
+	systemProperty("configFileName", "src/main/resources/configuration.properties")
+	systemProperty("checksumEnabled", false)
 }
 
 check.dependsOn jacocoTestReport

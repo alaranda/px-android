@@ -21,11 +21,19 @@ public class Main {
   private static final int FURY_PORT = 8080;
 
   public static void main(String[] args) {
+    setupPropertiesForLocal();
     setupSparkServer();
     Spark.port(FURY_PORT);
     new Router().init();
     Spark.awaitInitialization();
     LOGGER.info("Listening on port " + FURY_PORT);
+  }
+
+  private static void setupPropertiesForLocal() {
+    if (System.getenv("SCOPE") == null) {
+      System.setProperty("configFileName", "src/main/resources/configuration.properties");
+      System.setProperty("checksumEnabled", "false");
+    }
   }
 
   private static void setupSparkServer() {

@@ -32,7 +32,7 @@ import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.text.Text;
-import com.mercadolibre.px_config.Config;
+import com.mercadolibre.service.ConfigurationService;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
 import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
@@ -77,7 +77,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   public static final String CREDIT_CARD_WITHOUT_ESC = "credit_card_without_esc";
 
   private static final List<String> hybridCardBins =
-      Arrays.asList(StringUtils.split(Config.getString("hybrid.cards.bins"), "|"));
+      Arrays.asList(
+          StringUtils.split(
+              ConfigurationService.getInstance().getStringByName("hybrid.cards.bins"), "|"));
 
   public RemedySuggestionPaymentMethod(
       final RemedyCvv remedyCvv, final String remedyTitle, final String remedyMessage) {

@@ -16,7 +16,8 @@ import spark.Spark;
   CongratsRouterTest.class,
   CapEscControllerTest.class,
   RemediesControllerTest.class,
-  AuthenticationRouterTest.class
+  AuthenticationRouterTest.class,
+  ConfigurationControllerTest.class
 })
 public class ApiTest {
 
