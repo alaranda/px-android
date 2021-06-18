@@ -6,7 +6,7 @@
 
 ### Changed
 
-- Se eliminan el logueo de `PaymentsRead` debido a que sólo mostraba como información relevante el PayemntId.
+- Se elimina el logueo de `PaymentsRead` debido a que sólo mostraba como información relevante el PaymentId.
 
 ## [1.41.0]
 
