@@ -23,6 +23,7 @@ import com.mercadolibre.restclient.Response;
 import com.mercadolibre.restclient.exception.RestException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.http.HttpMethod;
+import com.mercadolibre.service.ConfigurationService;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +43,9 @@ public enum InstructionsApi {
         pool ->
             pool.withConnectionTimeout(
                     Config.getLong(Constants.SERVICE_CONNECTION_TIMEOUT_PROPERTY_KEY))
-                .withSocketTimeout(Config.getLong("instructions.socket.timeout")));
+                .withSocketTimeout(
+                    ConfigurationService.getInstance()
+                        .getLongByName("instructions.socket.timeout")));
   }
 
   static URIBuilder getPath(
@@ -54,7 +57,9 @@ public enum InstructionsApi {
     return new URIBuilder()
         .setScheme(Config.getString("api.base.url.scheme"))
         .setHost(Config.getString("api.base.mp.url.host"))
-        .setPath(Config.getString("instructions.scope") + String.format(PATH, paymentId))
+        .setPath(
+            ConfigurationService.getInstance().getStringByName("instructions.scope")
+                + String.format(PATH, paymentId))
         .setParameter(ACCESS_TOKEN, accessToken)
         .setParameter(PUBLIC_KEY, publicKey)
         .setParameter(API_VERSION, API_VERSION_INSTRUCTIONS)
