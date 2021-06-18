@@ -196,7 +196,7 @@ public enum PaymentAPI {
       final String httpMethod,
       final String poolName) {
     if (isSuccess(response.getStatus())) {
-      LOGGER.info(
+      LOGGER.debug(
           LogUtils.getResponseLogWithoutResponseBody(
               context.getRequestId(),
               httpMethod,
