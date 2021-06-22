@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.41.1]
+
+### Changed
+
+- Se elimina el logueo de `PaymentsRead` debido a que sólo mostraba como información relevante el PaymentId.
+
 ## [1.41.0]
 
 ### Added
