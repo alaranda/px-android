@@ -2,12 +2,14 @@ package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 @AllArgsConstructor
 @Getter
+@Builder
 public class CongratsRequest {
 
   private String userId;
@@ -27,4 +29,5 @@ public class CongratsRequest {
   private String merchantAccountId;
   private String accessToken;
   private String publicKey;
+  private String paymentTypeId;
 }

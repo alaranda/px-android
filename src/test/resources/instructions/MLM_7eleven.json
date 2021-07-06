@@ -1,0 +1,50 @@
+{
+  "amount_info": {
+    "thousands_separator": ",",
+    "decimal_separator": ".",
+    "symbol": "$",
+    "decimal_places": 2,
+    "amount": 343.65,
+    "total_paid_amount": 343.65
+  },
+  "instructions": [
+    {
+      "accreditation_message": "El pago se acreditará en menos de 1h.",
+      "actions": [],
+      "geolocation": {
+        "enabled": true
+      },
+      "info": [
+        "Indicale al cajero que es un pago de servicios BBVA Bancomer y te pedirá estos datos"
+      ],
+      "references": [
+        {
+          "label": "Número de convenio CIE",
+          "field_value": [
+            "0641",
+            "375"
+          ],
+          "separator": " ",
+          "comment": null
+        },
+        {
+          "label": "Referencia",
+          "field_value": [
+            "6001",
+            "8905",
+            "053"
+          ],
+          "separator": " ",
+          "comment": null
+        }
+      ],
+      "secondary_info": [
+        "También enviamos estos datos a tu email"
+      ],
+      "tertiary_info": [],
+      "subtitle": "Paga con estos datos",
+      "title": "Listo, solo te falta depositar $ 343.65 en el 7-Eleven más cercano",
+      "type": "7eleven"
+    }
+  ]
+}

@@ -66,24 +66,18 @@ public class CongratsRouterTest {
             .addParameter(IFPE, "true");
 
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            Site.MLA.name(),
-            PAYMENT_IDS_TEST,
-            PLATFORM_TEST_MP,
-            USER_AGENT_IOS,
-            DENSITY,
-            PRODUCT_ID_1,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(Site.MLA.name())
+            .paymentIds(PAYMENT_IDS_TEST)
+            .platform(PLATFORM_TEST_MP)
+            .userAgent(USER_AGENT_IOS)
+            .density(DENSITY)
+            .productId(PRODUCT_ID_1)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .build();
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,

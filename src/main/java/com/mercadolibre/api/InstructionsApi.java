@@ -53,7 +53,6 @@ public enum InstructionsApi {
       final String accessToken,
       final String publicKey,
       final String paymentTypeId) {
-
     return new URIBuilder()
         .setScheme(Config.getString("api.base.url.scheme"))
         .setHost(Config.getString("api.base.mp.url.host"))
