@@ -122,12 +122,16 @@ public class RemediesController {
   }
 
   private void logRemedies(final Context context, final RemediesResponse remediesResponse) {
-    LOGGER.info(
-        requestInLogBuilder(context.getRequestId())
-            .withSource(RemediesController.class.getSimpleName())
-            .withStatus(HttpStatus.SC_OK)
-            .withResponse(remediesResponse.toLog(remediesResponse))
-            .build());
+    final String response = remediesResponse.toLog(remediesResponse);
+
+    if (StringUtils.isNotBlank(response)) {
+      LOGGER.info(
+          requestInLogBuilder(context.getRequestId())
+              .withSource(RemediesController.class.getSimpleName())
+              .withStatus(HttpStatus.SC_OK)
+              .withResponse(response)
+              .build());
+    }
   }
 
   private Map<String, String> getNamePropertiesToReplace() {
@@ -136,6 +140,11 @@ public class RemediesController {
           {
             put("installments", "ins");
             put("total_amount", "t_a");
+            put("installments_list", "ins_list");
+            put("custom_option_id", "c_opt_id");
+            put("payment_method_id", "pm_id");
+            put("payment_type_id", "p_type_id");
+            put("security_code_location", "sec_cod_loc");
           }
         });
   }

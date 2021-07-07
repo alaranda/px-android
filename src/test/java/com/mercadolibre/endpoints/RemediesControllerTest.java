@@ -8,12 +8,14 @@ import static com.mercadolibre.px.constants.HeadersConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.controllers.RemediesController;
 import com.mercadolibre.dto.remedy.RemediesResponse;
+import com.mercadolibre.dto.remedy.ResponseCvv;
 import com.mercadolibre.dto.remedy.ResponseHighRisk;
 import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.dto.lib.site.Site;
@@ -22,6 +24,7 @@ import com.mercadolibre.px.exceptions.ValidationException;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.restclient.util.Constants;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.http.HttpStatus;
@@ -144,5 +147,42 @@ public class RemediesControllerTest {
     } catch (IllegalStateException e) {
       // everything went well
     }
+  }
+
+  @Test
+  public void getRemedy_rejectedCvv_cvvResponse() throws ApiException, IOException {
+
+    MockPaymentAPI.getPayment(
+        PAYMENT_ID_TEST,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            Objects.requireNonNull(getClass().getResourceAsStream("/payment/rejected_cvv.json"))));
+
+    final Request request = Mockito.mock(Request.class);
+    when(request.params(PAYMENT_ID)).thenReturn(PAYMENT_ID_TEST);
+    when(request.queryParams(CALLER_ID)).thenReturn(CALLER_ID_TEST);
+    when(request.queryParams(CLIENT_ID)).thenReturn(CLIENT_ID_TEST);
+    when(request.attribute(X_REQUEST_ID)).thenReturn(REQUEST_ID_TEST);
+    when(request.headers("User-Agent")).thenReturn(USER_AGENT_HEADER);
+    when(request.url()).thenReturn("url-test");
+    when(request.headers(PLATFORM)).thenReturn("MP");
+    when(request.queryParams(CALLER_SITE_ID)).thenReturn(Site.MLA.getSiteId());
+    when(request.body())
+        .thenReturn(
+            IOUtils.toString(
+                Objects.requireNonNull(
+                    getClass().getResourceAsStream("/remedies/remedy_request.json"))));
+
+    final HttpServletRequest innerRequest = Mockito.mock(HttpServletRequest.class);
+    when(innerRequest.getHeader(HeadersConstants.X_REQUEST_ID))
+        .thenReturn(UUID.randomUUID().toString());
+    when(innerRequest.getHeader(Constants.X_FORWARDED_HEADER_NAMES)).thenReturn("");
+    when(request.raw()).thenReturn(innerRequest);
+
+    final Response response = Mockito.mock(Response.class);
+
+    final RemediesResponse remediesResponse = remediesController.getRemedy(request, response);
+    final ResponseCvv responseCvv = remediesResponse.getCvv();
+    assertNotNull(responseCvv);
   }
 }
