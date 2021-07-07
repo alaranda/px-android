@@ -167,24 +167,18 @@ public class CongratsServiceTest {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            Site.MLA.name(),
-            PAYMENT_IDS_TEST,
-            Platform.MP.getId(),
-            invalidUserAgent,
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(Site.MLA.name())
+            .paymentIds(PAYMENT_IDS_TEST)
+            .platform(Platform.MP.getId())
+            .userAgent(invalidUserAgent)
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .build();
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -230,24 +224,18 @@ public class CongratsServiceTest {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            Site.MLU.name(),
-            PAYMENT_IDS_TEST,
-            Platform.MP.getId(),
-            invalidUserAgent,
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(Site.MLU.name())
+            .paymentIds(PAYMENT_IDS_TEST)
+            .platform(Platform.MP.getId())
+            .userAgent(invalidUserAgent)
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .build();
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -277,24 +265,18 @@ public class CongratsServiceTest {
 
     final UserAgent invalidUserAgent = UserAgent.create("PX/Android/4.23.2");
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            Site.MLA.name(),
-            PAYMENT_IDS_TEST,
-            Platform.ML.getId(),
-            invalidUserAgent,
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(Site.MLA.name())
+            .paymentIds(PAYMENT_IDS_TEST)
+            .platform(Platform.ML.getId())
+            .userAgent(invalidUserAgent)
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .build();
 
     MockLoyaltyApi.getAsyncPoints(
         congratsRequest,
@@ -422,24 +404,19 @@ public class CongratsServiceTest {
     final String paymentId = "4141386674";
     final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            paymentId,
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,
@@ -484,24 +461,19 @@ public class CongratsServiceTest {
     final String paymentId = "1212323224";
     final String siteId = Site.MLB.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            paymentId,
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,
@@ -546,24 +518,21 @@ public class CongratsServiceTest {
     final String paymentId = "1212323224";
     final String siteId = Site.MLB.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            paymentId,
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
-            "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c");
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
+            .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,
@@ -608,30 +577,94 @@ public class CongratsServiceTest {
   }
 
   @Test
+  public void
+      getPointsDiscountsAndInstructions_OfflineMethod_WithCredentialsAndPaymentTypeId_returnRedirectUrlAndInstructions()
+          throws IOException, ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = Site.MLB.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
+            .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .paymentTypeId("pix")
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/7eleven_response_payments.json")));
+
+    MockInstructionsAPI.getInstructions(
+        paymentId,
+        "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
+        "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676o",
+        "ticket",
+        IOUtils.toString(getClass().getResourceAsStream("/instructions/MLM_7eleven.json")),
+        HttpStatus.SC_OK);
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+    assertNotNull(congrats.getInstructions());
+    assertEquals(
+        "http://redirect-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type"
+            + "&processing_mode",
+        congrats.getRedirectUrl());
+  }
+
+  @Test
   public void getPointsAndDiscounts_preferenceId_returnAutoReturnAndPrimaryButton()
       throws IOException, ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            "null",
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds("null")
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,
@@ -664,24 +697,19 @@ public class CongratsServiceTest {
     final String paymentId = "4141386674";
     final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            paymentId + ",23432432",
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId + ",23432432")
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,
@@ -727,24 +755,18 @@ public class CongratsServiceTest {
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final String siteId = Site.MLA.getSiteId();
     final CongratsRequest congratsRequest =
-        new CongratsRequest(
-            USER_ID_TEST,
-            CLIENT_ID_TEST,
-            siteId,
-            null,
-            Platform.MP.getId(),
-            UserAgent.create("PX/Android/4.40.0"),
-            DENSITY,
-            PRODUCT_ID_INSTORE,
-            CAMPAIGN_ID_TEST,
-            FLOW_NAME,
-            false,
-            null,
-            prefId,
-            null,
-            null,
-            null,
-            null);
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
 
     MockPreferenceAPI.getById(
         prefId,

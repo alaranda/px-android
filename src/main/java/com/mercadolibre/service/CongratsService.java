@@ -158,7 +158,7 @@ public class CongratsService {
     Discounts discounts = null;
 
     final Optional<Points> optionalPoints =
-        LoyaltyApi.INSTANCE.getPointsFromFuture(context, futureLoyalPoints);
+        LoyaltyApi.getPointsFromFuture(context, futureLoyalPoints);
     try {
       if (optionalPoints.isPresent()) {
         final Points loyalPoints = optionalPoints.get();
@@ -176,7 +176,7 @@ public class CongratsService {
       }
 
       Optional<MerchResponse> optionalMerchResponse =
-          MerchAPI.INSTANCE.getMerchResponseFromFuture(context, futureMerchResponse);
+          MerchAPI.getMerchResponseFromFuture(context, futureMerchResponse);
 
       if (optionalMerchResponse.isPresent()) {
         final MerchResponse merchResponse = optionalMerchResponse.get();
@@ -244,13 +244,17 @@ public class CongratsService {
 
       Instruction instruction = null;
       if (hasCredentials(congratsRequest) && isOfflinePaymentMethod(payment)) {
+        final String paymentTypeId =
+            congratsRequest.getPaymentTypeId() != null
+                ? congratsRequest.getPaymentTypeId()
+                : payment.getPaymentTypeId();
         Either<InstructionsResponse, ApiError> instructionResponse =
             InstructionsApi.INSTANCE.getInstructions(
                 context,
                 primaryPaymentId,
                 congratsRequest.getAccessToken(),
                 congratsRequest.getPublicKey(),
-                payment.getPaymentTypeId());
+                paymentTypeId);
         instruction =
             instructionResponse.isValuePresent()
                 ? instructionResponse.getValue().getInstructions().get(0)
@@ -372,12 +376,8 @@ public class CongratsService {
     }
 
     // Validacion Android
-    if (userAgent.getOperatingSystem().getName().equals(OperatingSystem.ANDROID.getName())
-        && WITHOUT_LOYALTY_CONGRATS_ANDROID.compareTo(userAgent.getVersion()) == 1) {
-      return false;
-    }
-
-    return true;
+    return !userAgent.getOperatingSystem().getName().equals(OperatingSystem.ANDROID.getName())
+        || WITHOUT_LOYALTY_CONGRATS_ANDROID.compareTo(userAgent.getVersion()) != 1;
   }
 
   private Text textIfpeCompliance(
@@ -424,15 +424,14 @@ public class CongratsService {
 
     Map<String, String> paymentMethodImages = new HashMap<>();
     paymentMethodsIdList.forEach(
-        paymentMethodId -> {
-          paymentMethodImages.put(
-              paymentMethodId,
-              OnDemandResourcesService.createOnDemandResourcesUrl(
-                  String.format(PX_PM_ODR, paymentMethodId),
-                  congratsRequest.getDensity(),
-                  context.getLocale().toString(),
-                  ODR_IMAGES_VERSION));
-        });
+        paymentMethodId ->
+            paymentMethodImages.put(
+                paymentMethodId,
+                OnDemandResourcesService.createOnDemandResourcesUrl(
+                    String.format(PX_PM_ODR, paymentMethodId),
+                    congratsRequest.getDensity(),
+                    context.getLocale().toString(),
+                    ODR_IMAGES_VERSION)));
 
     return paymentMethodImages;
   }

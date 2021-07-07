@@ -109,6 +109,7 @@ public class CongratsController {
     final String preferenceId = request.queryParams(PREF_ID);
     final String merchantOrderId = request.queryParams(MERCHANT_ORDER_ID);
     final String merchantAccountId = request.queryParams(MERCHANT_ACCOUNT_ID);
+    final String paymentTypeId = request.queryParams(PAYMENT_TYPE_ID);
 
     return new CongratsRequest(
         callerId,
@@ -127,6 +128,7 @@ public class CongratsController {
         merchantOrderId,
         merchantAccountId,
         accessToken,
-        publicKey);
+        publicKey,
+        paymentTypeId);
   }
 }
