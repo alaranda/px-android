@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.41.2]
+
+### Added
+
+- Query param `payment_method_id` is sent to instructions API to support offline payment methods internal split.
+- Builder for `CongratsRequest`
+
 ## [1.41.1]
 
 ### Changed

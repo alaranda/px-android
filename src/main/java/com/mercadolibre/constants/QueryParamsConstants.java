@@ -1,10 +1,7 @@
 package com.mercadolibre.constants;
 
-import com.mercadolibre.security.authentication.filters.config.AuthenticationFiltersConfig;
-
 public final class QueryParamsConstants {
 
-  public static final String ACCESS_TOKEN = AuthenticationFiltersConfig.ACCESS_TOKEN_PARAMETER_NAME;
   public static final String PAYMENT_METHOD_ID = "payment_method_id";
   public static final String PAYMENT_IDS = "payment_ids";
   public static final String PLATFORM = "platform";
@@ -18,4 +15,5 @@ public final class QueryParamsConstants {
   public static final String MERCHANT_ACCOUNT_ID = "merchant_account_id";
   public static final String CARD_TOKEN = "card_token";
   public static final String PAYMENT_TYPE = "payment_type";
+  public static final String PAYMENT_TYPE_ID = "payment_type_id";
 }
