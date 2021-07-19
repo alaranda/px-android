@@ -16,6 +16,8 @@ import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
+import com.mercadolibre.px.monitoring.lib.log.MonitoringUtils;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.px.toolkit.utils.HeadersUtils;
@@ -101,25 +103,24 @@ public enum PublicKeyAPI {
   private Either<PublicKey, ApiError> buildResponse(
       final Context context, final Headers headers, final URIBuilder url, final Response response) {
     if (isSuccess(response.getStatus())) {
-      LOGGER.info(
-          LogUtils.getResponseLogWithoutResponseBody(
-              context.getRequestId(),
-              HttpMethod.GET.name(),
-              POOL_NAME,
-              URL,
-              HeadersUtils.filter(headers, ENABLED_HEADERS),
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              response));
+      MonitoringUtils.logResponse(
+          context,
+          HttpMethod.GET.name(),
+          POOL_NAME,
+          URL,
+          LogUtils.convertQueryParam(url.getQueryParams()),
+          response,
+          HeadersUtils.filter(headers, ENABLED_HEADERS));
     } else {
-      LOGGER.error(
-          LogUtils.getResponseLogWithResponseBody(
-              context.getRequestId(),
-              HttpMethod.GET.name(),
-              POOL_NAME,
-              URL,
-              headers,
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              response));
+      MonitoringUtils.logWithoutResponseBody(
+          context,
+          HttpMethod.GET.name(),
+          POOL_NAME,
+          URL,
+          url.getQueryParams(),
+          response,
+          HeadersUtils.filter(headers, ENABLED_HEADERS),
+          LogBuilder.LEVEL_ERROR);
     }
     return MeliRestUtils.responseToEither(response, PublicKey.class);
   }

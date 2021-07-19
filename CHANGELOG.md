@@ -2,6 +2,15 @@
 
 # Change Log
 
+## [1.41.3]
+
+### Changed
+
+- Remove `PublicKeyRead` log (INFO -> DEBUG level) because its info only included a request-id and caller/client ids
+  (this attributes are logged when the request starts).
+- Add new shortcuts for variables/nodes on remedy requests logs.
+- Avoid to log remedies responses when they are empty.
+
 ## [1.41.2]
 
 ### Added
