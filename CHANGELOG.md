@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.41.4]
+
+### Added
+
+- Added `request_in` log to the PreferencesController. 
+
 ## [1.41.3]
 
 ### Changed
