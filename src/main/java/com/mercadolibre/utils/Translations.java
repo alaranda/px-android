@@ -64,6 +64,7 @@ public enum Translations {
 
   public static final String RETURNING_MERCHANT_SITE = "congrats.return.merchant.time";
   public static final String RETURN_MERCHANT_SITE = "congrats.return.merchant.button";
+  public static final String CONGRATS_THIRD_PARTY_CARD_INFO = "congrats.third.party.card.info";
 
   public static final String WITH_DEBIT_GENERIC_LABEL = "payment_method.with.debit.label";
   public static final String WITH_CREDIT_GENERIC_LABEL = "payment_method.with.credit.label";
@@ -187,6 +188,9 @@ public enum Translations {
         return i18nService.tr("Total a pagar", locale);
       case WITH_ACCOUNT_MONEY_GENERIC_LABEL:
         return i18nService.tr("con dinero en Mercado Pago", locale);
+      case CONGRATS_THIRD_PARTY_CARD_INFO:
+        return i18nService.tr(
+            "Por normativa del Banco Central solo guardaremos las tarjetas a tu nombre", locale);
       default:
         return "";
     }
