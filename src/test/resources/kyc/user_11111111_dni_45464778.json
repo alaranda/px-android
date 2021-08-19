@@ -1,0 +1,11 @@
+{
+  "data": {
+    "user": {
+      "id": 11111111,
+      "identification": {
+        "type": "DNI",
+        "number": "45464778"
+      }
+    }
+  }
+}

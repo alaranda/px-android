@@ -189,7 +189,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Total a pagar con dinero en Mercado Pago"));
+        is("Total a pagar con dinero disponible en Mercado Pago"));
   }
 
   @Test
@@ -545,7 +545,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Some text con dinero en Mercado Pago"));
+        is("Some text con dinero disponible en Mercado Pago"));
   }
 
   @Test
@@ -607,7 +607,7 @@ public class RemedySuggestionPaymentMethodTest {
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
-        is("Some text con dinero en Mercado Pago"));
+        is("Some text con dinero disponible en Mercado Pago"));
   }
 
   @Test

@@ -1,0 +1,13 @@
+{
+  "errors": [
+    {
+      "extensions": {
+        "code": "403"
+      },
+      "message": "Key not allowed by mask. [xxxxxxxxxxxxxx: id site_id identification ]"
+    }
+  ],
+  "data": {
+    "user": null
+  }
+}

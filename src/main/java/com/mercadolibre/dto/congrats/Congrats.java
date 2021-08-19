@@ -6,7 +6,9 @@ import com.mercadolibre.px.dto.lib.text.Text;
 import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
 @AllArgsConstructor
 public class Congrats {
 
@@ -15,16 +17,16 @@ public class Congrats {
   private Set<CrossSelling> crossSelling;
   private Action viewReceipt;
   private Text topTextBox;
-  private boolean customOrder = false;
-  private ExpenseSplit expenseSplit = null;
+  @Builder.Default private boolean customOrder = false;
+  private ExpenseSplit expenseSplit;
   private Map<String, String> paymentMethodsImages;
   private Button primaryButton;
   private Button secondaryButton;
   private String backUrl;
   private String redirectUrl;
   private AutoReturn autoReturn;
-
   private Instruction instructions;
+  private OperationInfo operationInfo;
 
   public Congrats() {
     this.mpuntos = null;
@@ -96,6 +98,10 @@ public class Congrats {
 
   public Instruction getInstructions() {
     return instructions;
+  }
+
+  public OperationInfo getOperationInfo() {
+    return operationInfo;
   }
 
   public String toString() {

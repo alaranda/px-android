@@ -3,11 +3,13 @@ package com.mercadolibre.api;
 import com.mercadolibre.px.api.lib.dto.ConfigurationCircuitBreaker;
 import com.mercadolibre.px.api.lib.dto.ConfigurationDao;
 import com.mercadolibre.px.api.lib.kyc.KycVaultDao;
+import com.mercadolibre.px.api.lib.kyc.KycVaultV2Dao;
 import com.mercadolibre.px_config.Config;
 
 public class DaoProvider {
 
   private KycVaultDao kycVaultDao;
+  private KycVaultV2Dao kycVaultV2Dao;
   private RiskApi riskApi;
 
   public DaoProvider() {
@@ -27,6 +29,7 @@ public class DaoProvider {
             Config.getString("api.base.url.host"));
 
     kycVaultDao = new KycVaultDao(configurationDao, configurationCircuitBreaker);
+    kycVaultV2Dao = new KycVaultV2Dao(configurationDao, configurationCircuitBreaker);
     riskApi =
         new RiskApi(
             new ConfigurationDao(
@@ -44,5 +47,9 @@ public class DaoProvider {
 
   public KycVaultDao getKycVaultDao() {
     return this.kycVaultDao;
+  }
+
+  public KycVaultV2Dao getKycVaultV2Dao() {
+    return kycVaultV2Dao;
   }
 }

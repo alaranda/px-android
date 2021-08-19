@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.42.0]
+
+### Added
+
+- Added third party card payment verification in Congrats in order to return an informative message saying that 
+  the card will not be saved if card doesn't belong to the app user.
+- Updated px-dto-lib from `0.36.6` o `0.56.0`.
+- Updated px-api-lib from `0.7.0` o `0.10.0`.
+- Changed `api.base.url.host` production endpoint from `api.internal.ml.com` (deprecated) to `internal.mercadolibre.com`.
+
 ## [1.41.4]
 
 ### Added
