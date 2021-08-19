@@ -5,9 +5,14 @@ import static com.mercadolibre.constants.Constants.BUTTON_LOUD;
 import static com.mercadolibre.constants.Constants.IFPE_MESSAGE_COLOR;
 import static com.mercadolibre.constants.Constants.PX_PM_ODR;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
+import static com.mercadolibre.dto.congrats.OperationInfoHierarchy.QUIET;
+import static com.mercadolibre.dto.congrats.OperationInfoType.NEUTRAL;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
+import static com.mercadolibre.utils.CardUtil.isCardPaymentFromMLA;
+import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
 
+import com.mercadolibre.api.DaoProvider;
 import com.mercadolibre.api.InstructionsApi;
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
@@ -20,10 +25,12 @@ import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.CrossSelling;
 import com.mercadolibre.dto.congrats.Discounts;
 import com.mercadolibre.dto.congrats.ExpenseSplit;
+import com.mercadolibre.dto.congrats.OperationInfo;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.dto.instructions.Instruction;
 import com.mercadolibre.dto.instructions.InstructionsResponse;
+import com.mercadolibre.dto.kyc.UserIdentificationResponse;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.button.Button;
@@ -41,8 +48,10 @@ import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.services.OnDemandResourcesService;
 import com.mercadolibre.px.toolkit.utils.Either;
+import com.mercadolibre.utils.CardUtil;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
+import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,6 +63,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -116,6 +126,8 @@ public class CongratsService {
   private static final String STATUS_PENDING = "pending";
   private static final String STATUS_DETAIL_PENDING_WAITING_PAYMENT = "pending_waiting_payment";
   private static final String STATUS_DETAIL_PENDING_WAITING_TRANSFER = "pending_waiting_transfer";
+
+  private final DaoProvider daoProvider = new DaoProvider();
 
   public CongratsService() {}
 
@@ -223,6 +235,14 @@ public class CongratsService {
       AutoReturn autoReturn = null;
 
       Payment payment = optionalPayment.orElse(null);
+
+      CompletableFuture<Either<UserIdentificationResponse, ApiError>>
+          userIdentificationFutureResponse = null;
+      if (isCardPaymentFromMLA(congratsRequest.getSiteId(), payment)) {
+        userIdentificationFutureResponse =
+            makeAsyncUserIdentificationCall(congratsRequest, context);
+      }
+
       if (optionalPreferenceResponse.isPresent()) {
         Preference preference = optionalPreferenceResponse.get();
         String url;
@@ -273,21 +293,24 @@ public class CongratsService {
               congratsRequest.getPaymentMethodsIds(),
               context.getLocale());
 
-      return new Congrats(
-          points,
-          discounts,
-          crossSelling,
-          viewReceipt,
-          ifpeCompliance,
-          isCustomOrderEnabled(congratsRequest.getProductId()),
-          generateExpenseSplitNode(context.getLocale(), primaryPaymentId, congratsRequest),
-          buildPaymentMethodsImages(context, congratsRequest),
-          primaryButton,
-          null,
-          backUrl,
-          redirectUrl,
-          autoReturn,
-          instruction);
+      return Congrats.builder()
+          .mpuntos(points)
+          .discounts(discounts)
+          .crossSelling(crossSelling)
+          .viewReceipt(viewReceipt)
+          .topTextBox(ifpeCompliance)
+          .customOrder(isCustomOrderEnabled(congratsRequest.getProductId()))
+          .expenseSplit(
+              generateExpenseSplitNode(context.getLocale(), primaryPaymentId, congratsRequest))
+          .paymentMethodsImages(buildPaymentMethodsImages(context, congratsRequest))
+          .primaryButton(primaryButton)
+          .backUrl(backUrl)
+          .redirectUrl(redirectUrl)
+          .autoReturn(autoReturn)
+          .instructions(instruction)
+          .operationInfo(
+              getOperationInfo(context, payment, congratsRequest, userIdentificationFutureResponse))
+          .build();
     } catch (Exception e) {
       METRIC_COLLECTOR.incrementCounter(CONGRATS_ERROR_BUILD_CONGRATS);
       LOGGER.error(
@@ -295,6 +318,67 @@ public class CongratsService {
               context, "Congrats Service", congratsRequest.toString(), e));
       return new Congrats();
     }
+  }
+
+  private CompletableFuture<Either<UserIdentificationResponse, ApiError>>
+      makeAsyncUserIdentificationCall(
+          final CongratsRequest congratsRequest, final Context context) {
+    DatadogCongratsMetric.trackCongratsKyCRequest(congratsRequest);
+    return UserIdentificationService.INSTANCE.getAsyncUserIdentification(
+        congratsRequest.getUserId(), context);
+  }
+
+  private OperationInfo getOperationInfo(
+      final Context context,
+      final Payment payment,
+      final CongratsRequest congratsRequest,
+      final CompletableFuture<Either<UserIdentificationResponse, ApiError>>
+          userIdentificationFutureResponse) {
+
+    if (isThirdPartyCard(context, payment, congratsRequest, userIdentificationFutureResponse)) {
+      return OperationInfo.builder()
+          .type(NEUTRAL)
+          .hierarchy(QUIET)
+          .body(
+              Translations.INSTANCE.getTranslationByLocale(
+                  context.getLocale(), CONGRATS_THIRD_PARTY_CARD_INFO))
+          .build();
+    }
+
+    return null;
+  }
+
+  private boolean isThirdPartyCard(
+      final Context context,
+      final Payment payment,
+      final CongratsRequest congratsRequest,
+      final CompletableFuture<Either<UserIdentificationResponse, ApiError>>
+          userIdentificationFutureResponse) {
+    if (userIdentificationFutureResponse == null) {
+      return false;
+    }
+
+    UserIdentificationResponse userIdentificationResponse;
+    try {
+      userIdentificationResponse =
+          daoProvider
+              .getKycVaultV2Dao()
+              .parseAsyncResponse(context, userIdentificationFutureResponse);
+    } catch (ApiException e) {
+      DatadogCongratsMetric.trackCongratsKyCResponseException(congratsRequest);
+      return false;
+    }
+
+    if (CollectionUtils.isNotEmpty(userIdentificationResponse.getErrors())
+        || userIdentificationResponse.getData() == null
+        || userIdentificationResponse.getData().getUser() == null) {
+      DatadogCongratsMetric.trackCongratsKyCResponseBodyError(congratsRequest);
+      return false;
+    }
+
+    return CardUtil.isThirdPartyCard(
+        userIdentificationResponse.getData().getUser().getIdentification(),
+        payment.getCard().getCardholder());
   }
 
   private boolean hasCredentials(final CongratsRequest congratsRequest) {

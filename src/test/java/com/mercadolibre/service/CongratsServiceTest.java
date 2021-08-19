@@ -2,6 +2,7 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
+import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -12,12 +13,15 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.api.MockInstructionsAPI;
+import com.mercadolibre.api.MockKycVaultV2Dao;
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
 import com.mercadolibre.api.MockPaymentAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.dto.congrats.OperationInfoHierarchy;
+import com.mercadolibre.dto.congrats.OperationInfoType;
 import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
@@ -25,6 +29,7 @@ import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
+import com.mercadolibre.utils.Translations;
 import java.io.IOException;
 import java.util.Locale;
 import org.apache.http.HttpStatus;
@@ -778,5 +783,205 @@ public class CongratsServiceTest {
         congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
 
     assertEquals(congrats.getBackUrl(), "http://back-url-success .com");
+  }
+
+  @Test
+  public void testGetPointsAndDiscounts_notThirdPartyCard_dontReturnOperationInfoNode()
+      throws IOException, ApiException {
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "4141386674";
+    final String siteId = Site.MLA.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId + ",23432432")
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
+
+    MockKycVaultV2Dao.getAsync(
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/kyc/user_11111111_dni_45464778.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertEquals(
+        "http://back-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type=credit_card"
+            + "&processing_mode=aggregator",
+        congrats.getBackUrl());
+
+    assertNull(congrats.getOperationInfo());
+  }
+
+  @Test
+  public void testGetPointsAndDiscounts_kyc200OKWithErrorInBody_dontReturnOperationInfoNode()
+      throws IOException, ApiException {
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "4141386674";
+    final String siteId = Site.MLA.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId + ",23432432")
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
+
+    MockKycVaultV2Dao.getAsync(
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/kyc/200_OK_with_error_in_body.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertEquals(
+        "http://back-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type=credit_card"
+            + "&processing_mode=aggregator",
+        congrats.getBackUrl());
+
+    assertNull(congrats.getOperationInfo());
+  }
+
+  @Test
+  public void testGetPointsAndDiscounts_isThirdPartyCard_returnOperationInfoNode()
+      throws IOException, ApiException {
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "4141386674";
+    final String siteId = Site.MLA.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId + ",23432432")
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
+
+    MockKycVaultV2Dao.getAsync(
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/kyc/user_22314151_cuil_20147360194.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertEquals(
+        "http://back-url-success.com"
+            + "?status=approved"
+            + "&collection_status=approved"
+            + "&external_reference="
+            + "&preference_id="
+            + prefId
+            + "&site_id="
+            + siteId
+            + "&merchant_order_id"
+            + "&merchant_account_id"
+            + "&collection_id="
+            + paymentId
+            + "&payment_id="
+            + paymentId
+            + "&payment_type=credit_card"
+            + "&processing_mode=aggregator",
+        congrats.getBackUrl());
+
+    assertNotNull(congrats.getOperationInfo());
+    assertEquals(OperationInfoType.NEUTRAL.getValue(), congrats.getOperationInfo().getType());
+    assertEquals(
+        OperationInfoHierarchy.QUIET.getValue(), congrats.getOperationInfo().getHierarchy());
+    assertEquals(
+        Translations.INSTANCE.getTranslationByLocale(
+            CONTEXT_ES.getLocale(), CONGRATS_THIRD_PARTY_CARD_INFO),
+        congrats.getOperationInfo().getBody());
   }
 }

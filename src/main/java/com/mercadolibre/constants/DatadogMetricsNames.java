@@ -16,6 +16,12 @@ public final class DatadogMetricsNames {
   public static final String PREFERENCE_INVALID = "px.checkout_mobile_payments.invalid.preference";
   public static final String PAYMENT_ORDER_TYPE = "px.checkout_mobile_payments.order_type";
   public static final String CONGRATS_REQUEST = "px.checkout_mobile_payments.congrats.request";
+  public static final String CONGRATS_KYC_REQUEST =
+      "px.checkout_mobile_payments.congrats.kyc.request";
+  public static final String CONGRATS_KYC_RESPONSE_EXCEPTION =
+      "px.checkout_mobile_payments.congrats.kyc.response.exception";
+  public static final String CONGRATS_KYC_RESPONSE_BODY_ERROR =
+      "px.checkout_mobile_payments.congrats.kyc.response.body.error";
   public static final String CONGRATS_DISCOUNTS = "px.checkout_mobile_payments.congrats_discounts";
   public static final String CONGRATS_POINTS = "px.checkout_mobile_payments.congrats_points";
   public static final String CONGRATS_CROSS_SELLING =
