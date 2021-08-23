@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.44.0]
+
+### Added
+
+- Added new `modal` node to consumer credits (currently disabled) remedies response.
+- Changed some remedies related texts.
+
 ## [1.43.0]
 
 ### Fixed

@@ -66,11 +66,13 @@ public final class Constants {
   public static final String GETTING_PARAMETERS = "Error getting parameters"; // TODO
 
   public static final String IFPE_MESSAGE_COLOR = "#cc000000";
+  public static final String CONSUMER_CREDITS_MODAL_TEXT_COLOR = "#000000E5";
 
   // Label total to pay
   public static final String WHITE_COLOR = "#FFFFFF";
   public static final String BLACK_COLOR = "#000000";
   public static final String WEIGHT_SEMI_BOLD = "semi_bold";
+  public static final String WEIGHT_BOLD = "bold";
 
   public static final String ANDROID = "android";
   public static final String IOS = "ios";
@@ -79,10 +81,14 @@ public final class Constants {
 
   public static final String BUTTON_CONTINUE = "continue";
   public static final String BUTTON_LOUD = "loud";
+  public static final String BUTTON_QUIET = "quiet";
+
+  public static final String ACTION_PAY = "pay";
+  public static final String ACTION_CHANGE_PM = "change_pm";
 
   /** Collectors de pago de factura de meli. */
   public static final List<Long> COLLECTORS_MELI =
-      new ArrayList<Long>(
+      new ArrayList<>(
           Arrays.asList(
               99754138L,
               73220027L,
