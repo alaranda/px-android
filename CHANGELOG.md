@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.43.0]
+
+### Fixed
+
+- Fixes preference internal metadata location in body
+
 ## [1.42.0]
 
 ### Added

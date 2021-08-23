@@ -12,10 +12,7 @@ import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import lombok.Getter;
 import spark.utils.StringUtils;
 
@@ -303,11 +300,7 @@ public class PaymentBody {
   }
 
   private static Map<String, Object> buildInternalMetadataMap(final Preference preference) {
-    Map<String, Object> internalMetadata = preference.getInternalMetadata();
-    if (null == internalMetadata) {
-      internalMetadata = new HashMap<>();
-    }
-    internalMetadata.put(PREFERENCE, new PaymentPreference(preference.getId(), null));
-    return internalMetadata;
+    return Collections.singletonMap(
+        PREFERENCE, new PaymentPreference(preference.getId(), preference.getInternalMetadata()));
   }
 }
