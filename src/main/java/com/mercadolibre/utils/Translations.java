@@ -58,6 +58,7 @@ public enum Translations {
   public static final String REMEDY_CALL_FOR_AUTHORIZE_BUTTON_LOUD =
       "remedy.call_for_authorize.button.loud";
   public static final String REMEDY_GENERIC_TITLE = "remedy.generic.title";
+  public static final String REMEDY_CONSUMER_CREDITS_MESSAGE = "remedy.consumer_credits.message";
 
   public static final String EXPENSE_SPLIT_TITLE = "expense.split.title";
   public static final String EXPENSE_SPLIT_BUTTON_TITLE = "expense.split.button.title";
@@ -71,6 +72,14 @@ public enum Translations {
   public static final String TOTAL_PAY_GENERIC_LABEL = "payment_method.total_pay.label";
   public static final String WITH_ACCOUNT_MONEY_GENERIC_LABEL =
       "payment_method.with.account_money.label";
+  public static final String REMEDY_MODAL_CONSUMER_CREDITS_MAIN_BUTTON_LABEL =
+      "remedy.modal.consumer_credits.main_button.label";
+  public static final String REMEDY_MODAL_CONSUMER_CREDITS_SECONDARY_BUTTON_LABEL =
+      "remedy.modal.consumer_credits.secondary_button.label";
+  public static final String REMEDY_MODAL_CONSUMER_CREDITS_TITLE =
+      "remedy.modal.consumer_credits.title";
+  public static final String REMEDY_MODAL_CONSUMER_CREDITS_DESCRIPTION =
+      "remedy.modal.consumer_credits.description";
 
   private final I18nService i18nService = new I18nService();
 
@@ -137,7 +146,7 @@ public enum Translations {
       case REMEDY_INSUFFICIENT_AMOUNT_MESSAGE:
         return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
       case REMEDY_OTHER_REASON_TITLE:
-        return i18nService.tr("Tu %s *** %s rechazó el pago", locale);
+        return i18nService.tr("El pago con %s *** %s fue rechazado", locale);
       case REMEDY_OTHER_REASON_MESSAGE:
         return i18nService.tr("Te sugerimos reintentar con este medio:", locale);
       case REMEDY_MAX_ATTEMPTS_TITLE:
@@ -191,6 +200,18 @@ public enum Translations {
       case CONGRATS_THIRD_PARTY_CARD_INFO:
         return i18nService.tr(
             "Por normativa del Banco Central solo guardaremos las tarjetas a tu nombre", locale);
+      case REMEDY_CONSUMER_CREDITS_MESSAGE:
+        return i18nService.tr("Puedes usar tu línea de crédito para pagar sin tarjeta:", locale);
+      case REMEDY_MODAL_CONSUMER_CREDITS_MAIN_BUTTON_LABEL:
+        return i18nService.tr("Confirmar pago", locale);
+      case REMEDY_MODAL_CONSUMER_CREDITS_SECONDARY_BUTTON_LABEL:
+        return i18nService.tr("Pagar de otra forma", locale);
+      case REMEDY_MODAL_CONSUMER_CREDITS_TITLE:
+        return i18nService.tr("Recuerda que usarás Mercado Crédito", locale);
+      case REMEDY_MODAL_CONSUMER_CREDITS_DESCRIPTION:
+        return i18nService.tr(
+            "Las cuotas tienen un valor fijo y podrás pagarlas desde tu cuenta de Mercado Pago.",
+            locale);
       default:
         return "";
     }

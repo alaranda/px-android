@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ConsumerCreditsRejected implements SuggestionCriteriaInterface {
+public class DigitalCurrencyRejected implements SuggestionCriteriaInterface {
 
   @Override
   public PaymentMethodSelected findBestMedium(

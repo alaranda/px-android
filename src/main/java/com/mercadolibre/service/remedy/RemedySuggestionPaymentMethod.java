@@ -5,9 +5,10 @@ import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLE
 import static com.mercadolibre.constants.DatadogMetricsNames.REMEDY_SILVER_BULLET_INTENT;
 import static com.mercadolibre.constants.DatadogMetricsNames.SILVER_BULLET_WITHOUT_PM;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DIGITAL_CURRENCY;
+import static com.mercadolibre.utils.Translations.REMEDY_CONSUMER_CREDITS_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_SUGGESTION_PM_MESSAGE;
 import static com.mercadolibre.utils.Translations.REMEDY_CVV_TITLE;
 import static com.mercadolibre.utils.Translations.REMEDY_GENERIC_TITLE;
@@ -17,6 +18,7 @@ import static com.mercadolibre.utils.Translations.WITH_CREDIT_GENERIC_LABEL;
 import static com.mercadolibre.utils.Translations.WITH_DEBIT_GENERIC_LABEL;
 
 import com.mercadolibre.constants.Constants;
+import com.mercadolibre.dto.modal.ModalAction;
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.CustomStringConfiguration;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
@@ -32,6 +34,7 @@ import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.context.Version;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.text.Text;
+import com.mercadolibre.px.toolkit.constants.PaymentMethodId;
 import com.mercadolibre.service.ConfigurationService;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
 import com.mercadolibre.service.remedy.order.SuggestionCriteriaInterface;
@@ -67,7 +70,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   private final Predicate<AlternativePayerPaymentMethod> isAccountMoney =
       e -> e.getPaymentTypeId().equalsIgnoreCase(ACCOUNT_MONEY);
   private final Predicate<AlternativePayerPaymentMethod> isConsumerCredits =
-      e -> e.getPaymentTypeId().equalsIgnoreCase(CONSUMER_CREDITS);
+      e -> e.getPaymentTypeId().equalsIgnoreCase(DIGITAL_CURRENCY);
   private final Predicate<AlternativePayerPaymentMethod> containEsc =
       e -> e.getEscStatus().equalsIgnoreCase(STATUS_APPROVED);
 
@@ -152,7 +155,7 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     Map<String, List<AlternativePayerPaymentMethod>> payerPaymentMethodsMap = new HashMap<>();
     payerPaymentMethodsMap.put(ACCOUNT_MONEY, accountMoney);
-    payerPaymentMethodsMap.put(CONSUMER_CREDITS, consumerCredits);
+    payerPaymentMethodsMap.put(DIGITAL_CURRENCY, consumerCredits);
     payerPaymentMethodsMap.put(DEBIT_CARD_ESC, debitCardEsc);
     payerPaymentMethodsMap.put(DEBIT_CARD_WITHOUT_ESC, debitCardWithOutEsc);
     payerPaymentMethodsMap.put(CREDIT_CARD_ESC, creditCardEsc);
@@ -167,33 +170,26 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     if (null != paymentMethodSelected) {
 
-      String title =
-          String.format(
-              Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyTitle),
-              payerPaymentMethodRejected.getIssuerName(),
-              payerPaymentMethodRejected.getLastFourDigit());
-
-      if (payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(ACCOUNT_MONEY)
-          || payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(CONSUMER_CREDITS)) {
-
-        title =
-            Translations.INSTANCE.getTranslationByLocale(context.getLocale(), REMEDY_GENERIC_TITLE);
-      }
-
-      final String message =
-          String.format(
-              Translations.INSTANCE.getTranslationByLocale(context.getLocale(), remedyMessage),
-              payerPaymentMethodRejected.getIssuerName());
+      final String title = buildTitle(context.getLocale(), payerPaymentMethodRejected);
 
       final AlternativePayerPaymentMethod alternativePayerPaymentMethod =
           paymentMethodSelected.getAlternativePayerPaymentMethod();
 
-      final Text text =
-          buildText(
+      final String message =
+          buildMessage(
               context.getLocale(),
-              remediesRequest.getCustomStringConfiguration(),
-              remediesRequest,
-              alternativePayerPaymentMethod);
+              payerPaymentMethodRejected.getIssuerName(),
+              alternativePayerPaymentMethod.getPaymentMethodId());
+
+      final Text text =
+          buildText(context.getLocale(), remediesRequest, alternativePayerPaymentMethod);
+
+      ModalAction consumerCreditsModal = null;
+      if (PaymentMethodId.CONSUMER_CREDITS.equalsIgnoreCase(
+          alternativePayerPaymentMethod.getPaymentMethodId())) {
+        consumerCreditsModal =
+            RemedyConsumerCreditsModalFactory.INSTANCE.build(context.getLocale());
+      }
 
       final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse =
           SuggestionPaymentMethodResponse.builder()
@@ -201,6 +197,8 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               .message(message)
               .alternativePaymentMethod(alternativePayerPaymentMethod)
               .bottomMessage(text)
+              .modal(consumerCreditsModal)
+              .shouldShowTinyCard(consumerCreditsModal != null)
               .build();
 
       boolean frictionless = true;
@@ -255,10 +253,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
   }
 
   public Text buildText(
-      Locale locale,
-      CustomStringConfiguration customStringConfiguration,
-      RemediesRequest remediesRequest,
-      AlternativePayerPaymentMethod alternativePayerPaymentMethod) {
+      final Locale locale,
+      final RemediesRequest remediesRequest,
+      final AlternativePayerPaymentMethod alternativePayerPaymentMethod) {
 
     String message = Translations.INSTANCE.getTranslationByLocale(locale, TOTAL_PAY_GENERIC_LABEL);
 
@@ -309,19 +306,24 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
     switch (changeableTypeId) {
       case DEBIT_CARD:
         suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_DEBIT_GENERIC_LABEL);
-        message = String.format("%s %s", message, suffix);
+        message = String.format("%s %s:", message, suffix);
         break;
       case ACCOUNT_MONEY:
         suffix =
             Translations.INSTANCE.getTranslationByLocale(locale, WITH_ACCOUNT_MONEY_GENERIC_LABEL);
-        message = String.format("%s %s", message, suffix);
+        message = String.format("%s %s:", message, suffix);
         break;
       case CREDIT_CARD:
         suffix = Translations.INSTANCE.getTranslationByLocale(locale, WITH_CREDIT_GENERIC_LABEL);
-        message = String.format("%s %s", message, suffix);
+        message = String.format("%s %s:", message, suffix);
+        break;
+      default:
+        message = message.concat(":");
         break;
     }
 
+    final CustomStringConfiguration customStringConfiguration =
+        remediesRequest.getCustomStringConfiguration();
     if (customStringConfiguration != null
         && StringUtils.isNotBlank(customStringConfiguration.getTotalDescriptionText())) {
       message = StringUtils.trim(customStringConfiguration.getTotalDescriptionText());
@@ -332,6 +334,35 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
 
     return new Text(
         message, Constants.WHITE_COLOR, Constants.BLACK_COLOR, Constants.WEIGHT_SEMI_BOLD);
+  }
+
+  private String buildMessage(
+      final Locale locale,
+      final String payerPaymentMethodRejectedIssuerName,
+      final String alternativePaymentMethodId) {
+
+    if (PaymentMethodId.CONSUMER_CREDITS.equalsIgnoreCase(alternativePaymentMethodId)) {
+      return Translations.INSTANCE.getTranslationByLocale(locale, REMEDY_CONSUMER_CREDITS_MESSAGE);
+    }
+
+    return String.format(
+        Translations.INSTANCE.getTranslationByLocale(locale, remedyMessage),
+        payerPaymentMethodRejectedIssuerName);
+  }
+
+  private String buildTitle(
+      final Locale locale, final PayerPaymentMethodRejected payerPaymentMethodRejected) {
+
+    if (payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(ACCOUNT_MONEY)
+        || payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(DIGITAL_CURRENCY)) {
+
+      return Translations.INSTANCE.getTranslationByLocale(locale, REMEDY_GENERIC_TITLE);
+    }
+
+    return String.format(
+        Translations.INSTANCE.getTranslationByLocale(locale, remedyTitle),
+        payerPaymentMethodRejected.getIssuerName(),
+        payerPaymentMethodRejected.getLastFourDigit());
   }
 
   private static boolean isOfferingComboCard(
