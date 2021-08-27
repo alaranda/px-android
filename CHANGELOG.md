@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.44.0]
+
+### Added
+
+- Added site to ContextAssembler
+
+### Updated 
+
+- px-toolkit version from `0.47.2` to `0.49.1`
+
 ## [1.43.0]
 
 ### Fixed
