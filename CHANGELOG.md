@@ -2,7 +2,7 @@
 
 # Change Log
 
-## [1.44.0]
+## [1.45.0]
 
 ### Added
 
@@ -11,6 +11,13 @@
 ### Updated 
 
 - px-toolkit version from `0.47.2` to `0.49.1`
+
+## [1.44.0]
+
+### Added
+
+- Added new `modal` node to consumer credits (currently disabled) remedies response.
+- Changed some remedies related texts.
 
 ## [1.43.0]
 

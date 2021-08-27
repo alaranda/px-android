@@ -2,9 +2,9 @@ package com.mercadolibre.helper;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
-import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CONSUMER_CREDITS;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DIGITAL_CURRENCY;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
@@ -104,7 +104,7 @@ public class MockTestHelper {
 
     AlternativePayerPaymentMethod cc = Mockito.mock(AlternativePayerPaymentMethod.class);
     when(cc.getCustomOptionId()).thenReturn("12345678905");
-    when(cc.getPaymentTypeId()).thenReturn(CONSUMER_CREDITS);
+    when(cc.getPaymentTypeId()).thenReturn(DIGITAL_CURRENCY);
     when(cc.getBin()).thenReturn("1234554321");
 
     Installment installment_one = Mockito.mock(Installment.class);

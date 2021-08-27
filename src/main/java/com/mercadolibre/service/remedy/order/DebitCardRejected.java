@@ -29,7 +29,7 @@ public class DebitCardRejected implements SuggestionCriteriaInterface {
     paymentMethodsOrdered.addAll(
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.CREDIT_CARD_WITHOUT_ESC));
     // discarded temporally
-    // paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(CONSUMER_CREDITS));
+    // paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(DIGITAL_CURRENCY));
 
     return SuggestionPaymentMehodsUtils.getPaymentMethodSelected(paymentMethodsOrdered);
   }
