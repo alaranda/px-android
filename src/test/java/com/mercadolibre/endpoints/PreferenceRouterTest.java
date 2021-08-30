@@ -2,7 +2,9 @@ package com.mercadolibre.endpoints;
 
 import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_ID;
 import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
+import static com.mercadolibre.px.constants.HeadersConstants.X_CLIENT_INFO;
 import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -15,6 +17,8 @@ import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.Before;
@@ -90,7 +94,11 @@ public class PreferenceRouterTest {
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/preferenceTidy/23BYCZ.json")));
 
-    final Response response = get(uriBuilder.build());
+    Map headers = new HashMap<>();
+    headers.put(
+        X_CLIENT_INFO,
+        "utc_offset%3D-0300%26Timezone%3D-Infinity%26device_id%3D9ca179001d1a8d9c%26density%3D440%26connectivity%3DWIFI%26user_id%3D786856560%26site_id%3DMLA%26app_id%3D7092%26resolution%3D1080x1977");
+    final Response response = given().headers(headers).get(uriBuilder.build());
 
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
     assertThat(response.getBody().print(), is(notNullValue()));

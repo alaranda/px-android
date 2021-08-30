@@ -1,6 +1,7 @@
 package com.mercadolibre.utils.assemblers;
 
 import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_SITE_ID;
+import static com.mercadolibre.px.constants.CommonParametersNames.SITE_ID;
 import static com.mercadolibre.px.constants.HeadersConstants.*;
 import static com.mercadolibre.utils.HeadersUtils.userAgentFromHeader;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
@@ -8,9 +9,12 @@ import static org.apache.http.protocol.HTTP.USER_AGENT;
 import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
+import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.toolkit.utils.RestUtils;
 import com.mercadolibre.restclient.util.MeliContextBuilder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import spark.Request;
 import spark.utils.StringUtils;
 
@@ -34,7 +38,14 @@ public class ContextAssembler {
       builder.flow(flowHeader);
     }
 
-    final String siteId = request.queryParams(CALLER_SITE_ID);
+    String siteId = Optional.ofNullable(request.queryParams(CALLER_SITE_ID)).orElse(null);
+    final String clientInfo = request.headers(X_CLIENT_INFO);
+    if (siteId == null && StringUtils.isNotEmpty(clientInfo)) {
+      siteId = RestUtils.getFromClientInfoHeader(clientInfo, SITE_ID).orElse(null);
+    }
+    if (siteId != null) {
+      builder.site(Site.from(siteId));
+    }
     final String languageHeader = request.headers(LANGUAGE);
     builder.locale(languageHeader, siteId);
 
