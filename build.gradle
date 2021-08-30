@@ -55,6 +55,7 @@ sourceSets {
 
 repositories {
 		maven { url "http://maven.artifacts.furycloud.io/repository/all" }
+		mavenLocal()
 	}
 
 dependencies {
