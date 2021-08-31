@@ -4,11 +4,11 @@ import static org.mockito.Mockito.when;
 
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
-import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 import org.junit.Before;
@@ -36,6 +36,7 @@ public class DatadogPreferencesMetricTest {
 
     when(context.getSite()).thenReturn(Site.MLA);
     when(context.getPlatform()).thenReturn(Platform.MP);
+    when(context.getUserAgent()).thenReturn(USER_AGENT_IOS);
 
     DatadogPreferencesMetric.addPreferenceData(context, preferenceResponse);
   }

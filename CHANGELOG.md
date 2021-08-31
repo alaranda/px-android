@@ -2,6 +2,17 @@
 
 # Change Log
 
+## [1.45.1]
+
+### Added
+
+- Added flow_id to invalid preference metric
+- Added os to preference metrics
+
+### Changed
+
+- Log level for Merch API response from info to debug
+
 ## [1.45.0]
 
 ### Added
