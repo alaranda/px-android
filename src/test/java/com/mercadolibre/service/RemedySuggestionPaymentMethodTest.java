@@ -13,10 +13,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.constants.Constants;
@@ -29,13 +29,16 @@ import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
+import com.mercadolibre.service.remedy.order.AccountMoneyRejected;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
+import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.FieldSetter;
 
 public class RemedySuggestionPaymentMethodTest {
 
@@ -101,7 +104,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
@@ -161,7 +166,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv().getTitle(), notNullValue());
     assertThat(remediesResponse.getCvv().getMessage(), notNullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
@@ -211,7 +218,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(ACCOUNT_MONEY));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
@@ -268,7 +277,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(DEBIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
@@ -326,7 +337,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -367,7 +380,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -408,7 +423,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(PaymentMethodsRejectedTypes.ACCOUNT_MONEY));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -447,7 +464,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -486,7 +505,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -531,7 +552,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(CREDIT_CARD));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
         remediesResponse.getSuggestedPaymentMethod().getBottomMessage().getMessage(),
@@ -593,7 +616,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(ACCOUNT_MONEY));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
@@ -657,7 +682,9 @@ public class RemedySuggestionPaymentMethodTest {
             .getPaymentTypeId(),
         is(ACCOUNT_MONEY));
     assertNull(remediesResponse.getSuggestedPaymentMethod().getModal());
-    assertFalse(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.SMALL,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(
@@ -665,9 +692,9 @@ public class RemedySuggestionPaymentMethodTest {
         is("Some text con dinero disponible en Mercado Pago"));
   }
 
-  @Ignore // TODO enable test when consumer_credits remedy is enabled too
   @Test
-  public void applyRemedy_statusDetailBlacklist_remedySuggestedPmConsumerCredits() {
+  public void applyRemedy_statusDetailBlacklist_remedySuggestedPmConsumerCredits()
+      throws NoSuchFieldException {
 
     final BigDecimal totalAmount = new BigDecimal(100);
 
@@ -696,9 +723,27 @@ public class RemedySuggestionPaymentMethodTest {
     when(installment.getTotalAmount()).thenReturn(totalAmount);
 
     alternativePayerPaymentMethodBuilder.installmentsList(Collections.singletonList(installment));
-
     when(remediesRequest.getAlternativePayerPaymentMethods())
         .thenReturn(Collections.singletonList(alternativePayerPaymentMethodBuilder.build()));
+
+    RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
+        new RemedySuggestionPaymentMethod(
+            remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
+
+    // TODO remove this mocking process till line 746 once Consumer Credits is enabled
+    PaymentMethodsRejectedTypes mockPaymentMethodsRejectedTypes =
+        mock(PaymentMethodsRejectedTypes.class);
+    AccountMoneyRejected mockAccountMoneyRejected = mock(AccountMoneyRejected.class);
+    when(mockPaymentMethodsRejectedTypes.getSuggestionOrderCriteria(
+            payerPaymentMethodRejected.getPaymentTypeId()))
+        .thenReturn(mockAccountMoneyRejected);
+    when(mockAccountMoneyRejected.findBestMedium(any(), any()))
+        .thenReturn(
+            SuggestionPaymentMehodsUtils.getPaymentMethodSelected(
+                Arrays.asList(alternativePayerPaymentMethodBuilder.build())));
+    Field field =
+        RemedySuggestionPaymentMethod.class.getDeclaredField("paymentMethodsRejectedTypes");
+    FieldSetter.setField(remedySuggestionPaymentMethod, field, mockPaymentMethodsRejectedTypes);
 
     final RemediesResponse remediesResponse =
         remedySuggestionPaymentMethod.applyRemedy(
@@ -726,7 +771,7 @@ public class RemedySuggestionPaymentMethodTest {
         Constants.CONSUMER_CREDITS_MODAL_TEXT_COLOR, modalAction.getTitle().getTextColor());
     assertNull(modalAction.getTitle().getBackgroundColor());
     assertEquals(
-        "Las mensualidades tienen un valor fijo y podrás pagarlas desde tu cuenta de Mercado Pago.",
+        "Las cuotas tienen un valor fijo y podrás pagarlas desde tu cuenta de Mercado Pago.",
         modalAction.getDescription().getMessage());
     assertEquals(Constants.WEIGHT_BOLD, modalAction.getDescription().getWeight());
     assertEquals(
@@ -739,7 +784,9 @@ public class RemedySuggestionPaymentMethodTest {
     assertEquals(Constants.ACTION_CHANGE_PM, modalAction.getSecondaryButton().getAction());
     assertEquals(Constants.BUTTON_QUIET, modalAction.getSecondaryButton().getType());
 
-    assertTrue(remediesResponse.getSuggestedPaymentMethod().getShouldShowTinyCard());
+    assertEquals(
+        CardSize.MINI,
+        remediesResponse.getSuggestedPaymentMethod().getAlternativePaymentMethod().getCardSize());
     assertThat(remediesResponse.getCvv(), nullValue());
     assertThat(remediesResponse.getSuggestedPaymentMethod().getBottomMessage(), notNullValue());
     assertThat(

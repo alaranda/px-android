@@ -20,6 +20,7 @@ import static com.mercadolibre.utils.Translations.WITH_DEBIT_GENERIC_LABEL;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.modal.ModalAction;
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.CardSize;
 import com.mercadolibre.dto.remedy.CustomStringConfiguration;
 import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
 import com.mercadolibre.dto.remedy.PaymentMethodSelected;
@@ -189,6 +190,9 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
           alternativePayerPaymentMethod.getPaymentMethodId())) {
         consumerCreditsModal =
             RemedyConsumerCreditsModalFactory.INSTANCE.build(context.getLocale());
+        alternativePayerPaymentMethod.setCardSize(CardSize.MINI);
+      } else {
+        alternativePayerPaymentMethod.setCardSize(CardSize.SMALL);
       }
 
       final SuggestionPaymentMethodResponse suggestionPaymentMethodResponse =
@@ -198,7 +202,6 @@ public class RemedySuggestionPaymentMethod implements RemedyInterface {
               .alternativePaymentMethod(alternativePayerPaymentMethod)
               .bottomMessage(text)
               .modal(consumerCreditsModal)
-              .shouldShowTinyCard(consumerCreditsModal != null)
               .build();
 
       boolean frictionless = true;
