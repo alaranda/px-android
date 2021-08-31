@@ -107,7 +107,7 @@ public enum MerchAPI {
   private Either<MerchResponse, ApiError> buildResponse(
       final Context context, final Headers headers, final URIBuilder url, final Response response) {
     if (isSuccess(response.getStatus())) {
-      LOGGER.info(
+      LOGGER.debug(
           LogUtils.getResponseLogWithoutResponseBody(
               context.getRequestId(),
               HttpMethod.GET.name(),
