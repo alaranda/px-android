@@ -820,7 +820,7 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
 
-    MockKycVaultV2Dao.getAsync(
+    MockKycVaultV2Dao.getKycVaultUserData(
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/kyc/user_11111111_dni_45464778.json")));
 
@@ -884,7 +884,7 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
 
-    MockKycVaultV2Dao.getAsync(
+    MockKycVaultV2Dao.getKycVaultUserData(
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/kyc/200_OK_with_error_in_body.json")));
 
@@ -948,7 +948,7 @@ public class CongratsServiceTest {
         IOUtils.toString(
             getClass().getResourceAsStream("/payment/4141386674_with_card_holder.json")));
 
-    MockKycVaultV2Dao.getAsync(
+    MockKycVaultV2Dao.getKycVaultUserData(
         HttpStatus.SC_OK,
         IOUtils.toString(
             getClass().getResourceAsStream("/kyc/user_22314151_cuil_20147360194.json")));
