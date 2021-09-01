@@ -18,6 +18,7 @@ public class AlternativePayerPaymentMethod {
   private final String lastFourDigit;
   private final int securityCodeLength;
   private final String securityCodeLocation;
+  @Setter private CardSize cardSize;
   @Setter private Integer installments;
   @Setter private List<Installment> installmentsList;
   private final String bin;
