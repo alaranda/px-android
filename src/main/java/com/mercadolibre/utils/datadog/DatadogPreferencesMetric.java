@@ -23,13 +23,8 @@ public class DatadogPreferencesMetric {
       final Context context, final PreferenceResponse preferenceResponse) {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
     tags.add("flow_id", preferenceResponse.getFlowId());
-    tags.add("produc_id", preferenceResponse.getProductId());
-    if (null != context.getPlatform()) {
-      tags.add("platform", context.getPlatform().getName());
-    }
-    if (null != context.getSite()) {
-      tags.add("site_id", context.getSite().getSiteId());
-    }
+    tags.add("product_id", preferenceResponse.getProductId());
+    addTagsFromContextInfo(context, tags);
     return tags;
   }
 
@@ -42,12 +37,20 @@ public class DatadogPreferencesMetric {
       final Context context, final Preference preference) {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
     tags.add("operation_type", preference.getOperationType());
+    tags.add("flow_id", context.getFlow());
+    addTagsFromContextInfo(context, tags);
+    return tags;
+  }
+
+  private static void addTagsFromContextInfo(Context context, MetricCollector.Tags tags) {
     if (null != context.getPlatform()) {
       tags.add("platform", context.getPlatform().getName());
     }
     if (null != context.getSite()) {
       tags.add("site_id", context.getSite().getSiteId());
     }
-    return tags;
+    if (null != context.getUserAgent()) {
+      tags.add("os", context.getUserAgent().getOperatingSystem());
+    }
   }
 }
