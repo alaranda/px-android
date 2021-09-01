@@ -12,6 +12,5 @@ public class SuggestionPaymentMethodResponse {
   private final String message;
   private final AlternativePayerPaymentMethod alternativePaymentMethod;
   private final Text bottomMessage;
-  private final Boolean shouldShowTinyCard;
   private final ModalAction modal;
 }

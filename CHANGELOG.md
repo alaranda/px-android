@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.46.0]
+
+### Added
+
+- Added new `card_size` field to the remedies response
+- Removed `should_show_tiny_card` flag. We'll use `card_size` instead.
+
 ## [1.45.1]
 
 ### Added
