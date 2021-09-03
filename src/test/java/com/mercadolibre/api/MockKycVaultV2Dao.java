@@ -8,11 +8,11 @@ import com.mercadolibre.restclient.http.HttpMethod;
 
 public class MockKycVaultV2Dao {
 
-  public static void getAsync(final int statusCode, final String body) {
-    getAsync(statusCode, body, null);
+  public static void getKycVaultUserData(final int statusCode, final String body) {
+    getKycVaultUserData(statusCode, body, null);
   }
 
-  public static void getAsync(
+  public static void getKycVaultUserData(
       final int statusCode, final String body, final MockInterceptor interceptor) {
     String scheme = Config.getString("api.base.url.scheme");
     String host = Config.getString("api.base.url.host");

@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.47.0]
+
+### Changed
+
+- Changed `/px_mobile/init/preference` API to use the KyC Vault V2 implementation
+
 ## [1.46.0]
 
 ### Added

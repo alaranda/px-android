@@ -8,7 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
-import com.mercadolibre.api.MockKycVaultDao;
+import com.mercadolibre.api.MockKycVaultV2Dao;
 import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPreferenceTidyAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
@@ -39,7 +39,7 @@ public class PreferenceServiceTest {
   private static final String USER_ID_COW = "220115205";
 
   @Test
-  public void getPreference_collectorMeliEmailPayerDistincEmailPref_ValidationException()
+  public void getPreference_collectorMeliEmailPayerDistinctEmailPref_ValidationException()
       throws IOException, InterruptedException, ApiException, ExecutionException {
 
     MockPreferenceAPI.getById(
@@ -50,9 +50,10 @@ public class PreferenceServiceTest {
                 .getResourceAsStream(
                     "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
 
-    MockKycVaultDao.getSensitiveUserData(
+    MockKycVaultV2Dao.getKycVaultUserData(
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/kyc/userSensitiveData.json")));
+        IOUtils.toString(
+            getClass().getResourceAsStream("/kyc/user_22314151_cuil_20147360194.json")));
 
     try {
       PreferenceService.INSTANCE.getPreference(mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_2);
@@ -63,7 +64,7 @@ public class PreferenceServiceTest {
   }
 
   @Test
-  public void getPreference_collectorMeliEmailPayerEqualsEmailPref_200()
+  public void getPreference_collectorMeli_kycApiFailed_returnPreference()
       throws InterruptedException, ApiException, ExecutionException, IOException {
 
     MockPreferenceAPI.getById(
@@ -79,6 +80,98 @@ public class PreferenceServiceTest {
             mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
 
     assertNotNull(preference);
+  }
+
+  @Test
+  public void getPreference_collectorMeliEmailPayerEqualsEmailPref()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        PREF_MELICOLLECTOR,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
+
+    MockKycVaultV2Dao.getKycVaultUserData(
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/kyc/collector_email_equal_payer_email.json")));
+
+    final Preference preference =
+        PreferenceService.INSTANCE.getPreference(
+            mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
+
+    assertNotNull(preference);
+  }
+
+  @Test
+  public void getPreference_collectorMeli_kycResponseErrorInBody()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        PREF_MELICOLLECTOR,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
+
+    MockKycVaultV2Dao.getKycVaultUserData(
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/kyc/200_OK_with_error_in_body.json")));
+
+    final Preference preference =
+        PreferenceService.INSTANCE.getPreference(
+            mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
+
+    assertNotNull(preference);
+  }
+
+  @Test
+  public void getPreference_collectorMeli_kycNoRegistrationIdentifiers()
+      throws InterruptedException, ApiException, ExecutionException, IOException {
+
+    MockPreferenceAPI.getById(
+        PREF_MELICOLLECTOR,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
+
+    MockKycVaultV2Dao.getKycVaultUserData(
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/kyc/user_11111111_dni_45464778.json")));
+
+    final Preference preference =
+        PreferenceService.INSTANCE.getPreference(
+            mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
+
+    assertNotNull(preference);
+  }
+
+  @Test
+  public void getPreference_preferenceAPIFailed_throwException() throws IOException {
+
+    MockPreferenceAPI.getById(
+        PREF_MELICOLLECTOR,
+        HttpStatus.SC_BAD_GATEWAY,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream(
+                    "/preference/127330977-0f03b540-a8c2-4879-af10-66f619786c0c.json")));
+
+    try {
+      PreferenceService.INSTANCE.getPreference(mockContextLibDto(), PREF_MELICOLLECTOR, USER_ID_1);
+      fail("Should throw ApiException");
+    } catch (ApiException e) {
+      assertEquals("external_error", e.getCode());
+      assertEquals("API call to preference failed", e.getDescription());
+    } catch (Exception e) {
+      fail("Should throw ApiException");
+    }
   }
 
   @Test
