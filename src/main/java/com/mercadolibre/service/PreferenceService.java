@@ -4,16 +4,15 @@ import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.requestInLogBuilder;
 
-import com.mercadolibre.api.DaoProvider;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.api.PreferenceTidyAPI;
+import com.mercadolibre.dto.kyc.UserIdentificationResponse;
 import com.mercadolibre.dto.preference.AdditionalInfo;
 import com.mercadolibre.dto.preference.InitPreferenceRequest;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.dto.preference.PreferenceTidy;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
-import com.mercadolibre.px.dto.lib.kyc.SensitiveUserResponse;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.user.PublicKey;
 import com.mercadolibre.px.exceptions.ApiException;
@@ -25,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import spark.utils.CollectionUtils;
 import spark.utils.StringUtils;
 
 public enum PreferenceService {
@@ -38,7 +38,6 @@ public enum PreferenceService {
   private static final String DEFAULT_FLOW_ID = "/pay_preference";
   private static final String COW_FLOW_ID = "/checkout_web";
   private static final String DEFAULT_PRODUCT_ID = "BK9TMI410T3G01IB4220";
-  private final DaoProvider daoProvider = new DaoProvider();
 
   public PreferenceResponse getPreferenceResponse(
       final Context context, final InitPreferenceRequest initPreferenceRequest)
@@ -106,16 +105,28 @@ public enum PreferenceService {
     PREFERENCES_VALIDATOR.validate(context, preference, callerId);
 
     if (COLLECTORS_MELI.contains(Long.valueOf(preference.getCollectorId()))) {
-      final Either<SensitiveUserResponse, ApiError> sensitiveUserData =
-          daoProvider.getKycVaultDao().getSensitiveUserData(context, callerId);
-      if (sensitiveUserData.isValuePresent()
-          && null != sensitiveUserData.getValue().getData()
-          && null != sensitiveUserData.getValue().getData().getUser()) {
+      UserIdentificationResponse sensitiveUserData =
+          getUserIdentificationResponse(context, callerId);
+      if (null != sensitiveUserData
+          && CollectionUtils.isEmpty(sensitiveUserData.getErrors())
+          && null != sensitiveUserData.getData()
+          && null != sensitiveUserData.getData().getUser()
+          && null != sensitiveUserData.getData().getUser().getRegistrationEmail()) {
         PREFERENCES_VALIDATOR.isDifferent(
             context,
-            sensitiveUserData.getValue().getData().getUser().getEmail(),
+            sensitiveUserData.getData().getUser().getRegistrationEmail().getAddress(),
             preference.getPayer().getEmail());
       }
+    }
+  }
+
+  private UserIdentificationResponse getUserIdentificationResponse(
+      Context context, String callerId) {
+    try {
+      return UserIdentificationService.INSTANCE.getUserIdentification(callerId, context);
+    } catch (ApiException e) {
+      // Do not fail the process if API call fails
+      return null;
     }
   }
 
