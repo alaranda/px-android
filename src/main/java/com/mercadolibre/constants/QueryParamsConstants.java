@@ -16,4 +16,5 @@ public final class QueryParamsConstants {
   public static final String CARD_TOKEN = "card_token";
   public static final String PAYMENT_TYPE = "payment_type";
   public static final String PAYMENT_TYPE_ID = "payment_type_id";
+  public static final String FLOW_ID = "flow_id";
 }

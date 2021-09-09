@@ -74,4 +74,34 @@ public class PreferencesValidatorTest {
           e.getDescription(), is("No podés pagar con este link, solo podés usarlo para cobrar."));
     }
   }
+
+  @Test
+  public void differentMailOfPayerAndPreference_validationFails() throws IOException {
+    final Preference preference =
+        GsonWrapper.fromJson(
+            IOUtils.toString(
+                getClass()
+                    .getResourceAsStream(
+                        "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")),
+            Preference.class);
+    try {
+      validator.validatePayerDifferentThatPreferenceCreator(
+          CONTEXT_ES, "test@gmail.com", preference);
+    } catch (ApiException e) {
+      assertThat(e.getDescription(), is("No podés pagar con este link de pago."));
+    }
+  }
+
+  @Test
+  public void sameMailOfPayerAndPreference_validationOk() throws IOException, ValidationException {
+    final Preference preference =
+        GsonWrapper.fromJson(
+            IOUtils.toString(
+                getClass()
+                    .getResourceAsStream(
+                        "/preference/138275050-69faf356-c9b3-47d2-afe1-43d924fb6876.json")),
+            Preference.class);
+    validator.validatePayerDifferentThatPreferenceCreator(
+        CONTEXT_ES, "preference@gmail.com", preference);
+  }
 }

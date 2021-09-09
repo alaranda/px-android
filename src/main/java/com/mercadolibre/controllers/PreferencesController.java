@@ -6,6 +6,7 @@ import static com.mercadolibre.px.constants.HeadersConstants.SESSION_ID;
 import static com.mercadolibre.utils.Translations.PAYMENT_NOT_PROCESSED;
 
 import com.mercadolibre.constants.Constants;
+import com.mercadolibre.constants.QueryParamsConstants;
 import com.mercadolibre.dto.preference.InitPreferenceRequest;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
@@ -82,7 +83,7 @@ public enum PreferencesController {
     final String clientId = request.queryParams(CLIENT_ID);
     final String shortId = request.queryParams(Constants.SHORT_ID);
     final String prefId = request.queryParams(Constants.PREF_ID);
-    final String flowId = request.queryParams(Constants.FLOW_ID);
+    final String flowId = request.queryParams(QueryParamsConstants.FLOW_ID);
 
     if (null == callerId) {
       throw new ValidationException("caller id required");

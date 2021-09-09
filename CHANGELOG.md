@@ -2,6 +2,22 @@
 
 # Change Log
 
+## [1.48.0]
+
+### Added
+
+- Flow Id for invalid preference metrics
+- Invalid preference metrics for validations
+- Authentication type and payment type tags for payments metrics
+
+## Fixed
+
+- Flow id for payments metrics
+
+## Changed
+
+- Removed whitelist of sniffed collectors from COW
+
 ## [1.47.0]
 
 ### Changed

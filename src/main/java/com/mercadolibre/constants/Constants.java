@@ -37,7 +37,6 @@ public final class Constants {
 
   public static final String PREF_ID = "pref_id";
   public static final String SHORT_ID = "short_id";
-  public static final String FLOW_ID = "flow_id";
 
   public static final String PREFERENCE = "preference";
 
@@ -99,29 +98,6 @@ public final class Constants {
               220115205L,
               237674564L,
               170120736L));
-
-  /** Collectors de links de pagos snifeados desde cow */
-  public static final List<String> COW_SNIFFING_COLLECTOR_WHITELIST =
-      Arrays.asList(
-          "420696986",
-          "506902649",
-          "484351849",
-          "57822803",
-          "54795587",
-          "288896851",
-          "203414973",
-          "288896851",
-          "198576413",
-          "315168223",
-          "152162476",
-          "534155552",
-          "8733338",
-          "184618992",
-          "557586896",
-          "180991368");
-
-  public static final List<Long> COW_SNIFFING_CLIENT_WHITELIST =
-      Collections.singletonList(7248336015575023L);
 
   private Constants() {
     throw new AssertionError(CAN_NOT_INSTANTIATE_CONSTANTS_CLASS);

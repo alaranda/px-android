@@ -6,6 +6,7 @@ import static com.mercadolibre.px.constants.HeadersConstants.*;
 import static com.mercadolibre.utils.HeadersUtils.userAgentFromHeader;
 import static org.apache.http.protocol.HTTP.USER_AGENT;
 
+import com.mercadolibre.constants.QueryParamsConstants;
 import com.mercadolibre.px.constants.HeadersConstants;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.platform.Platform;
@@ -36,6 +37,8 @@ public class ContextAssembler {
     final String flowHeader = request.headers(FLOW_ID);
     if (flowHeader != null) {
       builder.flow(flowHeader);
+    } else if (request.queryParams(QueryParamsConstants.FLOW_ID) != null) {
+      builder.flow(request.queryParams(QueryParamsConstants.FLOW_ID));
     }
 
     String siteId = Optional.ofNullable(request.queryParams(CALLER_SITE_ID)).orElse(null);
