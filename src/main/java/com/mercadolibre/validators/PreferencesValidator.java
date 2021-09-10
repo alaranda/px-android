@@ -31,17 +31,8 @@ public class PreferencesValidator {
     }
 
     if (preference.getShipments() != null) {
-      validateNullValue(preference.getShipments().getMode(), context);
-      validateNullValue(preference.getShipments().getDimensions(), context);
-    }
-  }
-
-  private void validateNullValue(String value, final Context context) throws ValidationException {
-    if (null != value) {
-      ValidatorResult.fail(
-              Translations.INSTANCE.getTranslationByLocale(
-                  context.getLocale(), CANNOT_PAY_WITH_LINK))
-          .throwIfInvalid();
+      validateNullValue(preference.getShipments().getMode(), context, preference);
+      validateNullValue(preference.getShipments().getDimensions(), context, preference);
     }
   }
 
@@ -51,13 +42,26 @@ public class PreferencesValidator {
    *
    * @param context objeto con el contexto del request
    * @param emailPayer email del payer
-   * @param emailPreference email de la pref
+   * @param preference preferencia a pagar
    * @throws ValidationException falla la validacion
    */
-  public void isDifferent(
-      final Context context, final String emailPayer, final String emailPreference)
+  public void validatePayerDifferentThatPreferenceCreator(
+      final Context context, final String emailPayer, final Preference preference)
       throws ValidationException {
-    if (!emailPreference.equalsIgnoreCase(emailPayer)) {
+    if (!preference.getPayer().getEmail().equalsIgnoreCase(emailPayer)) {
+      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+      ValidatorResult.fail(
+              Translations.INSTANCE.getTranslationByLocale(
+                  context.getLocale(), CANNOT_PAY_WITH_LINK))
+          .throwIfInvalid();
+    }
+  }
+
+  private void validateNullValue(
+      final String value, final Context context, final Preference preference)
+      throws ValidationException {
+    if (null != value) {
+      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
       ValidatorResult.fail(
               Translations.INSTANCE.getTranslationByLocale(
                   context.getLocale(), CANNOT_PAY_WITH_LINK))

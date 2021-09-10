@@ -26,12 +26,14 @@ public final class DatadogTransactionsMetrics {
     METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
   }
 
-  public static void addPaymentsTransactionData(final Payment payment, final String flow) {
+  public static void addPaymentsTransactionData(
+      final Payment payment, final String authenticationType, final String flow) {
 
     MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
-    if (Constants.FLOW_NAME_PAYMENTS_BLACKLABEL.equals(flow)) {
+    if (Constants.FLOW_NAME_PAYMENTS_BLACKLABEL.equals(authenticationType)) {
       tags.add("client_id", payment.getClientId());
     }
+    tags.add("authentication_type", authenticationType);
 
     METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
   }
@@ -45,6 +47,7 @@ public final class DatadogTransactionsMetrics {
         .add("status", payment.getStatus())
         .add("status_detail", payment.getStatusDetail())
         .add("payment_method_id", payment.getPaymentMethodId())
+        .add("payment_type_id", payment.getPaymentTypeId())
         .add("flow", flow)
         .add("operation_type", payment.getOperationType())
         .add("marketplace", payment.getMarketplace())

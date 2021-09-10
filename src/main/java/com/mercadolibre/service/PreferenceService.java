@@ -36,7 +36,6 @@ public enum PreferenceService {
   private final PreferencesValidator PREFERENCES_VALIDATOR = new PreferencesValidator();
   private static final Long DEFAULT_CLIENT_ID = 963L;
   private static final String DEFAULT_FLOW_ID = "/pay_preference";
-  private static final String COW_FLOW_ID = "/checkout_web";
   private static final String DEFAULT_PRODUCT_ID = "BK9TMI410T3G01IB4220";
 
   public PreferenceResponse getPreferenceResponse(
@@ -112,10 +111,10 @@ public enum PreferenceService {
           && null != sensitiveUserData.getData()
           && null != sensitiveUserData.getData().getUser()
           && null != sensitiveUserData.getData().getUser().getRegistrationEmail()) {
-        PREFERENCES_VALIDATOR.isDifferent(
+        PREFERENCES_VALIDATOR.validatePayerDifferentThatPreferenceCreator(
             context,
             sensitiveUserData.getData().getUser().getRegistrationEmail().getAddress(),
-            preference.getPayer().getEmail());
+            preference);
       }
     }
   }
@@ -162,11 +161,6 @@ public enum PreferenceService {
 
     if (StringUtils.isNotBlank(flowId)) {
       return flowId;
-    }
-
-    if (COW_SNIFFING_COLLECTOR_WHITELIST.contains(preference.getCollectorId())
-        || COW_SNIFFING_CLIENT_WHITELIST.contains(preference.getClientId())) {
-      return COW_FLOW_ID;
     }
 
     AdditionalInfo additionalInfo = null;
