@@ -13,6 +13,7 @@ import com.mercadolibre.api.MockPreferenceAPI;
 import com.mercadolibre.api.MockPreferenceTidyAPI;
 import com.mercadolibre.api.MockPublicKeyAPI;
 import com.mercadolibre.constants.Constants;
+import com.mercadolibre.constants.QueryParamsConstants;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.response.Response;
 import java.io.IOException;
@@ -73,7 +74,8 @@ public class PreferenceRouterTest {
         new URIBuilder("/px_mobile/init/preference")
             .addParameter(Constants.SHORT_ID, SHORT_ID)
             .addParameter(CLIENT_ID, "395662610")
-            .addParameter(CALLER_ID, "343557477");
+            .addParameter(CALLER_ID, "343557477")
+            .addParameter(QueryParamsConstants.FLOW_ID, "/checkout_web/logged");
 
     MockPublicKeyAPI.getBycallerIdAndClientId(
         "395662610",

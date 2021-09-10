@@ -155,11 +155,12 @@ public enum PaymentsController {
     LOGGER.info(logBuilder.build());
 
     final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
-    final String flow =
+    final String authenticationType =
         request.queryParams(CALLER_ID) != null
             ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL
             : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
-    DatadogTransactionsMetrics.addPaymentsTransactionData(payment, flow);
+    DatadogTransactionsMetrics.addPaymentsTransactionData(
+        payment, authenticationType, context.getFlow());
     logPayment(context, paymentRequest, payment);
 
     return payment;
