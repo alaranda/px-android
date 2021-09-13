@@ -73,8 +73,9 @@ public enum PaymentsController {
 
     final PaymentRequest paymentRequest = getLegacyPaymentRequest(request, context);
     final Payment payment = PaymentService.INSTANCE.doPayment(context, paymentRequest);
+
     DatadogTransactionsMetrics.addLegacyPaymentsTransactionData(
-        payment, Constants.FLOW_NAME_LEGACY_PAYMENTS);
+        payment, Constants.FLOW_NAME_LEGACY_PAYMENTS, context.getUserAgent());
     logPayment(context, paymentRequest, payment);
     return payment;
   }
@@ -159,8 +160,9 @@ public enum PaymentsController {
         request.queryParams(CALLER_ID) != null
             ? Constants.FLOW_NAME_PAYMENTS_BLACKLABEL
             : Constants.FLOW_NAME_PAYMENTS_WHITELABEL;
+
     DatadogTransactionsMetrics.addPaymentsTransactionData(
-        payment, authenticationType, context.getFlow());
+        payment, authenticationType, context.getFlow(), context.getUserAgent());
     logPayment(context, paymentRequest, payment);
 
     return payment;

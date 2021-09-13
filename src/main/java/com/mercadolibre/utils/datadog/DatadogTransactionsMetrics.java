@@ -8,6 +8,7 @@ import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.*;
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.metrics.MetricCollector;
+import com.mercadolibre.px.dto.lib.context.UserAgent;
 
 public final class DatadogTransactionsMetrics {
 
@@ -19,17 +20,21 @@ public final class DatadogTransactionsMetrics {
    * @param payment payment
    * @param flow flow
    */
-  public static void addLegacyPaymentsTransactionData(final Payment payment, final String flow) {
+  public static void addLegacyPaymentsTransactionData(
+      final Payment payment, final String flow, final UserAgent userAgent) {
 
-    MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
+    MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow, userAgent);
     tags.add("collector_id", payment.getCollector().getId());
     METRIC_COLLECTOR.incrementCounter(PAYMENTS_COUNTER, tags);
   }
 
   public static void addPaymentsTransactionData(
-      final Payment payment, final String authenticationType, final String flow) {
+      final Payment payment,
+      final String authenticationType,
+      final String flow,
+      final UserAgent userAgent) {
 
-    MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow);
+    MetricCollector.Tags tags = getBasicTransactionMetricTags(payment, flow, userAgent);
     if (Constants.FLOW_NAME_PAYMENTS_BLACKLABEL.equals(authenticationType)) {
       tags.add("client_id", payment.getClientId());
     }
@@ -39,7 +44,7 @@ public final class DatadogTransactionsMetrics {
   }
 
   private static MetricCollector.Tags getBasicTransactionMetricTags(
-      final Payment payment, final String flow) {
+      final Payment payment, final String flow, final UserAgent userAgent) {
 
     addDiscountMetrics(payment);
     return new MetricCollector.Tags()
@@ -51,7 +56,8 @@ public final class DatadogTransactionsMetrics {
         .add("flow", flow)
         .add("operation_type", payment.getOperationType())
         .add("marketplace", payment.getMarketplace())
-        .add("product_id", payment.getProductId());
+        .add("product_id", payment.getProductId())
+        .add("os", userAgent.getOperatingSystem().getName());
   }
 
   private static void addDiscountMetrics(final Payment payment) {

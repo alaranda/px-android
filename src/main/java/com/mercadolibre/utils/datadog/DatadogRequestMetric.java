@@ -4,7 +4,9 @@ import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_IN_COUNTER;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
 import com.mercadolibre.metrics.MetricCollector;
+import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
+import com.mercadolibre.utils.assemblers.ContextAssembler;
 import spark.Request;
 import spark.Response;
 
@@ -28,11 +30,15 @@ public final class DatadogRequestMetric {
       path = path.substring(0, path.lastIndexOf("/"));
     }
 
+    final Context context = ContextAssembler.toContext(request);
+
     return new MetricCollector.Tags()
         .add("request_method", request.requestMethod())
         .add("request_path", path)
         .add("response_status", response.status())
         .add("response_status_pattern", LogUtils.getHttpStatusCodePattern(response.status()))
-        .add("user_agent", request.userAgent());
+        .add("flow", context.getFlow())
+        .add("site_id", context.getSite())
+        .add("os", context.getUserAgent().getOperatingSystem().getName());
   }
 }
