@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.49.0]
+
+### Added
+
+- Added site, flow and OS (operational system) in metric tags.
+
 ## [1.48.0]
 
 ### Added
