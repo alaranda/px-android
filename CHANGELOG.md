@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.50.0]
+
+### Updated
+
+- Congrats activities deeplink from native to webview from version 2.187.0 MP
+
+## Changed
+
+- Log level for Loyalty API response from info to debug
+
 ## [1.49.0]
 
 ### Added
