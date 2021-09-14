@@ -87,6 +87,7 @@ public final class SuggestionPaymentMehodsUtils {
     trackingData.setPaymentMethodId(alternativePayerPaymentMethod.getPaymentMethodId());
     trackingData.setPaymentTypeId(alternativePayerPaymentMethod.getPaymentTypeId());
     trackingData.setFrictionless(String.valueOf(frictionless));
+    trackingData.setCardSize(alternativePayerPaymentMethod.getCardSize().name().toLowerCase());
 
     if (payerPaymentMethodRejected.getPaymentTypeId().equalsIgnoreCase(ACCOUNT_MONEY)) {
 
