@@ -103,14 +103,7 @@ public class CongratsService {
   private static final List<String> SITES_WITH_EXPENSE_SPLIT_BLOCKED =
       Arrays.asList(Site.MLU.getSiteId(), Site.MCO.getSiteId());
 
-  protected static final String ACTIVITIES_NATIVE_DEEPLINK = "mercadopago://activities_v2_list";
-
-  protected static final String ACTIVITIES_WEBVIEW_DEEPLINK =
-      "mercadopago://webview/?url=https%3A%2F%2Fwww.mercadopago.com.mx%2Factivities%2Fwebview-list&from=PX";
-  private static final Version MINIMUM_ANDROID_VERSION_ACTIVITIES_WEBVIEW_DEEPLINK =
-      Version.create("4.89.0");
-  private static final Version MINIMUM_IOS_VERSION_ACTIVITIES_WEBVIEW_DEEPLINK =
-      Version.create("4.45.0");
+  private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
   private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
 
@@ -292,8 +285,7 @@ public class CongratsService {
           viewReceipt(
               context.getLocale(),
               congratsRequest.getSiteId(),
-              congratsRequest.getPaymentMethodsIds(),
-              congratsRequest.getUserAgent());
+              congratsRequest.getPaymentMethodsIds());
 
       final Text ifpeCompliance =
           textIfpeCompliance(
@@ -488,36 +480,16 @@ public class CongratsService {
   }
 
   private Action viewReceipt(
-      final Locale locale,
-      final String siteId,
-      final String paymentMethodsIds,
-      UserAgent userAgent) {
+      final Locale locale, final String siteId, final String paymentMethodsIds) {
 
     if (Site.MLM.getSiteId().equalsIgnoreCase(siteId)
         && validateAccountMoneyId(paymentMethodsIds)) {
-      final String translationByLocale =
-          Translations.INSTANCE.getTranslationByLocale(locale, Translations.VIEW_RECEIPT);
-      if (checkPXVersionForWebviewDeeplink(userAgent)) {
-        return new Action(translationByLocale, ACTIVITIES_WEBVIEW_DEEPLINK);
-      } else {
-        return new Action(translationByLocale, ACTIVITIES_NATIVE_DEEPLINK);
-      }
+      return new Action(
+          Translations.INSTANCE.getTranslationByLocale(locale, Translations.VIEW_RECEIPT),
+          ACTIVITIES_LINK);
     }
 
     return null;
-  }
-
-  /**
-   * @param userAgent of the user
-   * @return true if is a version with webview deeplink, otherwise false
-   */
-  private boolean checkPXVersionForWebviewDeeplink(final UserAgent userAgent) {
-    return OperatingSystem.isAndroid(userAgent.getOperatingSystem())
-            && MINIMUM_ANDROID_VERSION_ACTIVITIES_WEBVIEW_DEEPLINK.compareTo(userAgent.getVersion())
-                <= 0
-        || OperatingSystem.isIOS(userAgent.getOperatingSystem())
-            && MINIMUM_IOS_VERSION_ACTIVITIES_WEBVIEW_DEEPLINK.compareTo(userAgent.getVersion())
-                <= 0;
   }
 
   private boolean validateAccountMoneyId(final String paymentMethodsIds) {
