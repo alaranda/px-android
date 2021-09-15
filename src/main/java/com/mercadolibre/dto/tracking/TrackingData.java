@@ -12,4 +12,5 @@ public class TrackingData {
   private String amount;
   private String installments;
   private String frictionless;
+  private String cardSize;
 }

@@ -2,6 +2,16 @@
 
 # Change Log
 
+## [1.51.0]
+
+### Added
+
+- The card_size attribute was added to the tracking_data node
+
+### Reverted
+
+- Congrats activities update of 1.50.0 version
+
 ## [1.50.0]
 
 ### Updated
