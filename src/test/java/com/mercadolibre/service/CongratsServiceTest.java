@@ -2,8 +2,6 @@ package com.mercadolibre.service;
 
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
-import static com.mercadolibre.service.CongratsService.ACTIVITIES_NATIVE_DEEPLINK;
-import static com.mercadolibre.service.CongratsService.ACTIVITIES_WEBVIEW_DEEPLINK;
 import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -349,9 +347,7 @@ public class CongratsServiceTest {
   }
 
   @Test
-  public void
-      getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance_androidVersionWithNativeActivitiesLink()
-          throws ApiException {
+  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance() throws ApiException {
 
     final Context context = MockTestHelper.mockContextLibDto();
     when(context.getLocale()).thenReturn(new Locale("es", "MX"));
@@ -360,80 +356,11 @@ public class CongratsServiceTest {
     when(congratsRequest.isIfpe()).thenReturn(true);
     when(congratsRequest.getSiteId()).thenReturn("MLM");
     when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
-    when(congratsRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.23.0"));
 
     final Congrats congrats =
         congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
 
-    assertEquals(congrats.getViewReceipt().getTarget(), ACTIVITIES_NATIVE_DEEPLINK);
-    assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
-    assertThat(congrats.getCustomOrder(), is(false));
-    assertThat(congrats.getPaymentMethodsImages().size(), is(1));
-  }
-
-  @Test
-  public void
-      getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance_androidVersionWithWebViewLink()
-          throws ApiException {
-
-    final Context context = MockTestHelper.mockContextLibDto();
-    when(context.getLocale()).thenReturn(new Locale("es", "MX"));
-
-    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
-    when(congratsRequest.isIfpe()).thenReturn(true);
-    when(congratsRequest.getSiteId()).thenReturn("MLM");
-    when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
-    when(congratsRequest.getUserAgent()).thenReturn(UserAgent.create("PX/Android/4.89.0"));
-
-    final Congrats congrats =
-        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
-
-    assertEquals(congrats.getViewReceipt().getTarget(), ACTIVITIES_WEBVIEW_DEEPLINK);
-    assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
-    assertThat(congrats.getCustomOrder(), is(false));
-    assertThat(congrats.getPaymentMethodsImages().size(), is(1));
-  }
-
-  @Test
-  public void
-      getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance_iosVersionWithNativeActivitiesLink()
-          throws ApiException {
-
-    final Context context = MockTestHelper.mockContextLibDto();
-    when(context.getLocale()).thenReturn(new Locale("es", "MX"));
-
-    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
-    when(congratsRequest.isIfpe()).thenReturn(true);
-    when(congratsRequest.getSiteId()).thenReturn("MLM");
-    when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
-    when(congratsRequest.getUserAgent()).thenReturn(UserAgent.create("PX/iOS/4.43.4"));
-
-    final Congrats congrats =
-        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
-
-    assertEquals(congrats.getViewReceipt().getTarget(), ACTIVITIES_NATIVE_DEEPLINK);
-    assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
-    assertThat(congrats.getCustomOrder(), is(false));
-    assertThat(congrats.getPaymentMethodsImages().size(), is(1));
-  }
-
-  @Test
-  public void getPointsAndDiscounts_mlmIfpe_viewReceiptAndIfpeCompliance_iosVersionWithWebViewLink()
-      throws ApiException {
-
-    final Context context = MockTestHelper.mockContextLibDto();
-    when(context.getLocale()).thenReturn(new Locale("es", "MX"));
-
-    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
-    when(congratsRequest.isIfpe()).thenReturn(true);
-    when(congratsRequest.getSiteId()).thenReturn("MLM");
-    when(congratsRequest.getPaymentMethodsIds()).thenReturn(ACCOUNT_MONEY);
-    when(congratsRequest.getUserAgent()).thenReturn(UserAgent.create("PX/iOS/4.46.1"));
-
-    final Congrats congrats =
-        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
-
-    assertEquals(congrats.getViewReceipt().getTarget(), ACTIVITIES_WEBVIEW_DEEPLINK);
+    assertThat(congrats.getViewReceipt().getTarget(), notNullValue());
     assertThat(congrats.getTopTextBox().getMessage(), notNullValue());
     assertThat(congrats.getCustomOrder(), is(false));
     assertThat(congrats.getPaymentMethodsImages().size(), is(1));
