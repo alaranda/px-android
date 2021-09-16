@@ -1,6 +1,7 @@
 package com.mercadolibre.endpoints;
 
 import static com.mercadolibre.px.constants.CommonParametersNames.*;
+import static com.mercadolibre.px.constants.HeadersConstants.FLOW_ID;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
 import static org.hamcrest.CoreMatchers.not;
@@ -171,6 +172,7 @@ public class PaymentRouterTest {
                         .getResourceAsStream("/paymentRequestBody/blackLabelAccountMoney.json")))
             .with()
             .contentType("application/json")
+            .header(FLOW_ID, "/checkout_web/logged")
             .post(uriBuilder.build());
 
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
@@ -215,6 +217,7 @@ public class PaymentRouterTest {
                     getClass().getResourceAsStream("/paymentRequestBody/validationProgramOK.json")))
             .with()
             .contentType("application/json")
+            .header(FLOW_ID, "/moneyin")
             .post(uriBuilder.build());
 
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));

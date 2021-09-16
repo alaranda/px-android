@@ -2,6 +2,10 @@
 
 # Change Log
 
+## [1.52.0]
+
+- Overwrite x-product-id header from COW flows to payments api
+
 ## [1.51.0]
 
 ### Added
