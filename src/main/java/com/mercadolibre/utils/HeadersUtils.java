@@ -7,7 +7,6 @@ import com.mercadolibre.restclient.http.ContentType;
 import com.mercadolibre.restclient.http.Header;
 import com.mercadolibre.restclient.http.Headers;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +33,9 @@ public enum HeadersUtils {
   public static final String AUTHENTICATION_FACTOR_2FA = "security:2fa";
   public static final String AUTHENTICATION_FACTOR_NONE = "security:none";
 
+  protected static final String CHO_PRO_MOBILE_LOGGED_PRODUCT_ID = "BC32A7RU643001OI393G";
+  public static final String CHECKOUT_WEB_FLOW_PREFIX = "/checkout_web";
+
   /**
    * Store a Spark request headers in MeLi representation of {@link Headers}.
    *
@@ -44,27 +46,6 @@ public enum HeadersUtils {
     final Headers headers = new Headers();
     request.headers().stream().map(h -> new Header(h, request.headers(h))).forEach(headers::add);
     return headers;
-  }
-
-  /**
-   * Create a new Headers instance with, at most, the headers which appear in the collection of
-   * header names.
-   *
-   * @deprecated Use filter(...) from HeaderUtils of px-toolkit
-   * @param nonFilteredHeaders the headers to be filtered
-   * @param headerNamesToFilter the header names which will be kept in the resulting headers
-   * @return the filtered headers
-   */
-  @Deprecated
-  public static Headers filter(
-      final Headers nonFilteredHeaders, final Collection<String> headerNamesToFilter) {
-    final Headers filteredHeaders = new Headers();
-    for (final String headerName : headerNamesToFilter) {
-      if (nonFilteredHeaders.contains(headerName)) {
-        filteredHeaders.add(nonFilteredHeaders.getHeader(headerName));
-      }
-    }
-    return filteredHeaders;
   }
 
   /**
@@ -89,7 +70,8 @@ public enum HeadersUtils {
   public static Headers completePaymentHeaders(
       final Headers headers, final String token, final String requestId) {
     // TODO TrackingProductId tiene que venir desde las apps (?)
-    Headers filteredHeaders = HeadersUtils.filter(headers, PAYMENT_HEADERS);
+    Headers filteredHeaders =
+        com.mercadolibre.px.toolkit.utils.HeadersUtils.filter(headers, PAYMENT_HEADERS);
     if (!filteredHeaders.contains("x-idempotency-key")) {
       filteredHeaders.add("x-idempotency-key", generateKey(token, requestId));
     }
@@ -140,5 +122,17 @@ public enum HeadersUtils {
 
   private static boolean isTestToken(final String publicKey) {
     return publicKey.startsWith("TEST");
+  }
+
+  /**
+   * Add or override x-product-id header if flow starts with /checkout_web
+   *
+   * @param flow
+   * @param headers
+   */
+  public static void setProductIdForCowFlows(final String flow, final Headers headers) {
+    if (StringUtils.startsWith(flow, CHECKOUT_WEB_FLOW_PREFIX)) {
+      headers.add(PRODUCT_ID, CHO_PRO_MOBILE_LOGGED_PRODUCT_ID);
+    }
   }
 }

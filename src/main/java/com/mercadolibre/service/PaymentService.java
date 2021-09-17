@@ -3,6 +3,7 @@ package com.mercadolibre.service;
 import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.constants.ErrorCodes.INTERNAL_ERROR;
+import static com.mercadolibre.utils.HeadersUtils.CHECKOUT_WEB_FLOW_PREFIX;
 
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PreferenceAPI;
@@ -89,8 +90,9 @@ public enum PaymentService {
     if (StringUtils.isNotBlank(callerId)) {
       final Order order =
           setOrder(preference, Long.valueOf(callerId), paymentDataBody.getMerchantOrderId());
+      setProductIdPreference(headers, preference, context.getFlow());
       return createBlackLabelRequest(
-          setProductIdPreference(headers, preference),
+          headers,
           paymentData,
           preference,
           publicKeyInfo,
@@ -192,11 +194,13 @@ public enum PaymentService {
     return null;
   }
 
-  private Headers setProductIdPreference(final Headers headers, final Preference preference) {
+  private void setProductIdPreference(
+      final Headers headers, final Preference preference, final String flow) {
 
-    if (null == preference || null == preference.getProductId()) return headers;
-
-    headers.add(PRODUCT_ID, preference.getProductId());
-    return headers;
+    if (!org.apache.commons.lang3.StringUtils.startsWith(flow, CHECKOUT_WEB_FLOW_PREFIX)
+        && null != preference
+        && null != preference.getProductId()) {
+      headers.add(PRODUCT_ID, preference.getProductId());
+    }
   }
 }
