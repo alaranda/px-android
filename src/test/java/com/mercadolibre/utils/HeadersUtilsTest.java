@@ -1,5 +1,6 @@
 package com.mercadolibre.utils;
 
+import static com.mercadolibre.px.constants.HeadersConstants.PRODUCT_ID;
 import static com.mercadolibre.px.constants.HeadersConstants.TEST_TOKEN;
 import static com.mercadolibre.px.constants.HeadersConstants.X_CALLER_SCOPES;
 import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
@@ -103,5 +104,23 @@ public class HeadersUtilsTest {
     UserAgent userAgent = HeadersUtils.userAgentFromHeader(userAgentString);
 
     assertEquals("Tomi/NoOS/0.0", userAgent.toString());
+  }
+
+  @Test
+  public void testSetXProductIdForCowFlow() {
+    String flow = "/checkout_web/logged";
+    Headers headers = new Headers();
+    HeadersUtils.setProductIdForCowFlows(flow, headers);
+    assertEquals(
+        HeadersUtils.CHO_PRO_MOBILE_LOGGED_PRODUCT_ID, headers.getHeader(PRODUCT_ID).getValue());
+  }
+
+  @Test
+  public void testNoOverwriteProductIdHeaderForNoCowFlow() {
+    String flow = "/moneyin";
+    Headers headers = new Headers();
+    headers.add(PRODUCT_ID, "BCD9F527N9Q001QPA2CG");
+    HeadersUtils.setProductIdForCowFlows(flow, headers);
+    assertEquals("BCD9F527N9Q001QPA2CG", headers.getHeader(PRODUCT_ID).getValue());
   }
 }

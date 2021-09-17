@@ -28,13 +28,13 @@ import com.mercadolibre.validators.PaymentDataValidator;
 import com.mercadolibre.validators.PaymentRequestBodyValidator;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.util.StringUtil;
 import spark.Request;
 import spark.Response;
-import spark.utils.StringUtils;
 
 public enum PaymentsController {
   INSTANCE;
@@ -188,6 +188,7 @@ public enum PaymentsController {
     final PaymentDataBody paymentDataBody = getListPaymentData(request);
 
     final Headers headers = HeadersUtils.fromSparkHeaders(request);
+    HeadersUtils.setProductIdForCowFlows(context.getFlow(), headers);
     return PaymentService.INSTANCE.getPaymentRequest(
         context, paymentDataBody, publicKeyId, callerId, clientId, headers);
   }
