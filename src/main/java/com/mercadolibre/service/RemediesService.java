@@ -69,6 +69,9 @@ public class RemediesService {
     final Payment payment = paymentOptional.get();
     remediesRequest.setRiskExcecutionId(payment.getRiskExecutionId());
     remediesRequest.setStatusDetail(payment.getStatusDetail());
+    if (remediesRequest.getPayerPaymentMethodRejected().getTotalAmount() == null) {
+      remediesRequest.setPaymentMethodRejectedTotalAmount(payment.getTransactionAmount());
+    }
 
     final List<RemedyInterface> remediesInterface =
         remedyTypes.getRemedyByType(payment.getStatusDetail());

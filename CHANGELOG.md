@@ -2,6 +2,10 @@
 
 # Change Log
 
+## [1.52.1]
+
+- Fix NPE when trying to compare totalAmount field in order to create tracking data.
+
 ## [1.52.0]
 
 - Overwrite x-product-id header from COW flows to payments api
