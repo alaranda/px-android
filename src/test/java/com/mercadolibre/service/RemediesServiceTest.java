@@ -150,4 +150,30 @@ public class RemediesServiceTest {
     assertThat(remediesResponse.getCvv().getTitle(), notNullValue());
     assertThat(remediesResponse.getCvv().getMessage(), notNullValue());
   }
+
+  @Test
+  public void getRemedy_whenTotalAmountIsNull_success() throws IOException, ApiException {
+
+    MockPaymentAPI.getPayment(
+        PAYMENT_ID_TEST,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass()
+                .getResourceAsStream("/payment/rejected_invalid_cvv_transaction_amount.json")));
+
+    final RemediesRequest remediesRequest =
+        mockRemediesRequest(123L, CALLER_ID_TEST, Site.MLA.name());
+    final PayerPaymentMethodRejected payerPaymentMethodRejected =
+        mockPayerPaymentMethod("5555", "Santander", null, "back", 3);
+    when(remediesRequest.getPayerPaymentMethodRejected()).thenReturn(payerPaymentMethodRejected);
+
+    final RemediesResponse remediesResponse =
+        remediesService.getRemedy(mockContextLibDto(), PAYMENT_ID_TEST, remediesRequest);
+
+    final ResponseCvv responseCvv = remediesResponse.getCvv();
+    assertThat(responseCvv.getTitle(), notNullValue());
+    assertThat(responseCvv.getMessage(), notNullValue());
+    assertThat(responseCvv.getFieldSetting(), notNullValue());
+    assertThat(responseCvv.getFieldSetting().getHintMessage(), notNullValue());
+  }
 }
