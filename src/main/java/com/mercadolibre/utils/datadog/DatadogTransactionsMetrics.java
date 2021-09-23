@@ -6,13 +6,14 @@ import static com.mercadolibre.constants.DatadogMetricsNames.PAYMENT_ORDER_TYPE;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.*;
 
 import com.mercadolibre.constants.Constants;
+import com.mercadolibre.constants.DatadogTagNames;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.metrics.MetricCollector;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 
 public final class DatadogTransactionsMetrics {
 
-  DatadogTransactionsMetrics() {};
+  private DatadogTransactionsMetrics() {}
 
   /**
    * Trackea en datadog todos los datos de la transaccion
@@ -53,7 +54,7 @@ public final class DatadogTransactionsMetrics {
         .add("status_detail", payment.getStatusDetail())
         .add("payment_method_id", payment.getPaymentMethodId())
         .add("payment_type_id", payment.getPaymentTypeId())
-        .add("flow", flow)
+        .add(DatadogTagNames.FLOW, flow)
         .add("operation_type", payment.getOperationType())
         .add("marketplace", payment.getMarketplace())
         .add("product_id", payment.getProductId())
