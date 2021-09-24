@@ -11,6 +11,10 @@ import com.mercadolibre.utils.datadog.DatadogPreferencesMetric;
 
 public class PreferencesValidator {
 
+  private static final String PAYER_EQUALS_COLLECTOR = "payer_equals_collector";
+  private static final String PAYER_DIFFERENT_FROM_CREATOR = "payer_different_from_creator";
+  private static final String HAS_SHIPMENTS = "has_shipments";
+
   /**
    * Valida que el payerId sea distinto al collectorId y que la pref no tenga envios.
    *
@@ -23,7 +27,8 @@ public class PreferencesValidator {
       throws ValidationException {
 
     if (callerId.equals(preference.getCollectorId())) {
-      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+      DatadogPreferencesMetric.addInvalidPreferenceData(
+          context, preference, PAYER_EQUALS_COLLECTOR);
       ValidatorResult.fail(
               Translations.INSTANCE.getTranslationByLocale(
                   context.getLocale(), CANNOT_PAY_JUST_FOR_COLLECT))
@@ -49,7 +54,8 @@ public class PreferencesValidator {
       final Context context, final String emailPayer, final Preference preference)
       throws ValidationException {
     if (!preference.getPayer().getEmail().equalsIgnoreCase(emailPayer)) {
-      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+      DatadogPreferencesMetric.addInvalidPreferenceData(
+          context, preference, PAYER_DIFFERENT_FROM_CREATOR);
       ValidatorResult.fail(
               Translations.INSTANCE.getTranslationByLocale(
                   context.getLocale(), CANNOT_PAY_WITH_LINK))
@@ -61,7 +67,7 @@ public class PreferencesValidator {
       final String value, final Context context, final Preference preference)
       throws ValidationException {
     if (null != value) {
-      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+      DatadogPreferencesMetric.addInvalidPreferenceData(context, preference, HAS_SHIPMENTS);
       ValidatorResult.fail(
               Translations.INSTANCE.getTranslationByLocale(
                   context.getLocale(), CANNOT_PAY_WITH_LINK))

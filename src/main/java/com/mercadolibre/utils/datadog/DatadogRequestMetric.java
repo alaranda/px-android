@@ -3,6 +3,7 @@ package com.mercadolibre.utils.datadog;
 import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_IN_COUNTER;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
+import com.mercadolibre.constants.DatadogTagNames;
 import com.mercadolibre.metrics.MetricCollector;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
@@ -37,7 +38,7 @@ public final class DatadogRequestMetric {
         .add("request_path", path)
         .add("response_status", response.status())
         .add("response_status_pattern", LogUtils.getHttpStatusCodePattern(response.status()))
-        .add("flow", context.getFlow())
+        .add(DatadogTagNames.FLOW, context.getFlow())
         .add("site_id", context.getSite())
         .add("os", context.getUserAgent().getOperatingSystem().getName());
   }
