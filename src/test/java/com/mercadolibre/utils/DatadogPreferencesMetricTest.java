@@ -52,7 +52,8 @@ public class DatadogPreferencesMetricTest {
     when(context.getFlow()).thenReturn("px_flow");
     when(context.getPlatform()).thenReturn(Platform.MP);
 
-    DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+    DatadogPreferencesMetric.addInvalidPreferenceData(
+        context, preference, "payer_equals_collector");
   }
 
   @Test
@@ -66,6 +67,6 @@ public class DatadogPreferencesMetricTest {
     when(context.getFlow()).thenReturn("px_flow");
     when(context.getPlatform()).thenReturn(null);
 
-    DatadogPreferencesMetric.addInvalidPreferenceData(context, preference);
+    DatadogPreferencesMetric.addInvalidPreferenceData(context, preference, "has_shipments");
   }
 }

@@ -3,6 +3,7 @@ package com.mercadolibre.dto.remedy;
 import java.math.BigDecimal;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -18,6 +19,6 @@ public class PayerPaymentMethodRejected {
   private final String securityCodeLocation;
   private final int securityCodeLength;
   private final int installments;
-  private final BigDecimal totalAmount;
+  @Setter private BigDecimal totalAmount;
   private final String bin;
 }

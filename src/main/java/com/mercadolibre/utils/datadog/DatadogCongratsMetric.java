@@ -8,6 +8,7 @@ import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COL
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.mercadolibre.constants.DatadogMetricsNames;
+import com.mercadolibre.constants.DatadogTagNames;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.metrics.MetricCollector;
@@ -81,7 +82,7 @@ public class DatadogCongratsMetric {
     tags.add("productId", congratsRequest.getProductId());
     tags.add("os", congratsRequest.getUserAgent().getOperatingSystem().getName());
     if (!isBlank(congratsRequest.getFlowName())) {
-      tags.add("flow", congratsRequest.getFlowName());
+      tags.add(DatadogTagNames.FLOW, congratsRequest.getFlowName());
     }
     return tags;
   }

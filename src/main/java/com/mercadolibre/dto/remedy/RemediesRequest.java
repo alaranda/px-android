@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.remedy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,4 +17,8 @@ public class RemediesRequest {
   @Setter private String siteId;
   @Setter private String userId;
   @Setter private boolean oneTap;
+
+  public void setPaymentMethodRejectedTotalAmount(final BigDecimal totalAmount) {
+    this.payerPaymentMethodRejected.setTotalAmount(totalAmount);
+  }
 }

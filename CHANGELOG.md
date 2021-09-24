@@ -2,7 +2,19 @@
 
 # Change Log
 
+## [1.53.0]
+
+### Added
+
+- Reason tag for invalid preference Datadog metric
+
+### Fixed
+
+- Fix NPE when trying to compare totalAmount field in order to create tracking data.
+
 ## [1.52.0]
+
+### Updated
 
 - Overwrite x-product-id header from COW flows to payments api
 

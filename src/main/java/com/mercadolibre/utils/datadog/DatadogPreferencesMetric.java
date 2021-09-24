@@ -4,6 +4,7 @@ import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_COUNTER;
 import static com.mercadolibre.constants.DatadogMetricsNames.PREFERENCE_INVALID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 
+import com.mercadolibre.constants.DatadogTagNames;
 import com.mercadolibre.dto.preference.PreferenceResponse;
 import com.mercadolibre.metrics.MetricCollector;
 import com.mercadolibre.px.dto.lib.context.Context;
@@ -22,22 +23,24 @@ public class DatadogPreferencesMetric {
   private static MetricCollector.Tags getMetricTags(
       final Context context, final PreferenceResponse preferenceResponse) {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
-    tags.add("flow_id", preferenceResponse.getFlowId());
+    tags.add(DatadogTagNames.FLOW, preferenceResponse.getFlowId());
     tags.add("product_id", preferenceResponse.getProductId());
     addTagsFromContextInfo(context, tags);
     return tags;
   }
 
-  public static void addInvalidPreferenceData(final Context context, final Preference preference) {
+  public static void addInvalidPreferenceData(
+      final Context context, final Preference preference, final String reason) {
     METRIC_COLLECTOR.incrementCounter(
-        PREFERENCE_INVALID, getMetricTagsInvalidPreference(context, preference));
+        PREFERENCE_INVALID, getMetricTagsInvalidPreference(context, preference, reason));
   }
 
   private static MetricCollector.Tags getMetricTagsInvalidPreference(
-      final Context context, final Preference preference) {
+      final Context context, final Preference preference, final String reason) {
     final MetricCollector.Tags tags = new MetricCollector.Tags();
     tags.add("operation_type", preference.getOperationType());
-    tags.add("flow_id", context.getFlow());
+    tags.add(DatadogTagNames.FLOW, context.getFlow());
+    tags.add("reason", reason);
     addTagsFromContextInfo(context, tags);
     return tags;
   }
