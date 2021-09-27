@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.53.1]
+
+### Changed
+
+- Changed type of `com.mercadolibre.px.dto.lib.user.Address.streetNumber` to String.
+
 ## [1.53.0]
 
 ### Added
