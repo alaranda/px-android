@@ -8,7 +8,7 @@
 
 - Reason tag for invalid preference Datadog metric
 
-## [1.52.1]
+### Fixed
 
 - Fix NPE when trying to compare totalAmount field in order to create tracking data.
 
