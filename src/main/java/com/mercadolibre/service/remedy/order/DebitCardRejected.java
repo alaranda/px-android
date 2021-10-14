@@ -1,6 +1,7 @@
 package com.mercadolibre.service.remedy.order;
 
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.ACCOUNT_MONEY;
+import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DIGITAL_CURRENCY;
 
 import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
 import com.mercadolibre.dto.remedy.PaymentMethodSelected;
@@ -28,8 +29,8 @@ public class DebitCardRejected implements SuggestionCriteriaInterface {
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.DEBIT_CARD_WITHOUT_ESC));
     paymentMethodsOrdered.addAll(
         payerPaymentMethodsMap.get(RemedySuggestionPaymentMethod.CREDIT_CARD_WITHOUT_ESC));
-    // discarded temporally
-    // paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(DIGITAL_CURRENCY));
+    // comment next line to disable consumer_credits
+    paymentMethodsOrdered.addAll(payerPaymentMethodsMap.get(DIGITAL_CURRENCY));
 
     return SuggestionPaymentMehodsUtils.getPaymentMethodSelected(paymentMethodsOrdered);
   }
