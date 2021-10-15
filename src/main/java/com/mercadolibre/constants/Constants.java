@@ -22,9 +22,6 @@ public final class Constants {
   public static final String PUBLIC_KEY_URL_SCHEME = "public_key.url.scheme";
   public static final String PUBLIC_KEY_URL_HOST = "public_key.url.host";
 
-  public static final String USERS_URL_SCHEME = "users.url.scheme";
-  public static final String USERS_URL_HOST = "users.url.host";
-
   public static final List<String> ENABLED_HEADERS =
       Collections.unmodifiableList(
           Arrays.asList(
@@ -65,16 +62,14 @@ public final class Constants {
   public static final String GETTING_PARAMETERS = "Error getting parameters"; // TODO
 
   public static final String IFPE_MESSAGE_COLOR = "#cc000000";
-  public static final String CONSUMER_CREDITS_MODAL_TEXT_COLOR = "#000000E5";
+  public static final String CONSUMER_CREDITS_MODAL_TEXT_COLOR = "#E6000000";
 
   // Label total to pay
   public static final String WHITE_COLOR = "#FFFFFF";
   public static final String BLACK_COLOR = "#000000";
   public static final String WEIGHT_SEMI_BOLD = "semi_bold";
   public static final String WEIGHT_BOLD = "bold";
-
-  public static final String ANDROID = "android";
-  public static final String IOS = "ios";
+  public static final String WEIGHT_REGULAR = "regular";
 
   public static final String PX_PM_ODR = "px_pm_%s";
 

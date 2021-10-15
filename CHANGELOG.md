@@ -2,6 +2,17 @@
 
 # Change Log
 
+## [1.53.2]
+
+### Fixed
+
+- Updated text color for modal's texts.
+- Updated text weight for title and description in modal.
+
+### Removed
+
+- Removed unused constants.
+
 ## [1.53.1]
 
 ### Changed
