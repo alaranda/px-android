@@ -8,16 +8,22 @@ import static com.mercadolibre.px.constants.CommonParametersNames.CALLER_SITE_ID
 import static com.mercadolibre.px.constants.CommonParametersNames.CLIENT_ID;
 import static com.mercadolibre.px.constants.HeadersConstants.DENSITY;
 import static com.mercadolibre.px.constants.HeadersConstants.PRODUCT_ID;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.PIX;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
+import com.mercadolibre.api.MockCurrencyAPI;
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
+import com.mercadolibre.api.MockPaymentAPI;
+import com.mercadolibre.api.MockPaymentMethodSearchAPI;
+import com.mercadolibre.api.MockSiteAPI;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.utils.FileParserUtils;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
@@ -168,6 +174,57 @@ public class CongratsRouterTest {
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponseOnlyDiscounts.json")));
+
+    final Response response = given().headers(HEADERS).get(uriBuilder.build());
+    assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+  }
+
+  @Test
+  public void getCongrats_onlyInstructions_200() throws URISyntaxException, IOException {
+    final String siteId = Site.MLA.name();
+    final String paymentId = "1212323224";
+    final URIBuilder uriBuilder =
+        new URIBuilder("/px_mobile/congrats")
+            .addParameter(CALLER_ID, USER_ID_TEST)
+            .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+            .addParameter(CALLER_SITE_ID, siteId)
+            .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
+            .addParameter(PLATFORM, PLATFORM_TEST_MP);
+
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+
+    MockLoyaltyApi.getAsyncPoints(
+        congratsRequest,
+        HttpStatus.SC_NOT_FOUND,
+        FileParserUtils.getStringResponseFromFile("/loyalty/loyalResponse404.json"));
+
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        congratsRequest,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/merch/merchResponseOnlyDiscounts.json"));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/payment/pix_response_payment.json"));
+
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MLB_site.json"));
+
+    MockCurrencyAPI.getCurrencyAsync(
+        "BRL",
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_BRL_currency.json"));
+
+    MockPaymentMethodSearchAPI.getPaymentMethodsAsync(
+        siteId,
+        "NONE",
+        PIX,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile(
+            "/paymentMethods/payment_methods_response_200.json"));
 
     final Response response = given().headers(HEADERS).get(uriBuilder.build());
     assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));

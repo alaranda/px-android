@@ -1,0 +1,72 @@
+{
+  "paging": {
+    "total": 1,
+    "limit": 30,
+    "offset": 0
+  },
+  "results": [
+    {
+      "financial_institutions": [
+        {
+          "description": "PIX",
+          "id": "1"
+        }
+      ],
+      "secure_thumbnail": "https://www.mercadopago.com/org-img/MP3/API/logos/pix.gif",
+      "payer_costs": [
+        {
+          "installment_reduced_tea": 0,
+          "installment_reduced_cft": 0,
+          "installment_rate": 0,
+          "installment_full_cft": 0,
+          "discount_rate": 0,
+          "min_allowed_amount": 0.01,
+          "installment_full_tea": 0,
+          "labels": [],
+          "installments": 1,
+          "reimbursement_rate": null,
+          "installment_rate_collector": [
+            "MERCADOPAGO"
+          ],
+          "id": 667045018,
+          "max_allowed_amount": 9999999,
+          "base_installment_rate": 0,
+          "payment_method_option_id": "1.AQokODllZjQyNjktYjAzMy00OWU1LWJhMWQtNDE0NjQyNTM3MzY4EJaFuevHLg"
+        }
+      ],
+      "issuer": {
+        "default": true,
+        "name": "Pix",
+        "id": 12501
+      },
+      "total_financial_cost": 0,
+      "min_accreditation_days": 0,
+      "max_accreditation_days": 1,
+      "merchant_account_id": null,
+      "id": "pix",
+      "payment_type_id": "bank_transfer",
+      "accreditation_time": 0,
+      "owner": "site",
+      "settings": [],
+      "thumbnail": "https://www.mercadopago.com/org-img/MP3/API/logos/pix.gif",
+      "bins": [],
+      "marketplace": "NONE",
+      "deferred_capture": "does_not_apply",
+      "agreements": [],
+      "labels": [],
+      "payment_method_id": "667002040",
+      "financing_deals": {
+        "legals": null,
+        "installments": null,
+        "expiration_date": null,
+        "start_date": null,
+        "status": "deactive"
+      },
+      "name": "PIX",
+      "site_id": "MLB",
+      "processing_mode": "aggregator",
+      "additional_info_needed": [],
+      "status": "active"
+    }
+  ]
+}

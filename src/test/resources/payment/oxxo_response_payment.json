@@ -1,0 +1,172 @@
+{
+  "acquirer": null,
+  "acquirer_reconciliation": [],
+  "additional_info": {
+    "authentication_code": null,
+    "available_balance": null,
+    "nsu_processadora": null,
+    "poi_id": null,
+    "tracking_id": "platform:v1-whitelabel,so:ALL,type:N/A,security:none"
+  },
+  "api_version": "2",
+  "application_id": 7092,
+  "authorization_code": null,
+  "available_actions": [
+    "cancel"
+  ],
+  "barcode": {
+    "content": "780000022222852685406222222101189998",
+    "height": 30,
+    "type": "Code128C",
+    "width": 1
+  },
+  "binary_mode": false,
+  "brand_id": null,
+  "call_for_authorize_id": null,
+  "captured": true,
+  "card": {},
+  "charges_details": [],
+  "client_id": "7092",
+  "collector": {
+    "email": "aaaa@mercadolibre.mx",
+    "first_name": "Mercado Crédito 1",
+    "id": 788133771,
+    "identification": {
+      "number": null,
+      "type": null
+    },
+    "last_name": "MLM",
+    "operator_id": null,
+    "phone": {
+      "area_code": null,
+      "extension": null,
+      "number": null
+    }
+  },
+  "collector_id": 78812223771,
+  "collector_tags": [],
+  "contingencies": {
+    "list": [],
+    "status": "none"
+  },
+  "corporation_id": null,
+  "counter_currency": null,
+  "coupon_amount": 0,
+  "coupon_id": null,
+  "currency_id": "MXN",
+  "date_approved": null,
+  "date_created": "2021-09-16T11:40:37.000-04:00",
+  "date_last_updated": "2021-09-16T11:40:37.000-04:00",
+  "date_of_expiration": "2021-09-21T11:40:37.000-04:00",
+  "deduction_schema": null,
+  "description": "Pago de mensualidades de Mercado Crédito",
+  "differential_pricing_id": null,
+  "external_reference": "6a36d144-1704-11ec-b77f-0242ac130004",
+  "fee_details": [],
+  "financing_type": null,
+  "id": 169942222518,
+  "installments": 1,
+  "integrator_id": null,
+  "internal_metadata": {
+    "rule_engine": {
+      "valid_promise": false,
+      "with_promise": false,
+      "rules": [
+        {
+          "rule_id": 21000637962,
+          "rule_set": "processing_fee_and_release"
+        },
+        {
+          "rule_id": 21000236905,
+          "rule_set": "financing_fee_collector"
+        }
+      ]
+    },
+    "preference": {
+      "id": "788133771-3f637beb-2222-40b5-b59f-f7b5102a32a9",
+      "internal_metadata": {
+        "owner": "credits",
+        "environment": "prod",
+        "external_reference": "6a36d144-1704-11ec-b77f-0242ac130004",
+        "external_type": "repayment_preference",
+        "type": "repayment",
+        "version": 2
+      }
+    },
+    "internal_risk_analysis": "by_risk",
+    "offline_paym": "post_to_api_ok"
+  },
+  "is_test": null,
+  "issuer_id": null,
+  "live_mode": true,
+  "marketplace": "NONE",
+  "marketplace_owner": null,
+  "merchant_account_id": null,
+  "merchant_number": null,
+  "metadata": {},
+  "money_release_date": null,
+  "money_release_days": 0,
+  "money_release_schema": null,
+  "notification_url": null,
+  "operation_type": "regular_payment",
+  "order": {
+    "id": "3268486048",
+    "type": "mercadopago"
+  },
+  "payer": {
+    "email": "itest@gmail.com",
+    "entity_type": null,
+    "first_name": "Iris",
+    "id": "622322222",
+    "identification": {
+      "number": "AIPI222222MMNRLR09",
+      "type": "CURP"
+    },
+    "last_name": "Arias",
+    "operator_id": null,
+    "phone": {
+      "area_code": null,
+      "extension": null,
+      "number": null
+    },
+    "type": "registered"
+  },
+  "payer_id": 622324051,
+  "payer_tags": [],
+  "payment_method_id": "oxxo",
+  "payment_type_id": "ticket",
+  "platform_id": null,
+  "point_of_interaction": {},
+  "pos_id": null,
+  "processing_mode": "aggregator",
+  "product_id": "BJEO9NVBF6RG01IIIOTG",
+  "profile_id": null,
+  "refunds": [],
+  "reserve_id": null,
+  "risk_execution_id": null,
+  "shipping_amount": 0,
+  "site_id": "MLM",
+  "splitter_id": null,
+  "sponsor_id": null,
+  "statement_descriptor": null,
+  "status": "pending",
+  "status_detail": "pending_waiting_payment",
+  "store_id": null,
+  "taxes_amount": 0,
+  "transaction_amount": 1189.99,
+  "transaction_amount_refunded": 0,
+  "transaction_details": {
+    "acquirer_reference": null,
+    "external_resource_url": "https://www.mercadopago.com/mlm/payments/ticket/helper",
+    "financial_institution": null,
+    "installment_amount": 0,
+    "net_received_amount": 0,
+    "overpaid_amount": 0,
+    "payable_deferral_period": null,
+    "payment_method_reference_id": "9700009852685406",
+    "total_paid_amount": 1189.99,
+    "verification_code": "78000000985268540621092101189998"
+  },
+  "transaction_id": null,
+  "version": 0
+}

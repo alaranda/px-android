@@ -1,0 +1,69 @@
+{
+  "paging": {
+    "total": 1,
+    "limit": 30,
+    "offset": 0
+  },
+  "results": [
+    {
+      "financial_institutions": [],
+      "secure_thumbnail": "https://www.mercadopago.com/org-img/MP3/API/logos/2017.gif",
+      "payer_costs": [
+        {
+          "installment_reduced_tea": null,
+          "installment_reduced_cft": null,
+          "installment_rate": 0,
+          "installment_full_cft": null,
+          "discount_rate": 0,
+          "min_allowed_amount": 5,
+          "installment_full_tea": null,
+          "labels": [],
+          "installments": 1,
+          "reimbursement_rate": null,
+          "installment_rate_collector": [
+            "MERCADOPAGO"
+          ],
+          "id": 67697334,
+          "max_allowed_amount": 10000,
+          "base_installment_rate": 0,
+          "payment_method_option_id": "1.AQokODllZjQyNjktYjAzMy00OWU1LWJhMWQtNDE0NjQyNTM3MzY4EJaFuevHLg"
+        }
+      ],
+      "issuer": {
+        "default": false,
+        "name": "OXXO",
+        "id": 2017
+      },
+      "total_financial_cost": null,
+      "min_accreditation_days": 1,
+      "max_accreditation_days": 2,
+      "merchant_account_id": null,
+      "id": "oxxo",
+      "payment_type_id": "ticket",
+      "accreditation_time": 2880,
+      "owner": "site",
+      "settings": [],
+      "thumbnail": "http://img.mlstatic.com/org-img/MP3/API/logos/2017.gif",
+      "bins": [],
+      "marketplace": "NONE",
+      "deferred_capture": "does_not_apply",
+      "agreements": [],
+      "labels": [
+        "recommended_method"
+      ],
+      "payment_method_id": "67697337",
+      "financing_deals": {
+        "legals": null,
+        "installments": null,
+        "expiration_date": null,
+        "start_date": null,
+        "status": "deactive"
+      },
+      "name": "OXXO",
+      "site_id": "MLM",
+      "processing_mode": "aggregator",
+      "additional_info_needed": [],
+      "status": "active"
+    }
+  ]
+}

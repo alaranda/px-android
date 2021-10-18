@@ -96,7 +96,11 @@ dependencies {
 	testCompile "com.mercadolibre.restclient:meli-restclient-core:$restClientVersion:tests"
 	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
 	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
+	testCompile 'org.jmockit:jmockit:1.49'
 	testImplementation "org.mockito:mockito-inline:$mockitoCoreVersion"
+
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
 
 	// Babel
 	compile ("com.mercadolibre:i18n:$i18nVersion") {
@@ -127,7 +131,10 @@ jacocoTestReport {
 test {
 	// Endpoint tests run from within the ApiTest Suite, avoid double run
 	exclude 'com/mercadolibre/endpoints/**'
-	jvmArgs = ['-XX:+StartAttachListener']
+	jvmArgs = [
+			"-XX:+StartAttachListener",
+			"-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
+	]
 	testLogging {
 		exceptionFormat = 'full'
 	}

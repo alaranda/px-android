@@ -2,6 +2,17 @@
 
 # Change Log
 
+## [1.54.0]
+
+### Updated
+
+- Remove api call to instructions from checkout-off.
+
+### Added
+
+- Migrate instructions from checkout-off.
+- Congrats Instructions metrics.
+
 ## [1.53.2]
 
 ### Fixed

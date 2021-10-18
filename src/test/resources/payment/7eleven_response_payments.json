@@ -4,6 +4,7 @@
   "marketplace": "NONE",
   "transaction_amount": 100,
   "description": "Pago Bank Transfer Pix",
+  "site_id": "MLB",
   "collector": {
     "id": 90978436
   },

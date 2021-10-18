@@ -1,7 +1,11 @@
 package com.mercadolibre.service;
 
+import static com.mercadolibre.px.dto.lib.site.Site.MLB;
+import static com.mercadolibre.px.dto.lib.site.Site.MLM;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.MERCADOPAGO_CC;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.OXXO;
+import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.PIX;
 import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -12,22 +16,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-import com.mercadolibre.api.MockInstructionsAPI;
+import com.mercadolibre.api.MockCurrencyAPI;
 import com.mercadolibre.api.MockKycVaultV2Dao;
 import com.mercadolibre.api.MockLoyaltyApi;
 import com.mercadolibre.api.MockMerchAPI;
 import com.mercadolibre.api.MockPaymentAPI;
+import com.mercadolibre.api.MockPaymentMethodSearchAPI;
 import com.mercadolibre.api.MockPreferenceAPI;
+import com.mercadolibre.api.MockSiteAPI;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
 import com.mercadolibre.dto.congrats.OperationInfoHierarchy;
 import com.mercadolibre.dto.congrats.OperationInfoType;
 import com.mercadolibre.helper.MockTestHelper;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.payment.PxPaymentType;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.site.Site;
 import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
+import com.mercadolibre.px.toolkit.utils.FileParserUtils;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.utils.Translations;
 import java.io.IOException;
@@ -459,69 +467,12 @@ public class CongratsServiceTest {
 
   @Test
   public void
-      getPointsDiscountsAndInstructions_OfflineMethod_WithoutCredentials_returnRedirectUrlAndNullInstructions()
-          throws IOException, ApiException {
-
-    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
-    final String paymentId = "1212323224";
-    final String siteId = Site.MLB.getSiteId();
-    final CongratsRequest congratsRequest =
-        CongratsRequest.builder()
-            .userId(USER_ID_TEST)
-            .clientId(CLIENT_ID_TEST)
-            .siteId(siteId)
-            .paymentIds(paymentId)
-            .platform(Platform.MP.getId())
-            .userAgent(UserAgent.create("PX/Android/4.40.0"))
-            .density(DENSITY)
-            .productId(PRODUCT_ID_INSTORE)
-            .campaignId(CAMPAIGN_ID_TEST)
-            .flowName(FLOW_NAME)
-            .preferenceId(prefId)
-            .build();
-
-    MockPreferenceAPI.getById(
-        prefId,
-        HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
-
-    MockPaymentAPI.getPayment(
-        paymentId,
-        HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/pix_response_payment.json")));
-
-    final Congrats congrats =
-        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
-    assertNull(congrats.getInstructions());
-    assertEquals(
-        "http://redirect-url-success.com"
-            + "?status=approved"
-            + "&collection_status=approved"
-            + "&external_reference="
-            + "&preference_id="
-            + prefId
-            + "&site_id="
-            + siteId
-            + "&merchant_order_id"
-            + "&merchant_account_id"
-            + "&collection_id="
-            + paymentId
-            + "&payment_id="
-            + paymentId
-            + "&payment_type"
-            + "&processing_mode",
-        congrats.getRedirectUrl());
-  }
-
-  @Test
-  public void
       getPointsDiscountsAndInstructions_OfflineMethod_WithCredentials_returnRedirectUrlAndInstructions()
-          throws IOException, ApiException {
+          throws ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final String paymentId = "1212323224";
-    final String siteId = Site.MLB.getSiteId();
+    final String siteId = MLB.getSiteId();
     final CongratsRequest congratsRequest =
         CongratsRequest.builder()
             .userId(USER_ID_TEST)
@@ -537,26 +488,36 @@ public class CongratsServiceTest {
             .preferenceId(prefId)
             .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
             .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .paymentTypeId(PxPaymentType.BANK_TRANSFER.getType())
             .build();
 
     MockPreferenceAPI.getById(
         prefId,
         HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+        FileParserUtils.getStringResponseFromFile("/preference/preferenceWithRedirectUrl.json"));
 
     MockPaymentAPI.getPayment(
         paymentId,
         HttpStatus.SC_OK,
-        IOUtils.toString(getClass().getResourceAsStream("/payment/pix_response_payment.json")));
+        FileParserUtils.getStringResponseFromFile("/payment/pix_response_payment.json"));
 
-    MockInstructionsAPI.getInstructions(
-        paymentId,
-        "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
-        "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676o",
-        "ticket",
-        IOUtils.toString(getClass().getResourceAsStream("/instructions/MLB_instructions.json")),
-        HttpStatus.SC_OK);
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MLB_site.json"));
+
+    MockCurrencyAPI.getCurrencyAsync(
+        "BRL",
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_BRL_currency.json"));
+
+    MockPaymentMethodSearchAPI.getPaymentMethodsAsync(
+        siteId,
+        "NONE",
+        PIX,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile(
+            "/paymentMethods/payment_methods_response_200.json"));
 
     final Congrats congrats =
         congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
@@ -584,11 +545,11 @@ public class CongratsServiceTest {
   @Test
   public void
       getPointsDiscountsAndInstructions_OfflineMethod_WithCredentialsAndPaymentTypeId_returnRedirectUrlAndInstructions()
-          throws IOException, ApiException {
+          throws ApiException {
 
     final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
     final String paymentId = "1212323224";
-    final String siteId = Site.MLB.getSiteId();
+    final String siteId = MLB.getSiteId();
     final CongratsRequest congratsRequest =
         CongratsRequest.builder()
             .userId(USER_ID_TEST)
@@ -604,28 +565,36 @@ public class CongratsServiceTest {
             .preferenceId(prefId)
             .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
             .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
-            .paymentTypeId("pix")
+            .paymentTypeId(PxPaymentType.BANK_TRANSFER.getType())
             .build();
 
     MockPreferenceAPI.getById(
         prefId,
         HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass().getResourceAsStream("/preference/preferenceWithRedirectUrl.json")));
+        FileParserUtils.getStringResponseFromFile("/preference/preferenceWithRedirectUrl.json"));
 
     MockPaymentAPI.getPayment(
         paymentId,
         HttpStatus.SC_OK,
-        IOUtils.toString(
-            getClass().getResourceAsStream("/payment/7eleven_response_payments.json")));
+        FileParserUtils.getStringResponseFromFile("/payment/7eleven_response_payments.json"));
 
-    MockInstructionsAPI.getInstructions(
-        paymentId,
-        "TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850",
-        "TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676o",
-        "ticket",
-        IOUtils.toString(getClass().getResourceAsStream("/instructions/MLM_7eleven.json")),
-        HttpStatus.SC_OK);
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MLB_site.json"));
+
+    MockCurrencyAPI.getCurrencyAsync(
+        "BRL",
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_BRL_currency.json"));
+
+    MockPaymentMethodSearchAPI.getPaymentMethodsAsync(
+        siteId,
+        "NONE",
+        PIX,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile(
+            "/paymentMethods/payment_methods_response_200.json"));
 
     final Congrats congrats =
         congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
@@ -983,5 +952,172 @@ public class CongratsServiceTest {
         Translations.INSTANCE.getTranslationByLocale(
             CONTEXT_ES.getLocale(), CONGRATS_THIRD_PARTY_CARD_INFO),
         congrats.getOperationInfo().getBody());
+  }
+
+  @Test
+  public void getPointsDiscountsAndInstructions_offlineMethod_siteError_emptyCongrats()
+      throws ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = MLB.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
+            .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .paymentTypeId(PxPaymentType.BANK_TRANSFER.getType())
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/preference/preferenceWithRedirectUrl.json"));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/payment/pix_response_payment.json"));
+
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_INTERNAL_SERVER_ERROR,
+        FileParserUtils.getStringResponseFromFile("/site/404_site_response.json"));
+
+    when(CONTEXT_ES.getSite()).thenReturn(MLB);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+    assertNotNull(congrats.getInstructions());
+    assertEquals(
+        congrats.getInstructions().getTitle(), "Seu código Pix de R$ 1.189,00 já pode ser pago");
+  }
+
+  @Test
+  public void getPointsDiscountsAndInstructions_offlineMethod_pmSearchError_emptyCongrats()
+      throws ApiException {
+
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = MLM.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
+            .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .paymentTypeId(PxPaymentType.BANK_TRANSFER.getType())
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/preference/preferenceWithRedirectUrl.json"));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/payment/oxxo_response_payment.json"));
+
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MLM_site.json"));
+
+    MockCurrencyAPI.getCurrencyAsync(
+        "MXN",
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MXN_currency.json"));
+
+    MockPaymentMethodSearchAPI.getPaymentMethodsAsync(
+        siteId,
+        "NONE",
+        PIX,
+        HttpStatus.SC_NOT_FOUND,
+        FileParserUtils.getStringResponseFromFile(
+            "/paymentMethods/payment_methods_response_404.json"));
+
+    when(CONTEXT_ES.getSite()).thenReturn(MLM);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+    assertNull(congrats.getInstructions());
+  }
+
+  @Test
+  public void getPointsDiscountsAndInstructions_offlineMethod_completeInstruction()
+      throws ApiException {
+
+    RequestMockHolder.clear();
+    final String prefId = "138275050-69faf356-c9b3-47d2-afe1-43d924fb6876";
+    final String paymentId = "1212323224";
+    final String siteId = MLM.getSiteId();
+    final CongratsRequest congratsRequest =
+        CongratsRequest.builder()
+            .userId(USER_ID_TEST)
+            .clientId(CLIENT_ID_TEST)
+            .siteId(siteId)
+            .paymentIds(paymentId)
+            .platform(Platform.MP.getId())
+            .userAgent(UserAgent.create("PX/Android/4.40.0"))
+            .density(DENSITY)
+            .productId(PRODUCT_ID_INSTORE)
+            .campaignId(CAMPAIGN_ID_TEST)
+            .flowName(FLOW_NAME)
+            .preferenceId(prefId)
+            .accessToken("TEST-3792603160086480-033021-54e7ad29181cdcd4da6e7eb49d73f53d-139274850")
+            .publicKey("TEST-d1a694aa-b0ee-4dd2-8326-79b1d53a676c")
+            .paymentTypeId(PxPaymentType.TICKET.getType())
+            .build();
+
+    MockPreferenceAPI.getById(
+        prefId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/preference/preferenceWithRedirectUrl.json"));
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/payment/oxxo_response_payment.json"));
+
+    MockSiteAPI.getSiteAsync(
+        siteId,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MLM_site.json"));
+
+    MockCurrencyAPI.getCurrencyAsync(
+        "MXN",
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/site/200_MXN_currency.json"));
+
+    MockPaymentMethodSearchAPI.getPaymentMethodsAsync(
+        siteId,
+        "NONE",
+        OXXO,
+        HttpStatus.SC_OK,
+        FileParserUtils.getStringResponseFromFile("/paymentMethods/payment_methods_oxxo_200.json"));
+
+    final Context context = MockTestHelper.mockContextLibDto();
+    when(context.getSite()).thenReturn(MLM);
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(context, congratsRequest);
+    assertNotNull(congrats.getInstructions());
   }
 }

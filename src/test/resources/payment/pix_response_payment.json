@@ -12,7 +12,21 @@
   },
   "payment_method_id": "pix",
   "status": "pending",
+  "site_id": "MLB",
   "status_detail": "pending_waiting_transfer",
+  "transaction_details": {
+    "acquirer_reference": null,
+    "bank_transfer_id": 111118740,
+    "external_resource_url": null,
+    "financial_institution": "1",
+    "installment_amount": 0,
+    "net_received_amount": 1000.59,
+    "overpaid_amount": 0,
+    "payable_deferral_period": null,
+    "payment_method_reference_id": null,
+    "total_paid_amount": 1189,
+    "transaction_id": "PIXE165011111111111404d95952a8433"
+  },
   "point_of_interaction": {
     "type": "CHECKOUT",
     "sub_type": null,

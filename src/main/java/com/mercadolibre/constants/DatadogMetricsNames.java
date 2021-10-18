@@ -22,12 +22,16 @@ public final class DatadogMetricsNames {
       "px.checkout_mobile_payments.congrats.kyc.response.exception";
   public static final String CONGRATS_KYC_RESPONSE_BODY_ERROR =
       "px.checkout_mobile_payments.congrats.kyc.response.body.error";
+  public static final String CONGRATS_ILLEGAL_PAYMENT_METHOD =
+      "px.checkout_mobile_payments.congrats.illegal.payment_method";
   public static final String CONGRATS_DISCOUNTS = "px.checkout_mobile_payments.congrats_discounts";
   public static final String CONGRATS_POINTS = "px.checkout_mobile_payments.congrats_points";
   public static final String CONGRATS_CROSS_SELLING =
       "px.checkout_mobile_payments.congrats_cross_selling";
   public static final String CONGRATS_ERROR_BUILD_CONGRATS =
       "px.RemediesRequest.congrats_error_build_congrats";
+  public static final String CONGRATS_INSTRUCTIONS =
+      "px.checkout_mobile_payments.congrats_instructions";
   // Remedies
   public static final String REMEDY_SILVER_BULLET_INTENT =
       "px.checkout_mobile_payments.remedy_silver_bullet_intent";
