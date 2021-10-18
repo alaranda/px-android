@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.55.0]
+
+### Added
+
+- Enable consumer credits as remedy option.
+
 ## [1.54.0]
 
 ### Updated
