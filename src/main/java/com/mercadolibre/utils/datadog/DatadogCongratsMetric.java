@@ -2,8 +2,10 @@ package com.mercadolibre.utils.datadog;
 
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_CROSS_SELLING;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_DISCOUNTS;
+import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_INSTRUCTIONS;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_POINTS;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_REQUEST;
+import static com.mercadolibre.constants.DatadogTagNames.INSTRUCTION_TYPE;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -11,6 +13,7 @@ import com.mercadolibre.constants.DatadogMetricsNames;
 import com.mercadolibre.constants.DatadogTagNames;
 import com.mercadolibre.dto.congrats.Congrats;
 import com.mercadolibre.dto.congrats.CongratsRequest;
+import com.mercadolibre.dto.instructions.Instruction;
 import com.mercadolibre.metrics.MetricCollector;
 
 public class DatadogCongratsMetric {
@@ -45,6 +48,12 @@ public class DatadogCongratsMetric {
           CONGRATS_CROSS_SELLING,
           getMetricTags(congratsRequest, congrats.getCrossSelling().size()));
     }
+
+    if (null != congrats.getInstructions()) {
+      METRIC_COLLECTOR.incrementCounter(
+          CONGRATS_INSTRUCTIONS,
+          getMetricTagsWithInstructionType(congratsRequest, congrats.getInstructions()));
+    }
   }
 
   public static void trackCongratsKyCRequest(final CongratsRequest congratsRequest) {
@@ -62,6 +71,12 @@ public class DatadogCongratsMetric {
         DatadogMetricsNames.CONGRATS_KYC_RESPONSE_BODY_ERROR, getMetricTags(congratsRequest));
   }
 
+  public static void trackCongratsIllegalPaymentMethod(final String paymentMethod) {
+    METRIC_COLLECTOR.incrementCounter(
+        DatadogMetricsNames.CONGRATS_ILLEGAL_PAYMENT_METHOD,
+        new MetricCollector.Tags().add("paymentMethod", paymentMethod));
+  }
+
   private static MetricCollector.Tags getMetricTags(
       final CongratsRequest congratsRequest, final int quantity) {
 
@@ -72,6 +87,12 @@ public class DatadogCongratsMetric {
     }
 
     return tags;
+  }
+
+  private static MetricCollector.Tags getMetricTagsWithInstructionType(
+      final CongratsRequest congratsRequest, final Instruction instruction) {
+
+    return getMetricTags(congratsRequest).add(INSTRUCTION_TYPE, instruction.getType());
   }
 
   private static MetricCollector.Tags getMetricTags(final CongratsRequest congratsRequest) {

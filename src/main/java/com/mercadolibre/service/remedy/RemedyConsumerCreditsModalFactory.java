@@ -1,11 +1,6 @@
 package com.mercadolibre.service.remedy;
 
-import static com.mercadolibre.constants.Constants.ACTION_CHANGE_PM;
-import static com.mercadolibre.constants.Constants.ACTION_PAY;
-import static com.mercadolibre.constants.Constants.BUTTON_LOUD;
-import static com.mercadolibre.constants.Constants.BUTTON_QUIET;
-import static com.mercadolibre.constants.Constants.CONSUMER_CREDITS_MODAL_TEXT_COLOR;
-import static com.mercadolibre.constants.Constants.WEIGHT_BOLD;
+import static com.mercadolibre.constants.Constants.*;
 import static com.mercadolibre.utils.Translations.REMEDY_MODAL_CONSUMER_CREDITS_DESCRIPTION;
 import static com.mercadolibre.utils.Translations.REMEDY_MODAL_CONSUMER_CREDITS_MAIN_BUTTON_LABEL;
 import static com.mercadolibre.utils.Translations.REMEDY_MODAL_CONSUMER_CREDITS_SECONDARY_BUTTON_LABEL;
@@ -34,7 +29,7 @@ public enum RemedyConsumerCreditsModalFactory {
         getTranslation(locale, REMEDY_MODAL_CONSUMER_CREDITS_TITLE),
         null,
         CONSUMER_CREDITS_MODAL_TEXT_COLOR,
-        WEIGHT_BOLD);
+        WEIGHT_SEMI_BOLD);
   }
 
   private Text buildDescription(final Locale locale) {
@@ -42,7 +37,7 @@ public enum RemedyConsumerCreditsModalFactory {
         getTranslation(locale, REMEDY_MODAL_CONSUMER_CREDITS_DESCRIPTION),
         null,
         CONSUMER_CREDITS_MODAL_TEXT_COLOR,
-        WEIGHT_BOLD);
+        WEIGHT_REGULAR);
   }
 
   private Button buildMainButton(final Locale locale) {

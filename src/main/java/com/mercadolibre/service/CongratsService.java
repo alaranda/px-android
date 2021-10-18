@@ -7,16 +7,20 @@ import static com.mercadolibre.constants.Constants.PX_PM_ODR;
 import static com.mercadolibre.constants.DatadogMetricsNames.CONGRATS_ERROR_BUILD_CONGRATS;
 import static com.mercadolibre.dto.congrats.OperationInfoHierarchy.QUIET;
 import static com.mercadolibre.dto.congrats.OperationInfoType.NEUTRAL;
+import static com.mercadolibre.px.constants.ConstantsNames.MARKETPLACE_NONE;
+import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
+import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.LEVEL_ERROR;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.utils.CardUtil.isCardPaymentFromMLA;
 import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
+import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 
 import com.mercadolibre.api.DaoProvider;
-import com.mercadolibre.api.InstructionsApi;
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
 import com.mercadolibre.api.PaymentAPI;
+import com.mercadolibre.api.PaymentMethodsSearchApi;
 import com.mercadolibre.api.PreferenceAPI;
 import com.mercadolibre.dto.congrats.Action;
 import com.mercadolibre.dto.congrats.AutoReturn;
@@ -29,19 +33,26 @@ import com.mercadolibre.dto.congrats.OperationInfo;
 import com.mercadolibre.dto.congrats.Points;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.dto.instructions.Instruction;
-import com.mercadolibre.dto.instructions.InstructionsResponse;
+import com.mercadolibre.dto.instructions.InstructionFactory;
+import com.mercadolibre.dto.instructions.InstructionMold;
+import com.mercadolibre.dto.instructions.InstructionPrototype;
 import com.mercadolibre.dto.kyc.UserIdentificationResponse;
 import com.mercadolibre.dto.payment.Payment;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.button.Button;
 import com.mercadolibre.px.dto.lib.context.Context;
+import com.mercadolibre.px.dto.lib.installments.PaymentMethod;
+import com.mercadolibre.px.dto.lib.payment.PxPaymentType;
 import com.mercadolibre.px.dto.lib.platform.Platform;
 import com.mercadolibre.px.dto.lib.preference.BackUrls;
 import com.mercadolibre.px.dto.lib.preference.Preference;
 import com.mercadolibre.px.dto.lib.preference.RedirectUrls;
+import com.mercadolibre.px.dto.lib.site.CurrencyType;
 import com.mercadolibre.px.dto.lib.site.Site;
+import com.mercadolibre.px.dto.lib.site.SiteCore;
 import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.px.exceptions.ApiException;
+import com.mercadolibre.px.monitoring.lib.log.LogBuilder;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.dto.Version;
 import com.mercadolibre.px.toolkit.dto.user_agent.OperatingSystem;
@@ -49,6 +60,7 @@ import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
 import com.mercadolibre.px.toolkit.services.OnDemandResourcesService;
 import com.mercadolibre.px.toolkit.utils.Either;
 import com.mercadolibre.utils.CardUtil;
+import com.mercadolibre.utils.InstructionsUtils;
 import com.mercadolibre.utils.Translations;
 import com.mercadolibre.utils.UrlDownloadUtils;
 import com.mercadolibre.utils.datadog.DatadogCongratsMetric;
@@ -71,6 +83,8 @@ import spark.utils.StringUtils;
 
 public class CongratsService {
 
+  public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
+  public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
   private static final Logger LOGGER = LogManager.getLogger();
   private static final List<String> INSTORE_PRODUCT_IDS =
       Arrays.asList(
@@ -83,7 +97,6 @@ public class CongratsService {
           "bknng4ko5mpg01jd8mgg",
           "bknnga4o5mpg01jd8mh0",
           "bckm077hau10018ovch0");
-
   private static final List<String> EXPENSE_SPLIT_PRODUCT_IDS =
       Arrays.asList(
           "bh31umv10flg01nmhg60",
@@ -99,16 +112,13 @@ public class CongratsService {
           "bckjnp7hau10018ovcd0",
           "bckjocnhau10018ovcg0",
           "bckjo2vhau10018ovce0");
-
   private static final List<String> SITES_WITH_EXPENSE_SPLIT_BLOCKED =
       Arrays.asList(Site.MLU.getSiteId(), Site.MCO.getSiteId());
 
   private static final String ACTIVITIES_LINK = "mercadopago://activities_v2_list";
 
   private static final Pattern SPLIT_BY_COMMA_PATTERN = Pattern.compile(",");
-
   private static final String ODR_IMAGES_VERSION = "1";
-
   private static final String EXPENSE_SPLIT_ML_DEEPLINK =
       "mercadolibre://mplayer/money_split_external?operation_id=%s&source=%s";
   private static final String EXPENSE_SPLIT_MP_DEEPLINK =
@@ -116,10 +126,6 @@ public class CongratsService {
   private static final String EXPENSE_SPLIT_TEXT_COLOR = "#333333";
   private static final String EXPENSE_SPLIT_WEIGHT = "semi_bold";
   private static final String EXPENSE_SPLIT_ODR_ICON_KEY = "px_congrats_money_split_mp";
-
-  public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
-  public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
-
   private static final String EXPENSE_SPLIT_BACKGROUND_COLOUR = "#ffffff";
   private static final String APPROVED = "approved";
   private static final int RETURNING_TIME_SECONDS = 5;
@@ -128,8 +134,11 @@ public class CongratsService {
   private static final String STATUS_DETAIL_PENDING_WAITING_TRANSFER = "pending_waiting_transfer";
 
   private final DaoProvider daoProvider = new DaoProvider();
+  private final PaymentMethodsSearchApi paymentMethodsSearchApi;
 
-  public CongratsService() {}
+  public CongratsService() {
+    this.paymentMethodsSearchApi = new PaymentMethodsSearchApi();
+  }
 
   /**
    * Retorna los puntos sumados en el pago y los acumulados mas los descuentos otorgados.
@@ -262,24 +271,8 @@ public class CongratsService {
         }
       }
 
-      Instruction instruction = null;
-      if (hasCredentials(congratsRequest) && isOfflinePaymentMethod(payment)) {
-        final String paymentTypeId =
-            congratsRequest.getPaymentTypeId() != null
-                ? congratsRequest.getPaymentTypeId()
-                : payment.getPaymentTypeId();
-        Either<InstructionsResponse, ApiError> instructionResponse =
-            InstructionsApi.INSTANCE.getInstructions(
-                context,
-                primaryPaymentId,
-                congratsRequest.getAccessToken(),
-                congratsRequest.getPublicKey(),
-                paymentTypeId);
-        instruction =
-            instructionResponse.isValuePresent()
-                ? instructionResponse.getValue().getInstructions().get(0)
-                : null;
-      }
+      final Instruction instruction =
+          this.getInstructions(context, congratsRequest.getPaymentTypeId(), payment);
 
       final Action viewReceipt =
           viewReceipt(
@@ -379,10 +372,6 @@ public class CongratsService {
     return CardUtil.isThirdPartyCard(
         userIdentificationResponse.getData().getUser().getIdentification(),
         payment.getCard().getCardholder());
-  }
-
-  private boolean hasCredentials(final CongratsRequest congratsRequest) {
-    return congratsRequest.getAccessToken() != null && congratsRequest.getPublicKey() != null;
   }
 
   private boolean isOfflinePaymentMethod(final Payment payment) {
@@ -583,5 +572,85 @@ public class CongratsService {
     } catch (final URISyntaxException e) {
       return url;
     }
+  }
+
+  private Instruction getInstructions(
+      final Context context, String paymentTypeId, final Payment payment) throws ApiException {
+    if (isOfflinePaymentMethod(payment)) {
+
+      paymentTypeId = Optional.ofNullable(paymentTypeId).orElse(payment.getPaymentTypeId());
+
+      final InstructionPrototype instructionDraft =
+          InstructionFactory.getInstruction(payment.getPaymentMethodId());
+
+      InstructionMold.InstructionMoldBuilder instructionMoldBuilder =
+          InstructionMold.builder()
+              .paymentType(PxPaymentType.find(paymentTypeId))
+              .paymentCode(InstructionsUtils.getPaymentCode(payment))
+              .activationUri(InstructionsUtils.getActivationUri(payment.getTransactionDetails()))
+              .transactionId(InstructionsUtils.getTransactionId(payment.getTransactionDetails()))
+              .paymentId(String.valueOf(payment.getId()))
+              .qrCode(InstructionsUtils.getQrCode(payment.getPointOfInteraction()))
+              .payerIdentificationNumber(
+                  InstructionsUtils.getPayerIdentificationNumber(payment.getPayer()))
+              .payerIdentificationType(
+                  InstructionsUtils.getPayerIdentificationType(payment.getPayer()));
+
+      if (instructionDraft.hasAmount()) {
+        final CompletableFuture<Either<SiteCore, ApiError>> siteFuture =
+            this.daoProvider.getSiteDao().getSiteAsync(context, payment.getSiteId());
+
+        final Optional<SiteCore> siteOpt =
+            this.daoProvider.getSiteDao().getSiteFromFuture(context, siteFuture);
+
+        final CurrencyType currency;
+        if (siteOpt.isPresent()) {
+          final SiteCore site = siteOpt.get();
+          currency = site.getDefaultCurrency().setSeparatorsBySiteId(Site.from(site.getId()));
+        } else {
+          final LogBuilder logBuilder =
+              new LogBuilder(context.getRequestId(), LEVEL_ERROR)
+                  .withSource("CongratsService")
+                  .withMessage("API call to sites failed")
+                  .withSiteId(payment.getSiteId());
+          LOGGER.error(logBuilder.build());
+
+          currency = CurrencyType.getCurrencyBySiteId(Site.from(payment.getSiteId()));
+        }
+        final String amount =
+            InstructionsUtils.getAmount(payment.getTransactionDetails(), currency);
+        instructionMoldBuilder.amount(amount);
+      }
+
+      if (instructionDraft.hasAccreditationMessage() || instructionDraft.hasCompany()) {
+        final CompletableFuture<Either<PaymentMethodsSearchApi.PaymentMethodsSearchDTO, ApiError>>
+            pmsFuture =
+                this.paymentMethodsSearchApi.getPaymentMethodsAsync(
+                    context, payment.getSiteId(), MARKETPLACE_NONE, payment.getPaymentMethodId());
+
+        final Optional<PaymentMethodsSearchApi.PaymentMethodsSearchDTO> paymentMethodsOpt =
+            this.paymentMethodsSearchApi.getPaymentMethodsFromFuture(context, pmsFuture);
+
+        if (!paymentMethodsOpt.isPresent()) {
+          throw new ApiException(
+              EXTERNAL_ERROR,
+              "API call to payment methods search failed",
+              SC_INTERNAL_SERVER_ERROR);
+        }
+
+        final PaymentMethod paymentMethod =
+            paymentMethodsOpt.get().getResults().stream().findFirst().orElse(null);
+
+        final String accreditationMessage =
+            InstructionsUtils.getAccreditationMessage(context.getLocale(), paymentMethod);
+
+        instructionMoldBuilder
+            .company(InstructionsUtils.getCompany(paymentMethod, payment))
+            .accreditationMessage(accreditationMessage);
+      }
+
+      return instructionDraft.create(instructionMoldBuilder.build());
+    }
+    return null;
   }
 }

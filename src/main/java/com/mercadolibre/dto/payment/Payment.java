@@ -2,6 +2,7 @@ package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.px.dto.lib.card.v4.Card;
 import com.mercadolibre.px.dto.lib.preference.PointOfInteraction;
+import com.mercadolibre.px.dto.lib.user.Payer;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.Getter;
@@ -47,6 +48,9 @@ public class Payment {
   private long riskExecutionId;
   private PointOfInteraction pointOfInteraction;
   private Card card;
+  private TransactionDetails transactionDetails;
+  private Payer payer;
+  private Barcode barcode;
 
   @Getter
   public static final class Collector {

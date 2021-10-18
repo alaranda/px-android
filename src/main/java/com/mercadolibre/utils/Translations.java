@@ -81,6 +81,16 @@ public enum Translations {
   public static final String REMEDY_MODAL_CONSUMER_CREDITS_DESCRIPTION =
       "remedy.modal.consumer_credits.description";
 
+  // Instructions: Accreditation Time Message (checkout-off-backend migration)
+  public static final String ACCREDITATION_TIME_INSTANTLY =
+      "checkout.paymentmethod.accreditationtime.label1";
+  public static final String ACCREDITATION_TIME_1_2_DAYS =
+      "checkout.paymentmethod.accreditationtime.label3";
+  public static final String ACCREDITATION_TIME_N_HOURS =
+      "checkout.paymentmethod.accreditationtime.label4";
+  public static final String ACCREDITATION_TIME_N_DAYS =
+      "checkout.paymentmethod.accreditationtime.label5";
+
   private final I18nService i18nService = new I18nService();
 
   /**
@@ -89,6 +99,16 @@ public enum Translations {
    * @return String
    */
   public String getTranslationByLocale(Locale locale, final String key) {
+    return this.getTranslationByLocale(locale, null, key);
+  }
+
+  /**
+   * @param locale Locale
+   * @param args Object[]
+   * @param key String
+   * @return String
+   */
+  public String getTranslationByLocale(Locale locale, final Object[] args, final String key) {
     if (!isAvailableLocale(locale)) {
       locale = Locale.forLanguageTag("es-AR");
     }
@@ -212,6 +232,14 @@ public enum Translations {
         return i18nService.tr(
             "Las cuotas tienen un valor fijo y podrás pagarlas desde tu cuenta de Mercado Pago.",
             locale);
+      case ACCREDITATION_TIME_INSTANTLY:
+        return i18nService.tr("El pago se acreditará al instante.", locale);
+      case ACCREDITATION_TIME_1_2_DAYS:
+        return i18nService.tr("El pago se acreditará de 1 a 2 días hábiles.", locale);
+      case ACCREDITATION_TIME_N_HOURS:
+        return i18nService.tr("El pago se acreditará en menos de {0}h.", args, locale);
+      case ACCREDITATION_TIME_N_DAYS:
+        return i18nService.tr("El pago se acreditará en {0} días hábiles.", args, locale);
       default:
         return "";
     }

@@ -766,14 +766,14 @@ public class RemedySuggestionPaymentMethodTest {
     assertNotNull(modalAction);
     assertNotNull(modalAction);
     assertEquals("Recuerda que usarás Mercado Crédito", modalAction.getTitle().getMessage());
-    assertEquals(Constants.WEIGHT_BOLD, modalAction.getTitle().getWeight());
+    assertEquals(Constants.WEIGHT_SEMI_BOLD, modalAction.getTitle().getWeight());
     assertEquals(
         Constants.CONSUMER_CREDITS_MODAL_TEXT_COLOR, modalAction.getTitle().getTextColor());
     assertNull(modalAction.getTitle().getBackgroundColor());
     assertEquals(
         "Las cuotas tienen un valor fijo y podrás pagarlas desde tu cuenta de Mercado Pago.",
         modalAction.getDescription().getMessage());
-    assertEquals(Constants.WEIGHT_BOLD, modalAction.getDescription().getWeight());
+    assertEquals(Constants.WEIGHT_REGULAR, modalAction.getDescription().getWeight());
     assertEquals(
         Constants.CONSUMER_CREDITS_MODAL_TEXT_COLOR, modalAction.getDescription().getTextColor());
     assertNull(modalAction.getDescription().getBackgroundColor());
