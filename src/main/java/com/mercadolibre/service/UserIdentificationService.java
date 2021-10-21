@@ -17,7 +17,9 @@ public enum UserIdentificationService {
       "px-checkout-mobile-payments";
   private static final String KYC_VAULT_HEADER_API_SANDBOX_KEY = "kyc.vault.header.api.sandbox";
   private static final String KYC_USER_IDENTIFICATION_QUERY =
-      "id, identification { type, number }, registration_identifiers { email { address } }";
+      "id, identification { type, number }, registration_identifiers { email { address } }, "
+          + "person { other_identifications { type, number }} ";
+
   private final DaoProvider daoProvider = new DaoProvider();
 
   public CompletableFuture<Either<UserIdentificationResponse, ApiError>> getAsyncUserIdentification(

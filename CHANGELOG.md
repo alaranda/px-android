@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.57.0]
+
+### Updated
+
+- Improved third party card validation logic to make use of person other identifications.
+
 ## [1.56.0]
 
 ### Added

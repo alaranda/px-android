@@ -11,6 +11,18 @@
           "address": "user@example.me",
           "verified": true
         }
+      },
+      "person": {
+        "other_identifications": [
+          {
+            "type": "DNI",
+            "number": "8019106"
+          },
+          {
+            "type": "PASSPORT",
+            "number": "MLA208019"
+          }
+        ]
       }
     }
   }
