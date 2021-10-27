@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.56.0]
+
+### Added
+
+- QR PIX products id to congrats custom order list.
+
 ## [1.55.0]
 
 ### Added
