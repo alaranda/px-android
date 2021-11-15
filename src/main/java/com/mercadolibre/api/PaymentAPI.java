@@ -169,8 +169,7 @@ public enum PaymentAPI {
               LogUtils.convertQueryParam(url.getQueryParams()),
               HttpStatus.SC_GATEWAY_TIMEOUT,
               e));
-      METRIC_COLLECTOR.incrementCounter(
-          POOL_ERROR_COUNTER, "pool:" + POOL_NAME_READ);
+      METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME_READ);
       throw new ApiException(EXTERNAL_ERROR, API_CALL_PAYMENTS_FAILED, HttpStatus.SC_BAD_GATEWAY);
     }
   }
