@@ -86,6 +86,8 @@ public class CongratsService {
   public static final Version WITHOUT_LOYALTY_CONGRATS_IOS = Version.create("4.22");
   public static final Version WITHOUT_LOYALTY_CONGRATS_ANDROID = Version.create("4.23.1");
   private static final Logger LOGGER = LogManager.getLogger();
+  private static final String QR_PIX_ANDROID_PRODUCT_ID = "btvlsfpo1f60or8rlsj0";
+  private static final String QR_PIX_IOS_PRODUCT_ID = "btvlt19o1f60or8rlsjg";
   private static final List<String> INSTORE_PRODUCT_IDS =
       Arrays.asList(
           "bh31umv10flg01nmhg60",
@@ -96,7 +98,9 @@ public class CongratsService {
           "bknnfpko5mpg01jd8mg0",
           "bknng4ko5mpg01jd8mgg",
           "bknnga4o5mpg01jd8mh0",
-          "bckm077hau10018ovch0");
+          "bckm077hau10018ovch0",
+          QR_PIX_ANDROID_PRODUCT_ID,
+          QR_PIX_IOS_PRODUCT_ID);
   private static final List<String> EXPENSE_SPLIT_PRODUCT_IDS =
       Arrays.asList(
           "bh31umv10flg01nmhg60",
