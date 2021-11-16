@@ -1,13 +1,10 @@
 package com.mercadolibre.api;
 
 import static com.mercadolibre.constants.Constants.API_CALL_PAYMENTS_FAILED;
-import static com.mercadolibre.constants.Constants.ENABLED_HEADERS;
 import static com.mercadolibre.constants.DatadogMetricsNames.POOL_ERROR_COUNTER;
-import static com.mercadolibre.constants.DatadogMetricsNames.REQUEST_OUT_COUNTER;
 import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.constants.HeadersConstants.X_REQUEST_ID;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
-import static org.eclipse.jetty.http.HttpStatus.isSuccess;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.payment.Payment;
@@ -15,11 +12,10 @@ import com.mercadolibre.dto.payment.PaymentBody;
 import com.mercadolibre.px.dto.ApiError;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.exceptions.ApiException;
-import com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils;
+import com.mercadolibre.px.monitoring.lib.log.MonitoringUtils;
 import com.mercadolibre.px.monitoring.lib.utils.LogUtils;
 import com.mercadolibre.px.toolkit.gson.GsonWrapper;
 import com.mercadolibre.px.toolkit.utils.Either;
-import com.mercadolibre.px.toolkit.utils.HeadersUtils;
 import com.mercadolibre.px.toolkit.utils.MeliRestUtils;
 import com.mercadolibre.px_config.Config;
 import com.mercadolibre.restclient.Response;
@@ -91,24 +87,10 @@ public enum PaymentAPI {
                   context.getMeliContext())
               .get();
 
-      METRIC_COLLECTOR.incrementCounter(
-          REQUEST_OUT_COUNTER,
-          DatadogUtils.getRequestOutCounterTags(
-              HttpMethod.POST.name(), POOL_NAME, response.getStatus()));
-
       return buildResponse(context, headers, url, response, HttpMethod.POST.name(), POOL_NAME);
     } catch (final RestException | InterruptedException | ExecutionException e) {
-      LOGGER.error(
-          LogUtils.getExceptionLog(
-              context.getRequestId(),
-              HttpMethod.POST.name(),
-              POOL_NAME,
-              URL,
-              headers,
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              HttpStatus.SC_GATEWAY_TIMEOUT,
-              e));
-      METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME);
+      MonitoringUtils.logException(
+          context, HttpMethod.POST.name(), POOL_NAME, URL, url.getQueryParams(), headers, e);
       throw new ApiException(EXTERNAL_ERROR, API_CALL_PAYMENTS_FAILED, HttpStatus.SC_BAD_GATEWAY);
     }
   }
@@ -150,26 +132,12 @@ public enum PaymentAPI {
               .asyncGet(url.toString(), headers, context.getMeliContext());
 
       return completableFuture.thenApply(
-          response -> {
-            METRIC_COLLECTOR.incrementCounter(
-                REQUEST_OUT_COUNTER,
-                DatadogUtils.getRequestOutCounterTags(
-                    HttpMethod.GET.name(), POOL_NAME_READ, response.getStatus()));
-            return buildResponse(
-                context, headers, url, response, HttpMethod.GET.name(), POOL_NAME_READ);
-          });
+          response ->
+              buildResponse(
+                  context, headers, url, response, HttpMethod.GET.name(), POOL_NAME_READ));
     } catch (final RestException e) {
-      LOGGER.error(
-          LogUtils.getExceptionLog(
-              context.getRequestId(),
-              HttpMethod.GET.name(),
-              POOL_NAME_READ,
-              url.toString(),
-              headers,
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              HttpStatus.SC_GATEWAY_TIMEOUT,
-              e));
-      METRIC_COLLECTOR.incrementCounter(POOL_ERROR_COUNTER, "pool:" + POOL_NAME_READ);
+      MonitoringUtils.logException(
+          context, HttpMethod.POST.name(), POOL_NAME, URL, url.getQueryParams(), headers, e);
       throw new ApiException(EXTERNAL_ERROR, API_CALL_PAYMENTS_FAILED, HttpStatus.SC_BAD_GATEWAY);
     }
   }
@@ -195,27 +163,8 @@ public enum PaymentAPI {
       final Response response,
       final String httpMethod,
       final String poolName) {
-    if (isSuccess(response.getStatus())) {
-      LOGGER.debug(
-          LogUtils.getResponseLogWithoutResponseBody(
-              context.getRequestId(),
-              httpMethod,
-              poolName,
-              url.toString(),
-              HeadersUtils.filter(headers, ENABLED_HEADERS),
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              response));
-    } else {
-      LOGGER.error(
-          LogUtils.getResponseLogWithResponseBody(
-              context.getRequestId(),
-              httpMethod,
-              poolName,
-              url.toString(),
-              headers,
-              LogUtils.convertQueryParam(url.getQueryParams()),
-              response));
-    }
+
+    MonitoringUtils.logResponse(context, httpMethod, poolName, url.toString(), response, headers);
     return MeliRestUtils.responseToEither(response, Payment.class);
   }
 
