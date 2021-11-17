@@ -92,15 +92,15 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
 
 	// Test tools
-	testCompile 'junit:junit:4.12'
+	testCompile 'junit:junit:4.13.2'
 	testCompile "com.mercadolibre.restclient:meli-restclient-core:$restClientVersion:tests"
 	testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
 	testCompile "org.mockito:mockito-core:$mockitoCoreVersion"
 	testCompile 'org.jmockit:jmockit:1.49'
 	testImplementation "org.mockito:mockito-inline:$mockitoCoreVersion"
 
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
 	// Babel
 	compile ("com.mercadolibre:i18n:$i18nVersion") {

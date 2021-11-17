@@ -5,6 +5,18 @@
       "identification": {
         "type": "DNI",
         "number": "45464778"
+      },
+      "person": {
+        "other_identifications": [
+          {
+            "type": "DNI",
+            "number": "8019106"
+          },
+          {
+            "type": "PASSPORT",
+            "number": "MLA208019"
+          }
+        ]
       }
     }
   }
