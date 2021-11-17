@@ -12,7 +12,7 @@ import static com.mercadolibre.px.constants.ErrorCodes.EXTERNAL_ERROR;
 import static com.mercadolibre.px.monitoring.lib.datadog.DatadogUtils.METRIC_COLLECTOR;
 import static com.mercadolibre.px.monitoring.lib.log.LogBuilder.LEVEL_ERROR;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
-import static com.mercadolibre.utils.CardUtil.isCardPaymentFromMLA;
+import static com.mercadolibre.utils.CardUtil.isCardPaymentFromMla;
 import static com.mercadolibre.utils.Translations.CONGRATS_THIRD_PARTY_CARD_INFO;
 import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 
@@ -251,7 +251,7 @@ public class CongratsService {
 
       CompletableFuture<Either<UserIdentificationResponse, ApiError>>
           userIdentificationFutureResponse = null;
-      if (isCardPaymentFromMLA(congratsRequest.getSiteId(), payment)) {
+      if (isCardPaymentFromMla(congratsRequest.getSiteId(), payment)) {
         userIdentificationFutureResponse =
             makeAsyncUserIdentificationCall(congratsRequest, context);
       }
@@ -374,8 +374,9 @@ public class CongratsService {
     }
 
     return CardUtil.isThirdPartyCard(
-        userIdentificationResponse.getData().getUser().getIdentification(),
-        payment.getCard().getCardholder());
+        payment.getCard().getCardholder(),
+        userIdentificationResponse.getData().getUser(),
+        congratsRequest.getSiteId());
   }
 
   private boolean isOfflinePaymentMethod(final Payment payment) {

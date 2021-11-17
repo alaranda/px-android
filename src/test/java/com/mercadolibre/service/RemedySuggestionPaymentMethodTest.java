@@ -1,13 +1,26 @@
 package com.mercadolibre.service;
 
 import static com.mercadolibre.constants.Constants.STATUS_APPROVED;
-import static com.mercadolibre.helper.MockTestHelper.*;
+import static com.mercadolibre.helper.MockTestHelper.mockAlternativePaymentMethodsList;
+import static com.mercadolibre.helper.MockTestHelper.mockContextLibDto;
+import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethod;
+import static com.mercadolibre.helper.MockTestHelper.mockPayerPaymentMethodRejected;
+import static com.mercadolibre.helper.MockTestHelper.mockRemediesRequest;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.ACCOUNT_MONEY;
 import static com.mercadolibre.px.toolkit.constants.PaymentMethodId.CONSUMER_CREDITS;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.CREDIT_CARD;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DEBIT_CARD;
 import static com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes.DIGITAL_CURRENCY;
-import static com.mercadolibre.utils.Translations.*;
+import static com.mercadolibre.utils.Translations.REMEDY_BAD_FILLED_OTHER_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_BAD_FILLED_OTHER_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_BLACKLIST_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_BLACKLIST_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_INVALID_INSTALLMENTS_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_INVALID_INSTALLMENTS_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_MAX_ATTEMPTS_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_MAX_ATTEMPTS_TITLE;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_MESSAGE;
+import static com.mercadolibre.utils.Translations.REMEDY_OTHER_REASON_TITLE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -15,13 +28,17 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.mercadolibre.constants.Constants;
 import com.mercadolibre.dto.modal.ModalAction;
-import com.mercadolibre.dto.remedy.*;
+import com.mercadolibre.dto.remedy.AlternativePayerPaymentMethod;
+import com.mercadolibre.dto.remedy.CardSize;
+import com.mercadolibre.dto.remedy.CustomStringConfiguration;
+import com.mercadolibre.dto.remedy.Installment;
+import com.mercadolibre.dto.remedy.PayerPaymentMethodRejected;
+import com.mercadolibre.dto.remedy.RemediesRequest;
+import com.mercadolibre.dto.remedy.RemediesResponse;
 import com.mercadolibre.px.dto.lib.context.Context;
 import com.mercadolibre.px.dto.lib.context.UserAgent;
 import com.mercadolibre.px.dto.lib.site.Site;
@@ -29,22 +46,25 @@ import com.mercadolibre.px.dto.lib.text.Text;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import com.mercadolibre.service.remedy.RemedyCvv;
 import com.mercadolibre.service.remedy.RemedySuggestionPaymentMethod;
-import com.mercadolibre.service.remedy.order.AccountMoneyRejected;
 import com.mercadolibre.service.remedy.order.PaymentMethodsRejectedTypes;
-import com.mercadolibre.utils.SuggestionPaymentMehodsUtils;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
 
 public class RemedySuggestionPaymentMethodTest {
 
   private static final String CALLER_ID_TEST = "123456789";
+
   private static final Locale buildTextLocale = new Locale("es", "AR");
+
   final RemedyCvv remedyCvv = new RemedyCvv();
+
   private final RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
       new RemedySuggestionPaymentMethod(
           remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
@@ -693,8 +713,7 @@ public class RemedySuggestionPaymentMethodTest {
   }
 
   @Test
-  public void applyRemedy_statusDetailBlacklist_remedySuggestedPmConsumerCredits()
-      throws NoSuchFieldException {
+  public void applyRemedy_statusDetailBlacklist_remedySuggestedPmConsumerCredits() {
 
     final BigDecimal totalAmount = new BigDecimal(100);
 
@@ -729,21 +748,6 @@ public class RemedySuggestionPaymentMethodTest {
     RemedySuggestionPaymentMethod remedySuggestionPaymentMethod =
         new RemedySuggestionPaymentMethod(
             remedyCvv, REMEDY_OTHER_REASON_TITLE, REMEDY_OTHER_REASON_MESSAGE);
-
-    // TODO remove this mocking process till line 746 once Consumer Credits is enabled
-    PaymentMethodsRejectedTypes mockPaymentMethodsRejectedTypes =
-        mock(PaymentMethodsRejectedTypes.class);
-    AccountMoneyRejected mockAccountMoneyRejected = mock(AccountMoneyRejected.class);
-    when(mockPaymentMethodsRejectedTypes.getSuggestionOrderCriteria(
-            payerPaymentMethodRejected.getPaymentTypeId()))
-        .thenReturn(mockAccountMoneyRejected);
-    when(mockAccountMoneyRejected.findBestMedium(any(), any()))
-        .thenReturn(
-            SuggestionPaymentMehodsUtils.getPaymentMethodSelected(
-                Arrays.asList(alternativePayerPaymentMethodBuilder.build())));
-    Field field =
-        RemedySuggestionPaymentMethod.class.getDeclaredField("paymentMethodsRejectedTypes");
-    FieldSetter.setField(remedySuggestionPaymentMethod, field, mockPaymentMethodsRejectedTypes);
 
     final RemediesResponse remediesResponse =
         remedySuggestionPaymentMethod.applyRemedy(
