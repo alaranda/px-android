@@ -147,7 +147,8 @@ public enum PaymentsController {
             .withUrl(request.url())
             .withUserAgent(request.userAgent())
             .withAcceptLanguage(context.getLocale().toString())
-            .withPreferenceId(paymentRequest.getPreference().getId());
+            .withPreferenceId(paymentRequest.getPreference().getId())
+            .withFlow(context.getFlow());
     Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
     LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
     LogUtils.getJsonProperties(request.body())

@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.57.1]
+
+### Added
+
+- Flow in payments controller and API metrics.
+
 ## [1.57.0]
 
 ### Updated
