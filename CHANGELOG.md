@@ -6,7 +6,11 @@
 
 ### Added
 
-- Flow in payments controller and API metrics.
+- Flow in payments controller and API metrics and logs.
+
+### Updated
+
+- px-monitoring-lib version from 0.2.3 to 0.4.1
 
 ## [1.57.0]
 
