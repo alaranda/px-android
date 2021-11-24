@@ -18,6 +18,7 @@ plugins {
 	id 'distribution'
 	id 'it.gianluz.capsule' version '1.0.3'
 	id 'com.monits.staticCodeAnalysis' version '2.6.4'
+	id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.11"
 }
 
 compileJava.options.encoding = "UTF-8"
@@ -70,6 +71,8 @@ dependencies {
 	compile "com.mercadolibre.px:px-api-lib:$pxApiLibVersion"
 	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
 	implementation "com.mercadolibre:config-utils:${configsVersion}"
+	implementation group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.1.11'
+	implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
 
 	//Melidata
 	compile("com.mercadolibre.melidata:melidata-sdk-java:$melidataSdkVersion") {
@@ -208,6 +211,25 @@ task deleteJavadocBuildFolder(type: Delete) {
 
 createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder)
 test.finalizedBy(checkCodeFormat)
+
+//Swagger Task Alias
+task swagger {
+	group "documentation"
+	finalizedBy(resolve)
+}
+
+//Swagger Task Configuration
+resolve {
+	sortOutput = true
+	outputFileName = 'swagger'
+	outputFormat = 'YAML'
+	prettyPrint = 'true'
+	classpath = sourceSets.main.runtimeClasspath
+	resourcePackages = ['com.mercadolibre.swagger']
+	outputDir = file('docs/specs/')
+	readAllResources = false
+	modelConverterClasses = ['com.mercadolibre.px.toolkit.swagger.SnakeCaseFieldModelConverter']
+}
 
 i18n {
 	app = "px-checkout-mobile-payments"

@@ -1,5 +1,6 @@
 package com.mercadolibre.dto.remedy;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,10 @@ public class AlternativePayerPaymentMethod {
   private final String paymentTypeId;
   private final String escStatus;
   private final boolean esc;
+
+  @Schema(name = "issuer_name")
   private final String issuerName;
+
   private final String lastFourDigit;
   private final int securityCodeLength;
   private final String securityCodeLocation;

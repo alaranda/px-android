@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.58.0]
+
+### Added
+
+- Added swagger documentation
+
 ## [1.57.1]
 
 ### Added
