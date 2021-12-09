@@ -71,8 +71,6 @@ dependencies {
 	compile "com.mercadolibre.px:px-api-lib:$pxApiLibVersion"
 	compile "com.mercadolibre.px:px-monitoring-lib:$pxMonitoringLibVersion"
 	implementation "com.mercadolibre:config-utils:${configsVersion}"
-	implementation group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.1.11'
-	implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
 
 	//Melidata
 	compile("com.mercadolibre.melidata:melidata-sdk-java:$melidataSdkVersion") {
@@ -104,6 +102,10 @@ dependencies {
 
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+	// Swagger
+	testCompile group: 'io.swagger.core.v3', name: 'swagger-core', version: '2.1.11'
+	testCompile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
 
 	// Babel
 	compile ("com.mercadolibre:i18n:$i18nVersion") {
@@ -212,6 +214,18 @@ task deleteJavadocBuildFolder(type: Delete) {
 createProjectJavadoc.finalizedBy(deleteJavadocBuildFolder)
 test.finalizedBy(checkCodeFormat)
 
+//Swagger configs begin
+//Create a new source set to keep the Swagger resources outside main/test sources
+sourceSets {
+	doc {
+		java {
+			srcDir 'src/doc/java'
+		}
+		compileClasspath += sourceSets.test.runtimeClasspath
+		runtimeClasspath += sourceSets.test.runtimeClasspath
+	}
+}
+
 //Swagger Task Alias
 task swagger {
 	group "documentation"
@@ -224,7 +238,7 @@ resolve {
 	outputFileName = 'swagger'
 	outputFormat = 'YAML'
 	prettyPrint = 'true'
-	classpath = sourceSets.main.runtimeClasspath
+	classpath = sourceSets.doc.runtimeClasspath
 	resourcePackages = ['com.mercadolibre.swagger']
 	outputDir = file('docs/specs/')
 	readAllResources = false
