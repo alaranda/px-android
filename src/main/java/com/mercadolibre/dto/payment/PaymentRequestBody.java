@@ -1,6 +1,7 @@
 package com.mercadolibre.dto.payment;
 
 import com.mercadolibre.px.dto.lib.user.Payer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 /** Objeto que mapea el body que recibe el endpoint /px_mobile_api/legacy_payments */
@@ -15,7 +16,9 @@ public class PaymentRequestBody {
   private Long collectorId;
 
   // card fields
+  @Schema(name = "issuer_id")
   private String issuerId;
+
   private String token;
 
   private Integer installments;
