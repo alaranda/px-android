@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.58.1]
+
+### Changed
+
+- Changed swagger files structure
+
 ## [1.58.0]
 
 ### Added
