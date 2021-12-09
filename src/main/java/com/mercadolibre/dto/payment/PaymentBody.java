@@ -11,6 +11,7 @@ import com.mercadolibre.px.dto.lib.preference.PurposeDescriptor;
 import com.mercadolibre.px.dto.lib.preference.Tax;
 import com.mercadolibre.px.dto.lib.user.Identification;
 import com.mercadolibre.px.dto.lib.user.Payer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.*;
 import lombok.Getter;
@@ -21,7 +22,10 @@ import spark.utils.StringUtils;
 public class PaymentBody {
 
   private String token;
+
+  @Schema(name = "issuer_id")
   private String issuerId;
+
   private Integer installments;
   private String paymentMethodId;
   private BigDecimal transactionAmount;
