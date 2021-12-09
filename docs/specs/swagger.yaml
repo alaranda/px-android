@@ -44,6 +44,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/CardHolderAuthenticationResponse'
           description: Application responded successfully
+      servers:
+      - url: https://internal-api.mercadopago.com/production
+        variables: {}
       summary: Authenticate Card Holder
       tags:
       - px_mobile
@@ -363,6 +366,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResetStatus'
           description: Application responded successfully
+      servers:
+      - url: https://internal-api.mercadopago.com/production
+        variables: {}
       summary: Reset Cap Esc
       tags:
       - px_mobile
@@ -426,6 +432,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/RemediesResponse'
           description: Application responded successfully
+      servers:
+      - url: https://internal-api.mercadopago.com/production
+        variables: {}
       summary: Get Remedy
       tags:
       - px_mobile
