@@ -1,6 +1,11 @@
 # PX :: Checkout Mobile Payments
 
 # Change Log
+## [1.58.1]
+
+### Changed
+- Update px-monitoring-lib version from 0.4.0 to 0.4.2.
+- Update px-api-lib version from 0.14.0 to 0.14.1.
 
 ## [1.58.1]
 
