@@ -62,6 +62,7 @@ public class CongratsServiceTest {
   private static final String PRODUCT_ID = "test";
   private static final String CAMPAIGN_ID_TEST = "5656565656";
   private static final String FLOW_NAME = "paymentsBlackLabel";
+  private static final String FLOW_NAME_PROXIMITY = "proximity";
   private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.5.0");
 
   private static final CongratsService congratsService = new CongratsService();
@@ -72,7 +73,7 @@ public class CongratsServiceTest {
   public void getPointsAndDiscounts_validParams_crossSellingDiscountsAndPoints()
       throws IOException, ApiException {
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         getDefaultCongratsRequestMock(),
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -101,7 +102,7 @@ public class CongratsServiceTest {
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.getUserAgent()).thenReturn(invalidUserAgent);
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -129,7 +130,7 @@ public class CongratsServiceTest {
     when(congratsRequest.getUserAgent()).thenReturn(invalidUserAgent);
     when(congratsRequest.getPlatform()).thenReturn(PLATFORM_OTHER);
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -154,7 +155,7 @@ public class CongratsServiceTest {
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.getUserAgent()).thenReturn(invalidUserAgent);
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -193,7 +194,7 @@ public class CongratsServiceTest {
             .flowName(FLOW_NAME)
             .build();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -250,7 +251,7 @@ public class CongratsServiceTest {
             .flowName(FLOW_NAME)
             .build();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -291,7 +292,7 @@ public class CongratsServiceTest {
             .flowName(FLOW_NAME)
             .build();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -336,7 +337,7 @@ public class CongratsServiceTest {
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
     when(congratsRequest.getUserAgent()).thenReturn(invalidUserAgent);
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -391,6 +392,113 @@ public class CongratsServiceTest {
     assertThat(congrats.getTopTextBox(), nullValue());
     assertThat(congrats.getCustomOrder(), is(false));
     assertThat(congrats.getPaymentMethodsImages().size(), is(1));
+  }
+
+  @Test
+  public void getPointsAndDiscounts_validParams_flowProximity() throws IOException, ApiException {
+
+    final String paymentId = "444";
+    final String purchaseId = "555";
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+    when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME_PROXIMITY);
+    when(congratsRequest.getPaymentIds()).thenReturn(paymentId);
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_external_reference.json")));
+
+    MockLoyaltyApi.getAsyncPointsFromPurchase(
+        getDefaultCongratsRequestMock(),
+        purchaseId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        getDefaultCongratsRequestMock(),
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertThat(congrats.getCrossSelling(), notNullValue());
+    assertThat(congrats.hasDiscounts(), is(true));
+    assertThat(congrats.hasPoints(), is(true));
+    assertThat(congrats.getCustomOrder(), is(false));
+  }
+
+  @Test
+  public void getPointsAndDiscounts_invalidPurchaseId_flowProximity()
+      throws IOException, ApiException {
+
+    final String paymentId = "444";
+    final String purchaseId = "555";
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+    when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME_PROXIMITY);
+    when(congratsRequest.getPaymentIds()).thenReturn(paymentId);
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_external_reference.json")));
+
+    MockLoyaltyApi.getAsyncPointsFromPurchase(
+        getDefaultCongratsRequestMock(),
+        purchaseId,
+        HttpStatus.SC_NOT_FOUND,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
+
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        getDefaultCongratsRequestMock(),
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertThat(congrats.hasPoints(), is(false));
+    assertThat(congrats.getCrossSelling(), notNullValue());
+    assertThat(congrats.hasDiscounts(), is(true));
+    assertThat(congrats.getCustomOrder(), is(false));
+  }
+
+  @Test
+  public void getPointsAndDiscounts_paymentNotFound_flowProximity()
+      throws IOException, ApiException {
+
+    final String paymentId = "444";
+    final String purchaseId = "555";
+    final String emptyBody = "";
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+    when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME_PROXIMITY);
+    when(congratsRequest.getPaymentIds()).thenReturn(paymentId);
+
+    MockPaymentAPI.getPayment(paymentId, HttpStatus.SC_NOT_FOUND, emptyBody);
+
+    MockLoyaltyApi.getAsyncPointsFromPurchase(
+        getDefaultCongratsRequestMock(),
+        purchaseId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        getDefaultCongratsRequestMock(),
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/merch/merchResponseCrossSellingAndDiscounts.json")));
+
+    final Congrats congrats =
+        congratsService.getPointsDiscountsAndInstructions(CONTEXT_ES, congratsRequest);
+
+    assertThat(congrats.hasPoints(), is(false));
+    assertThat(congrats.getCrossSelling(), notNullValue());
+    assertThat(congrats.hasDiscounts(), is(true));
+    assertThat(congrats.getCustomOrder(), is(false));
   }
 
   private CongratsRequest getDefaultCongratsRequestMock() {

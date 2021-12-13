@@ -136,6 +136,7 @@ public class CongratsService {
   private static final String STATUS_PENDING = "pending";
   private static final String STATUS_DETAIL_PENDING_WAITING_PAYMENT = "pending_waiting_payment";
   private static final String STATUS_DETAIL_PENDING_WAITING_TRANSFER = "pending_waiting_transfer";
+  private static final String FLOW_NAME_PROXIMITY = "proximity";
 
   private final DaoProvider daoProvider = new DaoProvider();
   private final PaymentMethodsSearchApi paymentMethodsSearchApi;
@@ -164,8 +165,19 @@ public class CongratsService {
         && !congratsRequest.getPaymentIds().equalsIgnoreCase("null")) {
       primaryPaymentId = getFirstFromCsv(congratsRequest.getPaymentIds());
       futurePayment = PaymentAPI.INSTANCE.getAsyncPayment(context, primaryPaymentId);
-      if (userAgentIsValid(congratsRequest.getUserAgent())) {
-        futureLoyalPoints = LoyaltyApi.INSTANCE.getAsyncPoints(context, congratsRequest);
+
+      if (FLOW_NAME_PROXIMITY.equals(congratsRequest.getFlowName())) {
+        Optional<Payment> optionalPayment =
+            PaymentAPI.INSTANCE.getPaymentFromFuture(context, futurePayment);
+
+        if (optionalPayment.isPresent()) {
+          futureLoyalPoints =
+              LoyaltyApi.INSTANCE.getAsyncPointsFromPurchase(
+                  context, congratsRequest, optionalPayment.get().getExternalReference());
+        }
+      } else if (userAgentIsValid(congratsRequest.getUserAgent())) {
+        futureLoyalPoints =
+            LoyaltyApi.INSTANCE.getAsyncPointsFromPayments(context, congratsRequest);
       }
     }
 
