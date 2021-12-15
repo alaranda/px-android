@@ -1,7 +1,14 @@
 # PX :: Checkout Mobile Payments
 
 # Change Log
-## [1.58.1]
+
+## [1.59.0]
+
+### Added
+
+- Rounded Marketplace Fee for Payments API request
+
+## [1.58.2]
 
 ### Changed
 - Update px-monitoring-lib version from 0.4.0 to 0.4.2.

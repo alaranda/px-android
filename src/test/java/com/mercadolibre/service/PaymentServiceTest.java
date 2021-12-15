@@ -18,6 +18,7 @@ import com.mercadolibre.px.exceptions.ApiException;
 import com.mercadolibre.restclient.http.Headers;
 import com.mercadolibre.restclient.mock.RequestMockHolder;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
@@ -76,6 +77,8 @@ public class PaymentServiceTest {
 
     assertThat(paymentRequest.getBody().getOrder().getId(), is(11111L));
     assertThat(paymentRequest.getBody().getOrder().getType(), is(MERCHANT_ORDER_TYPE_ML));
+    final BigDecimal roundedApplicationFee = BigDecimal.valueOf(20.23);
+    assertThat(paymentRequest.getBody().getApplicationFee(), is(roundedApplicationFee));
   }
 
   @Test

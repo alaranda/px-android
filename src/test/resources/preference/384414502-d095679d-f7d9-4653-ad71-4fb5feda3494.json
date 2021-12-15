@@ -40,7 +40,7 @@
   ],
   "live_mode": true,
   "marketplace": "NONE",
-  "marketplace_fee": 0,
+  "marketplace_fee": 20.234,
   "notification_url": null,
   "operation_type": "regular_payment",
   "payer": {
