@@ -138,7 +138,8 @@ public enum PaymentsController {
       throws ApiException, ExecutionException, InterruptedException {
 
     final Context context = ContextAssembler.toContext(request);
-    final PaymentRequest paymentRequest = getPaymentRequest(request, context);
+    final PaymentDataBody paymentDataBody = getListPaymentData(request);
+    final PaymentRequest paymentRequest = getPaymentRequest(request, paymentDataBody, context);
 
     LogBuilder logBuilder =
         new LogBuilder(context.getRequestId(), LogBuilder.REQUEST_IN)
@@ -148,11 +149,10 @@ public enum PaymentsController {
             .withUserAgent(request.userAgent())
             .withAcceptLanguage(context.getLocale().toString())
             .withPreferenceId(paymentRequest.getPreference().getId())
-            .withFlow(context.getFlow());
+            .withFlow(context.getFlow())
+            .withMessage(String.format("Body: %s", GsonWrapper.toJson(paymentDataBody)));
     Optional.ofNullable(request.headers(SESSION_ID)).ifPresent(logBuilder::withSessionId);
     LogUtils.getQueryParams(request.queryString()).ifPresent(logBuilder::withParams);
-    LogUtils.getJsonProperties(request.body())
-        .ifPresent(s -> logBuilder.withMessage(String.format("Body: %s", s)));
 
     LOGGER.info(logBuilder.build());
 
@@ -174,20 +174,20 @@ public enum PaymentsController {
    * Obtiene la publicKey y la preferencia Crea el objeto PaymentRequest
    *
    * @param request request
+   * @param paymentDataBody the request body
+   * @param context the context
    * @return instancia el paymentRequest
    * @throws ExecutionException execution exception
    * @throws ApiException api exception
    * @throws InterruptedException interrupted exception
    */
-  private PaymentRequest getPaymentRequest(final Request request, final Context context)
+  private PaymentRequest getPaymentRequest(
+      final Request request, final PaymentDataBody paymentDataBody, final Context context)
       throws ApiException, ExecutionException, InterruptedException {
 
     final String publicKeyId = request.queryParams(PUBLIC_KEY);
     final String callerId = request.queryParams(CALLER_ID);
     final String clientId = request.queryParams(CLIENT_ID);
-
-    final PaymentDataBody paymentDataBody = getListPaymentData(request);
-
     final Headers headers = HeadersUtils.fromSparkHeaders(request);
     HeadersUtils.setProductIdForCowFlows(context.getFlow(), headers);
     return PaymentService.INSTANCE.getPaymentRequest(

@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.60.0]
+
+### Changed
+
+- Changed POST /payments request's logging to omit the `settings` node
+
 ## [1.59.0]
 
 ### Added
