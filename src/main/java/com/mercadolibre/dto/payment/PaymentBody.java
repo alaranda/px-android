@@ -197,7 +197,9 @@ public class PaymentBody {
       this.taxes = preference.getTaxes();
       if (null != preference.getMarketplaceFee()
           && preference.getMarketplaceFee().compareTo(BigDecimal.ZERO) > 0) {
-        this.applicationFee = preference.getMarketplaceFee();
+        final int decimalPlaces = 2;
+        this.applicationFee =
+            preference.getMarketplaceFee().setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
       }
       this.conceptId = preference.getConceptId();
       this.conceptAmount = preference.getConceptAmount();
