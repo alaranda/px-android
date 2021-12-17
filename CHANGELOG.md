@@ -2,6 +2,25 @@
 
 # Change Log
 
+## [1.62.0]
+
+### Changed
+
+- Updated spark-core version to `2.9.3`
+- Updated px-dto-lib version to `0.78.0`
+- Updated px-toolkit version to `0.60.0`
+- Updated px-monitoring-lib version to `0.5.0`
+
+### Removed
+
+- Removed Google Guava dependency (not used)
+
+## [1.61.0]
+
+### Added
+
+- Get loyalty points from purchase for proximity flow.
+
 ## [1.60.0]
 
 ### Changed

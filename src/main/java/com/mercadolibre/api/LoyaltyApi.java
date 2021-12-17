@@ -55,11 +55,37 @@ public enum LoyaltyApi {
    * @return CompletableFutureEitherPointsApiError
    */
   @Trace(async = true, dispatcher = true, nameTransaction = true)
-  public CompletableFuture<Either<Points, ApiError>> getAsyncPoints(
+  public CompletableFuture<Either<Points, ApiError>> getAsyncPointsFromPayments(
       final Context context, final CongratsRequest congratsRequest) {
 
     final Headers headers = addHeaders(context, congratsRequest.getUserAgent());
-    final URIBuilder url = buildUrl(congratsRequest);
+    final URIBuilder url = buildUrlActionPayment(congratsRequest, congratsRequest.getPaymentIds());
+    return getAsyncPoints(context, headers, url);
+  }
+
+  /**
+   * Makes an API call to Loyal API using a user id, purchase id, site id, platform and gets all the
+   * points associated to the user and purchase. If an error occurs while parsing the response then
+   * null is returned.
+   *
+   * @param context context
+   * @param congratsRequest request congrats
+   * @param purchaseId purchase id
+   * @return CompletableFutureEitherPointsApiError
+   */
+  @Trace(async = true, dispatcher = true, nameTransaction = true)
+  public CompletableFuture<Either<Points, ApiError>> getAsyncPointsFromPurchase(
+      final Context context, final CongratsRequest congratsRequest, final String purchaseId) {
+
+    final Headers headers = addHeaders(context, congratsRequest.getUserAgent());
+    final URIBuilder url = buildUrlActionPurchase(congratsRequest, purchaseId);
+    return getAsyncPoints(context, headers, url);
+  }
+
+  @Trace(async = true, dispatcher = true, nameTransaction = true)
+  public CompletableFuture<Either<Points, ApiError>> getAsyncPoints(
+      final Context context, final Headers headers, final URIBuilder url) {
+
     try {
       final CompletableFuture<Response> completableFutureResponse =
           MeliRestUtils.newRestRequestBuilder(POOL_NAME)
@@ -126,17 +152,37 @@ public enum LoyaltyApi {
    * Builds the api call url using the loyalty
    *
    * @param congratsRequest request congrats
+   * @param paymentIds payment ids
    * @return a string with the url
    */
-  public static URIBuilder buildUrl(final CongratsRequest congratsRequest) {
+  public static URIBuilder buildUrlActionPayment(
+      final CongratsRequest congratsRequest, final String paymentIds) {
+    return buildBaseUrl(congratsRequest)
+        .addParameter("payments_ids", paymentIds)
+        .addParameter("action", "payment");
+  }
+
+  /**
+   * Builds the api call url using the loyalty
+   *
+   * @param congratsRequest request congrats
+   * @param purchaseId purchase id
+   * @return a string with the url
+   */
+  public static URIBuilder buildUrlActionPurchase(
+      final CongratsRequest congratsRequest, final String purchaseId) {
+    return buildBaseUrl(congratsRequest)
+        .addParameter("purchase_id", purchaseId)
+        .addParameter("action", "purchase");
+  }
+
+  public static URIBuilder buildBaseUrl(final CongratsRequest congratsRequest) {
     return new URIBuilder()
         .setScheme(Config.getString("loyal.url.scheme"))
         .setHost(Config.getString("loyal.url.host"))
         .setPath(URL)
         .addParameter("user_id", congratsRequest.getUserId())
         .addParameter("site_id", congratsRequest.getSiteId())
-        .addParameter("payments_ids", congratsRequest.getPaymentIds())
-        .addParameter("action", "payment")
         .addParameter("platform", congratsRequest.getPlatform());
   }
 

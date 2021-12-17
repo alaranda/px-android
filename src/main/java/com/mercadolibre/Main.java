@@ -9,10 +9,12 @@ import javax.servlet.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import spark.Spark;
 import spark.embeddedserver.EmbeddedServers;
 import spark.embeddedserver.jetty.EmbeddedJettyServer;
 import spark.embeddedserver.jetty.JettyHandler;
+import spark.embeddedserver.jetty.JettyServerFactory;
 import spark.http.matching.MatcherFilter;
 
 public class Main {
@@ -39,14 +41,29 @@ public class Main {
   private static void setupSparkServer() {
     EmbeddedServers.add(
         JETTY,
-        (routeMatcher, staticFilesConfiguration, hasMultipleHandler) -> {
+        (routeMatcher, staticFilesConfiguration, exceptionMapper, hasMultipleHandler) -> {
           // Create a standard Spark handler (taken from Spark's EmbeddedJettyFactory)
           final MatcherFilter matcherFilter =
-              new MatcherFilter(routeMatcher, staticFilesConfiguration, false, hasMultipleHandler);
+              new MatcherFilter(
+                  routeMatcher,
+                  staticFilesConfiguration,
+                  exceptionMapper,
+                  false,
+                  hasMultipleHandler);
           matcherFilter.init(null);
 
           return new EmbeddedJettyServer(
-              (int maxThreads, int minThreads, int threadTimeoutMillis) -> new Server(),
+              new JettyServerFactory() {
+                @Override
+                public Server create(int maxThreads, int minThreads, int threadTimeoutMillis) {
+                  return new Server();
+                }
+
+                @Override
+                public Server create(ThreadPool threadPool) {
+                  return new Server();
+                }
+              },
               new JettyHandler(decorateWithMLAuth(matcherFilter)));
         });
   }
