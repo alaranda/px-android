@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.61.0]
+
+### Added
+
+- Get loyalty points from purchase for proximity flow.
+
 ## [1.60.0]
 
 ### Changed
