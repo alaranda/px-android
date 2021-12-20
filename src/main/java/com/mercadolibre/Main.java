@@ -61,7 +61,7 @@ public class Main {
 
                 @Override
                 public Server create(ThreadPool threadPool) {
-                  return new Server();
+                  return new Server(threadPool);
                 }
               },
               new JettyHandler(decorateWithMLAuth(matcherFilter)));
