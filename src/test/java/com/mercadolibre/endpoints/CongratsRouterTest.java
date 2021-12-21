@@ -1,5 +1,6 @@
 package com.mercadolibre.endpoints;
 
+import static com.mercadolibre.constants.QueryParamsConstants.FLOW_NAME;
 import static com.mercadolibre.constants.QueryParamsConstants.IFPE;
 import static com.mercadolibre.constants.QueryParamsConstants.PAYMENT_IDS;
 import static com.mercadolibre.constants.QueryParamsConstants.PLATFORM;
@@ -52,7 +53,7 @@ public class CongratsRouterTest {
   private static final UserAgent USER_AGENT_IOS = UserAgent.create("PX/iOS/4.3.4");
   private static final String PRODUCT_ID_1 = "BJEO9NVBF6RG01IIIOTG";
   private static final String CAMPAIGN_ID_TEST = "12345678";
-  private static final String FLOW_NAME = "paymentsBlackLabel";
+  private static final String FLOW_NAME_TEST = "paymentsBlackLabel";
   private static final Headers HEADERS =
       new Headers(
           new Header("accept-language", "es-AR"),
@@ -82,10 +83,10 @@ public class CongratsRouterTest {
             .density(DENSITY)
             .productId(PRODUCT_ID_1)
             .campaignId(CAMPAIGN_ID_TEST)
-            .flowName(FLOW_NAME)
+            .flowName(FLOW_NAME_TEST)
             .build();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -112,7 +113,7 @@ public class CongratsRouterTest {
 
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_OK,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
@@ -138,7 +139,7 @@ public class CongratsRouterTest {
 
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_NOT_FOUND,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
@@ -165,7 +166,7 @@ public class CongratsRouterTest {
 
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_NOT_FOUND,
         IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponse404.json")));
@@ -193,7 +194,7 @@ public class CongratsRouterTest {
 
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
 
-    MockLoyaltyApi.getAsyncPoints(
+    MockLoyaltyApi.getAsyncPointsFromPayments(
         congratsRequest,
         HttpStatus.SC_NOT_FOUND,
         FileParserUtils.getStringResponseFromFile("/loyalty/loyalResponse404.json"));
@@ -242,7 +243,7 @@ public class CongratsRouterTest {
 
     final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
 
-    MockLoyaltyApi.getAsyncPoints(congratsRequest, HttpStatus.SC_GATEWAY_TIMEOUT, "");
+    MockLoyaltyApi.getAsyncPointsFromPayments(congratsRequest, HttpStatus.SC_GATEWAY_TIMEOUT, "");
 
     MockMerchAPI.getAsyncCrosselingAndDiscount(
         congratsRequest,
@@ -391,6 +392,45 @@ public class CongratsRouterTest {
     assertThat(response.getStatusCode(), is(HttpStatus.SC_BAD_REQUEST));
   }
 
+  @Test
+  public void getCongratsFlowProximity_200() throws URISyntaxException, IOException {
+    final String proximityFlowName = "proximity";
+    final String paymentId = "444";
+    final String purchaseId = "555";
+    URIBuilder uriBuilder =
+        new URIBuilder("/px_mobile/congrats")
+            .addParameter(CALLER_ID, USER_ID_TEST)
+            .addParameter(CLIENT_ID, CLIENT_ID_TEST)
+            .addParameter(CALLER_SITE_ID, Site.MLA.name())
+            .addParameter(PAYMENT_IDS, PAYMENT_IDS_TEST)
+            .addParameter(PLATFORM, PLATFORM_TEST_MP)
+            .addParameter(FLOW_NAME, proximityFlowName);
+
+    final CongratsRequest congratsRequest = getDefaultCongratsRequestMock();
+    when(congratsRequest.getFlowName()).thenReturn(proximityFlowName);
+    when(congratsRequest.getPaymentIds()).thenReturn(paymentId);
+
+    MockPaymentAPI.getPayment(
+        paymentId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(
+            getClass().getResourceAsStream("/payment/4141386674_with_external_reference.json")));
+
+    MockLoyaltyApi.getAsyncPointsFromPurchase(
+        getDefaultCongratsRequestMock(),
+        purchaseId,
+        HttpStatus.SC_OK,
+        IOUtils.toString(getClass().getResourceAsStream("/loyalty/loyalResponseOk.json")));
+
+    MockMerchAPI.getAsyncCrosselingAndDiscount(
+        congratsRequest,
+        HttpStatus.SC_NOT_FOUND,
+        IOUtils.toString(getClass().getResourceAsStream("/merch/merchResponse404.json")));
+
+    final Response response = given().headers(HEADERS).get(uriBuilder.build());
+    assertThat(response.getStatusCode(), is(HttpStatus.SC_OK));
+  }
+
   private CongratsRequest getDefaultCongratsRequestMock() {
 
     final CongratsRequest congratsRequest = Mockito.mock(CongratsRequest.class);
@@ -402,7 +442,7 @@ public class CongratsRouterTest {
     when(congratsRequest.getUserAgent()).thenReturn(USER_AGENT_IOS);
     when(congratsRequest.getDensity()).thenReturn(DENSITY);
     when(congratsRequest.getProductId()).thenReturn(PRODUCT_ID);
-    when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME);
+    when(congratsRequest.getFlowName()).thenReturn(FLOW_NAME_TEST);
     return congratsRequest;
   }
 }
