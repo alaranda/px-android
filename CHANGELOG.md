@@ -4,6 +4,8 @@
 
 ## [1.63.0]
 
+### Changed
+
 - Updated spark-core version to `2.9.3`
 
 ### Removed
