@@ -2,6 +2,13 @@
 
 # Change Log
 
+## [1.58.2]
+
+### Changed
+- Update px-monitoring-lib version 0.6.0 
+- Update px-api-lib version from 0.16.0.
+
+
 ## [1.60.0]
 
 ### Changed
