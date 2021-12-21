@@ -2,6 +2,14 @@
 
 # Change Log
 
+## [1.62.0]
+
+### Changed
+- Update px-monitoring-lib version 0.6.0 
+- Update px-api-lib version from 0.16.0.
+- Update dto-lib version from 0.79.0.
+- Update toolkit version from 0.61.0.
+
 ## [1.61.0]
 
 ### Added
