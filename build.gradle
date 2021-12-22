@@ -60,7 +60,6 @@ repositories {
 	}
 
 dependencies {
-	compile "com.google.guava:guava:$guavaVersion"
 	compile "com.google.code.gson:gson:$gsonVersion"
 	compile "com.sparkjava:spark-core:$sparkVersion"
 	compile "com.newrelic.agent.java:newrelic-api:$newRelicVersion"
@@ -124,7 +123,7 @@ jacocoTestReport {
 		classDirectories = files(classDirectories.files.collect {
 			fileTree(dir: it, exclude: [
 					'com/mercadolibre/constants',
-					'com/mercadolibre/Main.class',
+					'com/mercadolibre/Main**',
 					'com/mercadolibre/dto'
 			])
 		})
