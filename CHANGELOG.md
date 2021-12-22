@@ -2,9 +2,20 @@
 
 # Change Log
 
+## [1.63.0]
+
+### Changed
+
+- Updated spark-core version to `2.9.3`
+
+### Removed
+
+- Removed Google Guava dependency (not used)
+
 ## [1.62.0]
 
 ### Changed
+
 - Update px-monitoring-lib version 0.6.0 
 - Update px-api-lib version from 0.16.0.
 - Update dto-lib version from 0.79.0.
