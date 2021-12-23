@@ -14,7 +14,6 @@ import com.mercadopago.android.px.model.internal.InitRequestBody
 import com.mercadopago.android.px.model.internal.PaymentTypeChargeRuleDM
 import com.mercadopago.android.px.preferences.CheckoutPreference
 
-
 internal class InitRequestBodyMapper (
     val escManagerBehaviour: ESCManagerBehaviour,
     val featureProvider: FeatureProvider,
@@ -70,7 +69,7 @@ internal class InitRequestBodyMapper (
             CheckoutFeaturesDM(
                 features.express, features.split, features.odrFlag, features.comboCard, features.hybridCard,
                 features.pix, features.customTaxesCharges, features.cardsCustomTaxesCharges, features.taxableCharges,
-                features.styleVersion, features.threedsSdkVersion, features.validationPrograms
+                features.styleVersion, features.threedsSdkVersion, features.validationPrograms, features.debinVersion
             ),
             paymentConfiguration.getCheckoutType(),
             checkoutPreferenceId,
