@@ -4,7 +4,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.mercadopago.android.px.addons.ESCManagerBehaviour;
-import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.core.internal.CheckoutData;
 import com.mercadopago.android.px.core.internal.PaymentWrapper;
 import com.mercadopago.android.px.core.v2.PaymentProcessor;
@@ -80,6 +79,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final PaymentMethodMapper paymentMethodMapper;
     @NonNull private final PaymentMethodRepository paymentMethodRepository;
     @NonNull private final ValidationProgramUseCase validationProgramUseCase;
+    @NonNull private final TransactionInfoFactory transactionInfoFactory;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
@@ -96,7 +96,8 @@ public class PaymentService implements PaymentRepository {
         @NonNull final FromPayerPaymentMethodToCardMapper fromPayerPaymentMethodToCardMapper,
         @NonNull final PaymentMethodMapper paymentMethodMapper,
         @NonNull final PaymentMethodRepository paymentMethodRepository,
-        @NonNull final ValidationProgramUseCase validationProgramUseCase) {
+        @NonNull final ValidationProgramUseCase validationProgramUseCase,
+        @NonNull final TransactionInfoFactory transactionInfoFactory) {
         this.amountConfigurationRepository = amountConfigurationRepository;
         this.escPaymentManager = escPaymentManager;
         this.escManagerBehaviour = escManagerBehaviour;
@@ -108,6 +109,7 @@ public class PaymentService implements PaymentRepository {
         this.tokenRepository = tokenRepository;
         this.fileManager = fileManager;
         this.validationProgramUseCase = validationProgramUseCase;
+        this.transactionInfoFactory = transactionInfoFactory;
 
         paymentFile = fileManager.create(FILE_PAYMENT);
         this.fromPayerPaymentMethodToCardMapper = fromPayerPaymentMethodToCardMapper;
@@ -344,6 +346,7 @@ public class PaymentService implements PaymentRepository {
                 .setToken(paymentSettingRepository.getToken())
                 .setIssuer(userSelectionRepository.getIssuer())
                 .setPayer(paymentSettingRepository.getCheckoutPreference().getPayer())
+                .setTransactionInfo(transactionInfoFactory.create(paymentMethod))
                 .setTransactionAmount(amountToPay)
                 .setCampaign(discountModel.getCampaign())
                 .setDiscount(splitConfiguration.primaryPaymentMethod.discount)
@@ -375,6 +378,7 @@ public class PaymentService implements PaymentRepository {
             final PaymentData paymentData = new PaymentData.Builder()
                 .setPaymentMethod(paymentMethod)
                 .setPayerCost(payerCost)
+                .setTransactionInfo(transactionInfoFactory.create(paymentMethod))
                 .setToken(paymentSettingRepository.getToken())
                 .setIssuer(userSelectionRepository.getIssuer())
                 .setDiscount(discount)

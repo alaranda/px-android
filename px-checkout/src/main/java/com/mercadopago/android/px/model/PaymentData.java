@@ -49,6 +49,8 @@ public final class PaymentData implements Serializable {
      */
     @Nullable private Token token;
 
+    @Nullable private TransactionInfo transactionInfo;
+
     /**
      * @deprecated CouponCode discount is not supported anymore.
      */
@@ -226,6 +228,15 @@ public final class PaymentData implements Serializable {
         this.rawAmount = rawAmount;
     }
 
+    /**
+     * TransactionInfo, contains bank info for this payment method.
+     * @return TransactionInfo
+     */
+    @Nullable
+    public TransactionInfo getTransactionInfo() {
+        return transactionInfo;
+    }
+
     public static final class Builder {
 
         /* default */ BigDecimal transactionAmount;
@@ -239,6 +250,7 @@ public final class PaymentData implements Serializable {
         @Nullable /* default */ Issuer issuer;
         @Nullable /* default */ PayerCost payerCost;
         @Nullable /* default */ Token token;
+        @Nullable /* default */ TransactionInfo transactionIfo;
 
         @Deprecated
         public Builder setTransactionAmount(final BigDecimal transactionAmount) {
@@ -248,6 +260,11 @@ public final class PaymentData implements Serializable {
 
         public Builder setPaymentMethod(final PaymentMethod paymentMethod) {
             this.paymentMethod = paymentMethod;
+            return this;
+        }
+
+        public Builder setTransactionInfo(final TransactionInfo transactionIfo) {
+            this.transactionIfo = transactionIfo;
             return this;
         }
 

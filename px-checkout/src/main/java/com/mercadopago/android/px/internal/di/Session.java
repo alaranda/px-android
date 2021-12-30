@@ -30,6 +30,7 @@ import com.mercadopago.android.px.internal.datasource.PaymentMethodRepositoryImp
 import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.datasource.PrefetchInitService;
 import com.mercadopago.android.px.internal.datasource.TokenizeService;
+import com.mercadopago.android.px.internal.datasource.TransactionInfoFactory;
 import com.mercadopago.android.px.internal.features.PaymentResultViewModelFactory;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PXPaymentCongratsTracking;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsModel;
@@ -90,6 +91,7 @@ public final class Session extends ApplicationModule {
     private ConfigurationSolver configurationSolver;
     private CardHolderAuthenticatorRepositoryImpl cardHolderAuthenticatorRepository;
     private UseCaseModule useCaseModule;
+    private FactoryModule factoryModule;
     private CustomOptionIdSolver customOptionIdSolver;
     private AudioPlayer audioPlayer;
     private final NetworkModule networkModule;
@@ -181,6 +183,7 @@ public final class Session extends ApplicationModule {
         getAmountConfigurationRepository().reset();
         getDiscountRepository().reset();
         useCaseModule = null;
+        factoryModule = null;
         discountRepository = null;
         amountRepository = null;
         checkoutRepository = null;
@@ -303,7 +306,8 @@ public final class Session extends ApplicationModule {
                 MapperProvider.INSTANCE.getFromPayerPaymentMethodToCardMapper(),
                 MapperProvider.INSTANCE.getPaymentMethodMapper(),
                 getPaymentMethodRepository(),
-                getUseCaseModule().getValidationProgramUseCase());
+                getUseCaseModule().getValidationProgramUseCase(),
+                getFactoryModule().getTransactionInfoFactory());
         }
 
         return paymentRepository;
@@ -468,6 +472,13 @@ public final class Session extends ApplicationModule {
         if (TextUtil.isNotEmpty(accessToken)) {
             configurationModule.getAuthorizationProvider().configure(accessToken);
         }
+    }
+
+    private FactoryModule getFactoryModule() {
+        if (factoryModule == null) {
+            factoryModule = new FactoryModule();
+        }
+        return factoryModule;
     }
 
     public enum State {
