@@ -56,7 +56,7 @@ public class PaymentResultHeaderModelMapper extends Mapper<PaymentModel, Payment
         return new PaymentResultHeader.Model.Builder()
             .setDynamicHeight(!hasBodyComponent)
             .setBackground(remediesModel.hasRemedies() ? RemediesModel.DECORATOR.resColor : viewModel.getBackgroundResId())
-            .setIconImage(getIconImage(paymentResult))
+            .setIconImage(viewModel.getIconResId() > 0 ? viewModel.getIconResId() : getIconImage(paymentResult))
             .setIconUrl(getIconUrl(paymentResult))
             .setBadgeImage(getBadgeImage(paymentResult, viewModel))
             .setTitle(new GenericLocalized(remediesModel.hasRemedies() ? remediesModel.getTitle() :

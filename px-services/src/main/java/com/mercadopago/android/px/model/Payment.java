@@ -431,6 +431,7 @@ public final class Payment implements IPayment, IPaymentDescriptor {
         public static final String STATUS_DETAIL_INVALID_ESC = "invalid_esc";
         public static final String STATUS_DETAIL_CC_REJECTED_CARD_DISABLED = "cc_rejected_card_disabled";
         public static final String STATUS_DETAIL_CC_REJECTED_INSUFFICIENT_AMOUNT = "cc_rejected_insufficient_amount";
+        public static final String STATUS_DETAIL_REJECTED_INSUFFICIENT_AMOUNT = "insufficient_amount";
         public static final String STATUS_DETAIL_CC_REJECTED_BAD_FILLED_OTHER = "cc_rejected_bad_filled_other";
         public static final String STATUS_DETAIL_CC_REJECTED_BAD_FILLED_CARD_NUMBER =
             "cc_rejected_bad_filled_card_number";

@@ -11,6 +11,8 @@ import com.mercadopago.android.px.internal.features.payment_result.props.BodyErr
 import com.mercadopago.android.px.internal.util.StatusHelper;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.viewmodel.PaymentResultViewModel;
+import com.mercadopago.android.px.model.Action;
+import com.mercadopago.android.px.model.ExitAction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.tracking.internal.MPTracker;
@@ -38,6 +40,7 @@ import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAI
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_PLUGIN_PM;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_BY_REGULATIONS;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK;
+import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_INSUFFICIENT_AMOUNT;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_BY_BANK;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA;
 
@@ -219,7 +222,16 @@ public final class PaymentResultViewModelFactory {
         case STATUS_DETAIL_CC_REJECTED_HIGH_RISK:
             return getHighRiskBuilder(builder, R.string.px_title_rejection_high_risk);
         case STATUS_DETAIL_REJECTED_HIGH_RISK:
-            return getHighRiskBuilder(builder, R.string.px_title_rejection_account_high_risk);
+            setNonRecoverableErrorResources(builder);
+            return builder
+                .setBadgeResId(0)
+                .setIconResId(R.drawable.px_ic_badge_error)
+                .setTitleResId(R.string.px_title_error_rejected_high_risk)
+                .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_high_risk)
+                .setMainAction(new ChangePaymentMethodAction())
+                .setMainActionTitle(R.string.px_change_payment)
+                .setLinkAction(new NextAction())
+                .setLinkActionTitle(R.string.px_button_text_go_to_home);
         case STATUS_DETAIL_REJECTED_BY_REGULATIONS:
             setNonRecoverableErrorResources(builder);
             return builder
@@ -278,6 +290,18 @@ public final class PaymentResultViewModelFactory {
                 .setMainActionTitle(R.string.px_error_bad_filled_action)
                 .setLinkAction(new ChangePaymentMethodAction())
                 .setLinkActionTitle(R.string.px_text_pay_with_other_method);
+
+        case STATUS_DETAIL_REJECTED_INSUFFICIENT_AMOUNT:
+            setNonRecoverableErrorResources(builder);
+            return builder
+                .setBadgeResId(0)
+                .setIconResId(R.drawable.px_ic_badge_error)
+                .setTitleResId(R.string.px_title_error_rejected_insufficient_amount)
+                .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_insufficient_amount)
+                .setMainAction(new ChangePaymentMethodAction())
+                .setMainActionTitle(R.string.px_change_payment)
+                .setLinkAction(new NextAction())
+                .setLinkActionTitle(R.string.px_button_text_go_to_home);
 
         default:
             setNonRecoverableErrorResources(builder);
@@ -347,4 +371,6 @@ public final class PaymentResultViewModelFactory {
             .setMainActionTitle(R.string.px_change_payment)
             .setLinkAction(null);
     }
+
+
 }
