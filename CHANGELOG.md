@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.64.0]
+
+### Updated
+
+- Update px-monitoring-lib, px-toolkit and px-api-lib to use log4j version 2.17.1
+
 ## [1.63.0]
 
 ### Changed
