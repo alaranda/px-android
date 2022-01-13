@@ -1,3 +1,13 @@
+## VERSION 4.100.1
+_13_01_2022_
+* FIX - Reverted debin version feature flag
+
+## VERSION 4.100.0
+_13_01_2022_
+* ENHANCEMENT - Added debin version feature flag
+* ENHANCEMENT - Migrated OneTapPresenter to kotlin
+* FIX - Disabled remedies back button when paying
+
 ## VERSION 4.99.1
 _16_12_2021_
 * ENHANCEMENT - Added px-core new module

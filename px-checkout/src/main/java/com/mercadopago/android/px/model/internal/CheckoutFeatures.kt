@@ -24,7 +24,6 @@ internal class CheckoutFeatures(builder: Builder) {
 
     @SerializedName("validations_programs")
     val validationPrograms: List<String>
-    val debinVersion: String
 
     /* default */
     init {
@@ -40,7 +39,6 @@ internal class CheckoutFeatures(builder: Builder) {
         threedsSdkVersion = THREEDS_SDK_VERSION
         taxableCharges = builder.taxableCharges
         cardsCustomTaxesCharges = builder.cardsCustomTaxesCharges
-        debinVersion = DEBIN_VERSION
     }
 
     class Builder {
@@ -85,6 +83,5 @@ internal class CheckoutFeatures(builder: Builder) {
     companion object {
         const val STYLE_VERSION = "v1"
         const val THREEDS_SDK_VERSION = "v1"
-        const val DEBIN_VERSION = "v1"
     }
 }
