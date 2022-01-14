@@ -6,54 +6,73 @@
 [![new_relic](https://img.shields.io/badge/-New%20Relic-6ebbce.svg?style=flat)](https://rpm.newrelic.com/accounts/989586/applications/312653384)
 [![fury](https://img.shields.io/badge/-Fury-6ECE80.svg?style=flat)](http://fury.ml.com/#/px-checkout-mobile-payments/general)
 
-### Traducciones
-Excel de textos a traducir:
-https://docs.google.com/spreadsheets/d/1RvPhyh3am0uKOBySjqO4zm1nWpiVBUf_Z5CUU1lv6UQ
- 
-En caso de ser necesario instalar gettext (para poder sincronizar mensajes)
+## [Changelog](./CHANGELOG.md)
+
+#### Add environment variables
+
+* `MLAUTH_AUTH_ACCESS_TOKEN_URI=https://internal-api.mercadolibre.com/auth/access_token/`
+
+## Translations :: Babel
+
+### Gettex Installation:
 ```
 brew install gettext
 brew link gettext --force
 ```
-Para ver el estado de las traducciones:
+
+### How to generate the jar file with the translations of Babel
+
+```
+make babel-translations
+```
+
+* How to see the status of translations:
+
 ```
 ./gradlew i18n-status
 ```
-Para obtener todos los mensajes utilizados en el proyecto:
+
+* How to get all the messages used in the project:
+
 ```
 ./gradlew i18n-gettext
 ```
-Si se agregan o actualizan mensajes
+
+* Upload (when you added or updated a message)
+
 ```
 ./gradlew i18n-upload
 ```
-Para descargar los mensajes traducidos
+
+* Download - To download translated messages
+
 ```
 ./gradlew i18n-download
 ```
-Para compilar mensajes y empaquetarlos
+
+* Makemo - To compile messages and package them
+
 ```
 ./gradlew i18n-makemo
 ```
 
+## Documentation :: Swagger
+
+* Update via [APIDefinition Class](/src/doc/java/com/mercadolibre/swagger/APIDefinition.java) and execute the command:
+    * `"./gradlew swagger"`
+
+* Update on Fury
+    * `fury -> documentation -> promote`
+
 ## Endpoints
 
-### /px_mobile/legacy_payments (POST)
-
-### /px_mobile/payments (POST)
-
-### /px_mobile/init/preference (GET)
-
-### /px_mobile/congrats (GET)
-
-### /px_mobile/esc_cap (DELETE)
-
-### /px_mobile/remedies (POST)
-
+| Method Type   | Endpoint                    |
+| ------------- |:---------------------------:|
+| POST          | /px_mobile/legacy_payments |
+| GET          | /px_mobile/congrats   |   
+| DELETE          | /px_mobile/esc_cap   |   
+| POST          | /px_mobile/remedies   |
 
 ## Questions
 
 * [px_nativo@mercadolibre.com](px_nativo@mercadolibre.com)
-
-
-# [Change Log](https://github.com/mercadolibre/fury_px-checkout-mobile-payments/blob/master/CHANGELOG.md)

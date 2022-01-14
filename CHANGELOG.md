@@ -2,6 +2,12 @@
 
 # Change Log
 
+## [1.65.0]
+
+### Added
+
+- Including instructions to document the swagger in the readme file
+
 ## [1.64.0]
 
 ### Updated
