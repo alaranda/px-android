@@ -80,7 +80,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedOtherReasonPaymentResult() {
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
         final FooterPaymentResult footerPaymentResult = new FooterPaymentResult(factory, paymentResult, actionDispatcher);
         final Footer.Props props = footerPaymentResult.getFooterProps(context);
@@ -120,7 +120,7 @@ public class FooterPaymentResultTest {
     @Test
     public void testRejectedInsufficientAmountPaymentResult() {
 
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
         when(context.getString(R.string.px_button_text_go_to_home)).thenReturn(LABEL_GO_TO_HOME);
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedInsufficientAmountPaymentResult();
@@ -144,7 +144,7 @@ public class FooterPaymentResultTest {
     @Test
     public void testRejectedMaxAttemptsPaymentResult() {
 
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedMaxAttemptsPaymentResult();
         final FooterPaymentResult footerPaymentResult =
             new FooterPaymentResult(factory, paymentResult, actionDispatcher);
@@ -178,7 +178,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedCreditCardInsufficientAmountPaymentResult() {
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedCreditCardInsufficientAmountPaymentResult();
         final FooterPaymentResult footerPaymentResult =
@@ -235,7 +235,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejected() {
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedOtherPaymentResult();
         final FooterPaymentResult footerPaymentResult = new FooterPaymentResult(factory, paymentResult, actionDispatcher);
         final Footer.Props props = footerPaymentResult.getFooterProps(context);
@@ -270,7 +270,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedBlackListPaymentResult() {
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedBlacklist();
         final FooterPaymentResult footerPaymentResult =
@@ -309,7 +309,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedHighRiskPaymentResult() {
-        when (context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when (context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedHighRisk();
         final FooterPaymentResult footerPaymentResult =
@@ -328,7 +328,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedByRegulationsPaymentResult() {
-        when (context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when (context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
 
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedByRegulations();
         final FooterPaymentResult footerPaymentResult =
@@ -347,7 +347,7 @@ public class FooterPaymentResultTest {
 
     @Test
     public void testRejectedUnknown() {
-        when(context.getString(R.string.px_change_payment)).thenReturn(LABEL_CHANGE);
+        when(context.getString(R.string.px_change_payment_method)).thenReturn(LABEL_CHANGE);
         final PaymentResult paymentResult = PaymentResults.getStatusRejectedUnknown();
         final FooterPaymentResult footerPaymentResult = new FooterPaymentResult(factory, paymentResult, actionDispatcher);
         final Footer.Props props = footerPaymentResult.getFooterProps(context);

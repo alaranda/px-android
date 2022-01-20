@@ -125,6 +125,8 @@
     <string name="px_title_error_rejected_high_risk">No pudimos realizar la operación</string>
     <string name="px_body_error_rejected_insufficient_amount">Inténtalo con otro medio de pago.</string>
     <string name="px_body_error_rejected_high_risk">Lo sentimos, la operación no pasó nuestra validación de seguridad.</string>
+    <string name="px_body_error_rejected_default">Lo sentimos, algo salió mal. Por favor, inténtalo de nuevo con otro medio de pago.</string>
+    <string name="px_title_error_rejected_default">No pudimos realizar la operación</string>
 
     <!-- Error messages -->
     <string name="px_error_message_invalid_item">Item inválido</string>
@@ -196,7 +198,7 @@
     <string name="px_payment_types_title">¿Qué tipo de tarjeta es?</string>
 
     <!-- Review and Confirm -->
-    <string name="px_change_payment">Elegir otro medio de pago</string>
+    <string name="px_change_payment_method">Elegir otro medio de pago</string>
     <string name="px_review_item_quantity">Cantidad:</string>
     <string name="px_review_product_price">Precio unitario: {0}</string>
     <string name="px_activity_checkout_title">Revisa si está todo bien</string>

@@ -17,7 +17,7 @@
     <string name="px_card_installments_title">¿En cuántas cuotas?</string>
     <string name="px_select_installments_title">Selecciona la cuota</string>
     <string name="px_terms_and_conditions_message">Al pagar, afirmo que soy mayor de edad y acepto los</string>
-    <string name="px_terms_and_conditions">Términos y condiciones</string>
+    <string name="px_terms_and_conditions">Términos y Condiciones</string>
     <string name="px_discount_terms_and_conditions_message">Descuento exclusivo de Mercado Libre y Mercado Pago.</string>
     <string name="px_discount_terms_and_conditions_linked_message">Ver condiciones</string>
     <string name="px_invalid_card_number_incomplete">Ingresa todos los números de la tarjeta</string>
@@ -98,6 +98,8 @@
     <string name="px_title_error_rejected_high_risk">No pudimos realizar la operación</string>
     <string name="px_body_error_rejected_insufficient_amount">Intentá con otro medio de pago.</string>
     <string name="px_body_error_rejected_high_risk">Lo sentimos, la operación no pasó nuestra validación de seguridad.</string>
+    <string name="px_body_error_rejected_default">Lo sentimos, algo salió mal. Por favor, intentá de nuevo con otro medio de pago.</string>
+    <string name="px_title_error_rejected_default">No pudimos realizar la operación</string>
     <string name="px_error_message_invalid_item">Item inválido</string>
     <string name="px_error_message_expired_preference">Preferencia expirada</string>
     <string name="px_error_message_inactive_preference">Preferencia inactiva</string>
@@ -149,7 +151,7 @@
     <string name="px_debit_payment_type">Débito</string>
     <string name="px_form_card_title_payment_type_prepaid">Tarjeta prepaga</string>
     <string name="px_payment_types_title">¿Qué tipo de tarjeta es?</string>
-    <string name="px_change_payment">Elegir otro medio de pago</string>
+    <string name="px_change_payment_method">Elegir otro medio de pago</string>
     <string name="px_review_item_quantity">Cantidad:</string>
     <string name="px_review_product_price">Precio unitario: {0}</string>
     <string name="px_activity_checkout_title">Revisá si está todo bien</string>

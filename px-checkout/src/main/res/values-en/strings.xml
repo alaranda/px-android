@@ -98,6 +98,8 @@
     <string name="px_title_error_rejected_high_risk">It was not possible to make the transaction</string>
     <string name="px_body_error_rejected_insufficient_amount">Please try to use another payment method.</string>
     <string name="px_body_error_rejected_high_risk">We are sorry, the transaction did not pass our security validation.</string>
+    <string name="px_body_error_rejected_default">We are sorry, something went wrong. Please try again with another payment method.</string>
+    <string name="px_title_error_rejected_default">It was not possible to make the transaction</string>
     <string name="px_error_message_invalid_item">Invalid item</string>
     <string name="px_error_message_expired_preference">Expired preference</string>
     <string name="px_error_message_inactive_preference">Inactive preference</string>
@@ -149,7 +151,7 @@
     <string name="px_debit_payment_type">Debit</string>
     <string name="px_form_card_title_payment_type_prepaid">Prepaid card</string>
     <string name="px_payment_types_title">What card type is it?</string>
-    <string name="px_change_payment">Pay using a different method</string>
+    <string name="px_change_payment_method">Choose another payment method</string>
     <string name="px_review_item_quantity">Quantity:</string>
     <string name="px_review_product_price">Unit price: {0}</string>
     <string name="px_activity_checkout_title">Check if everything\'s correct</string>

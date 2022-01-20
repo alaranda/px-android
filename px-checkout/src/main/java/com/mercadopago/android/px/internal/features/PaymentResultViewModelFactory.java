@@ -11,8 +11,6 @@ import com.mercadopago.android.px.internal.features.payment_result.props.BodyErr
 import com.mercadopago.android.px.internal.util.StatusHelper;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.viewmodel.PaymentResultViewModel;
-import com.mercadopago.android.px.model.Action;
-import com.mercadopago.android.px.model.ExitAction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.tracking.internal.MPTracker;
@@ -126,7 +124,7 @@ public final class PaymentResultViewModelFactory {
             // defaults
             builder.setMainAction(new ChangePaymentMethodAction());
             builder.setIsErrorRecoverable(true);
-            builder.setMainActionTitle(R.string.px_text_pay_with_other_method);
+            builder.setMainActionTitle(R.string.px_change_payment_method);
             builder.setHasDetail(true);
             return rejectedStatusBuilder(detail, builder, paymentMethodName, paymentAmount);
 
@@ -190,7 +188,7 @@ public final class PaymentResultViewModelFactory {
                 .setTitleResId(R.string.px_title_other_reason_rejection)
                 .setLinkAction(null)
                 .setMainAction(new ChangePaymentMethodAction())
-                .setMainActionTitle(R.string.px_change_payment);
+                .setMainActionTitle(R.string.px_change_payment_method);
         case STATUS_DETAIL_CC_REJECTED_DUPLICATED_PAYMENT:
             setNonRecoverableErrorResources(builder);
             return builder
@@ -204,7 +202,7 @@ public final class PaymentResultViewModelFactory {
             return builder
                 .setTitleResId(R.string.px_text_insufficient_amount)
                 .setLinkAction(null)
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setBodyTitleResId(R.string.px_what_can_do)
                 .setBodyDetailDescriptionResId(R.string.px_text_insufficient_amount_title_description)
                 .setDescriptionResId(R.string.px_error_description_rejected_by_insufficient_amount_1)
@@ -229,7 +227,7 @@ public final class PaymentResultViewModelFactory {
                 .setTitleResId(R.string.px_title_error_rejected_high_risk)
                 .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_high_risk)
                 .setMainAction(new ChangePaymentMethodAction())
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setLinkAction(new NextAction())
                 .setLinkActionTitle(R.string.px_button_text_go_to_home);
         case STATUS_DETAIL_REJECTED_BY_REGULATIONS:
@@ -237,13 +235,13 @@ public final class PaymentResultViewModelFactory {
             return builder
                 .setTitleResId(R.string.px_title_other_reason_rejection)
                 .setMainAction(new ChangePaymentMethodAction())
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setLinkAction(null);
         case STATUS_DETAIL_CC_REJECTED_MAX_ATTEMPTS:
             setNonRecoverableErrorResources(builder);
             return builder
                 .setMainAction(new ChangePaymentMethodAction())
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setTitleResId(R.string.px_title_rejection_max_attempts)
                 .setBodyTitleResId(R.string.px_what_can_do)
                 .setDescriptionResId(R.string.px_error_description_max_attempts)
@@ -252,7 +250,7 @@ public final class PaymentResultViewModelFactory {
             setNonRecoverableErrorResources(builder);
             return builder
                 .setLinkAction(null)
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setTitleResId(R.string.px_title_rejection_blacklist);
         case STATUS_DETAIL_CC_REJECTED_FRAUD:
             setNonRecoverableErrorResources(builder);
@@ -299,16 +297,21 @@ public final class PaymentResultViewModelFactory {
                 .setTitleResId(R.string.px_title_error_rejected_insufficient_amount)
                 .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_insufficient_amount)
                 .setMainAction(new ChangePaymentMethodAction())
-                .setMainActionTitle(R.string.px_change_payment)
+                .setMainActionTitle(R.string.px_change_payment_method)
                 .setLinkAction(new NextAction())
                 .setLinkActionTitle(R.string.px_button_text_go_to_home);
 
         default:
             setNonRecoverableErrorResources(builder);
             return builder
-                .setTitleResId(R.string.px_title_other_reason_rejection)
-                .setPendingSuccess(false)
-                .setPendingWarning(false);
+                    .setBadgeResId(0)
+                    .setIconResId(R.drawable.px_ic_badge_error)
+                    .setTitleResId(R.string.px_title_error_rejected_default)
+                    .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_default)
+                    .setLinkAction(new NextAction())
+                    .setLinkActionTitle(R.string.px_button_text_go_to_home)
+                    .setPendingSuccess(false)
+                    .setPendingWarning(false);
         }
     }
 
@@ -321,7 +324,7 @@ public final class PaymentResultViewModelFactory {
             .setBodyTitleResId(R.string.px_what_can_do)
             .setDescriptionResId(R.string.px_text_try_with_other_method)
             .setMainAction(new ChangePaymentMethodAction())
-            .setMainActionTitle(R.string.px_change_payment)
+            .setMainActionTitle(R.string.px_change_payment_method)
             .setHasDetail(true);
     }
 
@@ -368,7 +371,7 @@ public final class PaymentResultViewModelFactory {
         return builder
             .setTitleResId(R.string.px_title_other_reason_rejection)
             .setMainAction(new ChangePaymentMethodAction())
-            .setMainActionTitle(R.string.px_change_payment)
+            .setMainActionTitle(R.string.px_change_payment_method)
             .setLinkAction(null);
     }
 
