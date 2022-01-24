@@ -81,6 +81,15 @@ public class PaymentResultActivity extends PXActivity<PaymentResultPresenter> im
         fragment.startActivityForResult(intent, requestCode);
     }
 
+    public static void start(@NonNull final Activity activity, final int requestCode, @NonNull final PaymentModel model) {
+        if (activity instanceof PXActivity) {
+            ((PXActivity) activity).overrideTransitionIn();
+        }
+        final Intent intent = new Intent(activity, PaymentResultActivity.class);
+        intent.putExtra(EXTRA_PAYMENT_MODEL, model);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
     @Override
     protected void onCreated(@Nullable final Bundle savedInstanceState) {
         setContentView(R.layout.px_activity_payment_result);

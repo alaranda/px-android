@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.mercadopago.android.px.internal.base.FragmentCommunicationViewModel
 import com.mercadopago.android.px.internal.features.one_tap.offline_methods.OfflineMethodsViewModel
 import com.mercadopago.android.px.internal.features.pay_button.PayButtonViewModel
+import com.mercadopago.android.px.internal.features.payment_congrats.CongratsViewModel
 import com.mercadopago.android.px.internal.features.security_code.SecurityCodeViewModel
 import com.mercadopago.android.px.internal.features.security_code.mapper.TrackingParamModelMapper
 import com.mercadopago.android.px.internal.mappers.CardUiMapper
@@ -20,13 +21,14 @@ internal class ViewModelFactory : ViewModelProvider.Factory {
 
         return when {
             modelClass.isAssignableFrom(PayButtonViewModel::class.java) -> {
-                PayButtonViewModel(session.paymentRepository,
+                PayButtonViewModel(
+                    session.congratsResultFactory,
+                    session.paymentRepository,
                     configurationModule.productIdProvider,
                     session.networkModule.connectionHelper,
                     paymentSetting,
                     configurationModule.customTextsRepository,
                     PayButtonViewModelMapper(),
-                    MapperProvider.getPaymentCongratsMapper(),
                     MapperProvider.getPostPaymentUrlsMapper(),
                     MapperProvider.getRenderModeMapper(session.applicationContext),
                     useCaseModule.playSoundUseCase,
@@ -54,6 +56,15 @@ internal class ViewModelFactory : ViewModelProvider.Factory {
             }
             modelClass.isAssignableFrom(FragmentCommunicationViewModel::class.java) -> {
                 FragmentCommunicationViewModel(session.tracker)
+            }
+            modelClass.isAssignableFrom(CongratsViewModel::class.java) -> {
+                CongratsViewModel(
+                    session.congratsRepository,
+                    session.paymentRepository,
+                    session.congratsResultFactory,
+                    session.networkModule.connectionHelper,
+                    session.tracker
+                )
             }
             else -> {
                 throw IllegalArgumentException("Unknown ViewModel class")

@@ -96,7 +96,9 @@ public final class PaymentProcessorActivity extends PXActivity
         paymentServiceHandlerWrapper = new PaymentServiceHandlerWrapper(session.getPaymentRepository(),
             session.getConfigurationModule().getDisabledPaymentMethodRepository(),
             session.getEscPaymentManager(), session.getCongratsRepository(),
-            session.getConfigurationModule().getUserSelectionRepository());
+            session.getConfigurationModule().getUserSelectionRepository(),
+            session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration()
+                .getPostPaymentConfiguration());
 
         if (getFragmentByTag() == null) { // if fragment is not added, then create it.
             addPaymentProcessorFragment(session);
@@ -187,6 +189,13 @@ public final class PaymentProcessorActivity extends PXActivity
                 intent.putExtra(EXTRA_PAYMENT, paymentModel);
                 setResult(RESULT_PAYMENT, intent);
                 finish();
+            }
+
+            @Override
+            public void onPostPaymentFlowStarted(
+                @NonNull final IPaymentDescriptor iPaymentDescriptor
+            ) {
+                // do nothing
             }
 
             @Override

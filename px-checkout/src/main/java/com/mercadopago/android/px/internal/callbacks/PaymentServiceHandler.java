@@ -31,4 +31,6 @@ public interface PaymentServiceHandler extends OnPaymentListener {
     default void onPaymentFinished(@NonNull final IPaymentDescriptor payment) {}
 
     void onPostPayment(@NonNull final PaymentModel paymentModel);
+
+    void onPostPaymentFlowStarted(@NonNull final IPaymentDescriptor iPaymentDescriptor);
 }

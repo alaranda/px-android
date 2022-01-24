@@ -109,7 +109,7 @@ public class PaymentCongratsModelMapper extends Mapper<BusinessPaymentModel, Pay
         if (businessPaymentModel.getPaymentResult().getPaymentId() != null) {
             builder.withReceipt(businessPaymentModel.getPaymentResult().getPaymentId(),
                 businessPayment.shouldShowReceipt(),
-                paymentCongratsResponse.getViewReceipt());
+                paymentCongratsResponse.getViewReceipt(), businessPayment.forceShowReceipt());
         }
         if (businessPayment.getStatementDescription() != null) {
             builder.withStatementDescription(businessPayment.getStatementDescription());

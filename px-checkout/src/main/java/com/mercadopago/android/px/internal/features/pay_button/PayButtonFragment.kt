@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.features.pay_button
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -18,6 +19,8 @@ import com.mercadopago.android.px.R
 import com.mercadopago.android.px.addons.BehaviourProvider
 import com.mercadopago.android.px.addons.internal.SecurityValidationHandler
 import com.mercadopago.android.px.addons.model.SecurityValidationData
+import com.mercadopago.android.px.configuration.PostPaymentConfiguration.Companion.EXTRA_BUNDLE
+import com.mercadopago.android.px.configuration.PostPaymentConfiguration.Companion.EXTRA_PAYMENT
 import com.mercadopago.android.px.internal.base.BaseFragment
 import com.mercadopago.android.px.internal.di.viewModel
 import com.mercadopago.android.px.internal.extensions.runIfNull
@@ -26,17 +29,23 @@ import com.mercadopago.android.px.internal.features.Constants
 import com.mercadopago.android.px.internal.features.dummy_result.DummyResultActivity
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator
 import com.mercadopago.android.px.internal.features.explode.ExplodingFragment
+import com.mercadopago.android.px.internal.features.payment_congrats.CongratsPaymentResult
+import com.mercadopago.android.px.internal.features.payment_congrats.CongratsResult
 import com.mercadopago.android.px.internal.features.payment_congrats.PaymentCongrats
 import com.mercadopago.android.px.internal.features.payment_result.PaymentResultActivity
 import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorActivity
 import com.mercadopago.android.px.internal.features.security_code.SecurityCodeActivity
 import com.mercadopago.android.px.internal.features.security_code.SecurityCodeFragment
 import com.mercadopago.android.px.internal.features.security_code.model.SecurityCodeParams
+import com.mercadopago.android.px.internal.util.ErrorUtil
 import com.mercadopago.android.px.internal.util.FragmentUtil
+import com.mercadopago.android.px.internal.util.MercadoPagoUtil
 import com.mercadopago.android.px.internal.util.ViewUtils
 import com.mercadopago.android.px.internal.util.nonNullObserve
 import com.mercadopago.android.px.internal.view.OnSingleClickListener
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction
+import com.mercadopago.android.px.model.exceptions.MercadoPagoError
+import com.mercadopago.android.px.tracking.internal.TrackWrapper
 import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker
 import com.mercadopago.android.px.internal.viewmodel.PayButtonViewModel as ButtonConfig
 
@@ -100,6 +109,7 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
                 params?.let { showSecurityCodeScreen(it) }
             })
             stateUILiveData.observe(viewLifecycleOwner, Observer { state -> state?.let { onStateUIChanged(it) } })
+            congratsResultLiveData.observe(viewLifecycleOwner, Observer { state -> state?.let { onCongratsResult(it) } })
         }
     }
 
@@ -117,11 +127,55 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
             is UIProgress.ButtonLoadingStarted -> startLoadingButton(stateUI.timeOut, stateUI.buttonConfig)
             is UIProgress.ButtonLoadingFinished -> finishLoading(stateUI.explodeDecorator)
             is UIProgress.ButtonLoadingCanceled -> cancelLoading()
+            is UIProgress.PostPaymentFlowStarted -> launchPostPaymentFlow(
+                stateUI.postPaymentDeepLinkUrl,
+                stateUI.iParcelablePaymentDescriptor
+            )
             is UIResult.VisualProcessorResult -> PaymentProcessorActivity.start(this, REQ_CODE_PAYMENT_PROCESSOR)
             is UIError -> resolveError(stateUI)
-            is UIResult.PaymentResult -> PaymentResultActivity.start(this, REQ_CODE_CONGRATS, stateUI.model)
-            is UIResult.NoCongratsResult -> DummyResultActivity.start(this, REQ_CODE_CONGRATS, stateUI.model)
-            is UIResult.CongratsPaymentModel -> PaymentCongrats.show(stateUI.model, this, REQ_CODE_CONGRATS)
+        }
+    }
+
+    private fun onCongratsResult(congratsResult: CongratsResult) {
+        when (congratsResult) {
+            is CongratsResult.PaymentResult -> PaymentResultActivity.start(
+                this,
+                REQ_CODE_CONGRATS,
+                congratsResult.paymentModel
+            )
+            is CongratsResult.BusinessPaymentResult -> PaymentCongrats.show(
+                congratsResult.paymentCongratsModel,
+                this,
+                REQ_CODE_CONGRATS
+            )
+            is CongratsPaymentResult.SkipCongratsResult -> DummyResultActivity.start(
+                this,
+                REQ_CODE_CONGRATS,
+                congratsResult.paymentModel
+            )
+        }
+    }
+
+    private fun launchPostPaymentFlow(deepLink: String, extraData: Parcelable?) {
+        runCatching {
+            val intent = MercadoPagoUtil.getIntent(deepLink)
+            extraData?.let { data ->
+                val bundle = Bundle()
+                bundle.putParcelable(EXTRA_PAYMENT, data)
+                intent.putExtra(EXTRA_BUNDLE, bundle)
+            }
+            startActivity(intent)
+            activity?.finish()
+        }.onFailure { exception ->
+            viewModel.track(
+                FrictionEventTracker.with(
+                    "${TrackWrapper.BASE_PATH}/post_payment_deep_link",
+                    FrictionEventTracker.Id.INVALID_POST_PAYMENT_DEEP_LINK,
+                    FrictionEventTracker.Style.SCREEN,
+                    MercadoPagoError.createNotRecoverable(exception.message.orEmpty())
+                )
+            )
+            ErrorUtil.startErrorActivity(this, MercadoPagoError("", false))
         }
     }
 
@@ -176,8 +230,8 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
             else -> {
                 val action = AndesSnackbarAction(
                     getString(R.string.px_snackbar_error_action), View.OnClickListener {
-                    activity?.onBackPressed()
-                })
+                        activity?.onBackPressed()
+                    })
                 view.showSnackBar(getString(R.string.px_error_title), andesSnackbarAction = action)
             }
         }
@@ -217,6 +271,8 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
             viewModel.onPostPayment(PaymentProcessorActivity.getPaymentModel(data))
         } else if (resultCode == Constants.RESULT_FAIL_ESC) {
             viewModel.onRecoverPaymentEscInvalid(PaymentProcessorActivity.getPaymentRecovery(data)!!)
+        } else if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
+            activity?.finish()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
@@ -236,7 +292,7 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
         super.onDestroy()
     }
 
-    private fun finishLoading(params: ExplodeDecorator) {
+    private fun finishLoading(params: ExplodeDecorator?) {
         ViewUtils.hideKeyboard(activity)
         childFragmentManager.findFragmentByTag(ExplodingFragment.TAG)
             ?.let { (it as ExplodingFragment).finishLoading(params) }
@@ -247,13 +303,20 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
         context?.let {
             button.post {
                 if (!isAdded) {
-                    FrictionEventTracker.with("/px_checkout/pay_button_loading", FrictionEventTracker.Id.GENERIC,
-                        FrictionEventTracker.Style.SCREEN, emptyMap<String, String>())
+                    viewModel.track(
+                        FrictionEventTracker.with(
+                            "${TrackWrapper.BASE_PATH}/pay_button_loading",
+                            FrictionEventTracker.Id.GENERIC,
+                            FrictionEventTracker.Style.SCREEN,
+                            emptyMap<String, String>()
+                        )
+                    )
                 } else {
                     val handleState = payButtonStateChange.overrideStateChange(PayButton.State.IN_PROGRESS)
                     if (!handleState) {
                         val explodingFragment = ExplodingFragment.newInstance(
-                            buttonConfig.getButtonProgressText(it), paymentTimeout)
+                            buttonConfig.getButtonProgressText(it), paymentTimeout
+                        )
                         childFragmentManager.beginTransaction()
                             .add(R.id.exploding_frame, explodingFragment, ExplodingFragment.TAG)
                             .commitNowAllowingStateLoss()
@@ -263,6 +326,8 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
             }
         }
     }
+
+    override fun shouldSkipRevealAnimation() = viewModel.skipRevealAnimation()
 
     private fun cancelLoading() {
         showConfirmButton()

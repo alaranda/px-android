@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 import com.mercadopago.android.px.addons.ESCManagerBehaviour;
+import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.PostPaymentConfiguration;
 import com.mercadopago.android.px.core.internal.CheckoutData;
 import com.mercadopago.android.px.core.internal.PaymentWrapper;
 import com.mercadopago.android.px.core.v2.PaymentProcessor;
@@ -102,6 +104,8 @@ public class PaymentServiceTest {
     @Mock private SplitSelectionState splitSelectionState;
     @Mock private PayerCostSelectionRepository payerCostSelectionRepository;
     @Mock private ApplicationSelectionRepository applicationSelectionRepository;
+    @Mock private AdvancedConfiguration advancedConfiguration;
+    @Mock private PostPaymentConfiguration postPaymentConfiguration;
 
     @Mock private OneTapItem node;
     @Mock private PayerCost payerCost;
@@ -122,6 +126,9 @@ public class PaymentServiceTest {
 
     @Before
     public void setUp() {
+        when(paymentSettingRepository.getAdvancedConfiguration()).thenReturn(advancedConfiguration);
+        when(advancedConfiguration.getPostPaymentConfiguration()).thenReturn(postPaymentConfiguration);
+
         paymentService = new PaymentService(userSelectionRepository,
             paymentSettingRepository,
             disabledPaymentMethodRepository,

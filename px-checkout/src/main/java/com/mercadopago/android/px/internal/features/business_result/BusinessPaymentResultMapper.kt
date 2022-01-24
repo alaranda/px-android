@@ -3,19 +3,18 @@ package com.mercadopago.android.px.internal.features.business_result
 import com.mercadopago.android.px.R
 import com.mercadopago.android.px.internal.features.payment_congrats.model.CongratsViewModelMapper
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsModel
-import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsModel.CongratsType
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsResponse
 import com.mercadopago.android.px.internal.features.payment_result.CongratsAutoReturn
 import com.mercadopago.android.px.internal.features.payment_result.presentation.PaymentResultButton
 import com.mercadopago.android.px.internal.features.payment_result.presentation.PaymentResultFooter
+import com.mercadopago.android.px.internal.mappers.Mapper
 import com.mercadopago.android.px.internal.view.PaymentResultBody
 import com.mercadopago.android.px.internal.view.PaymentResultHeader
 import com.mercadopago.android.px.internal.view.PaymentResultMethod
 import com.mercadopago.android.px.internal.viewmodel.GenericLocalized
 import com.mercadopago.android.px.internal.viewmodel.PaymentResultType
-import com.mercadopago.android.px.internal.mappers.Mapper
 import com.mercadopago.android.px.tracking.internal.MPTracker
-import java.util.*
+import java.util.ArrayList
 
 internal class BusinessPaymentResultMapper(private val tracker: MPTracker) :
     Mapper<PaymentCongratsModel, BusinessPaymentResultViewModel>() {
@@ -37,14 +36,18 @@ internal class BusinessPaymentResultMapper(private val tracker: MPTracker) :
                     model.statementDescription))
             }
         }
-        val type = model.congratsType
+
         return PaymentResultBody.Model.Builder()
             .setMethodModels(methodModels)
             .apply { model.paymentCongratsResponse?.let {
                 setCongratsViewModel(CongratsViewModelMapper(BusinessPaymentResultTracker(tracker)).map(it))
             }}
             .apply {
-                if (type == CongratsType.APPROVED && model.shouldShowReceipt == true) setReceiptId(model.paymentId.toString())
+                if (model.shouldShowReceipt == true) {
+                    if (model.forceShowReceipt || model.congratsType == PaymentCongratsModel.CongratsType.APPROVED) {
+                        setReceiptId(model.paymentId.toString())
+                    }
+                }
             }
             .setHelp(model.help)
             .setStatement(model.statementDescription)
