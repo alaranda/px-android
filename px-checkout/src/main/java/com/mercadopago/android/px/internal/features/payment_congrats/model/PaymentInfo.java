@@ -32,7 +32,9 @@ public class PaymentInfo implements Parcelable {
     @Nullable public final String installmentsTotalAmount;
     @Nullable public final BigDecimal installmentsRate;
     @Nullable public final PaymentResultInfo consumerCreditsInfo;
-    @Nullable public final PaymentCongratsText description;
+    @Nullable public final PaymentCongratsText paymentMethodDescriptionText;
+    @Nullable public final PaymentCongratsText descriptionText;
+    @Nullable public final PaymentCongratsText statementText;
 
     protected PaymentInfo(final Builder builder) {
         rawAmount = builder.rawAmount;
@@ -46,8 +48,10 @@ public class PaymentInfo implements Parcelable {
         installmentsAmount = builder.installmentsAmount;
         installmentsRate = builder.installmentsRate;
         consumerCreditsInfo = builder.consumerCreditsInfo;
-        description = builder.description;
+        paymentMethodDescriptionText = builder.paymentMethodDescriptionText;
         installmentsTotalAmount = builder.installmentsTotalAmount;
+        descriptionText = builder.descriptionText;
+        statementText = builder.statementText;
     }
 
     protected PaymentInfo(final Parcel in) {
@@ -67,7 +71,9 @@ public class PaymentInfo implements Parcelable {
             installmentsRate = new BigDecimal(in.readString());
         }
         consumerCreditsInfo = in.readParcelable(ResultInfo.class.getClassLoader());
-        description = in.readParcelable(PaymentCongratsText.class.getClassLoader());
+        paymentMethodDescriptionText = in.readParcelable(PaymentCongratsText.class.getClassLoader());
+        descriptionText = in.readParcelable(PaymentCongratsText.class.getClassLoader());
+        statementText = in.readParcelable(PaymentCongratsText.class.getClassLoader());
     }
 
     @Override
@@ -94,7 +100,9 @@ public class PaymentInfo implements Parcelable {
             dest.writeString(installmentsRate.toString());
         }
         dest.writeParcelable(consumerCreditsInfo, flags);
-        dest.writeParcelable(description, flags);
+        dest.writeParcelable(paymentMethodDescriptionText, flags);
+        dest.writeParcelable(descriptionText, flags);
+        dest.writeParcelable(statementText, flags);
     }
 
     public enum PaymentMethodType {
@@ -140,7 +148,9 @@ public class PaymentInfo implements Parcelable {
         /* default */ String installmentsTotalAmount;
         /* default */ BigDecimal installmentsRate;
         /* default */ PaymentResultInfo consumerCreditsInfo;
-        /* default */ PaymentCongratsText description;
+        /* default */ PaymentCongratsText paymentMethodDescriptionText;
+        /* default */ PaymentCongratsText descriptionText;
+        /* default */ PaymentCongratsText statementText;
 
         /**
          * Instantiates a PaymentInfo object
@@ -252,11 +262,21 @@ public class PaymentInfo implements Parcelable {
         /**
          * Adds extra info to the paymentMethodName
          *
-         * @param description info shown related to paymentMethodName
+         * @param paymentMethodDescriptionText info shown related to paymentMethodName
          * @return Builder
          */
-        public Builder withDescription(final PaymentCongratsText description) {
-            this.description = description;
+        public Builder withPaymentMethodDescriptionText(final PaymentCongratsText paymentMethodDescriptionText) {
+            this.paymentMethodDescriptionText = paymentMethodDescriptionText;
+            return this;
+        }
+
+        public Builder withDescriptionText(final PaymentCongratsText descriptionText) {
+            this.descriptionText = descriptionText;
+            return this;
+        }
+
+        public Builder withStatementText(final PaymentCongratsText statementText) {
+            this.statementText = statementText;
             return this;
         }
     }

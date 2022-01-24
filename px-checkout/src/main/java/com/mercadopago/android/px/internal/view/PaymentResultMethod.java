@@ -11,14 +11,9 @@ import com.mercadopago.android.px.internal.extensions.ImageViewExtensionsKt;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsText;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentInfo;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentResultInfo;
-import com.mercadopago.android.px.internal.util.CurrenciesUtil;
-import com.mercadopago.android.px.internal.util.PaymentDataHelper;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
-import com.mercadopago.android.px.model.Currency;
-import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentTypes;
-import java.math.BigDecimal;
 import java.util.Locale;
 
 public class PaymentResultMethod extends ConstraintLayout {
@@ -54,7 +49,7 @@ public class PaymentResultMethod extends ConstraintLayout {
     public void setModel(@NonNull final Model model) {
         ImageViewExtensionsKt.loadOrElse(icon, model.imageUrl, R.drawable.px_generic_method);
         ViewUtils.loadOrGone(getDescription(model), description);
-        ViewUtils.loadOrGone(model.paymentMethodDescription, paymentMethodStatement);
+        ViewUtils.loadOrGone(model.paymentMethodDescriptionText, paymentMethodStatement);
         ViewUtils.loadOrGone(getStatement(model), statement);
         amount.setModel(model.amountModel);
         renderInfo(model.info);
@@ -64,6 +59,8 @@ public class PaymentResultMethod extends ConstraintLayout {
     private String getStatement(@NonNull final Model model) {
         if (PaymentTypes.isCardPaymentType(model.paymentTypeId) && TextUtil.isNotEmpty(model.statement)) {
             return TextUtil.format(getContext(), R.string.px_text_state_account_activity_congrats, model.statement);
+        } else if (PaymentTypes.isBankTransfer(model.paymentTypeId) && model.statementText != null) {
+            return model.statementText.getMessage();
         }
         return null;
     }
@@ -75,8 +72,10 @@ public class PaymentResultMethod extends ConstraintLayout {
                 model.paymentMethodName,
                 getResources().getString(R.string.px_ending_in),
                 model.lastFourDigits);
-        } else if (!PaymentTypes.isAccountMoney(model.paymentTypeId) || model.paymentMethodDescription == null ||
-            model.paymentMethodDescription.getMessage() == null) {
+        } else if (PaymentTypes.isBankTransfer(model.paymentTypeId) && model.descriptionText != null) {
+            return model.descriptionText.getMessage();
+        } else if (!PaymentTypes.isAccountMoney(model.paymentTypeId) || model.paymentMethodDescriptionText == null ||
+            model.paymentMethodDescriptionText.getMessage() == null) {
             return model.paymentMethodName;
         }
         return null;
@@ -94,55 +93,6 @@ public class PaymentResultMethod extends ConstraintLayout {
 
     public static final class Model {
 
-        public static Model with(@Nullable final String imageUrl, @NonNull final PaymentData paymentData,
-            @NonNull final Currency currency) {
-            final PaymentInfo.Builder paymentInfoBuilder = new PaymentInfo.Builder()
-                .withLastFourDigits(paymentData.getToken() != null ? paymentData.getToken().getLastFourDigits() : null)
-                .withPaymentMethodName(paymentData.getPaymentMethod().getName())
-                .withIconUrl(imageUrl)
-                .withPaymentMethodType(
-                    PaymentInfo.PaymentMethodType.fromName(paymentData.getPaymentMethod().getPaymentTypeId()))
-                .withPaidAmount(getPrettyAmount(currency,
-                    PaymentDataHelper.getPrettyAmountToPay(paymentData)));
-
-            if (paymentData.getPaymentMethod().getDisplayInfo() != null) {
-                final PaymentResultInfo paymentResultInfo = new PaymentResultInfo(
-                    paymentData.getPaymentMethod().getDisplayInfo().getResultInfo().getTitle()
-                    , paymentData.getPaymentMethod().getDisplayInfo().getResultInfo().getSubtitle());
-
-                paymentInfoBuilder.withConsumerCreditsInfo(paymentResultInfo);
-
-                if (paymentData.getPaymentMethod().getDisplayInfo().getDescription() != null) {
-                    final PaymentCongratsText description = new PaymentCongratsText(
-                        paymentData.getPaymentMethod().getDisplayInfo().getDescription() != null ? paymentData
-                            .getPaymentMethod().getDisplayInfo().getDescription().getMessage() : "",
-                        paymentData.getPaymentMethod().getDisplayInfo().getDescription().getBackgroundColor(),
-                        paymentData.getPaymentMethod().getDisplayInfo().getDescription().getTextColor(),
-                        paymentData.getPaymentMethod().getDisplayInfo().getDescription().getWeight()
-                    );
-                    paymentInfoBuilder.withDescription(description);
-                }
-
-            }
-            if (paymentData.getDiscount() != null) {
-                paymentInfoBuilder
-                    .withDiscountData(paymentData.getDiscount().getName(),
-                        getPrettyAmount(currency, paymentData.getNoDiscountAmount()));
-            }
-
-            if (paymentData.getPayerCost() != null) {
-                paymentInfoBuilder.withInstallmentsData(paymentData.getPayerCost().getInstallments(),
-                    getPrettyAmount(currency, paymentData.getPayerCost().getInstallmentAmount()),
-                    getPrettyAmount(currency, paymentData.getPayerCost().getTotalAmount()),
-                    paymentData.getPayerCost().getInstallmentRate());
-            }
-            return with(paymentInfoBuilder.build(), null);
-        }
-
-        private static String getPrettyAmount(@NonNull final Currency currency, @NonNull final BigDecimal amount) {
-            return CurrenciesUtil.getLocalizedAmountWithoutZeroDecimals(currency, amount);
-        }
-
         public static Model with(@NonNull final PaymentInfo paymentInfo, @Nullable final String statement) {
 
             final PaymentResultAmount.Model amountModel = new PaymentResultAmount.Model.Builder(
@@ -155,43 +105,49 @@ public class PaymentResultMethod extends ConstraintLayout {
                 .build();
 
             final PaymentCongratsText description =
-                paymentInfo.description != null ? paymentInfo.description : PaymentCongratsText.EMPTY;
+                paymentInfo.paymentMethodDescriptionText != null ? paymentInfo.paymentMethodDescriptionText : PaymentCongratsText.EMPTY;
 
-            return new Builder( paymentInfo.paymentMethodName, paymentInfo.iconUrl,
+            return new Builder(paymentInfo.paymentMethodName, paymentInfo.iconUrl,
                 description,
                 paymentInfo.paymentMethodType.value)
                 .setLastFourDigits(paymentInfo.lastFourDigits)
-                .setStatement(statement)
                 .setAmountModel(amountModel)
                 .setInfo(paymentInfo.consumerCreditsInfo)
+                .setDescriptionText(paymentInfo.descriptionText)
+                .setStatement(statement)
+                .setStatementText(paymentInfo.statementText)
                 .build();
         }
 
         @NonNull /* default */ final String paymentMethodId;
         @NonNull /* default */ final String paymentMethodName;
         @Nullable /* default */ final String imageUrl;
-        @NonNull /* default */ final PaymentCongratsText paymentMethodDescription;
+        @NonNull /* default */ final PaymentCongratsText paymentMethodDescriptionText;
         @NonNull /* default */ final String paymentTypeId;
         @NonNull /* default */ final PaymentResultAmount.Model amountModel;
         @Nullable /* default */ final String lastFourDigits;
         @Nullable /* default */ final String statement;
         @Nullable /* default */ final PaymentResultInfo info;
+        @Nullable /* default */ final PaymentCongratsText descriptionText;
+        @Nullable /* default */ final PaymentCongratsText statementText;
 
         /* default */ Model(@NonNull final Builder builder) {
             paymentMethodId = builder.paymentMethodId;
             paymentMethodName = builder.paymentMethodName;
             imageUrl = builder.imageUrl;
-            paymentMethodDescription = builder.paymentMethodDescription;
+            paymentMethodDescriptionText = builder.paymentMethodDescriptionText;
             paymentTypeId = builder.paymentTypeId;
             amountModel = builder.amountModel;
             lastFourDigits = builder.lastFourDigits;
             statement = builder.statement;
             info = builder.info;
+            descriptionText = builder.descriptionText;
+            statementText = builder.statementText;
         }
 
         public static class Builder {
             @Nullable /* default */ String imageUrl;
-            @NonNull /* default */ final PaymentCongratsText paymentMethodDescription;
+            @NonNull /* default */ final PaymentCongratsText paymentMethodDescriptionText;
             @NonNull /* default */ String paymentMethodId;
             @NonNull /* default */ String paymentMethodName;
             @NonNull /* default */ String paymentTypeId;
@@ -199,13 +155,15 @@ public class PaymentResultMethod extends ConstraintLayout {
             @Nullable /* default */ String lastFourDigits;
             @Nullable /* default */ String statement;
             @Nullable /* default */ PaymentResultInfo info;
+            @Nullable /* default */ PaymentCongratsText descriptionText;
+            @Nullable /* default */ PaymentCongratsText statementText;
 
             public Builder(@NonNull final String paymentMethodName,
                 @Nullable final String imageUrl,
-                @NonNull final PaymentCongratsText paymentMethodDescription, @NonNull final String paymentTypeId) {
+                @NonNull final PaymentCongratsText paymentMethodDescriptionText, @NonNull final String paymentTypeId) {
                 this.paymentMethodName = paymentMethodName;
                 this.imageUrl = imageUrl;
-                this.paymentMethodDescription = paymentMethodDescription;
+                this.paymentMethodDescriptionText = paymentMethodDescriptionText;
                 this.paymentTypeId = paymentTypeId;
             }
 
@@ -219,13 +177,23 @@ public class PaymentResultMethod extends ConstraintLayout {
                 return this;
             }
 
-            public Builder setStatement(@Nullable final String statement) {
-                this.statement = statement;
+            public Builder setInfo(@Nullable final PaymentResultInfo info) {
+                this.info = info;
                 return this;
             }
 
-            public Builder setInfo(@Nullable final PaymentResultInfo info) {
-                this.info = info;
+            public Builder setDescriptionText(@Nullable final PaymentCongratsText descriptionText) {
+                this.descriptionText = descriptionText;
+                return this;
+            }
+
+            public Builder setStatementText(@Nullable final PaymentCongratsText statementText) {
+                this.statementText = statementText;
+                return this;
+            }
+
+            public Builder setStatement(@Nullable final String statement) {
+                this.statement = statement;
                 return this;
             }
 

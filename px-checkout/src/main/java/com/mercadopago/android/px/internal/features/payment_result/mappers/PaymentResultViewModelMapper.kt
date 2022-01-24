@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.features.payment_result.mappers
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration
 import com.mercadopago.android.px.internal.features.PaymentResultViewModelFactory
 import com.mercadopago.android.px.internal.features.payment_result.instruction.mapper.InstructionMapper
+import com.mercadopago.android.px.internal.features.payment_result.model.DisplayInfoHelper
 import com.mercadopago.android.px.internal.features.payment_result.viewmodel.PaymentResultLegacyViewModel
 import com.mercadopago.android.px.internal.features.payment_result.viewmodel.PaymentResultViewModel
 import com.mercadopago.android.px.internal.mappers.Mapper
@@ -14,7 +15,9 @@ internal class PaymentResultViewModelMapper(
     private val factory: PaymentResultViewModelFactory,
     private val tracker: MPTracker,
     private val instructionMapper: InstructionMapper,
-    private val autoReturnFromPreference: String?) : Mapper<PaymentModel, PaymentResultViewModel>() {
+    private val autoReturnFromPreference: String?,
+    private val displayInfoHelper: DisplayInfoHelper
+) : Mapper<PaymentModel, PaymentResultViewModel>() {
 
     override fun map(model: PaymentModel): PaymentResultViewModel {
         val legacyViewModel = PaymentResultLegacyViewModel(
@@ -25,7 +28,7 @@ internal class PaymentResultViewModelMapper(
                 configuration, factory, model.congratsResponse.instructions, remediesModel).map(model),
             remediesModel,
             PaymentResultFooterModelMapper.map(model),
-            PaymentResultBodyModelMapper(configuration, tracker).map(model), legacyViewModel,
+            PaymentResultBodyModelMapper(configuration, tracker, displayInfoHelper).map(model), legacyViewModel,
             model.congratsResponse.instructions?.let { instructionMapper.map(it) },
             CongratsAutoReturnMapper(autoReturnFromPreference, model.paymentResult.paymentStatus)
                 .map(model.congratsResponse.autoReturn))

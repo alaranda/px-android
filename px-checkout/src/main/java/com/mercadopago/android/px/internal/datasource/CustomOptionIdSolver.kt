@@ -29,7 +29,12 @@ internal abstract class CustomOptionIdSolver {
                 (isCard && card.id == customOptionId)
                     || paymentMethodId == customOptionId
                     || compareWithOfflineMethod(oneTapItem, customOptionId)
+                    || compareWithBankTransfer(oneTapItem, customOptionId)
             }
+        }
+
+        private fun compareWithBankTransfer(oneTapItem: OneTapItem, customOptionId: String): Boolean {
+            return oneTapItem.isBankTransfer() && oneTapItem.bankTransfer!!.id == customOptionId
         }
 
         private fun compareWithOfflineMethod(oneTapItem: OneTapItem, customOptionId: String): Boolean {

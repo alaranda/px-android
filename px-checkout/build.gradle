@@ -48,7 +48,9 @@ dependencies {
 
     implementation "com.google.code.gson:gson:$gson"
     implementation "com.mercadolibre.android:ui:$ui"
-    implementation "com.mercadolibre.android:carddrawer:$cardDrawer"
+    implementation ("com.mercadolibre.android:carddrawer:$cardDrawer") {
+        force true
+    }
     implementation "com.mercadolibre.android.mlbusinesscomponents:mlbusinesscomponents:$businessComponents"
     implementation("com.mercadolibre.android:cardform:$cardForm") {
         exclude group:'com.mercadopago.android.px', module:'addons'

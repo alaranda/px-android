@@ -16,6 +16,7 @@ import com.mercadopago.android.px.model.internal.Application
 import com.mercadopago.android.px.model.internal.OfflineMethodCard
 import com.mercadopago.android.px.model.internal.OneTapItem
 import com.mercadopago.android.px.model.internal.Text
+import com.mercadopago.android.px.model.internal.BankTransfer
 import com.mercadopago.android.px.model.one_tap.CheckoutBehaviour
 import com.mercadopago.android.px.internal.repository.PayerPaymentMethodKey as Key
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentCommons.ByApplication
@@ -40,7 +41,7 @@ internal class PaymentMethodDrawableItemMapper(
         val parameters = getParameters(value, payerPaymentMethodRepository.value, genericDialogItem)
         with(value) {
             return when {
-                isCard || isAccountMoney || isOfflineMethodCard() -> DrawableFragmentItem(parameters)
+                isCard || isAccountMoney || isOfflineMethodCard() || isBankTransfer() -> DrawableFragmentItem(parameters)
                 isConsumerCredits -> ConsumerCreditsDrawableFragmentItem(parameters, consumerCredits)
                 isNewCard || isOfflineMethods -> OtherPaymentMethodFragmentItem(parameters, newCard, offlineMethods)
                 else -> null
@@ -48,19 +49,20 @@ internal class PaymentMethodDrawableItemMapper(
         }
     }
 
-
     private fun getCardDrawerConfiguration(
         accountMoneyMetadata: AccountMoneyMetadata?,
         cardMetadata: CardMetadata?,
         offlineMethodCard: OfflineMethodCard?,
         paymentMethod: Application.PaymentMethod,
-        cardTag : Text?): CardDrawerConfiguration? {
+        cardTag : Text?,
+        bankTransfer: BankTransfer?): CardDrawerConfiguration? {
         return when {
             PaymentTypes.isAccountMoney(paymentMethod.type) ->
                 accountMoneyMetadata?.displayInfo?.let{ cardUiMapper.map(it, cardTag) } to null
             PaymentTypes.isCardPaymentType(paymentMethod.type) ->
                 cardMetadata?.displayInfo?.let { cardUiMapper.map(it, cardTag) } to null
             offlineMethodCard != null -> null to cardUiMapper.map(offlineMethodCard.displayInfo, cardTag)
+            bankTransfer != null -> null to cardUiMapper.map(bankTransfer.displayInfo, cardTag)
             else -> null
         }?.let {
             CardDrawerConfiguration(paymentMethod.id, it.first, it.second)
@@ -93,7 +95,7 @@ internal class PaymentMethodDrawableItemMapper(
                     description,
                     issuerName,
                     getCardDrawerConfiguration(oneTapItem.accountMoney,
-                        oneTapItem.card, oneTapItem.offlineMethodCard, application.paymentMethod, oneTapItem.displayInfo?.tag)
+                        oneTapItem.card, oneTapItem.offlineMethodCard, application.paymentMethod, oneTapItem.displayInfo?.tag, oneTapItem.bankTransfer)
                 )
             }
         }
