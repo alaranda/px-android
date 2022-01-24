@@ -56,7 +56,7 @@ class TransactionInfoFactoryTest {
 
         every { payerPaymentMethodRepository[any<String>()] } returns customSearchItem
 
-        val transactionInfo = transactionInfoFactory.create(debinPaymentMethod)
+        val transactionInfo = transactionInfoFactory.create(DEBIN_ACCOUNT_ID, debinPaymentMethod)
 
         assertNotNull(transactionInfo.bankInfo)
         assertNotNull(transactionInfo.financialInstitutionId)
@@ -75,7 +75,7 @@ class TransactionInfoFactoryTest {
 
         every { payerPaymentMethodRepository[any<String>()] } returns customSearchItem
 
-        val transactionInfo = transactionInfoFactory.create(paymentMethod)
+        val transactionInfo = transactionInfoFactory.create(DEBIN_ACCOUNT_ID, paymentMethod)
 
         assertNull(transactionInfo.bankInfo)
         assertNull(transactionInfo.financialInstitutionId)
@@ -91,7 +91,7 @@ class TransactionInfoFactoryTest {
 
         every { payerPaymentMethodRepository[any<String>()] } returns customSearchItem
 
-        transactionInfoFactory.create(paymentMethod)
+        transactionInfoFactory.create(DEBIN_PAYMENT_METHOD_ID, paymentMethod)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -104,6 +104,6 @@ class TransactionInfoFactoryTest {
 
         every { payerPaymentMethodRepository[any<String>()] } returns customSearchItem
 
-        transactionInfoFactory.create(paymentMethod)
+        transactionInfoFactory.create(DEBIN_ACCOUNT_ID, paymentMethod)
     }
 }

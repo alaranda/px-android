@@ -8,9 +8,9 @@ import com.mercadopago.android.px.model.BankInfo
 
 internal class TransactionInfoFactory(private val payerPaymentMethodRepository: PayerPaymentMethodRepository) {
 
-    fun create(paymentMethod: PaymentMethod): TransactionInfo {
+    fun create(customOptionId: String, paymentMethod: PaymentMethod): TransactionInfo {
         var bankInfo: BankInfo? = null
-        val accountId = paymentMethod.id?.let { payerPaymentMethodRepository[it] }?.id
+        val accountId = customOptionId.let { payerPaymentMethodRepository[it] }?.id
         val financialInstitutionId = paymentMethod.financialInstitutions?.firstOrNull()?.id
 
         if (paymentMethod.id == PaymentMethods.ARGENTINA.DEBIN) {

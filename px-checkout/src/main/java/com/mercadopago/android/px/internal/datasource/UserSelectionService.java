@@ -11,6 +11,7 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
+import com.mercadopago.android.px.model.TransactionInfo;
 import java.io.File;
 
 public class UserSelectionService implements UserSelectionRepository {
@@ -20,6 +21,7 @@ public class UserSelectionService implements UserSelectionRepository {
     private static final String PREF_SELECTED_PAYER_COST = "PREF_SELECTED_INSTALLMENT";
     private static final String PREF_SELECTED_ISSUER = "PREF_SELECTED_ISSUER";
     private static final String FILE_SELECTED_CARD = "px_selected_card";
+    private static final String CUSTOM_OPTION_ID = "custom_option_id";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final FileManager fileManager;
@@ -89,6 +91,11 @@ public class UserSelectionService implements UserSelectionRepository {
     }
 
     @Override
+    public void select(@NonNull final String customOptionId) {
+        sharedPreferences.edit().putString(CUSTOM_OPTION_ID, JsonUtil.toJson(customOptionId)).apply();
+    }
+
+    @Override
     public void select(@Nullable final Card card, @Nullable final PaymentMethod secondaryPaymentMethod) {
         if (card == null) {
             removeCardSelection();
@@ -125,6 +132,13 @@ public class UserSelectionService implements UserSelectionRepository {
     @Override
     public Issuer getIssuer() {
         return JsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_ISSUER, TextUtil.EMPTY), Issuer.class);
+    }
+
+    @Override
+    @Nullable
+    public String getCustomOptionId() {
+        return JsonUtil.fromJson(sharedPreferences.getString(CUSTOM_OPTION_ID, TextUtil.EMPTY),
+            String.class);
     }
 
     @Nullable

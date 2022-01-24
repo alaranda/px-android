@@ -12,6 +12,7 @@ import com.mercadopago.android.px.model.AccountMoneyDisplayInfo
 import com.mercadopago.android.px.model.AccountMoneyDisplayInfoType
 import com.mercadopago.android.px.model.CardDisplayInfo
 import com.mercadopago.android.px.model.CardDisplayInfoType
+import com.mercadopago.android.px.model.internal.BankTransfer
 import com.mercadopago.android.px.model.internal.OfflineMethodCard
 import com.mercadopago.android.px.model.internal.Text
 import com.meli.android.carddrawer.model.GenericPaymentMethod.Text as CardDrawerText
@@ -91,7 +92,26 @@ internal object CardUiMapper {
                 subtitle?.let {
                     CardDrawerText(it.message, Color.parseColor(it.textColor))
                 },
-                mapCardTagToCardDrawerTag(cardTag)
+                mapCardTagToCardDrawerTag(cardTag),
+                gradientColor
+            )
+        }
+    }
+
+    fun map(displayInfo: BankTransfer.DisplayInfo, cardTag: Text?): GenericPaymentMethod {
+        with(displayInfo) {
+            return GenericPaymentMethod(
+                Color.parseColor(color),
+                CardDrawerText(title.message, Color.parseColor(title.textColor), title.weight),
+                paymentMethodImageUrl,
+                subtitle?.let {
+                    CardDrawerText(it.message, Color.parseColor(it.textColor), it.weight)
+                },
+                mapCardTagToCardDrawerTag(cardTag),
+                gradientColor,
+                description?.let {
+                    CardDrawerText(it.message, Color.parseColor(it.textColor), it.weight)
+                }
             )
         }
     }

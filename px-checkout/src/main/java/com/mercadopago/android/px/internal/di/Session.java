@@ -30,7 +30,6 @@ import com.mercadopago.android.px.internal.datasource.PaymentMethodRepositoryImp
 import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.datasource.PrefetchInitService;
 import com.mercadopago.android.px.internal.datasource.TokenizeService;
-import com.mercadopago.android.px.internal.datasource.TransactionInfoFactory;
 import com.mercadopago.android.px.internal.features.PaymentResultViewModelFactory;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PXPaymentCongratsTracking;
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsModel;
@@ -95,6 +94,7 @@ public final class Session extends ApplicationModule {
     private CustomOptionIdSolver customOptionIdSolver;
     private AudioPlayer audioPlayer;
     private final NetworkModule networkModule;
+    private HelperModule helperModule;
 
     private Session(@NonNull final Context context) {
         super(context);
@@ -184,6 +184,7 @@ public final class Session extends ApplicationModule {
         getDiscountRepository().reset();
         useCaseModule = null;
         factoryModule = null;
+        helperModule = null;
         discountRepository = null;
         amountRepository = null;
         checkoutRepository = null;
@@ -479,6 +480,14 @@ public final class Session extends ApplicationModule {
             factoryModule = new FactoryModule();
         }
         return factoryModule;
+    }
+
+    @NonNull
+    public HelperModule getHelperModule() {
+        if (helperModule == null) {
+            helperModule = new HelperModule();
+        }
+        return helperModule;
     }
 
     public enum State {

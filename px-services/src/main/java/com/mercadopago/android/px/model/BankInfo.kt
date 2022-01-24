@@ -1,3 +1,5 @@
 package com.mercadopago.android.px.model
 
-data class BankInfo(val accountId: String)
+import java.io.Serializable
+
+data class BankInfo(val accountId: String) : Serializable

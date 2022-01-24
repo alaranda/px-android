@@ -53,7 +53,8 @@ internal object MapperProvider {
     fun getPaymentCongratsMapper(): PaymentCongratsModelMapper {
         return PaymentCongratsModelMapper(
             Session.getInstance().configurationModule.paymentSettings,
-            Session.getInstance().configurationModule.trackingRepository
+            Session.getInstance().configurationModule.trackingRepository,
+            Session.getInstance().helperModule.displayInfoHelper
         )
     }
 
@@ -136,8 +137,8 @@ internal object MapperProvider {
                 session.paymentResultViewModelFactory,
                 session.tracker,
                 instructionMapper,
-                paymentSettings.checkoutPreference?.autoReturn
-            )
+                paymentSettings.checkoutPreference?.autoReturn,
+                session.helperModule.displayInfoHelper)
         }
 
     val instructionMapper: InstructionMapper

@@ -326,6 +326,7 @@ public final class PaymentData implements Serializable {
         paymentData.payer = paymentDataBuilder.payer;
         paymentData.transactionAmount = paymentDataBuilder.transactionAmount;
         paymentData.paymentMethod = paymentDataBuilder.paymentMethod;
+        paymentData.transactionInfo = paymentDataBuilder.transactionIfo;
         return paymentData;
     }
 }
