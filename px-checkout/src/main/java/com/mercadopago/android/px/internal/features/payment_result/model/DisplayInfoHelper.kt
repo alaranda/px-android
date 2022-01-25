@@ -30,9 +30,10 @@ internal class DisplayInfoHelper(
         displayInfo?.let {
             val paymentResultInfo = PaymentResultInfo(it.resultInfo.title, it.resultInfo.subtitle)
             paymentInfoBuilder.withConsumerCreditsInfo(paymentResultInfo)
-            with(it.description) {
-                val description = PaymentCongratsText(message, backgroundColor, textColor, weight)
-                paymentInfoBuilder.withPaymentMethodDescriptionText(description)
+            val description = it.description
+            if (description != null) {
+                val descriptionText = PaymentCongratsText(description.message, description.backgroundColor, description.textColor, description.weight)
+                paymentInfoBuilder.withPaymentMethodDescriptionText(descriptionText)
             }
         }
     }
