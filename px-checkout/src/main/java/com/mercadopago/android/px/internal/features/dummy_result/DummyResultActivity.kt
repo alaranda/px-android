@@ -45,5 +45,12 @@ internal class DummyResultActivity : PXActivity<DummyResultPresenter>(), MvpView
                 fragment.startActivityForResult(intent, requestCode)
             }
         }
+
+        fun start(activity: Activity, requestCode: Int, model: PaymentModel) {
+            if (activity is PXActivity<*>) activity.overrideTransitionIn()
+            val intent = Intent(activity, DummyResultActivity::class.java)
+            intent.putExtra(PaymentResultActivity.EXTRA_PAYMENT_MODEL, model)
+            activity.startActivityForResult(intent, requestCode)
+        }
     }
 }

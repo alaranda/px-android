@@ -3,9 +3,11 @@ package com.mercadopago.android.px.internal.features.payment_congrats
 import com.mercadopago.android.px.internal.base.BaseState
 import com.mercadopago.android.px.internal.base.BaseViewModelWithState
 import com.mercadopago.android.px.internal.core.ConnectionHelper
+import com.mercadopago.android.px.internal.features.checkout.PostPaymentUrlsMapper
 import com.mercadopago.android.px.internal.livedata.MediatorSingleLiveData
 import com.mercadopago.android.px.internal.repository.CongratsRepository
 import com.mercadopago.android.px.internal.repository.PaymentRepository
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository
 import com.mercadopago.android.px.internal.viewmodel.PaymentModel
 import com.mercadopago.android.px.model.IPaymentDescriptor
 import com.mercadopago.android.px.tracking.internal.MPTracker
@@ -17,6 +19,8 @@ internal class CongratsViewModel(
     private val paymentRepository: PaymentRepository,
     private val congratsResultFactory: CongratsResultFactory,
     private val connectionHelper: ConnectionHelper,
+    private val paymentSettingRepository: PaymentSettingRepository,
+    private val postPaymentUrlsMapper: PostPaymentUrlsMapper,
     tracker: MPTracker
 ) : BaseViewModelWithState<CongratsViewModel.State>(tracker), CongratsRepository.PostPaymentCallback {
 
@@ -41,7 +45,24 @@ internal class CongratsViewModel(
     }
 
     override fun handleResult(paymentModel: PaymentModel) {
-        congratsResultLiveData.value = congratsResultFactory.create(paymentModel)
+        val postPaymentUrls = resolvePostPaymentUrls(paymentModel)
+        state.backUrl = postPaymentUrls?.backUrl.orEmpty()
+        congratsResultLiveData.value =
+            congratsResultFactory.create(paymentModel, postPaymentUrls?.redirectUrl.orEmpty())
+    }
+
+    private fun resolvePostPaymentUrls(paymentModel: PaymentModel): PostPaymentUrlsMapper.Response? {
+        return paymentSettingRepository.checkoutPreference?.let { preference ->
+            val congratsResponse = paymentModel.congratsResponse
+            postPaymentUrlsMapper.map(
+                PostPaymentUrlsMapper.Model(
+                    congratsResponse.redirectUrl,
+                    congratsResponse.backUrl,
+                    paymentModel.payment,
+                    preference,
+                    paymentSettingRepository.site.id
+                ))
+        }
     }
 
     private fun manageNoConnection() {
@@ -51,6 +72,7 @@ internal class CongratsViewModel(
 
     @Parcelize
     data class State(
-        var iPaymentDescriptor: IPaymentDescriptor? = null
+        var iPaymentDescriptor: IPaymentDescriptor? = null,
+        var backUrl: String? = null
     ) : BaseState
 }

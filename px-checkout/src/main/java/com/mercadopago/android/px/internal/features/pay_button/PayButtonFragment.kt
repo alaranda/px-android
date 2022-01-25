@@ -47,6 +47,7 @@ import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError
 import com.mercadopago.android.px.tracking.internal.TrackWrapper
 import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker
+import com.mercadopago.android.px.tracking.internal.events.PostPaymentFlowEvent
 import com.mercadopago.android.px.internal.viewmodel.PayButtonViewModel as ButtonConfig
 
 private const val REQ_CODE_CONGRATS = 300
@@ -166,6 +167,8 @@ internal class PayButtonFragment : BaseFragment(), PayButton.View, SecurityValid
             }
             startActivity(intent)
             activity?.finish()
+        }.onSuccess {
+            viewModel.track(PostPaymentFlowEvent(deepLink))
         }.onFailure { exception ->
             viewModel.track(
                 FrictionEventTracker.with(

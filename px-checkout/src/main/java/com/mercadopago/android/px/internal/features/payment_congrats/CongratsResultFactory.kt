@@ -16,9 +16,4 @@ internal class CongratsResultFactory(private val paymentCongratsModelMapper: Pay
         )
         else -> CongratsResult.PaymentResult(paymentModel)
     }
-
-    fun create(paymentModel: PaymentModel) : CongratsResult = when (paymentModel) {
-        is BusinessPaymentModel -> CongratsResult.BusinessPaymentResult(paymentCongratsModelMapper.map(paymentModel))
-        else -> CongratsResult.PaymentResult(paymentModel)
-    }
 }
