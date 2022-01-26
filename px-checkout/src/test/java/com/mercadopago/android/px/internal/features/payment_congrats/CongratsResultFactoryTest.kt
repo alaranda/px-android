@@ -64,25 +64,4 @@ internal class CongratsResultFactoryTest {
 
         congratsResult.assertEquals(expectedCongratsResult)
     }
-
-    @Test
-    fun `When payment model is business then return business payment result`() {
-
-        val businessPaymentModel = mock<BusinessPaymentModel>()
-
-        val expectedCongratsResult = CongratsResult.BusinessPaymentResult(paymentCongratsModel)
-        val congratsResult = congratsResultFactory.create(businessPaymentModel)
-
-        congratsResult.assertEquals(expectedCongratsResult)
-    }
-
-    @Test
-    fun `On default payment model then payment result`() {
-        val paymentModel = mock<PaymentModel>()
-
-        val expectedCongratsResult = CongratsResult.PaymentResult(paymentModel)
-        val congratsResult = congratsResultFactory.create(paymentModel)
-
-        congratsResult.assertEquals(expectedCongratsResult)
-    }
 }

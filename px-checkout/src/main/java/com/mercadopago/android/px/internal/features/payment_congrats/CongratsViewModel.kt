@@ -47,8 +47,8 @@ internal class CongratsViewModel(
     override fun handleResult(paymentModel: PaymentModel) {
         val postPaymentUrls = resolvePostPaymentUrls(paymentModel)
         state.backUrl = postPaymentUrls?.backUrl.orEmpty()
-        congratsResultLiveData.value =
-            congratsResultFactory.create(paymentModel, postPaymentUrls?.redirectUrl.orEmpty())
+        state.redirectUrl = postPaymentUrls?.redirectUrl.orEmpty()
+        congratsResultLiveData.value = congratsResultFactory.create(paymentModel, state.redirectUrl)
     }
 
     private fun resolvePostPaymentUrls(paymentModel: PaymentModel): PostPaymentUrlsMapper.Response? {
@@ -73,6 +73,7 @@ internal class CongratsViewModel(
     @Parcelize
     data class State(
         var iPaymentDescriptor: IPaymentDescriptor? = null,
-        var backUrl: String? = null
+        var backUrl: String? = null,
+        var redirectUrl: String? = null
     ) : BaseState
 }

@@ -10,6 +10,7 @@ import com.mercadopago.android.px.configuration.PostPaymentConfiguration.Compani
 import com.mercadopago.android.px.configuration.PostPaymentConfiguration.Companion.EXTRA_PAYMENT
 import com.mercadopago.android.px.internal.di.viewModel
 import com.mercadopago.android.px.internal.features.Constants.RESULT_CUSTOM_EXIT
+import com.mercadopago.android.px.internal.features.dummy_result.DummyResultActivity
 import com.mercadopago.android.px.internal.features.payment_result.PaymentResultActivity
 import com.mercadopago.android.px.internal.util.ErrorUtil
 import com.mercadopago.android.px.internal.util.MercadoPagoUtil
@@ -18,6 +19,7 @@ import com.mercadopago.android.px.model.IParcelablePaymentDescriptor
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError
 
 private const val REQ_CODE_CONGRATS = 300
+private const val REQ_CODE_SKIP_CONGRATS = 301
 
 internal class CongratsDeepLinkActivity : AppCompatActivity() {
 
@@ -41,18 +43,16 @@ internal class CongratsDeepLinkActivity : AppCompatActivity() {
         when (congratsResult) {
             is CongratsResult.PaymentResult -> {
                 PaymentResultActivity.start(this, REQ_CODE_CONGRATS, congratsResult.paymentModel)
-                //finish()
             }
             is CongratsResult.BusinessPaymentResult -> {
                 PaymentCongrats.show(congratsResult.paymentCongratsModel, this, REQ_CODE_CONGRATS)
-                //finish()
             }
             is CongratsPaymentResult.SkipCongratsResult -> {
-                /*DummyResultActivity.start(
+                DummyResultActivity.start(
                     this,
-                    REQ_CODE_CONGRATS,
+                    REQ_CODE_SKIP_CONGRATS,
                     congratsResult.paymentModel
-                )*/
+                )
             }
             is CongratsPostPaymentResult.Loading ->
                 findViewById<MeliSpinner>(R.id.loading_view).visibility = View.VISIBLE
@@ -75,6 +75,7 @@ internal class CongratsDeepLinkActivity : AppCompatActivity() {
             requestCode == ErrorUtil.ERROR_REQUEST_CODE && resultCode == RESULT_OK ->
                 congratsViewModel.createCongratsResult(iPaymentDescriptor)
             requestCode == REQ_CODE_CONGRATS && resultCode == RESULT_CUSTOM_EXIT -> navigateToBackUrl()
+            requestCode == REQ_CODE_SKIP_CONGRATS && resultCode == RESULT_CUSTOM_EXIT -> openInWebView()
             else -> finish()
         }
     }
@@ -90,17 +91,22 @@ internal class CongratsDeepLinkActivity : AppCompatActivity() {
             val intent = MercadoPagoUtil.getIntent(congratsViewModel.state.backUrl.orEmpty())
             startActivity(intent)
             finish()
-        }.onSuccess {
-            //congratsViewModel.track(PostPaymentFlowEvent(deepLink))
         }.onFailure { exception ->
-            /*viewModel.track(
-                FrictionEventTracker.with(
-                    "${TrackWrapper.BASE_PATH}/post_payment_deep_link",
-                    FrictionEventTracker.Id.INVALID_POST_PAYMENT_DEEP_LINK,
-                    FrictionEventTracker.Style.SCREEN,
-                    MercadoPagoError.createNotRecoverable(exception.message.orEmpty())
-                )
-            )*/
+            exception.printStackTrace()
+            finish()
+        }
+    }
+
+    private fun openInWebView() {
+        runCatching {
+            val intent = MercadoPagoUtil.getNativeOrWebViewIntent(
+                this,
+                congratsViewModel.state.redirectUrl.orEmpty()
+            )
+            startActivity(intent)
+            finish()
+        }.onFailure { exception ->
+            exception.printStackTrace()
             finish()
         }
     }
