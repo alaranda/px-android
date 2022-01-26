@@ -37,9 +37,13 @@ public class UserSelectionService implements UserSelectionRepository {
     @Override
     public void removePaymentMethodSelection() {
         sharedPreferences.edit().remove(PREF_PRIMARY_SELECTED_PM).apply();
-        sharedPreferences.edit().remove(PREF_SECONDARY_SELECTED_PM).apply();
+        removeSecondaryPaymentMethodSelection();
         removePayerCostSelection();
         removeIssuerSelection();
+    }
+
+    private void removeSecondaryPaymentMethodSelection() {
+        sharedPreferences.edit().remove(PREF_SECONDARY_SELECTED_PM).apply();
     }
 
     private void removeIssuerSelection() {
@@ -74,6 +78,8 @@ public class UserSelectionService implements UserSelectionRepository {
 
             if (secondary != null) {
                 sharedPreferences.edit().putString(PREF_SECONDARY_SELECTED_PM, JsonUtil.toJson(secondary)).apply();
+            } else {
+                removeSecondaryPaymentMethodSelection();
             }
 
             removePayerCostSelection();
