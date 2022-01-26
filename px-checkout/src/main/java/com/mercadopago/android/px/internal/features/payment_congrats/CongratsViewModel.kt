@@ -61,7 +61,8 @@ internal class CongratsViewModel(
                     paymentModel.payment,
                     preference,
                     paymentSettingRepository.site.id
-                ))
+                )
+            )
         }
     }
 
