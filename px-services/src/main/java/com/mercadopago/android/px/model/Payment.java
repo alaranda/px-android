@@ -447,6 +447,7 @@ public final class Payment implements IPayment, IPaymentDescriptor {
         public static final String STATUS_DETAIL_REJECTED_BY_REGULATIONS = "rejected_by_regulations";
         public static final String STATUS_DETAIL_CC_REJECTED_FRAUD = "cc_rejected_fraud";
         public static final String STATUS_DETAIL_CC_REJECTED_BLACKLIST = "cc_rejected_blacklist";
+        public static final String STATUS_DETAIL_REJECTED_CAP_EXCEEDED = "rejected_cap_exceeded";
 
         // Return all the static declared fields as a collection
         private static Collection<Field> getAll() {

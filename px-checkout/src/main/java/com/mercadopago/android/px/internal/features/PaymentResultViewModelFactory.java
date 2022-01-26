@@ -37,6 +37,7 @@ import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAI
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_OTHER_REASON;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_PLUGIN_PM;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_BY_REGULATIONS;
+import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_CAP_EXCEEDED;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_HIGH_RISK;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_INSUFFICIENT_AMOUNT;
 import static com.mercadopago.android.px.model.Payment.StatusDetail.STATUS_DETAIL_REJECTED_REJECTED_BY_BANK;
@@ -300,6 +301,18 @@ public final class PaymentResultViewModelFactory {
                 .setMainActionTitle(R.string.px_change_payment_method)
                 .setLinkAction(new NextAction())
                 .setLinkActionTitle(R.string.px_button_text_go_to_home);
+
+        case STATUS_DETAIL_REJECTED_CAP_EXCEEDED:
+            setNonRecoverableErrorResources(builder);
+            return builder
+                    .setBadgeResId(0)
+                    .setIconResId(R.drawable.px_ic_badge_error)
+                    .setTitleResId(R.string.px_title_error_rejected_cap_exceeded)
+                    .setBodyDetailDescriptionResId(R.string.px_body_error_rejected_cap_exceeded)
+                    .setMainAction(new ChangePaymentMethodAction())
+                    .setMainActionTitle(R.string.px_change_payment_method)
+                    .setLinkAction(new NextAction())
+                    .setLinkActionTitle(R.string.px_button_text_go_to_home);
 
         default:
             setNonRecoverableErrorResources(builder);

@@ -99,7 +99,9 @@
     <string name="px_body_error_rejected_insufficient_amount">Please try to use another payment method.</string>
     <string name="px_body_error_rejected_high_risk">We are sorry, the transaction did not pass our security validation.</string>
     <string name="px_body_error_rejected_default">We are sorry, something went wrong. Please try again with another payment method.</string>
+    <string name="px_body_error_rejected_cap_exceeded">You can perform the transaction with another payment method.</string>
     <string name="px_title_error_rejected_default">It was not possible to make the transaction</string>
+    <string name="px_title_error_rejected_cap_exceeded">You exceeded the daily limit use of the chosen payment method</string>
     <string name="px_error_message_invalid_item">Invalid item</string>
     <string name="px_error_message_expired_preference">Expired preference</string>
     <string name="px_error_message_inactive_preference">Inactive preference</string>

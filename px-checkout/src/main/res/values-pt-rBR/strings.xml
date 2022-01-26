@@ -99,7 +99,9 @@
     <string name="px_body_error_rejected_insufficient_amount">Por favor, tente usar outro meio de pagamento.</string>
     <string name="px_body_error_rejected_high_risk">Desculpe, a transação não passou na nossa validação de segurança.</string>
     <string name="px_body_error_rejected_default">Desculpe, ocorreu um erro. Por favor, tente novamente com outro meio de pagamento.</string>
+    <string name="px_body_error_rejected_cap_exceeded">Você pode efetuar a transação com outro meio de pagamento.</string>
     <string name="px_title_error_rejected_default">Não foi possível efetuar a transação</string>
+    <string name="px_title_error_rejected_cap_exceeded">Você excedeu o limite diário de uso do meio de pagamento escolhido</string>
     <string name="px_error_message_invalid_item">Item inválido</string>
     <string name="px_error_message_expired_preference">Preferência expirada</string>
     <string name="px_error_message_inactive_preference">Preferência inativa</string>
