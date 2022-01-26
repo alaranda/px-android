@@ -12,7 +12,7 @@ import java.math.BigDecimal
 
 interface CheckoutService {
 
-    @POST("https://run.mocky.io/v3/4bd07c00-57dc-4423-b4a9-538ca925c7ea")
+    @POST("https://run.mocky.io/v3/4c2ab1c8-421b-42c9-8499-0b3256cbb827")
     suspend fun checkout(
         @Body body: InitRequestBody
     ): Response<CheckoutResponse>

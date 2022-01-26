@@ -107,7 +107,8 @@ internal class CongratsRepositoryImpl(
                         !disabledPaymentMethodRepository.hasKey(
                             PayerPaymentMethodKey(it.customOptionId, it.paymentTypeId))
                 },
-                paymentSettingRepository
+                paymentSettingRepository,
+                payerPaymentMethodRepository
             ).map(paymentData)
             congratsService.getRemedies(
                 payment.id.toString(),

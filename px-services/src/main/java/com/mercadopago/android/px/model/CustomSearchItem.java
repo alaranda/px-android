@@ -33,9 +33,12 @@ public class CustomSearchItem implements Serializable, Parcelable {
     @Nullable private Issuer issuer;
     @Nullable private String lastFourDigits;
     @Nullable private String firstSixDigits;
-    @Nullable private BankTransferDisplayInfo displayInfo;
 
     private String escStatus;
+
+    @Nullable private BankTransferDisplayInfo displayInfo;
+    @Nullable private String paymentMethodName;
+    @Nullable private BankTransferInfo bankInfo;
 
     @Deprecated
     public CustomSearchItem() {
@@ -69,6 +72,8 @@ public class CustomSearchItem implements Serializable, Parcelable {
         issuer = in.readParcelable(Issuer.class.getClassLoader());
         escStatus = in.readString();
         displayInfo = in.readParcelable(BankTransferDisplayInfo.class.getClassLoader());
+        paymentMethodName = in.readString();
+        bankInfo = in.readParcelable(BankTransferInfo.class.getClassLoader());
     }
 
     @Override
@@ -86,6 +91,8 @@ public class CustomSearchItem implements Serializable, Parcelable {
         dest.writeParcelable(issuer, 0);
         dest.writeString(escStatus);
         dest.writeParcelable(displayInfo, 0);
+        dest.writeString(paymentMethodName);
+        dest.writeParcelable(bankInfo, 0);
     }
 
     public String getDescription() {
@@ -171,4 +178,10 @@ public class CustomSearchItem implements Serializable, Parcelable {
 
     @Nullable
     public BankTransferDisplayInfo getBankTransferDisplayInfo() { return displayInfo; }
+
+    @Nullable
+    public String getPaymentMethodName() { return paymentMethodName; }
+
+    @Nullable
+    public BankTransferInfo getBankInfo() { return bankInfo; }
 }
