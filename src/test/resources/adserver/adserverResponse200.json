@@ -1,0 +1,26 @@
+{
+  "content": {
+    "content_id": "fallback_mla",
+    "markup": "<!DOCTYPE html>\n<html>\n<style>\n  html,\n  body {\n    margin: 0;\n    padding: 0;\n  }\n  img {\n    width: 100%;\n    position: absolute;\n    z-index: 1;\n  }\n  #skeleton {\n    height: 24.5vw;\n    width: 100%;\n    background-size: 1000px 640px;\n    animation-duration: 1.5s;\n    animation-fill-mode: forwards;\n    animation-iteration-count: infinite;\n    animation-name: placeHolderShimmer;\n    animation-timing-function: linear;\n    background: linear-gradient(to right, #F5F5F5 8%, #EDEDED 38%, #F5F5F5 54%);\n  }\n  @keyframes placeHolderShimmer {\n    0% {\n      background-position: -50vw 0\n    }\n    100% {\n      background-position: 50vw 0\n    }\n  }\n</style>\n<script>\n  function hideSkeleton() {\n    document.getElementById('skeleton').id = '';\n  }\n</script>\n<body>\n  <img onload=\"hideSkeleton()\" src=\"https://http2.mlstatic.com/D_NQ_983670-MLA48849245111_012022-F.webp\" alt=\"\">\n  <div id=\"skeleton\"></div>\n</body>\n</html>",
+    "image_url": "https://http2.mlstatic.com/D_NQ_983670-MLA48849245111_012022-F.webp",
+    "deeplink": "meli://search?go=https://www.mercadolibre.com.ar/ofertas#c_id=/home/top_home_banner&c_uid=bf63075c-6be3-4a30-90ee-cf6b0f89570f&c_category=fallback_mla",
+    "destination_url": "https://click1.mercadolibre.com.ar/display/clicks/MLA/count?a=3mOhmmzi2W8Y4oHe1Y%2BUUOOsXbj8x3Hw6ziK583cRklX3ntFTVW46CIdG35qEAW0SpFLM45pZ6ph6hYLx6dCPQ0FqFpgvqdvyCaUxe32Y%2Ba3AuviQcBnBHInK5R29ULTcPbxJpJim63zkdbg5buturDrICD7JHvQmwUl89Y2cgk5JAVOWG2YWCLA8QfuDYtt8x%2FqFzVGTrUXmfU%2FakCjozuo%2F6p9YbGsBg94WL%2BOqIgH5zwim%2FIyvlMQTDQoX7p5aEi%2BGmSN2PIuMZURCSwkR%2Fc%2FfdNra8HCocTG7sKC999uvAdb1h2KRynnx2JYxGjWGkLiklBuC6CCSQ0g",
+    "print_url": "https://print1.mercadoclics.com/display/prints/MLA/count?d=pptAd0ENAw%2F%2F1xgiR1t%2BLaryawX%2B8%2F15N%2B%2Ft8YHdmYgTk83lin93mQ2uis9VTJNwefwxHjsvoVokh6KaldoJGlz7ml2xtfYECTnBZDyrF7qMuBLOiFZQauonouUtgw4R5dtr8vKL4ymYlA8Gjvvu7e06AKsrkKl4jHemMNG1TMvKKKTHfdZRslWlqBqZiW4aQjkLI3ay%2FC8fiCk38cCOBLQVADdYovgaXqOlTWA8pynOWieERh5xcTxMmwyhqBOVhgAGaYvLDZufCv%2BMBXsYikgnpwO8HTTtdXoVQ3CTOdfsvYx%2FpY5ulAVqKOo68CtKIXkkoyMbh4KLhiFKMOooJQRUyUwT1j17HJfWPDG9pKk0Q8grDE%2B2Ig%2FwEMzY4P%2FcRctF3%2BNbjZQR78jao1GmWgOAHTk%3D"
+  },
+  "event_data": {
+    "audience": "all",
+    "component_id": "top_home_banner",
+    "line_item_id": 115,
+    "content_id": "fallback_mla",
+    "content_source": "displayCoreApi",
+    "print_id": "34389289-95c0-407c-afc8-a47783ef6afd",
+    "logic": "campaigns",
+    "position": "0",
+    "flow": "-1",
+    "campaign_id": 130
+  },
+  "c_id": "/home/top_home_banner",
+  "c_category": "fallback_mla",
+  "experiments": null,
+  "explain": null
+}
