@@ -2,6 +2,7 @@ package com.mercadopago.android.px.internal.features.payment_congrats
 
 import com.mercadopago.android.px.internal.features.payment_congrats.model.PaymentCongratsModel
 import com.mercadopago.android.px.internal.viewmodel.PaymentModel
+import com.mercadopago.android.px.model.Payment
 
 internal open class CongratsResult {
     data class PaymentResult(val paymentModel: PaymentModel) : CongratsResult()
@@ -16,4 +17,10 @@ internal open class CongratsPostPaymentResult : CongratsResult() {
     object Loading : CongratsPostPaymentResult()
     object ConnectionError : CongratsPostPaymentResult()
     object BusinessError : CongratsPostPaymentResult()
+}
+
+internal open class CongratsPostPaymentUrlsResponse : CongratsResult() {
+    data class OnGoToLink(val link: String) : CongratsPostPaymentUrlsResponse()
+    data class OnOpenInWebView(val link: String) : CongratsPostPaymentUrlsResponse()
+    data class OnExitWith(val customResponseCode: Int?, val payment: Payment?) : CongratsPostPaymentUrlsResponse()
 }

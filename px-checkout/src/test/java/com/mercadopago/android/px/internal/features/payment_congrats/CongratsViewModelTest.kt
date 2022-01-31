@@ -10,6 +10,8 @@ import com.mercadopago.android.px.internal.repository.PaymentRepository
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository
 import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel
 import com.mercadopago.android.px.internal.viewmodel.PaymentModel
+import com.mercadopago.android.px.model.BusinessPayment
+import com.mercadopago.android.px.model.Payment
 import com.mercadopago.android.px.model.Sites
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -47,6 +49,13 @@ class CongratsViewModelTest {
     private lateinit var paymentSettingRepository: PaymentSettingRepository
     @Mock
     private lateinit var postPaymentUrlsMapper: PostPaymentUrlsMapper
+    @Mock
+    private lateinit var postPaymentUrlsLiveData: Observer<CongratsPostPaymentUrlsResponse>
+    @Mock
+    private lateinit var exitFlowLiveData: Observer<CongratsPostPaymentUrlsResponse>
+
+    private val backUrl = "mercadopago://px/congrats"
+    private val redirectUrl = "www.google.com"
 
     @Before
     fun setUp() {
@@ -61,6 +70,8 @@ class CongratsViewModelTest {
         )
 
         congratsViewModel.congratsResultLiveData.observeForever(congratsResultLiveData)
+        congratsViewModel.postPaymentUrlsLiveData.observeForever(postPaymentUrlsLiveData)
+        congratsViewModel.exitFlowLiveData.observeForever(exitFlowLiveData)
         congratsViewModel.restoreState(state)
     }
 
@@ -131,7 +142,6 @@ class CongratsViewModelTest {
 
     @Test
     fun `When createCongratsResult there is connectivity and IPaymentDescriptor is not null and redirectUrl is not null`() {
-        val redirectUrl = "www.google.com"
         whenever(connectionHelper.hasConnection()).thenReturn(true)
         val paymentModel = mock<PaymentModel>{
             on { payment }.thenReturn(mock())
@@ -153,5 +163,69 @@ class CongratsViewModelTest {
         congratsViewModel.handleResult(paymentModel)
 
         verify(congratsResultLiveData).onChanged(CongratsPaymentResult.SkipCongratsResult(paymentModel))
+    }
+
+    @Test
+    fun `When custom result code is null then OnPaymentResult executes OnExitWith`() {
+        congratsViewModel.onPaymentResultResponse(null)
+
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(null, null))
+    }
+
+    @Test
+    fun `When custom result code and payment are not null then OnPaymentResult executes OnExitWith`() {
+        val payment = mock<Payment>()
+
+        whenever(state.iPaymentDescriptor).thenReturn(payment)
+        congratsViewModel.onPaymentResultResponse(1)
+
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(1, payment))
+    }
+
+    @Test
+    fun `When custom result code is not null and payment is businessPayment then OnPaymentResult executes OnExitWith`() {
+        val payment = mock<BusinessPayment>()
+
+        whenever(state.iPaymentDescriptor).thenReturn(payment)
+        congratsViewModel.onPaymentResultResponse(1)
+
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(1, null))
+    }
+
+    @Test
+    fun `When custom result code and backUrl are not null and payment is businessPayment then OnPaymentResult executes OnGoToLink and OnExitWith`() {
+        val payment = mock<BusinessPayment>()
+
+        whenever(state.backUrl).thenReturn(backUrl)
+        whenever(state.iPaymentDescriptor).thenReturn(payment)
+        congratsViewModel.onPaymentResultResponse(1)
+
+        verify(postPaymentUrlsLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnGoToLink(backUrl))
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(1, null))
+    }
+
+    @Test
+    fun `When custom result code and redirectUrl are not null and payment is businessPayment then OnPaymentResult executes OnOpenInWebView and OnExitWith`() {
+        val payment = mock<BusinessPayment>()
+
+        whenever(state.redirectUrl).thenReturn(redirectUrl)
+        whenever(state.iPaymentDescriptor).thenReturn(payment)
+        congratsViewModel.onPaymentResultResponse(1)
+
+        verify(postPaymentUrlsLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnOpenInWebView(redirectUrl))
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(1, null))
+    }
+
+    @Test
+    fun `When custom result code, redirectUrl and backUrl are not null and payment is businessPayment then OnPaymentResult executes OnOpenInWebView and OnExitWith`() {
+        val payment = mock<BusinessPayment>()
+
+        whenever(state.redirectUrl).thenReturn(redirectUrl)
+        whenever(state.backUrl).thenReturn(backUrl)
+        whenever(state.iPaymentDescriptor).thenReturn(payment)
+        congratsViewModel.onPaymentResultResponse(1)
+
+        verify(postPaymentUrlsLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnOpenInWebView(redirectUrl))
+        verify(exitFlowLiveData).onChanged(CongratsPostPaymentUrlsResponse.OnExitWith(1, null))
     }
 }

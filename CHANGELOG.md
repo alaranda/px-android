@@ -1,3 +1,9 @@
+## VERSION 4.102.0
+_27_01_2022_
+* ENHANCEMENT - Add backUrl and redirectUrl handling for PostPaymentUrl flow.
+* FIX - Consumer credits payment crashing when previous payment was with split
+* FEATURE - Adds GAv2 tracker to enum
+
 ## VERSION 4.101.0
 _20_01_2022_
 * FEATURE - Added PostPaymentUrl flow
