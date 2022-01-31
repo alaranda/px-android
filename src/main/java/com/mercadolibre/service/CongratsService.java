@@ -19,18 +19,11 @@ import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR;
 import com.mercadolibre.api.DaoProvider;
 import com.mercadolibre.api.LoyaltyApi;
 import com.mercadolibre.api.MerchAPI;
+import com.mercadolibre.api.AdServerAPI;
 import com.mercadolibre.api.PaymentAPI;
 import com.mercadolibre.api.PaymentMethodsSearchApi;
 import com.mercadolibre.api.PreferenceAPI;
-import com.mercadolibre.dto.congrats.Action;
-import com.mercadolibre.dto.congrats.AutoReturn;
-import com.mercadolibre.dto.congrats.Congrats;
-import com.mercadolibre.dto.congrats.CongratsRequest;
-import com.mercadolibre.dto.congrats.CrossSelling;
-import com.mercadolibre.dto.congrats.Discounts;
-import com.mercadolibre.dto.congrats.ExpenseSplit;
-import com.mercadolibre.dto.congrats.OperationInfo;
-import com.mercadolibre.dto.congrats.Points;
+import com.mercadolibre.dto.congrats.*;
 import com.mercadolibre.dto.congrats.merch.MerchResponse;
 import com.mercadolibre.dto.instructions.Instruction;
 import com.mercadolibre.dto.instructions.InstructionFactory;
@@ -153,6 +146,15 @@ public class CongratsService {
    * @return Congrats congrats object
    * @throws ApiException API Exception
    */
+
+  public Optional<Banner> getBanner(final Context context, final CongratsRequest congratsRequest) throws URISyntaxException {
+
+    CompletableFuture<Either<Banner, ApiError>> test = AdServerAPI.INSTANCE.getAd(context, congratsRequest);
+    return AdServerAPI.getBannerFromFuture(context, test);
+
+
+  }
+
   public Congrats getPointsDiscountsAndInstructions(
       final Context context, final CongratsRequest congratsRequest) throws ApiException {
 
@@ -184,6 +186,9 @@ public class CongratsService {
     final CompletableFuture<Either<MerchResponse, ApiError>> futureMerchResponse =
         MerchAPI.INSTANCE.getAsyncCrossSellingAndDiscount(context, congratsRequest);
 
+    final CompletableFuture<Either<Banner, ApiError>> futureBannerResponse =
+            AdServerAPI.INSTANCE.getAd(context, congratsRequest);
+
     CompletableFuture<Either<Preference, ApiError>> futurePref = null;
     if (null != congratsRequest.getPreferenceId()) {
       futurePref =
@@ -192,6 +197,7 @@ public class CongratsService {
 
     Points points = null;
     Set<CrossSelling> crossSelling = null;
+    Banner banner = null;
     Discounts discounts = null;
 
     final Optional<Points> optionalPoints =
@@ -212,8 +218,18 @@ public class CongratsService {
         }
       }
 
+      Optional<Banner> optionalBannerResponse =
+              AdServerAPI.getBannerFromFuture(context, futureBannerResponse);
+
       Optional<MerchResponse> optionalMerchResponse =
           MerchAPI.getMerchResponseFromFuture(context, futureMerchResponse);
+
+
+      if(optionalBannerResponse.isPresent()){
+
+        banner = optionalBannerResponse.get();
+
+      }
 
       if (optionalMerchResponse.isPresent()) {
         final MerchResponse merchResponse = optionalMerchResponse.get();
@@ -305,6 +321,7 @@ public class CongratsService {
       return Congrats.builder()
           .mpuntos(points)
           .discounts(discounts)
+          .banner(banner)
           .crossSelling(crossSelling)
           .viewReceipt(viewReceipt)
           .topTextBox(ifpeCompliance)
