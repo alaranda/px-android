@@ -1,15 +1,13 @@
 package com.mercadolibre.dto.congrats;
 
 import com.mercadolibre.px.toolkit.dto.user_agent.UserAgent;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @ToString
 @AllArgsConstructor
 @Getter
 @Builder
+@NoArgsConstructor
 public class CongratsRequest {
 
   private String userId;

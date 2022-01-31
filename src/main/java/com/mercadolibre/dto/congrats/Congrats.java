@@ -27,6 +27,7 @@ public class Congrats {
   private AutoReturn autoReturn;
   private Instruction instructions;
   private OperationInfo operationInfo;
+  private Banner banner;
 
   public Congrats() {
     this.mpuntos = null;
@@ -34,6 +35,7 @@ public class Congrats {
     this.crossSelling = null;
     this.viewReceipt = null;
     this.topTextBox = null;
+    this.banner = null;
   }
 
   public boolean hasPoints() {
